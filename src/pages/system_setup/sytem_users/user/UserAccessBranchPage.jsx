@@ -1,8 +1,8 @@
-import { useState, useEffect } from 'react';
-import { redirect, useNavigate, useParams } from 'react-router-dom';
-import { toast } from 'react-toastify';
+import { useEffect, useState } from 'react';
 import ReactPaginate from 'react-paginate';
+import { redirect, useNavigate, useParams } from 'react-router-dom';
 import Select from 'react-select';
+import { toast } from 'react-toastify';
 import { fetchData } from '../../../../services/$service';
 import { ROUTE_PATH } from '../../../../utils/route-util';
 

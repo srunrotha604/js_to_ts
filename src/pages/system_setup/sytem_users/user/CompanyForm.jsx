@@ -1,13 +1,13 @@
 import { useEffect, useState } from 'react';
-import HeaderTableComponent from '../../../../components/table/table_action/HeaderTableComponent';
-import TableRowStatusComponentHandle from '../../../../components/table/table_action/TableRowStatusComponentHandle';
-import TableRow from '../../../../components/table/TableRow';
-import TableCell from '../../../../components/table/TableCell';
 import { useNavigate } from 'react-router-dom';
 import ListDetailsIcon from '../../../../components/Icons/ListDetailsIcon';
-import { fetchDataAsync } from '../../../../services/$service';
-import WrapperComponent from '../../../../components/WrapperComponent';
 import PageBodyComponent from '../../../../components/pages/PageBodyComponent';
+import HeaderTableComponent from '../../../../components/table/table_action/HeaderTableComponent';
+import TableRowStatusComponentHandle from '../../../../components/table/table_action/TableRowStatusComponentHandle';
+import TableCell from '../../../../components/table/TableCell';
+import TableRow from '../../../../components/table/TableRow';
+import WrapperComponent from '../../../../components/WrapperComponent';
+import { fetchDataAsync } from '../../../../services/$service';
 import { ROUTE_PATH } from '../../../../utils/route-util';
 
 const CompanyForm = () => {
@@ -103,7 +103,9 @@ const CompanyForm = () => {
                               stroke="#00abfb"
                               onClick={() => {
                                 navigate(
-                                  `${ROUTE_PATH.userCompanyBranch}?uuid=${params.get(
+                                  `${
+                                    ROUTE_PATH.userCompanyBranch
+                                  }?uuid=${params.get(
                                     'uuid'
                                   )}&appMember=${params.get(
                                     'appMember'

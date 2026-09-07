@@ -1,32 +1,32 @@
-import { useState, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import ReactPaginate from "react-paginate";
-import Loading from "../../../../components/Loading";
-import { fetchData } from "../../../../services/$service";
-import { useAuth } from "../../../../context/AuthContext.jsx";
-import Select from "react-select";
-import { selectCustomStyles } from "../../../../components/transaction/TransactionTabList";
-import TableCellAction from "../../../../components/form/TableCellAction";
-import TableBreakBar from "../../../../components/table/table_action/TableBreakBar.jsx";
-import TableCellTextDeleteConfirm from "../../../../components/table/table_action/TableCellTextDeleteConfirm.jsx";
-import TableCellStatusCodeHandle from "../../../../components/form/TableCellStatusCodeHandle.jsx";
-import AddPhoneNumber from "./components/AddPhoneNumber.jsx";
-import { ROUTE_PATH } from "../../../../utils/route-util";
+import { useEffect, useState } from 'react';
+import ReactPaginate from 'react-paginate';
+import { Link, useNavigate } from 'react-router-dom';
+import Select from 'react-select';
+import TableCellAction from '../../../../components/form/TableCellAction';
+import TableCellStatusCodeHandle from '../../../../components/form/TableCellStatusCodeHandle.jsx';
+import Loading from '../../../../components/Loading';
+import TableBreakBar from '../../../../components/table/table_action/TableBreakBar.jsx';
+import TableCellTextDeleteConfirm from '../../../../components/table/table_action/TableCellTextDeleteConfirm.jsx';
+import { selectCustomStyles } from '../../../../components/transaction/TransactionTabList';
+import { useAuth } from '../../../../context/AuthContext.jsx';
+import { fetchData } from '../../../../services/$service';
+import { ROUTE_PATH } from '../../../../utils/route-util';
+import AddPhoneNumber from './components/AddPhoneNumber.jsx';
 
 const UserPage = () => {
-  document.title = "E-CHANNEL PORTAL | user";
+  document.title = 'E-CHANNEL PORTAL | user';
   const navigate = useNavigate();
   const { company } = useAuth();
   const [loading, setLoading] = useState(false);
-  const [query, setQuery] = useState("");
+  const [query, setQuery] = useState('');
   const [arrList, setArrList] = useState([]);
   const [optionBranch, setOptionBranch] = useState([]);
-  const [selectedBranch, setSelectdBranch] = useState("");
+  const [selectedBranch, setSelectdBranch] = useState('');
   const getList = () => {
     fetchData(
-      "/e-chanel-user?branchName=" + selectedBranch.toString(),
+      '/e-chanel-user?branchName=' + selectedBranch.toString(),
       {},
-      "GET",
+      'GET'
     ).then((res) => {
       if (res?.status == 200) {
         setLoading(true);
@@ -39,9 +39,9 @@ const UserPage = () => {
   const branchHandleChange = (data) => {
     setSelectdBranch(data.value);
     fetchData(
-      "/e-chanel-user?branchName=" + data.value.toString(),
+      '/e-chanel-user?branchName=' + data.value.toString(),
       {},
-      "GET",
+      'GET'
     ).then((res) => {
       if (res.status == 200) {
         setLoading(true);
@@ -53,10 +53,10 @@ const UserPage = () => {
 
   useEffect(() => {
     getList();
-    const e_chanel_storage = localStorage.getItem("e_chanel_storage");
+    const e_chanel_storage = localStorage.getItem('e_chanel_storage');
     const token_text = JSON.parse(e_chanel_storage);
     const companyDetails = company?.find(
-      (item) => item?.value === token_text?.company,
+      (item) => item?.value === token_text?.company
     );
     const tempBranch = companyDetails?.branch || [];
 
@@ -77,7 +77,7 @@ const UserPage = () => {
   const filteredList = arrList?.filter((item) => {
     const search = query.toLowerCase().trim();
 
-    return search === ""
+    return search === ''
       ? true
       : item.userName?.toLowerCase()?.includes(search) ||
           item.email?.toLowerCase()?.includes(search) ||
@@ -254,15 +254,15 @@ const UserPage = () => {
                   <table className="table table-vcenter card-table">
                     <thead>
                       <tr>
-                        <th style={{ width: "5%" }}>#</th>
+                        <th style={{ width: '5%' }}>#</th>
                         <th>USER NAME</th>
                         <th>EMAIL</th>
                         <th>PHONE NUMBER</th>
                         <th>DISPLAY NAME</th>
                         <th>ROLE</th>
                         <th>TYPE</th>
-                        <th style={{ width: "10%" }}>STATUS</th>
-                        <th style={{ width: "15%" }}>ACTION</th>
+                        <th style={{ width: '10%' }}>STATUS</th>
+                        <th style={{ width: '15%' }}>ACTION</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -274,7 +274,7 @@ const UserPage = () => {
                             <td className="text-muted">{item.userName}</td>
                             <td className="text-muted">{item.email}</td>
                             <td className="cursor-pointer">
-                              {item?.phone == "" ? (
+                              {item?.phone == '' ? (
                                 <AddPhoneNumber
                                   item={item}
                                   success={() => getList()}
@@ -299,7 +299,9 @@ const UserPage = () => {
                                 Company
                               </Link>
                               <TableBreakBar />
-                              <Link to={ROUTE_PATH.userEdit(item?.transactionCode)}>
+                              <Link
+                                to={ROUTE_PATH.userEdit(item?.transactionCode)}
+                              >
                                 Edit
                               </Link>
                               {item?.deleted ? (
@@ -317,7 +319,7 @@ const UserPage = () => {
                                   />
                                 </>
                               ) : (
-                                ""
+                                ''
                               )}
                             </TableCellAction>
                           </tr>
@@ -327,7 +329,7 @@ const UserPage = () => {
                 </div>
                 <div className="d-flex align-items-center mt-2">
                   <p className="m-0 text-muted">
-                    Total <span>{arrList && arrList && arrList.length}</span>{" "}
+                    Total <span>{arrList && arrList && arrList.length}</span>{' '}
                     entries
                   </p>
                   <ReactPaginate
@@ -374,16 +376,16 @@ const UserPage = () => {
                     marginPagesDisplayed={3}
                     pageRangeDisplayed={3}
                     onPageChange={handlePageClick}
-                    containerClassName={"pagination m-0 ms-auto"}
-                    pageClassName={"page-item"}
-                    pageLinkClassName={"page-link"}
-                    previousClassName={"page-item"}
-                    previousLinkClassName={"page-link"}
-                    nextClassName={"page-item"}
-                    nextLinkClassName={"page-link"}
-                    breakClassName={"page-item"}
-                    breakLinkClassName={"page-link"}
-                    activeClassName={"active"}
+                    containerClassName={'pagination m-0 ms-auto'}
+                    pageClassName={'page-item'}
+                    pageLinkClassName={'page-link'}
+                    previousClassName={'page-item'}
+                    previousLinkClassName={'page-link'}
+                    nextClassName={'page-item'}
+                    nextLinkClassName={'page-link'}
+                    breakClassName={'page-item'}
+                    breakLinkClassName={'page-link'}
+                    activeClassName={'active'}
                   />
                 </div>
               </div>

@@ -1,17 +1,17 @@
-import { forwardRef, useEffect, useState } from "react";
-import { Controller, useFormContext } from "react-hook-form";
-import nation from "../../../data/nationlity.json";
-import Select from "react-select";
-import { useNavigate } from "react-router-dom";
-import { NumericFormat, PatternFormat } from "react-number-format";
-import { fetchDataAsync } from "../../../services/$service";
-import { useDebouncedCallback } from "use-debounce";
-import { pluralize } from "../../../utils/pluralize";
-import ExistedPolicyModal from "./ExistedPolicyModal";
-import { useModal } from "../../common/modal";
-import CustomDatePicker from "../../../components/form/CustomDatePicker";
+import { forwardRef, useEffect, useState } from 'react';
+import { Controller, useFormContext } from 'react-hook-form';
+import { NumericFormat, PatternFormat } from 'react-number-format';
+import { useNavigate } from 'react-router-dom';
+import Select from 'react-select';
+import { useDebouncedCallback } from 'use-debounce';
+import CustomDatePicker from '../../../components/form/CustomDatePicker';
+import nation from '../../../data/nationlity.json';
+import { fetchDataAsync } from '../../../services/$service';
+import { pluralize } from '../../../utils/pluralize';
+import { useModal } from '../../common/modal';
+import ExistedPolicyModal from './ExistedPolicyModal';
 
-const nationCambodia = nation.find((item) => item.nationality === "Cambodian");
+const nationCambodia = nation.find((item) => item.nationality === 'Cambodian');
 
 // eslint-disable-next-line react/display-name
 export const CustomPattern = forwardRef(
@@ -21,8 +21,8 @@ export const CustomPattern = forwardRef(
         className="form-control"
         onKeyDown={onKeyDown}
         onFocus={onFocus}
-        format={"##-##-#####"}
-        placeholder={"dd-mm-yyyy"}
+        format={'##-##-#####'}
+        placeholder={'dd-mm-yyyy'}
         onChange={onChange}
         value={value}
         required
@@ -30,7 +30,7 @@ export const CustomPattern = forwardRef(
         getInputRef={ref}
       />
     );
-  },
+  }
 );
 
 const CustomerCreate = (props) => {
@@ -51,20 +51,20 @@ const CustomerCreate = (props) => {
 
   const resetHandleClick = () => {
     reset({
-      sureName: "",
-      firstName: "",
-      gender: "",
-      dateOfBirth: "",
-      nation: "",
-      physicalCard: "",
-      policy: "",
-      project: "",
-      telNo: "",
-      position: "",
-      identifyNumber: "",
-      parentId: "",
-      childrenId: "",
-      openingDate: "",
+      sureName: '',
+      firstName: '',
+      gender: '',
+      dateOfBirth: '',
+      nation: '',
+      physicalCard: '',
+      policy: '',
+      project: '',
+      telNo: '',
+      position: '',
+      identifyNumber: '',
+      parentId: '',
+      childrenId: '',
+      openingDate: '',
     });
     setPolicy([]);
     setPolicyDetails({});
@@ -74,10 +74,10 @@ const CustomerCreate = (props) => {
 
   const checkDuplicateCustomer = async () => {
     try {
-      const response = await fetchDataAsync("/operation-customer/duplicate", {
+      const response = await fetchDataAsync('/operation-customer/duplicate', {
         params: {
-          nicPassport: getValues("identifyNumber"),
-          customerId: getValues("childrenId"),
+          nicPassport: getValues('identifyNumber'),
+          customerId: getValues('childrenId'),
         },
       });
       setDuplicateCustomer(response.data);
@@ -88,7 +88,7 @@ const CustomerCreate = (props) => {
 
   const debouceCheckDuplicateCustomer = useDebouncedCallback(
     checkDuplicateCustomer,
-    400,
+    400
   );
 
   const handleDateChange = (dateString, onChange) => {
@@ -115,7 +115,7 @@ const CustomerCreate = (props) => {
     const ageLabel =
       years < 1
         ? `${months} M ${days} D`
-        : `${years} Year${years !== 1 ? "s" : ""}`;
+        : `${years} Year${years !== 1 ? 's' : ''}`;
     setAge(ageLabel);
     setIsUnderage(years < 18);
 
@@ -139,18 +139,18 @@ const CustomerCreate = (props) => {
       if (!stillValid) {
         const first = policies[0] ?? null;
         setPolicyDetails(first);
-        setValue("policy", first, { shouldValidate: true });
+        setValue('policy', first, { shouldValidate: true });
       }
     } else {
       setPolicy([]);
       setPolicyDetails(null);
-      setValue("policy", null, { shouldValidate: true });
+      setValue('policy', null, { shouldValidate: true });
     }
 
     if (formData.dateOfBirth && formData.dateOfBirth.toDate) {
       handleDateChange(formData.dateOfBirth, () => {});
     }
-    console.log("Form data on init:", formData); // Debug log to check initial form data
+    console.log('Form data on init:', formData); // Debug log to check initial form data
   }, []);
 
   return (
@@ -170,8 +170,8 @@ const CustomerCreate = (props) => {
                   onClick={() => openModal()}
                 >
                   <h4 className="alert-heading mb-0 text-underline">
-                    This customer already has {duplicateCustomer.totalDocs}{" "}
-                    {pluralize("policy", duplicateCustomer.totalDocs)}.
+                    This customer already has {duplicateCustomer.totalDocs}{' '}
+                    {pluralize('policy', duplicateCustomer.totalDocs)}.
                   </h4>
                 </div>
               )}
@@ -187,7 +187,7 @@ const CustomerCreate = (props) => {
                     <input
                       required
                       className="form-control"
-                      {...register("sureName", { required: true })}
+                      {...register('sureName', { required: true })}
                       placeholder="Surname"
                     />
                   </div>
@@ -196,7 +196,7 @@ const CustomerCreate = (props) => {
                     <input
                       required
                       className="form-control"
-                      {...register("firstName", { required: true })}
+                      {...register('firstName', { required: true })}
                       placeholder="First name"
                     />
                   </div>
@@ -205,7 +205,7 @@ const CustomerCreate = (props) => {
                     <select
                       required
                       className="form-control"
-                      {...register("gender", { required: true })}
+                      {...register('gender', { required: true })}
                     >
                       <option value="">Select...</option>
                       <option value="Male">Male</option>
@@ -256,11 +256,11 @@ const CustomerCreate = (props) => {
                     <div
                       className={`${
                         isUnderage
-                          ? "border border-primary text-center p-1 rounded"
-                          : "text-center p-1 pt-1"
+                          ? 'border border-primary text-center p-1 rounded'
+                          : 'text-center p-1 pt-1'
                       }`}
                     >
-                      <div>{age ? age : "_ _"}</div>
+                      <div>{age ? age : '_ _'}</div>
                     </div>
                   </div>
                 </div>
@@ -388,7 +388,7 @@ const CustomerCreate = (props) => {
                               setPolicy(policies);
                               const first = policies[0] ?? null;
                               setPolicyDetails(first);
-                              setValue("policy", first, {
+                              setValue('policy', first, {
                                 shouldValidate: true,
                                 shouldDirty: true,
                               });
@@ -428,7 +428,7 @@ const CustomerCreate = (props) => {
                   </div>
                   <input
                     className="form-control"
-                    value={policyDetails?.policies ?? ""}
+                    value={policyDetails?.policies ?? ''}
                     readOnly
                   />
                 </div>
@@ -437,7 +437,7 @@ const CustomerCreate = (props) => {
                     <input
                       className="form-check-input"
                       type="checkbox"
-                      {...register("physicalCard", { value: true })}
+                      {...register('physicalCard', { value: true })}
                     />
                     <span className="form-check-label">
                       Request Physical Card

@@ -1,8 +1,8 @@
 import { Link, useLocation } from 'react-router-dom';
-import { useAuth } from '../../context/AuthContext';
+import companyLogo from '../../assets/DaraInsurancePlc.png';
 import userIcon from '../../assets/default-user.png';
 import companyLogoFull from '../../assets/logo-full.jpg';
-import companyLogo from '../../assets/DaraInsurancePlc.png';
+import { useAuth } from '../../context/AuthContext';
 import { ROUTE_PATH } from '../../utils/route-util';
 
 const HeaderPage = () => {

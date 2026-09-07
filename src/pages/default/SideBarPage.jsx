@@ -1,6 +1,5 @@
 import clsx from 'clsx';
-import React, { useState } from 'react';
-import { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link, NavLink, useLocation } from 'react-router-dom';
 import Select from 'react-select';
 import Modal, { useModal } from '../../components/common/modal';

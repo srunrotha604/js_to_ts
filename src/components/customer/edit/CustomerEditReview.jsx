@@ -1,15 +1,15 @@
-import { useFormContext } from "react-hook-form";
-import { fetchDataAsync } from "../../../services/$service";
-import { useParams } from "react-router-dom";
-import { useModal } from "../../common/modal";
-import { useAuth } from "../../../context/AuthContext";
-import TransactionDetail from "../../transaction/TransactionDetail";
-import ActionSaveDraftConfirmationModal from "../../common/ActionSaveDraftConfirmationModal";
-import Spinner, { useSpinner } from "../../common/Spinner.jsx";
-import { delay } from "../../../utils/delay.js";
-import { STATUS } from "../../../utils/status.js";
-import { toast } from "react-toastify";
-import { handleApiError } from "../../../utils/handleApiError";
+import { useFormContext } from 'react-hook-form';
+import { useParams } from 'react-router-dom';
+import { toast } from 'react-toastify';
+import { useAuth } from '../../../context/AuthContext';
+import { fetchDataAsync } from '../../../services/$service';
+import { delay } from '../../../utils/delay.js';
+import { handleApiError } from '../../../utils/handleApiError';
+import { STATUS } from '../../../utils/status.js';
+import ActionSaveDraftConfirmationModal from '../../common/ActionSaveDraftConfirmationModal';
+import { useModal } from '../../common/modal';
+import Spinner, { useSpinner } from '../../common/Spinner.jsx';
+import TransactionDetail from '../../transaction/TransactionDetail';
 
 const CustomerEditReview = (props) => {
   const { user, selectedBranch, selectedCompany } = useAuth();
@@ -49,8 +49,8 @@ const CustomerEditReview = (props) => {
         openingDate: data.openingDate,
       };
 
-      const response = await fetchDataAsync("/operation-customer", {
-        method: "PUT",
+      const response = await fetchDataAsync('/operation-customer', {
+        method: 'PUT',
         data: summaryData,
       });
 
@@ -58,8 +58,8 @@ const CustomerEditReview = (props) => {
         closeSpinner,
         () => {
           const msg = isDraft
-            ? "Draft saved successfully"
-            : "Record created successfully";
+            ? 'Draft saved successfully'
+            : 'Record created successfully';
           toast.success(msg);
           handleSubmitted(response.data, summaryData);
           closeModal();
@@ -70,8 +70,8 @@ const CustomerEditReview = (props) => {
         closeSpinner();
 
         const baseMsg = isDraft
-          ? "Failed to save draft"
-          : "Failed to create record";
+          ? 'Failed to save draft'
+          : 'Failed to create record';
 
         handleApiError(error, baseMsg);
       });
@@ -133,8 +133,8 @@ const CustomerEditReview = (props) => {
         <ActionSaveDraftConfirmationModal
           modalRef={modalRef}
           closeModal={closeModal}
-          confirm={hasPermissionProccessTransaction("submitted")}
-          saveDraft={hasPermissionProccessTransaction("draft")}
+          confirm={hasPermissionProccessTransaction('submitted')}
+          saveDraft={hasPermissionProccessTransaction('draft')}
           onSaveDraft={handleSubmit((data) => {
             onSubmit({ ...data, saveDraft: true });
           })}

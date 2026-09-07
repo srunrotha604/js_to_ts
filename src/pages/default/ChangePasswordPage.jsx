@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { redirect, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import { fetchData } from '../../services/$service';
 import EyeIcon from '../../components/Icons/EyeIcon';
 import EyeOffIcon from '../../components/Icons/EyeOffIcon';
+import { fetchData } from '../../services/$service';
 import { ROUTE_PATH } from '../../utils/route-util';
 
 const ChangePasswordPage = () => {
@@ -21,7 +21,7 @@ const ChangePasswordPage = () => {
     confirmPassword: false,
   });
   const toggleEye = (key) => setShow((s) => ({ ...s, [key]: !s[key] }));
-  
+
   const getList = () => {
     fetchData('/login', {}, 'GET').then((res) => {
       switch (res.status) {
@@ -68,11 +68,14 @@ const ChangePasswordPage = () => {
       fetchData('/login/change-password', data, 'POST').then((res) => {
         switch (res.status) {
           case 200: {
-            toast.success(res?.data?.message ?? 'Password changed successfully', {
-              autoClose: 50,
-              pauseOnHover: false,
-              onClose: () => navigate(ROUTE_PATH.dashboard),
-            });
+            toast.success(
+              res?.data?.message ?? 'Password changed successfully',
+              {
+                autoClose: 50,
+                pauseOnHover: false,
+                onClose: () => navigate(ROUTE_PATH.dashboard),
+              }
+            );
             break;
           }
           case 400:
@@ -197,7 +200,9 @@ const ChangePasswordPage = () => {
                   type="button"
                   className="input-group-text"
                   onClick={() => toggleEye('newPassword')}
-                  aria-label={show.newPassword ? 'Hide new password' : 'Show new password'}
+                  aria-label={
+                    show.newPassword ? 'Hide new password' : 'Show new password'
+                  }
                   aria-controls="newPassword"
                 >
                   {show.newPassword ? <EyeIcon /> : <EyeOffIcon />}
@@ -211,7 +216,7 @@ const ChangePasswordPage = () => {
                 <input
                   id="confirmPassword"
                   type={show.confirmPassword ? 'text' : 'password'}
-                  className={"form-control"}
+                  className={'form-control'}
                   placeholder="Confirm password"
                   autoComplete="off"
                   onChange={ConfirmPasswordHandleChange}
@@ -222,7 +227,11 @@ const ChangePasswordPage = () => {
                   type="button"
                   className="input-group-text"
                   onClick={() => toggleEye('confirmPassword')}
-                  aria-label={show.confirmPassword ? 'Hide confirm password' : 'Show confirm password'}
+                  aria-label={
+                    show.confirmPassword
+                      ? 'Hide confirm password'
+                      : 'Show confirm password'
+                  }
                   aria-controls="confirmPassword"
                 >
                   {show.confirmPassword ? <EyeIcon /> : <EyeOffIcon />}
@@ -238,10 +247,7 @@ const ChangePasswordPage = () => {
                 Cancel
               </button>
 
-              <button
-                type="submit"
-                className="btn btn-primary mt-2"
-              >
+              <button type="submit" className="btn btn-primary mt-2">
                 Change password
               </button>
             </div>

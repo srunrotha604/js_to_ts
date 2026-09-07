@@ -1,11 +1,11 @@
-import { useState, useEffect } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
-import { fetchData } from '../../services/$service';
-import { toast } from 'react-toastify';
+import { useEffect, useState } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
+import { useNavigate, useParams } from 'react-router-dom';
+import { toast } from 'react-toastify';
 import CustomerCreate from '../../components/customer/create/CustomerCreate';
 import CustomerCreateReview from '../../components/customer/create/CustomerCreateReview';
 import CostomerTransationSubmit from '../../components/customer/create/CustomerTransationSubmit';
+import { fetchData } from '../../services/$service';
 import { ROUTE_PATH } from '../../utils/route-util';
 
 const STEP = {

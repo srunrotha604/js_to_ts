@@ -1,10 +1,10 @@
-import 'react-datepicker/dist/react-datepicker.css';
 import { useEffect, useState } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import 'react-datepicker/dist/react-datepicker.css';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import VersionHistoryForm from '../../components/version-history/VersionHistoryFrom';
-import VersionHistoryEdit from '../../components/version-history/VersionHistoryEdit';
 import { useModal } from '../../components/common/modal';
+import VersionHistoryEdit from '../../components/version-history/VersionHistoryEdit';
+import VersionHistoryForm from '../../components/version-history/VersionHistoryFrom';
 import { getVersionList } from '../../pages/version-history/versionexport';
 import { ROUTE_PATH } from '../../utils/route-util';
 
@@ -65,18 +65,18 @@ const VersionHistoryPage = () => {
 
   const handleNewVersionAdded = (newVersion) => {
     if (!newVersion || !newVersion.uuid) {
-      setRefreshFlag(prev => !prev);
+      setRefreshFlag((prev) => !prev);
       return;
     }
 
     setVersionList((prev) => {
-      if (prev.some(v => v.uuid === newVersion.uuid)) return prev;
+      if (prev.some((v) => v.uuid === newVersion.uuid)) return prev;
       return [newVersion, ...prev];
     });
   };
 
   const handleVersionDeleted = (deletedUuid) => {
-    setVersionList(prev => prev.filter(v => v.uuid !== deletedUuid));
+    setVersionList((prev) => prev.filter((v) => v.uuid !== deletedUuid));
   };
 
   const handleVersionUpdated = (updatedVersion) => {
@@ -86,7 +86,7 @@ const VersionHistoryPage = () => {
       )
     );
 
-    setRefreshFlag(prev => !prev);
+    setRefreshFlag((prev) => !prev);
   };
 
   return (

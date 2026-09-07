@@ -1,9 +1,8 @@
-import { useAuth } from '../../context/AuthContext';
-import { contactUs } from '../../utils/contact';
-import { NavLink, useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
-import { fetchDataAsync } from '../../services/$service';
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../../context/AuthContext';
 import { getCurrentVersion } from '../../pages/version-history/versionexport';
+import { contactUs } from '../../utils/contact';
 import { ROUTE_PATH } from '../../utils/route-util';
 
 const FooterPage = () => {
@@ -12,7 +11,7 @@ const FooterPage = () => {
   const { user } = useAuth();
   const VersionButton = () => {
     navigate(ROUTE_PATH.version);
-  }
+  };
 
   const loadVersion = async () => {
     try {
@@ -83,7 +82,10 @@ const FooterPage = () => {
                 All rights reserved
               </li>
               {version && (
-                <div className="list-inline-item pointer" onClick={VersionButton}>
+                <div
+                  className="list-inline-item pointer"
+                  onClick={VersionButton}
+                >
                   <span style={{ fontSize: '14px', cursor: 'pointer' }}>
                     Version {version}
                   </span>

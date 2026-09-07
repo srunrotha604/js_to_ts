@@ -1,15 +1,15 @@
-import { useFormContext } from "react-hook-form";
-import { fetchDataAsync } from "../../../services/$service";
-import { useParams } from "react-router-dom";
-import { useModal } from "../../common/modal";
-import { useAuth } from "../../../context/AuthContext";
-import TransactionDetail from "../../transaction/TransactionDetail";
-import ActionSaveDraftConfirmationModal from "../../common/ActionSaveDraftConfirmationModal";
-import Spinner, { useSpinner } from "../../common/Spinner.jsx";
-import { delay } from "../../../utils/delay.js";
-import { STATUS } from "../../../utils/status.js";
-import { toast } from "react-toastify";
-import { handleApiError } from "../../../utils/handleApiError";
+import { useFormContext } from 'react-hook-form';
+import { useParams } from 'react-router-dom';
+import { toast } from 'react-toastify';
+import { useAuth } from '../../../context/AuthContext';
+import { fetchDataAsync } from '../../../services/$service';
+import { delay } from '../../../utils/delay.js';
+import { handleApiError } from '../../../utils/handleApiError';
+import { STATUS } from '../../../utils/status.js';
+import ActionSaveDraftConfirmationModal from '../../common/ActionSaveDraftConfirmationModal';
+import { useModal } from '../../common/modal';
+import Spinner, { useSpinner } from '../../common/Spinner.jsx';
+import TransactionDetail from '../../transaction/TransactionDetail';
 
 const CustomerCreateReview = (props) => {
   const { user, selectedBranch, selectedCompany } = useAuth();
@@ -41,8 +41,8 @@ const CustomerCreateReview = (props) => {
         parentId: data?.parentId,
         openingDate: data?.openingDate,
       };
-      const response = await fetchDataAsync("/operation-customer", {
-        method: "POST",
+      const response = await fetchDataAsync('/operation-customer', {
+        method: 'POST',
         data: summaryData,
       });
       delay([
@@ -50,9 +50,9 @@ const CustomerCreateReview = (props) => {
         () => {
           if (!suppressSuccessToast) {
             const msg =
-              data.status === "Draft"
-                ? "Draft saved successfully"
-                : "Record created successfully";
+              data.status === 'Draft'
+                ? 'Draft saved successfully'
+                : 'Record created successfully';
             toast.success(msg);
           }
           handleSubmitted(response.data, summaryData);
@@ -64,9 +64,9 @@ const CustomerCreateReview = (props) => {
         closeSpinner();
 
         const baseMsg =
-          data.status === "Draft"
-            ? "Failed to save draft"
-            : "Failed to create record";
+          data.status === 'Draft'
+            ? 'Failed to save draft'
+            : 'Failed to create record';
 
         const status = error?.response?.status;
 
@@ -131,10 +131,10 @@ const CustomerCreateReview = (props) => {
         <ActionSaveDraftConfirmationModal
           modalRef={modalRef}
           closeModal={closeModal}
-          confirm={hasPermissionProccessTransaction("submitted")}
-          saveDraft={hasPermissionProccessTransaction("draft")}
+          confirm={hasPermissionProccessTransaction('submitted')}
+          saveDraft={hasPermissionProccessTransaction('draft')}
           onSaveDraft={handleSubmit((data) => {
-            data.status = "Draft";
+            data.status = 'Draft';
             onSubmit(data, { suppressSuccessToast: true });
           })}
           onConfirm={handleSubmit(onSubmit)}

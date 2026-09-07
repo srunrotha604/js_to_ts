@@ -1,28 +1,26 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useLocation, useNavigate, useParams } from 'react-router';
-import TransactionTabList from '../../components/transaction/TransactionTabList';
-import { useAuth } from '../../context/AuthContext';
-import { STATUS } from '../../utils/status';
-import Button from '../../components/common/Button';
-import ApproveRejectConfirmationModal from '../../components/common/ActionConfirmationModal';
-import { useModal } from '../../components/common/modal';
-import TransactionBatchProccessModal from '../../components/transaction/TransactionBatchProccessModal';
 import { useSearchParams } from 'react-router-dom';
-import { fetchDataAsync } from '../../services/$service';
 import { toast } from 'react-toastify';
-import { useRef } from 'react';
-import { useEffect } from 'react';
-import { pluralize } from '../../utils/pluralize';
-import useLoading from '../../hooks/useLoading';
+import ApproveRejectConfirmationModal from '../../components/common/ActionConfirmationModal';
+import Button from '../../components/common/Button';
+import Checkbox from '../../components/common/Checkbox';
+import { useModal } from '../../components/common/modal';
+import Spinner, { useSpinner } from '../../components/common/Spinner.jsx';
+import TransactionBatchProccessModal from '../../components/transaction/TransactionBatchProccessModal';
+import TransactionNumberTableItem from '../../components/transaction/TransactionNumberTableItem.jsx';
+import TransactionTabList from '../../components/transaction/TransactionTabList';
 import TransactionTabSelect, {
   useTransactionTabSelect,
 } from '../../components/transaction/TransactionTabSelect';
-import Checkbox from '../../components/common/Checkbox';
-import TransactionNumberTableItem from '../../components/transaction/TransactionNumberTableItem.jsx';
-import Spinner, { useSpinner } from '../../components/common/Spinner.jsx';
+import { useAuth } from '../../context/AuthContext';
+import useLoading from '../../hooks/useLoading';
 import useMessage from '../../hooks/useMessage.jsx';
+import { fetchDataAsync } from '../../services/$service';
 import { delay } from '../../utils/delay.js';
+import { pluralize } from '../../utils/pluralize';
 import { ROUTE_PATH } from '../../utils/route-util';
+import { STATUS } from '../../utils/status';
 
 const CustomerDeletePage = () => {
   const location = useLocation();

@@ -1,16 +1,16 @@
-import { useState } from "react";
-import { toast } from "react-toastify";
-import { PatternFormat } from "react-number-format";
-import Modal, { useModal } from "../../../../../components/common/modal";
-import { fetchDataAsync } from "../../../../../services/$service";
-import ButtonGroup from "../../../../../components/buttons/ButtonGroup";
-import SubmitButton from "../../../../../components/buttons/SubmitButton";
-import CancelButton from "../../../../../components/buttons/CancelButton";
+import { useState } from 'react';
+import { PatternFormat } from 'react-number-format';
+import { toast } from 'react-toastify';
+import ButtonGroup from '../../../../../components/buttons/ButtonGroup';
+import CancelButton from '../../../../../components/buttons/CancelButton';
+import SubmitButton from '../../../../../components/buttons/SubmitButton';
+import Modal, { useModal } from '../../../../../components/common/modal';
+import { fetchDataAsync } from '../../../../../services/$service';
 
 const AddPhoneNumber = (props) => {
   const { item, success } = props;
   const { modalRef, openModal, closeModal } = useModal();
-  const [phone, setPhone] = useState("");
+  const [phone, setPhone] = useState('');
 
   const handleSubmit = async () => {
     try {
@@ -20,9 +20,9 @@ const AddPhoneNumber = (props) => {
       };
       await fetchDataAsync(`/e-chanel-user/add-phone-number`, {
         data,
-        method: "post",
+        method: 'post',
       });
-      toast.success("Success!");
+      toast.success('Success!');
       success();
       closeModal();
     } catch (error) {
@@ -33,7 +33,7 @@ const AddPhoneNumber = (props) => {
 
   return (
     <>
-      <Modal ref={modalRef} title={"Add Phone Number"} size="lg">
+      <Modal ref={modalRef} title={'Add Phone Number'} size="lg">
         <div className="mb-3">
           <label className="form-label">Phone number</label>
           <PatternFormat
@@ -60,7 +60,7 @@ const AddPhoneNumber = (props) => {
           openModal(), setPhone(item?.phone);
         }}
       >
-        {item?.phone == "" ? "+ Add phone number" : item?.phone}
+        {item?.phone == '' ? '+ Add phone number' : item?.phone}
       </span>
     </>
   );

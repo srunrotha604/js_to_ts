@@ -1,19 +1,19 @@
-import dayjs from "dayjs";
-import { useEffect, useState } from "react";
-import ReactDatePicker from "react-datepicker";
-import { Controller, useFormContext, useWatch } from "react-hook-form";
-import { NumericFormat, PatternFormat } from "react-number-format";
-import { useNavigate, useParams } from "react-router-dom";
-import Select from "react-select";
-import { useDebouncedCallback } from "use-debounce";
-import CustomDatePicker from "../../../components/form/CustomDatePicker";
-import nation from "../../../data/nationlity.json";
-import useMessage from "../../../hooks/useMessage.jsx";
-import { fetchDataAsync } from "../../../services/$service";
-import { pluralize } from "../../../utils/pluralize";
-import { useModal } from "../../common/modal";
-import { CustomPattern } from "../create/CustomerCreate.jsx";
-import ExistedPolicyModal from "../create/ExistedPolicyModal";
+import dayjs from 'dayjs';
+import { useEffect, useState } from 'react';
+import ReactDatePicker from 'react-datepicker';
+import { Controller, useFormContext, useWatch } from 'react-hook-form';
+import { NumericFormat, PatternFormat } from 'react-number-format';
+import { useNavigate, useParams } from 'react-router-dom';
+import Select from 'react-select';
+import { useDebouncedCallback } from 'use-debounce';
+import CustomDatePicker from '../../../components/form/CustomDatePicker';
+import nation from '../../../data/nationlity.json';
+import useMessage from '../../../hooks/useMessage.jsx';
+import { fetchDataAsync } from '../../../services/$service';
+import { pluralize } from '../../../utils/pluralize';
+import { useModal } from '../../common/modal';
+import { CustomPattern } from '../create/CustomerCreate.jsx';
+import ExistedPolicyModal from '../create/ExistedPolicyModal';
 
 const CustomerEdit = (props) => {
   const { project, handleNextStep, setProduct, closeSpinner } = props;
@@ -35,7 +35,7 @@ const CustomerEdit = (props) => {
   const getListDetails = async () => {
     try {
       const response = await fetchDataAsync(
-        "/operation-customer?transactionCode=" + params.key,
+        '/operation-customer?transactionCode=' + params.key
       );
       const responseData = response?.data?.list[0];
       setProduct(responseData.productName);
@@ -68,7 +68,7 @@ const CustomerEdit = (props) => {
     }
   };
 
-  const dobWatch = useWatch({ control, name: "dateOfBirth" });
+  const dobWatch = useWatch({ control, name: 'dateOfBirth' });
 
   const handleDateChange = (input, onChange, commitToForm = true) => {
     const d = !input
@@ -77,10 +77,10 @@ const CustomerEdit = (props) => {
       ? input
       : input instanceof Date
       ? dayjs(input)
-      : dayjs(input, ["YYYY-MM-DD", "DD-MM-YYYY", dayjs.ISO_8601], true);
+      : dayjs(input, ['YYYY-MM-DD', 'DD-MM-YYYY', dayjs.ISO_8601], true);
 
     if (!d || !d.isValid()) {
-      setAge("");
+      setAge('');
       setIsUnderage(false);
       if (commitToForm) onChange(null);
       return;
@@ -106,7 +106,7 @@ const CustomerEdit = (props) => {
     const ageLabel =
       years < 1
         ? `${months} M ${days} D`
-        : `${years} Year${years !== 1 ? "s" : ""}`;
+        : `${years} Year${years !== 1 ? 's' : ''}`;
     setAge(ageLabel);
     setIsUnderage(years < 18);
 
@@ -124,20 +124,20 @@ const CustomerEdit = (props) => {
   useEffect(() => {
     if (!project || !project.length) return;
 
-    const isCreate = !getValues("firstName");
+    const isCreate = !getValues('firstName');
     if (isCreate) {
       getListDetails();
     }
 
-    const selectedProject = getValues("project") || null;
-    const currentPolicy = getValues("policy") || null;
+    const selectedProject = getValues('project') || null;
+    const currentPolicy = getValues('policy') || null;
 
-    setRejectRemark(getValues("remark"));
+    setRejectRemark(getValues('remark'));
     debouceCheckDuplicateCustomer();
     if (!selectedProject) {
       setPolicy([]);
       setPolicyDetails(null);
-      setValue("policy", null, { shouldValidate: true, shouldDirty: true });
+      setValue('policy', null, { shouldValidate: true, shouldDirty: true });
       return;
     }
 
@@ -146,7 +146,7 @@ const CustomerEdit = (props) => {
 
     if (policies.length === 0) {
       setPolicyDetails(null);
-      setValue("policy", null, { shouldValidate: true, shouldDirty: true });
+      setValue('policy', null, { shouldValidate: true, shouldDirty: true });
       return;
     }
 
@@ -156,7 +156,7 @@ const CustomerEdit = (props) => {
 
     const nextPolicy = currentIsValid ? currentPolicy : policies[0];
 
-    setValue("policy", nextPolicy, { shouldValidate: true, shouldDirty: true });
+    setValue('policy', nextPolicy, { shouldValidate: true, shouldDirty: true });
     setPolicyDetails(nextPolicy);
   }, [project]);
 
@@ -164,10 +164,10 @@ const CustomerEdit = (props) => {
 
   const checkDuplicateCustomer = async () => {
     try {
-      const response = await fetchDataAsync("/operation-customer/duplicate", {
+      const response = await fetchDataAsync('/operation-customer/duplicate', {
         params: {
-          nicPassport: getValues("nicPassport"),
-          customerId: getValues("customerId"),
+          nicPassport: getValues('nicPassport'),
+          customerId: getValues('customerId'),
         },
       });
       setDuplicateCustomer(response.data);
@@ -178,7 +178,7 @@ const CustomerEdit = (props) => {
 
   const debouceCheckDuplicateCustomer = useDebouncedCallback(
     checkDuplicateCustomer,
-    400,
+    400
   );
 
   const { modalRef, openModal } = useModal();
@@ -205,8 +205,8 @@ const CustomerEdit = (props) => {
                   onClick={() => openModal()}
                 >
                   <h4 className="alert-heading mb-0 text-underline">
-                    This customer already has {duplicateCustomer.totalDocs}{" "}
-                    {pluralize("policy", duplicateCustomer.totalDocs)}.
+                    This customer already has {duplicateCustomer.totalDocs}{' '}
+                    {pluralize('policy', duplicateCustomer.totalDocs)}.
                   </h4>
                 </div>
               )}
@@ -222,7 +222,7 @@ const CustomerEdit = (props) => {
                     </div>
                     <input
                       className="form-control"
-                      {...register("sureName", { required: true })}
+                      {...register('sureName', { required: true })}
                     />
                   </div>
                   <div className="col-md-4">
@@ -231,7 +231,7 @@ const CustomerEdit = (props) => {
                     </div>
                     <input
                       className="form-control"
-                      {...register("firstName", { required: true })}
+                      {...register('firstName', { required: true })}
                       placeholder="First name"
                     />
                   </div>
@@ -241,7 +241,7 @@ const CustomerEdit = (props) => {
                     </div>
                     <select
                       className="form-control"
-                      {...register("gender", { required: true })}
+                      {...register('gender', { required: true })}
                     >
                       <option value="">Select...</option>
                       <option value="Male">Male</option>
@@ -304,11 +304,11 @@ const CustomerEdit = (props) => {
                       <div
                         className={
                           isUnderage
-                            ? "border border-primary text-center p-1 rounded"
-                            : "text-center p-1 pt-1"
+                            ? 'border border-primary text-center p-1 rounded'
+                            : 'text-center p-1 pt-1'
                         }
                       >
-                        <div>{age ? age : "_ _"}</div>
+                        <div>{age ? age : '_ _'}</div>
                       </div>
                     </div>
                   </div>
@@ -323,7 +323,7 @@ const CustomerEdit = (props) => {
                       </div>
                       <input
                         className="form-control"
-                        {...register("nicPassport", { required: true })}
+                        {...register('nicPassport', { required: true })}
                         onKeyUp={(e) => {
                           debouceCheckDuplicateCustomer(e.target.value);
                         }}
@@ -446,7 +446,7 @@ const CustomerEdit = (props) => {
                           return (
                             <ReactDatePicker
                               maxDate={new Date()}
-                              minDate={new Date("1900-01-01")}
+                              minDate={new Date('1900-01-01')}
                               onChange={onChange}
                               selected={value}
                               className="form-control"
@@ -459,7 +459,7 @@ const CustomerEdit = (props) => {
                             />
                           );
                         }}
-                        name={"openingDate"}
+                        name={'openingDate'}
                         control={control}
                         rules={{ required: true }}
                       />
@@ -488,9 +488,9 @@ const CustomerEdit = (props) => {
                               ) {
                                 const firstPolicy = selectedProject.policies[0];
                                 setPolicyDetails(firstPolicy);
-                                setValue("policy", firstPolicy); // ✅ auto-select first policy
+                                setValue('policy', firstPolicy); // ✅ auto-select first policy
                               } else {
-                                setValue("policy", null);
+                                setValue('policy', null);
                               }
 
                               // update project field
@@ -539,7 +539,7 @@ const CustomerEdit = (props) => {
                               className="form-check-input"
                               type="checkbox"
                               value={value}
-                              checked={value === "true"}
+                              checked={value === 'true'}
                               onChange={(e) => {
                                 onChange(String(e.target.checked));
                               }}
@@ -563,7 +563,7 @@ const CustomerEdit = (props) => {
                       </div>
                       <input
                         className="form-control"
-                        value={policyDetails?.value ?? ""}
+                        value={policyDetails?.value ?? ''}
                         readOnly
                       />
                     </div>
@@ -575,7 +575,7 @@ const CustomerEdit = (props) => {
                       </div>
                       <input
                         className="form-control"
-                        value={policyDetails?.policyExpireDate ?? ""}
+                        value={policyDetails?.policyExpireDate ?? ''}
                         readOnly
                       />
                     </div>

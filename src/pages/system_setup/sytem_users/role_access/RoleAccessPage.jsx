@@ -1,11 +1,11 @@
-import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
 import ReactPaginate from 'react-paginate';
+import { useNavigate } from 'react-router-dom';
+import Select from 'react-select';
 import { toast } from 'react-toastify';
+import Modal, { useModal } from '../../../../components/common/modal';
 import Loading from '../../../../components/Loading';
 import { fetchData } from '../../../../services/$service';
-import Select from 'react-select';
-import Modal, { useModal } from '../../../../components/common/modal';
 import { ROUTE_PATH } from '../../../../utils/route-util';
 
 const RoleAccessPage = () => {

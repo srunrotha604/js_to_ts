@@ -1,21 +1,18 @@
-import Button from '../../components/common/Button';
+import clsx from 'clsx';
+import fileDownload from 'js-file-download';
+import { useEffect, useMemo, useRef, useState } from 'react';
+import ReactPaginate from 'react-paginate';
 import Select from 'react-select';
+import Button from '../../components/common/Button';
+import ComponentStatus from '../../components/customer/ComponentStatus';
+import DateRangeSelector from '../../components/form/DateRangeSelector';
 import { selectCustomStyles } from '../../components/transaction/TransactionTabList';
-import { RECORDSTATUS } from '../../utils/status';
-import { useMemo } from 'react';
 import { useAuth } from '../../context/AuthContext';
-import { useState } from 'react';
+import useLoading from '../../hooks/useLoading';
+import useMessage from '../../hooks/useMessage.jsx';
 import { fetchDataAsync } from '../../services/$service';
 import { formatDay } from '../../utils/format-day';
-import ComponentStatus from '../../components/customer/ComponentStatus';
-import clsx from 'clsx';
-import useLoading from '../../hooks/useLoading';
-import ReactPaginate from 'react-paginate';
-import { useRef } from 'react';
-import { useEffect } from 'react';
-import fileDownload from 'js-file-download';
-import useMessage from '../../hooks/useMessage.jsx';
-import DateRangeSelector from '../../components/form/DateRangeSelector';
+import { RECORDSTATUS } from '../../utils/status';
 
 const UserReportPage = () => {
   document.title = 'Report | User report';
@@ -52,7 +49,7 @@ const UserReportPage = () => {
     }
   }, []);
 
-  useEffect(() => { }, [hasPermissionAccessTransaction]);
+  useEffect(() => {}, [hasPermissionAccessTransaction]);
 
   const statusOptions = useMemo(
     () => [
@@ -161,10 +158,11 @@ const UserReportPage = () => {
                       <label className="form-label">
                         <b>Date:</b>
                       </label>
-                      <DateRangeSelector 
-                      date={date}
-                      placeholder={"Select Date"} 
-                      onDateChange={onDateChange} />
+                      <DateRangeSelector
+                        date={date}
+                        placeholder={'Select Date'}
+                        onDateChange={onDateChange}
+                      />
                     </div>
                   </div>
                   <div className="col-md-6">

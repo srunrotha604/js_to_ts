@@ -1,28 +1,25 @@
-import Button from "../../../components/common/Button";
-import ReactSelect from "react-select";
+import clsx from 'clsx';
+import fileDownload from 'js-file-download';
+import { useEffect, useMemo, useRef, useState } from 'react';
+import ReactPaginate from 'react-paginate';
+import ReactSelect from 'react-select';
+import Button from '../../../components/common/Button';
+import ComponentStatus from '../../../components/customer/ComponentStatus';
+import DateRangeSelector from '../../../components/form/DateRangeSelector';
+import ProjectSelect from '../../../components/form/ProjectSelect.jsx';
 import {
   selectCustomStyles,
   typeOptions,
-} from "../../../components/transaction/TransactionTabList";
-import { STATUS } from "../../../utils/status";
-import { useMemo } from "react";
-import { useAuth } from "../../../context/AuthContext";
-import { useState } from "react";
-import { fetchDataAsync } from "../../../services/$service";
-import { formatDay, getStartOfMonthDate } from "../../../utils/format-day";
-import ComponentStatus from "../../../components/customer/ComponentStatus";
-import clsx from "clsx";
-import useLoading from "../../../hooks/useLoading";
-import ReactPaginate from "react-paginate";
-import { useRef } from "react";
-import { useEffect } from "react";
-import fileDownload from "js-file-download";
-import useMessage from "../../../hooks/useMessage.jsx";
-import DateRangeSelector from "../../../components/form/DateRangeSelector";
-import ProjectSelect from "../../../components/form/ProjectSelect.jsx";
+} from '../../../components/transaction/TransactionTabList';
+import { useAuth } from '../../../context/AuthContext';
+import useLoading from '../../../hooks/useLoading';
+import useMessage from '../../../hooks/useMessage.jsx';
+import { fetchDataAsync } from '../../../services/$service';
+import { formatDay, getStartOfMonthDate } from '../../../utils/format-day';
+import { STATUS } from '../../../utils/status';
 
 const CustomerReportPage = () => {
-  document.title = "Report | customer report";
+  document.title = 'Report | customer report';
 
   const { hasPermissionAccessTransaction, company } = useAuth();
   const [data, setData] = useState(null);
@@ -51,7 +48,7 @@ const CustomerReportPage = () => {
   };
 
   useEffect(() => {
-    const e_chanel_storage = localStorage.getItem("e_chanel_storage");
+    const e_chanel_storage = localStorage.getItem('e_chanel_storage');
     const token_text = e_chanel_storage ? JSON.parse(e_chanel_storage) : null;
 
     if (company && token_text) {
@@ -87,10 +84,10 @@ const CustomerReportPage = () => {
 
   useEffect(() => {
     const defaultSelectedStatus = [
-      ...(hasPermissionAccessTransaction("confirmed")
+      ...(hasPermissionAccessTransaction('confirmed')
         ? [{ label: STATUS.Confirmed, value: STATUS.Confirmed }]
         : []),
-      ...(hasPermissionAccessTransaction("driRejected")
+      ...(hasPermissionAccessTransaction('driRejected')
         ? [{ label: STATUS.DRI_Rejected, value: STATUS.DRI_Rejected }]
         : []),
     ];
@@ -102,27 +99,27 @@ const CustomerReportPage = () => {
       {
         label: STATUS.Submitted,
         value: STATUS.Submitted,
-        hidden: !hasPermissionAccessTransaction("submitted"),
+        hidden: !hasPermissionAccessTransaction('submitted'),
       },
       {
         label: STATUS.Approved,
         value: STATUS.Approved,
-        hidden: !hasPermissionAccessTransaction("approved"),
+        hidden: !hasPermissionAccessTransaction('approved'),
       },
       {
         label: STATUS.BM_Rejected,
         value: STATUS.BM_Rejected,
-        hidden: !hasPermissionAccessTransaction("bmRejected"),
+        hidden: !hasPermissionAccessTransaction('bmRejected'),
       },
       {
         label: STATUS.Confirmed,
         value: STATUS.Confirmed,
-        hidden: !hasPermissionAccessTransaction("confirmed"),
+        hidden: !hasPermissionAccessTransaction('confirmed'),
       },
       {
         label: STATUS.DRI_Rejected,
         value: STATUS.DRI_Rejected,
-        hidden: !hasPermissionAccessTransaction("driRejected"),
+        hidden: !hasPermissionAccessTransaction('driRejected'),
       },
     ],
     [hasPermissionAccessTransaction]
@@ -132,26 +129,26 @@ const CustomerReportPage = () => {
     try {
       startLoading();
       const response = await fetchDataAsync(
-        "/export/operation-customer/filter",
+        '/export/operation-customer/filter',
         {
           params: {
-            type: type?.map((item) => item.value).join(",") || "",
-            status: status?.map((item) => item.value).join(",") || "",
+            type: type?.map((item) => item.value).join(',') || '',
+            status: status?.map((item) => item.value).join(',') || '',
             startDate: date?.startDate
-              ? formatDay(date.startDate, "YYYYMMDD")
-              : "",
-            endDate: date?.endDate ? formatDay(date.endDate, "YYYYMMDD") : "",
+              ? formatDay(date.startDate, 'YYYYMMDD')
+              : '',
+            endDate: date?.endDate ? formatDay(date.endDate, 'YYYYMMDD') : '',
             startIssueDate: issueDateRange?.startIssueDate
-              ? formatDay(issueDateRange.startIssueDate, "YYYYMMDD")
-              : "",
+              ? formatDay(issueDateRange.startIssueDate, 'YYYYMMDD')
+              : '',
             endIssueDate: issueDateRange?.endIssueDate
-              ? formatDay(issueDateRange.endIssueDate, "YYYYMMDD")
-              : "",
-            expirePolicy: expirePolicy ? "true" : "false",
+              ? formatDay(issueDateRange.endIssueDate, 'YYYYMMDD')
+              : '',
+            expirePolicy: expirePolicy ? 'true' : 'false',
             branchName:
-              selectedBranch?.map((item) => item.value).join(",") || "",
+              selectedBranch?.map((item) => item.value).join(',') || '',
             projectName:
-              selectedProject?.map((item) => item.value).join(",") || "",
+              selectedProject?.map((item) => item.value).join(',') || '',
           },
         }
       );
@@ -191,39 +188,40 @@ const CustomerReportPage = () => {
 
   const [exportLoading, startExportLoading, stopExportLoading] = useLoading();
   const { showErrorResponseMessage } = useMessage();
-  const safeFormat = (d, f) => (d ? formatDay(d, f) : "");
+  const safeFormat = (d, f) => (d ? formatDay(d, f) : '');
 
   const exportList = async () => {
     try {
       startExportLoading();
       const params = {
-        type: type?.map((item) => item.value).join(",") || "",
-        status: status?.map((item) => item.value).join(",") || "",
-        startDate: safeFormat(date?.startDate, "YYYYMMDD"),
-        endDate: safeFormat(date?.endDate, "YYYYMMDD"),
-        expirePolicy: expirePolicy ? "true" : "false",
-        startIssueDate: safeFormat(issueDateRange?.startIssueDate, "YYYYMMDD"),
-        endIssueDate: safeFormat(issueDateRange?.endIssueDate, "YYYYMMDD"),
-        branchName: selectedBranch?.map((item) => item.value).join(",") || "",
-        projectName: selectedProject?.map((item) => item.value).join(",") || "",
+        type: type?.map((item) => item.value).join(',') || '',
+        status: status?.map((item) => item.value).join(',') || '',
+        startDate: safeFormat(date?.startDate, 'YYYYMMDD'),
+        endDate: safeFormat(date?.endDate, 'YYYYMMDD'),
+        expirePolicy: expirePolicy ? 'true' : 'false',
+        startIssueDate: safeFormat(issueDateRange?.startIssueDate, 'YYYYMMDD'),
+        endIssueDate: safeFormat(issueDateRange?.endIssueDate, 'YYYYMMDD'),
+        branchName: selectedBranch?.map((item) => item.value).join(',') || '',
+        projectName: selectedProject?.map((item) => item.value).join(',') || '',
       };
 
-      const response = await fetchDataAsync("/export/operation-customer", {
+      const response = await fetchDataAsync('/export/operation-customer', {
         params,
-        responseType: "blob",
+        responseType: 'blob',
       });
 
       fileDownload(
         response?.data,
-        `${issueDateRange?.startIssueDate && issueDateRange?.endIssueDate
-          ? `customer_export card_issue_date ${safeFormat(
-            issueDateRange?.startIssueDate,
-            "DD-MM-YY"
-          )} ${safeFormat(issueDateRange?.endIssueDate, "DD-MM-YY")}`
-          : `customer_export ${safeFormat(
-            date?.startDate,
-            "DD-MM-YY"
-          )} ${safeFormat(date?.endDate, "DD-MM-YY")}`
+        `${
+          issueDateRange?.startIssueDate && issueDateRange?.endIssueDate
+            ? `customer_export card_issue_date ${safeFormat(
+                issueDateRange?.startIssueDate,
+                'DD-MM-YY'
+              )} ${safeFormat(issueDateRange?.endIssueDate, 'DD-MM-YY')}`
+            : `customer_export ${safeFormat(
+                date?.startDate,
+                'DD-MM-YY'
+              )} ${safeFormat(date?.endDate, 'DD-MM-YY')}`
         }.xlsx`
       );
     } catch (error) {
@@ -256,7 +254,7 @@ const CustomerReportPage = () => {
   return (
     <div
       className="container-xl full-height-dashboard-container"
-      style={{ height: "0", overflow: "auto", display: "flex" }}
+      style={{ height: '0', overflow: 'auto', display: 'flex' }}
     >
       <div className="page-body mb-0 flex-1 d-flex">
         <div className="card overflow-hidden d-flex flex-1">
@@ -273,7 +271,7 @@ const CustomerReportPage = () => {
                         </label>
                         <DateRangeSelector
                           date={date}
-                          placeholder={"Select Date"}
+                          placeholder={'Select Date'}
                           onDateChange={onDateChange}
                         />
                       </div>
@@ -374,13 +372,13 @@ const CustomerReportPage = () => {
                   <div className="btn-list mb-2 col-md-12 my-3 mb-3">
                     <Button
                       loading={loading}
-                      style={{ width: "100px" }}
+                      style={{ width: '100px' }}
                       disabled={!isFilterAble}
                       onClick={() =>
                         getList({ pageNumber: 1, pageSize: rowPerPage })
                       }
                     >
-                      Filter{" "}
+                      Filter{' '}
                       {isFieldDirty && (
                         <span className="badge bg-white d-block ml-5" />
                       )}
@@ -388,8 +386,8 @@ const CustomerReportPage = () => {
                     <div className="ms-auto" />
                     <Button
                       loading={exportLoading}
-                      loadingText={"Exporting..."}
-                      style={{ width: "100px" }}
+                      loadingText={'Exporting...'}
+                      style={{ width: '100px' }}
                       // onClick={exportList}
                       onClick={() => exportList(selectedProject)}
                       variant="primary"
@@ -419,7 +417,7 @@ const CustomerReportPage = () => {
                   <th>USER</th>
                   <th>BRANCH</th>
                   <th>Date Of Issue Card</th>
-                  <th style={{ width: "10%" }}>STATUS</th>
+                  <th style={{ width: '10%' }}>STATUS</th>
                 </tr>
               </thead>
               <tbody>
@@ -433,20 +431,20 @@ const CustomerReportPage = () => {
                 {data?.map((item, index) => (
                   <tr
                     style={{
-                      background: item.deleted ? "rgb(247 219 219 / 45%)" : "",
+                      background: item.deleted ? 'rgb(247 219 219 / 45%)' : '',
                     }}
                     key={index}
                   >
                     <td className="text-primary">{item.transactionNumber}</td>
                     <td
                       className={clsx({
-                        "text-primary": item.batchNumber,
+                        'text-primary': item.batchNumber,
                       })}
                     >
-                      {item?.batchNumber || "N/A"}
+                      {item?.batchNumber || 'N/A'}
                     </td>
                     <td className="text-muted">
-                      {item.sureName + " " + item.firstName}
+                      {item.sureName + ' ' + item.firstName}
                     </td>
                     <td className="text-muted">{item.projectCode}</td>
                     <td className="text-muted">{item.productCode}</td>
@@ -456,7 +454,7 @@ const CustomerReportPage = () => {
                     <td className="text-muted">
                       {item.customerIssueDate?.issueDate}
                     </td>
-                    <td className={clsx("text-bold")}>
+                    <td className={clsx('text-bold')}>
                       <ComponentStatus status={item.status} />
                     </td>
                   </tr>
@@ -485,10 +483,10 @@ const CustomerReportPage = () => {
             <div className="mx-4">
               {totalDocs > 0 && (
                 <span className="text-muted">
-                  {(Number(pageNum) - 1) * rowPerPage + 1} -{" "}
+                  {(Number(pageNum) - 1) * rowPerPage + 1} -{' '}
                   {Number(pageNum) * rowPerPage > totalDocs
                     ? totalDocs
-                    : Number(pageNum) * rowPerPage}{" "}
+                    : Number(pageNum) * rowPerPage}{' '}
                   of {totalDocs}
                 </span>
               )}
@@ -542,16 +540,16 @@ const CustomerReportPage = () => {
                     setPageNum(tempPageNum);
                     getList({ pageNumber: tempPageNum, pageSize: rowPerPage });
                   }}
-                  containerClassName={"pagination m-0 ml-auto"}
-                  pageClassName={"page-item"}
-                  pageLinkClassName={"page-link"}
-                  previousClassName={"page-item"}
-                  previousLinkClassName={"page-link"}
-                  nextClassName={"page-item"}
-                  nextLinkClassName={"page-link"}
-                  breakClassName={"page-item"}
-                  breakLinkClassName={"page-link"}
-                  activeClassName={"active"}
+                  containerClassName={'pagination m-0 ml-auto'}
+                  pageClassName={'page-item'}
+                  pageLinkClassName={'page-link'}
+                  previousClassName={'page-item'}
+                  previousLinkClassName={'page-link'}
+                  nextClassName={'page-item'}
+                  nextLinkClassName={'page-link'}
+                  breakClassName={'page-item'}
+                  breakLinkClassName={'page-link'}
+                  activeClassName={'active'}
                 />
               )}
             </div>

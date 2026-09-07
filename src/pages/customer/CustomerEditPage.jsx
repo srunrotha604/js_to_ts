@@ -1,12 +1,12 @@
-import { useState, useEffect } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
-import { fetchData } from '../../services/$service';
-import { toast } from 'react-toastify';
+import { useEffect, useState } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
+import { useNavigate, useParams } from 'react-router-dom';
+import { toast } from 'react-toastify';
+import Spinner, { useSpinner } from '../../components/common/Spinner.jsx';
+import CostomerTransationSubmit from '../../components/customer/create/CustomerTransationSubmit';
 import CustomerEdit from '../../components/customer/edit/CustomerEdit';
 import CustomerEditReview from '../../components/customer/edit/CustomerEditReview';
-import CostomerTransationSubmit from '../../components/customer/create/CustomerTransationSubmit';
-import Spinner, { useSpinner } from '../../components/common/Spinner.jsx';
+import { fetchData } from '../../services/$service';
 import { ROUTE_PATH } from '../../utils/route-util';
 
 const STEP = {

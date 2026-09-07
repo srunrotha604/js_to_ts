@@ -1,31 +1,30 @@
-import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import { toast } from "react-toastify";
-import { fetchData } from "../../../../services/$service";
-import Select from "react-select";
-import { useAuth } from "../../../../context/AuthContext.jsx";
-import { PatternFormat } from "react-number-format";
-import { ROUTE_PATH } from "../../../../utils/route-util";
+import { useEffect, useState } from 'react';
+import { PatternFormat } from 'react-number-format';
+import { useNavigate } from 'react-router-dom';
+import Select from 'react-select';
+import { toast } from 'react-toastify';
+import { useAuth } from '../../../../context/AuthContext.jsx';
+import { fetchData } from '../../../../services/$service';
+import { ROUTE_PATH } from '../../../../utils/route-util';
 
 const UserCreatePage = () => {
-  document.title = "E-CHANNEL PORTAL | user - create";
+  document.title = 'E-CHANNEL PORTAL | user - create';
   const navigate = useNavigate();
   const { company } = useAuth();
-
-  const [textEmail, setTextEmail] = useState("");
-  const [phone, setPhone] = useState("");
-  const [textFirstName, setTextFirstName] = useState("");
-  const [textLastName, setTextLastName] = useState("");
+  const [textEmail, setTextEmail] = useState('');
+  const [phone, setPhone] = useState('');
+  const [textFirstName, setTextFirstName] = useState('');
+  const [textLastName, setTextLastName] = useState('');
 
   const [optionRole, setOptionRole] = useState([]);
-  const [selectedRole, setSelectedRole] = useState("");
+  const [selectedRole, setSelectedRole] = useState('');
 
   const [optionBranch, setOptionBranch] = useState([]);
-  const [selectedBranch, setSelectedBranch] = useState("");
-  const [message, setMessage] = useState("");
+  const [selectedBranch, setSelectedBranch] = useState('');
+  const [message, setMessage] = useState('');
 
   const getList = () => {
-    fetchData("/e-chanel-user/access", {}, "GET").then((res) => {
+    fetchData('/e-chanel-user/access', {}, 'GET').then((res) => {
       if (res?.status == 200) {
         setOptionRole(res?.data?.role);
       }
@@ -34,19 +33,19 @@ const UserCreatePage = () => {
 
   const funcButtonHandleClickExecute = (e) => {
     let messages = [];
-    if (textEmail === "") {
+    if (textEmail === '') {
       messages.push(true);
     }
-    if (textFirstName === "") {
+    if (textFirstName === '') {
       messages.push(true);
     }
-    if (textLastName === "") {
+    if (textLastName === '') {
       messages.push(true);
     }
-    if (selectedBranch === "") {
+    if (selectedBranch === '') {
       messages.push(true);
     }
-    if (selectedRole === "") {
+    if (selectedRole === '') {
       messages.push(true);
     } else {
       if (messages.length < 1) {
@@ -59,7 +58,7 @@ const UserCreatePage = () => {
           phone: phone,
         };
 
-        fetchData("/e-chanel-user", data, "POST").then((res) => {
+        fetchData('/e-chanel-user', data, 'POST').then((res) => {
           switch (res.status) {
             case 200:
               toast.success(res.data.message);
@@ -82,7 +81,7 @@ const UserCreatePage = () => {
 
   useEffect(() => {
     getList();
-    const e_chanel_storage = localStorage.getItem("e_chanel_storage");
+    const e_chanel_storage = localStorage.getItem('e_chanel_storage');
     const token_text = JSON.parse(e_chanel_storage);
     const companyDetails = company?.find(
       (item) => item?.value === token_text?.company
@@ -112,7 +111,7 @@ const UserCreatePage = () => {
     fetchData(
       `/e-chanel-user/access/branch-manager?transaction=${e.value}`,
       {},
-      "GET"
+      'GET'
     ).then((res) => {
       switch (res.status) {
         case 200:
@@ -193,14 +192,14 @@ const UserCreatePage = () => {
           <div className="container-xl">
             <div className="card">
               <div className="card-body">
-                {message != "" ? (
+                {message != '' ? (
                   <div className="alert alert-danger">
-                    User <b>{message}</b> is currently the <b>Branch Manager</b>{" "}
+                    User <b>{message}</b> is currently the <b>Branch Manager</b>{' '}
                     for this branch. Create user with same role will result in
                     replacement.
                   </div>
                 ) : (
-                  ""
+                  ''
                 )}
 
                 <div className="col-md-6">
@@ -210,9 +209,9 @@ const UserCreatePage = () => {
                       <input
                         type="email"
                         className={
-                          textEmail !== ""
-                            ? "form-control"
-                            : "form-control is-invalid is-invalid-lite"
+                          textEmail !== ''
+                            ? 'form-control'
+                            : 'form-control is-invalid is-invalid-lite'
                         }
                         placeholder="Email"
                         onChange={emailHandleChange}
@@ -241,9 +240,9 @@ const UserCreatePage = () => {
                       <input
                         type="text"
                         className={
-                          textFirstName !== ""
-                            ? "form-control"
-                            : "form-control is-invalid is-invalid-lite"
+                          textFirstName !== ''
+                            ? 'form-control'
+                            : 'form-control is-invalid is-invalid-lite'
                         }
                         placeholder="First name"
                         onChange={firstNameHandleChange}
@@ -258,9 +257,9 @@ const UserCreatePage = () => {
                       <input
                         type="text"
                         className={
-                          textLastName !== ""
-                            ? "form-control"
-                            : "form-control is-invalid is-invalid-lite"
+                          textLastName !== ''
+                            ? 'form-control'
+                            : 'form-control is-invalid is-invalid-lite'
                         }
                         placeholder="Last name"
                         onChange={lastNameHandleChange}

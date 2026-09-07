@@ -1,21 +1,21 @@
-import { useState, useEffect } from "react";
-import { redirect, useNavigate } from "react-router-dom";
-import { FormProvider, useForm } from "react-hook-form";
-import { fetchData } from "../../services/$service";
-import ComponentSelectedProduct from "../../components/batch_register/ComponentSelectedProduct";
-import ComponentExcelUpload from "../../components/batch_register/ComponentExcelUpload";
-import ComponentReview from "../../components/batch_register/ComponentReview";
-import { toast } from "react-toastify";
-import { ROUTE_PATH } from "../../utils/route-util";
+import { useEffect, useState } from 'react';
+import { FormProvider, useForm } from 'react-hook-form';
+import { redirect, useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
+import ComponentExcelUpload from '../../components/batch_register/ComponentExcelUpload';
+import ComponentReview from '../../components/batch_register/ComponentReview';
+import ComponentSelectedProduct from '../../components/batch_register/ComponentSelectedProduct';
+import { fetchData } from '../../services/$service';
+import { ROUTE_PATH } from '../../utils/route-util';
 
 const STEP = {
-  SELECTE_PRODUCT: "SELECTE_PRODUCT",
-  SUBMITTED: "SUBMITTED",
-  REVIEW: "REVIEW",
+  SELECTE_PRODUCT: 'SELECTE_PRODUCT',
+  SUBMITTED: 'SUBMITTED',
+  REVIEW: 'REVIEW',
 };
 
 const BatchRegister = () => {
-  document.title = "E-CHANNEL PORTAL | batch register";
+  document.title = 'E-CHANNEL PORTAL | batch register';
   const navigate = useNavigate();
 
   const methods = useForm();
@@ -23,10 +23,10 @@ const BatchRegister = () => {
   const [arrProduct, setArrProduct] = useState([]);
   const [arrProject, setArrProject] = useState([]);
   const [customerList, setCustomerList] = useState([]);
-  const [productCode, setProductCode] = useState("");
+  const [productCode, setProductCode] = useState('');
 
   const getList = () => {
-    fetchData("/operation-customer/product", {}, "GET").then((res) => {
+    fetchData('/operation-customer/product', {}, 'GET').then((res) => {
       switch (res.status) {
         case 200:
           setArrProduct(res?.data?.list);
@@ -44,7 +44,7 @@ const BatchRegister = () => {
   };
 
   const policyList = (value) => {
-    fetchData("/operation-customer/product/" + value, {}, "GET").then((res) => {
+    fetchData('/operation-customer/product/' + value, {}, 'GET').then((res) => {
       switch (res.status) {
         case 200:
           setArrProject(res?.data?.category);
@@ -56,7 +56,7 @@ const BatchRegister = () => {
           toast.error(res?.data);
           break;
         default:
-          redirect("/404");
+          redirect('/404');
       }
     });
   };

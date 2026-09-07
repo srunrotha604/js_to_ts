@@ -1,18 +1,23 @@
 /*!
-* Tabler v1.0.0-beta5 (https://tabler.io)
-* @version 1.0.0-beta5
-* @link https://tabler.io
-* Copyright 2018-2022 The Tabler Authors
-* Copyright 2018-2022 codecalm.net Paweł Kuna
-* Licensed under MIT (https://github.com/tabler/tabler/blob/master/LICENSE)
-*/
+ * Tabler v1.0.0-beta5 (https://tabler.io)
+ * @version 1.0.0-beta5
+ * @link https://tabler.io
+ * Copyright 2018-2022 The Tabler Authors
+ * Copyright 2018-2022 codecalm.net Paweł Kuna
+ * Licensed under MIT (https://github.com/tabler/tabler/blob/master/LICENSE)
+ */
 (function (factory) {
-  typeof define === 'function' && define.amd ? define(factory) :
-  factory();
-})((function () { 'use strict';
+  typeof define === 'function' && define.amd ? define(factory) : factory();
+})(function () {
+  'use strict';
 
   function _slicedToArray(arr, i) {
-    return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _unsupportedIterableToArray(arr, i) || _nonIterableRest();
+    return (
+      _arrayWithHoles(arr) ||
+      _iterableToArrayLimit(arr, i) ||
+      _unsupportedIterableToArray(arr, i) ||
+      _nonIterableRest()
+    );
   }
 
   function _arrayWithHoles(arr) {
@@ -20,7 +25,11 @@
   }
 
   function _iterableToArrayLimit(arr, i) {
-    var _i = arr == null ? null : typeof Symbol !== "undefined" && arr[Symbol.iterator] || arr["@@iterator"];
+    var _i =
+      arr == null
+        ? null
+        : (typeof Symbol !== 'undefined' && arr[Symbol.iterator]) ||
+          arr['@@iterator'];
 
     if (_i == null) return;
     var _arr = [];
@@ -40,7 +49,7 @@
       _e = err;
     } finally {
       try {
-        if (!_n && _i["return"] != null) _i["return"]();
+        if (!_n && _i['return'] != null) _i['return']();
       } finally {
         if (_d) throw _e;
       }
@@ -51,11 +60,12 @@
 
   function _unsupportedIterableToArray(o, minLen) {
     if (!o) return;
-    if (typeof o === "string") return _arrayLikeToArray(o, minLen);
+    if (typeof o === 'string') return _arrayLikeToArray(o, minLen);
     var n = Object.prototype.toString.call(o).slice(8, -1);
-    if (n === "Object" && o.constructor) n = o.constructor.name;
-    if (n === "Map" || n === "Set") return Array.from(o);
-    if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen);
+    if (n === 'Object' && o.constructor) n = o.constructor.name;
+    if (n === 'Map' || n === 'Set') return Array.from(o);
+    if (n === 'Arguments' || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n))
+      return _arrayLikeToArray(o, minLen);
   }
 
   function _arrayLikeToArray(arr, len) {
@@ -67,33 +77,41 @@
   }
 
   function _nonIterableRest() {
-    throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
+    throw new TypeError(
+      'Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.'
+    );
   }
 
   var items = {
-    'theme': {
+    theme: {
       localStorage: 'tablerTheme',
-      default: 'light'
+      default: 'light',
     },
     'menu-position': {
       localStorage: 'tablerMenuPosition',
-      default: 'top'
+      default: 'top',
     },
     'menu-behavior': {
       localStorage: 'tablerMenuBehavior',
-      default: 'sticky'
+      default: 'sticky',
     },
     'container-layout': {
       localStorage: 'tablerContainerLayout',
-      default: 'boxed'
-    }
+      default: 'boxed',
+    },
   };
   var config = {};
-  for (var _i = 0, _Object$entries = Object.entries(items); _i < _Object$entries.length; _i++) {
+  for (
+    var _i = 0, _Object$entries = Object.entries(items);
+    _i < _Object$entries.length;
+    _i++
+  ) {
     var _Object$entries$_i = _slicedToArray(_Object$entries[_i], 2),
-        key = _Object$entries$_i[0],
-        params = _Object$entries$_i[1];
-    config[key] = localStorage.getItem(params.localStorage) ? localStorage.getItem(params.localStorage) : params.default;
+      key = _Object$entries$_i[0],
+      params = _Object$entries$_i[1];
+    config[key] = localStorage.getItem(params.localStorage)
+      ? localStorage.getItem(params.localStorage)
+      : params.default;
   }
   var parseUrl = function parseUrl() {
     var search = window.location.search.substring(1);
@@ -109,11 +127,19 @@
     }
   };
   var toggleFormControls = function toggleFormControls(form) {
-    for (var _i2 = 0, _Object$entries2 = Object.entries(items); _i2 < _Object$entries2.length; _i2++) {
+    for (
+      var _i2 = 0, _Object$entries2 = Object.entries(items);
+      _i2 < _Object$entries2.length;
+      _i2++
+    ) {
       var _Object$entries2$_i = _slicedToArray(_Object$entries2[_i2], 2),
-          _key2 = _Object$entries2$_i[0];
-          _Object$entries2$_i[1];
-      var elem = form.querySelector("[name=\"settings-".concat(_key2, "\"][value=\"").concat(config[_key2], "\"]"));
+        _key2 = _Object$entries2$_i[0];
+      _Object$entries2$_i[1];
+      var elem = form.querySelector(
+        '[name="settings-'
+          .concat(_key2, '"][value="')
+          .concat(config[_key2], '"]')
+      );
       if (elem) {
         elem.checked = true;
       }
@@ -122,14 +148,20 @@
   var updateBodyClasses = function updateBodyClasses() {
     document.body.classList.remove('theme-dark');
     document.body.classList.remove('theme-light');
-    document.body.classList.add("theme-".concat(config.theme));
+    document.body.classList.add('theme-'.concat(config.theme));
   };
   var submitForm = function submitForm(form) {
-    for (var _i3 = 0, _Object$entries3 = Object.entries(items); _i3 < _Object$entries3.length; _i3++) {
+    for (
+      var _i3 = 0, _Object$entries3 = Object.entries(items);
+      _i3 < _Object$entries3.length;
+      _i3++
+    ) {
       var _Object$entries3$_i = _slicedToArray(_Object$entries3[_i3], 2),
-          _key3 = _Object$entries3$_i[0],
-          _params2 = _Object$entries3$_i[1];
-      var value = form.querySelector("[name=\"settings-".concat(_key3, "\"]:checked")).value;
+        _key3 = _Object$entries3$_i[0],
+        _params2 = _Object$entries3$_i[1];
+      var value = form.querySelector(
+        '[name="settings-'.concat(_key3, '"]:checked')
+      ).value;
       localStorage.setItem(_params2.localStorage, value);
       config[_key3] = value;
     }
@@ -147,5 +179,4 @@
     });
     toggleFormControls(form);
   }
-
-}));
+});

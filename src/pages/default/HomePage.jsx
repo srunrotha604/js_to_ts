@@ -1,24 +1,24 @@
 import { forwardRef, useEffect, useMemo, useRef, useState } from 'react';
+import { useNavigate, useSearchParams } from 'react-router-dom';
+import { toast } from 'react-toastify';
+import ApproveRejectConfirmationModal from '../../components/common/ActionConfirmationModal.jsx';
+import Button from '../../components/common/Button.jsx';
+import Modal, { useModal } from '../../components/common/modal/index.jsx';
+import Spinner, { useSpinner } from '../../components/common/Spinner.jsx';
+import ComponentStatus from '../../components/customer/ComponentStatus';
+import TransactionBatchProccessModal from '../../components/transaction/TransactionBatchProccessModal.jsx';
 import TransactionTabList from '../../components/transaction/TransactionTabList';
-import { useAuth } from '../../context/AuthContext';
-import { STATUS, isTransactionStatusCountChanged } from '../../utils/status';
 import TransactionTabSelect, {
   useTransactionTabSelect,
 } from '../../components/transaction/TransactionTabSelect.jsx';
-import Button from '../../components/common/Button.jsx';
-import TransactionBatchProccessModal from '../../components/transaction/TransactionBatchProccessModal.jsx';
-import { useNavigate, useSearchParams } from 'react-router-dom';
-import Modal, { useModal } from '../../components/common/modal/index.jsx';
+import { useAuth } from '../../context/AuthContext';
 import { fetchDataAsync } from '../../services/$service.jsx';
-import ApproveRejectConfirmationModal from '../../components/common/ActionConfirmationModal.jsx';
-import { pluralize } from '../../utils/pluralize.js';
-import Spinner, { useSpinner } from '../../components/common/Spinner.jsx';
-import { toast } from 'react-toastify';
+import { actions } from '../../utils/actions';
 import { delay } from '../../utils/delay.js';
 import { getConfirmedMessageText } from '../../utils/get-confirm-message-text';
-import { actions } from '../../utils/actions';
-import ComponentStatus from '../../components/customer/ComponentStatus';
+import { pluralize } from '../../utils/pluralize.js';
 import { ROUTE_PATH } from '../../utils/route-util';
+import { STATUS, isTransactionStatusCountChanged } from '../../utils/status';
 
 const HomePage = () => {
   document.title = 'E-CHANNEL PORTAL | Home';
@@ -322,7 +322,9 @@ const PopupInfo = forwardRef(({ data, onClose }, ref) => {
           <div style={{ display: 'flex', justifyContent: 'center' }}>
             <Button
               onClick={() => {
-                navigate(`${ROUTE_PATH.dashboard}?status=${STATUS.DRI_Rejected}`);
+                navigate(
+                  `${ROUTE_PATH.dashboard}?status=${STATUS.DRI_Rejected}`
+                );
                 onClose();
               }}
             >

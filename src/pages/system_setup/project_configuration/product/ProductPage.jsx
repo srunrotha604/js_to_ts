@@ -1,11 +1,11 @@
-import React, { useState, useEffect } from 'react';
-import { Link, redirect, useNavigate } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
 import ReactPaginate from 'react-paginate';
-import Loading from '../../../../components/Loading';
+import { Link, redirect, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import { fetchData } from '../../../../services/$service';
 import ActionConfirmationModal from '../../../../components/common/ActionConfirmationModal.jsx';
 import { useModal } from '../../../../components/common/modal/index.jsx';
+import Loading from '../../../../components/Loading';
+import { fetchData } from '../../../../services/$service';
 import { ROUTE_PATH } from '../../../../utils/route-util';
 
 const ProductPage = () => {
@@ -301,7 +301,7 @@ const ProductPage = () => {
                               </a>
                               <Link
                                 to={ROUTE_PATH.productEdit(
-                                  item.transactionCode,
+                                  item.transactionCode
                                 )}
                               >
                                 <svg

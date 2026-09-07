@@ -1,9 +1,9 @@
-import { useFormContext } from "react-hook-form";
-import { useNavigate } from "react-router-dom";
-import { useAuth } from "../../../context/AuthContext";
-import TransactionDetail from "../../transaction/TransactionDetail";
-import { STATUS } from "../../../utils/status.js";
-import { ROUTE_PATH } from "../../../utils/route-util";
+import { useFormContext } from 'react-hook-form';
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../../../context/AuthContext';
+import { ROUTE_PATH } from '../../../utils/route-util';
+import { STATUS } from '../../../utils/status.js';
+import TransactionDetail from '../../transaction/TransactionDetail';
 
 const CostomerTransationSubmit = (props) => {
   const { data, productName } = props;
@@ -22,7 +22,7 @@ const CostomerTransationSubmit = (props) => {
               <div className="card">
                 <div className="card-body">
                   <h2 className="card-transaction-title text-center mb-3">
-                    TRANSACTION{" "}
+                    TRANSACTION{' '}
                     <span className="transaction-submitted"> SUBMITTED</span>
                   </h2>
                   <div className="row justify-content-center">
@@ -41,7 +41,7 @@ const CostomerTransationSubmit = (props) => {
                         }}
                       />
                     </div>
-                  </div>{" "}
+                  </div>{' '}
                   <div className="btn-list">
                     <button
                       className="btn btn-secondary"

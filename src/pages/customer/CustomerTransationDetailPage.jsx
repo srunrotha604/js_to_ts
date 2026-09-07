@@ -1,24 +1,24 @@
 import { useEffect, useState } from 'react';
-import { fetchDataAsync } from '../../services/$service';
-import { toast } from 'react-toastify';
 import { useNavigate, useParams } from 'react-router-dom';
+import { toast } from 'react-toastify';
 import { useModal } from '../../components/common/modal';
 import { useAuth } from '../../context/AuthContext';
+import { fetchDataAsync } from '../../services/$service';
 
 import ApproveRejectConfirmationModal from '../../components/common/ActionConfirmationModal';
+import Button from '../../components/common/Button';
+import Spinner, { useSpinner } from '../../components/common/Spinner.jsx';
 import TransactionDetailCard, {
   TransactionDetailCardContainer,
 } from '../../components/transaction/TransactionDetailCard';
-import Button from '../../components/common/Button';
-import Spinner, { useSpinner } from '../../components/common/Spinner.jsx';
-import { delay } from '../../utils/delay.js';
-import { getConfirmedMessageText } from '../../utils/get-confirm-message-text';
-import { actions } from '../../utils/actions';
-import { handleApiError } from "../../utils/handleApiError";
 import {
   ShowLogsButton,
   TransactionLogsModal,
 } from '../../components/transaction/TransactionTabList';
+import { actions } from '../../utils/actions';
+import { delay } from '../../utils/delay.js';
+import { getConfirmedMessageText } from '../../utils/get-confirm-message-text';
+import { handleApiError } from '../../utils/handleApiError';
 
 const CustomerTransationDetailPage = () => {
   const params = useParams();

@@ -9,7 +9,7 @@ export const valid_token_data = () => {
     login_return_url: '',
     company: '',
     branch: '',
-    hostName: window.location.origin
+    hostName: window.location.origin,
   };
 
   if (!storage) {
@@ -46,7 +46,7 @@ export const refreshToken = async () => {
 
   const data = {
     token: token_text.token,
-    refreshToken: token_text.refreshToken
+    refreshToken: token_text.refreshToken,
   };
 
   try {
@@ -57,8 +57,8 @@ export const refreshToken = async () => {
       headers: {
         application_id: import.meta.env.VITE_APP_ID,
         'Content-Type': 'application/json',
-        accept: '*/*'
-      }
+        accept: '*/*',
+      },
     });
 
     const alt_fa_token = {
@@ -67,7 +67,7 @@ export const refreshToken = async () => {
       company: token_text.company || '',
       branch: token_text.branch || '',
       hostName: window.location.origin,
-      login_return_url: token_text.login_return_url || ''
+      login_return_url: token_text.login_return_url || '',
     };
 
     localStorage.setItem('e_chanel_storage', JSON.stringify(alt_fa_token));

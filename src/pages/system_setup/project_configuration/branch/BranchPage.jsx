@@ -1,27 +1,27 @@
-import React, { useState, useEffect } from "react";
-import { Link, redirect, useNavigate } from "react-router-dom";
-import ReactPaginate from "react-paginate";
-import { toast } from "react-toastify";
-import Loading from "../../../../components/Loading";
-import { fetchData } from "../../../../services/$service";
-import Select from "react-select";
-import Modal, { useModal } from "../../../../components/common/modal";
-import { ROUTE_PATH } from "../../../../utils/route-util";
+import React, { useEffect, useState } from 'react';
+import ReactPaginate from 'react-paginate';
+import { Link, redirect, useNavigate } from 'react-router-dom';
+import Select from 'react-select';
+import { toast } from 'react-toastify';
+import Modal, { useModal } from '../../../../components/common/modal';
+import Loading from '../../../../components/Loading';
+import { fetchData } from '../../../../services/$service';
+import { ROUTE_PATH } from '../../../../utils/route-util';
 
 const BranchPage = () => {
-  document.title = "E-CHANNEL PORTAL | Branch";
+  document.title = 'E-CHANNEL PORTAL | Branch';
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [arrList, setArrList] = useState([]);
   const [listUser, setListUser] = useState([]);
   const [selectedAdminValue, setSelectedAdminValue] = useState([]);
-  const [selectedBranch, setSelectedBranch] = useState("");
-  const [query, setQuery] = useState("");
+  const [selectedBranch, setSelectedBranch] = useState('');
+  const [query, setQuery] = useState('');
 
   const { modalRef, openModal, closeModal } = useModal();
 
   const getList = () => {
-    fetchData("/opertion-branch", {}, "GET").then((res) => {
+    fetchData('/opertion-branch', {}, 'GET').then((res) => {
       switch (res.status) {
         case 200:
           setLoading(true);
@@ -54,7 +54,7 @@ const BranchPage = () => {
       branchCode: selectedBranch,
       value: selectedAdminValue.toString(),
     };
-    fetchData("/opertion-branch/admin", data, "PUT").then((res) => {
+    fetchData('/opertion-branch/admin', data, 'PUT').then((res) => {
       switch (res.status) {
         case 200:
           toast.success(res.data.message);
@@ -89,7 +89,7 @@ const BranchPage = () => {
   const filteredList = arrList?.filter((item) => {
     const search = query.toLowerCase().trim();
 
-    return search === ""
+    return search === ''
       ? true
       : item.branchCode?.toLowerCase()?.includes(search) ||
           item.branchName?.toLowerCase()?.includes(search) ||
@@ -100,7 +100,7 @@ const BranchPage = () => {
   const pageCount = Math.ceil(filteredList?.length / PER_PAGE);
   return (
     <React.Fragment>
-      <Modal ref={modalRef} title={"Admin User"} size="xl">
+      <Modal ref={modalRef} title={'Admin User'} size="xl">
         <div className="mb-3">
           <label className="form-label required">User</label>
           <div>
@@ -109,7 +109,7 @@ const BranchPage = () => {
               menuPortalTarget={document.body}
               placeholder="Select Option"
               value={listUser?.filter((obj) =>
-                selectedAdminValue.includes(obj.value),
+                selectedAdminValue.includes(obj.value)
               )}
               onChange={userHandleChange}
               options={listUser}
@@ -308,18 +308,18 @@ const BranchPage = () => {
                                 setSelectedAdminValue(item.adminValue);
                               }}
                             >
-                              {item.admin === "" ? "N/A" : item.admin}
+                              {item.admin === '' ? 'N/A' : item.admin}
                             </td>
                             <td className="text-underline">
                               <Link
                                 to={ROUTE_PATH.branchProject(
-                                  item.transactionCode,
+                                  item.transactionCode
                                 )}
                               >
                                 project
                               </Link>
                             </td>
-                            {item.status === "Active" ? (
+                            {item.status === 'Active' ? (
                               <td className="text-primary">{item.status}</td>
                             ) : (
                               <td className="text-danger">{item.status}</td>
@@ -327,7 +327,7 @@ const BranchPage = () => {
                             <td>
                               <Link
                                 to={ROUTE_PATH.projectEdit(
-                                  item.transactionCode,
+                                  item.transactionCode
                                 )}
                               >
                                 <svg
@@ -406,16 +406,16 @@ const BranchPage = () => {
                     marginPagesDisplayed={3}
                     pageRangeDisplayed={3}
                     onPageChange={handlePageClick}
-                    containerClassName={"pagination m-0 ms-auto"}
-                    pageClassName={"page-item"}
-                    pageLinkClassName={"page-link"}
-                    previousClassName={"page-item"}
-                    previousLinkClassName={"page-link"}
-                    nextClassName={"page-item"}
-                    nextLinkClassName={"page-link"}
-                    breakClassName={"page-item"}
-                    breakLinkClassName={"page-link"}
-                    activeClassName={"active"}
+                    containerClassName={'pagination m-0 ms-auto'}
+                    pageClassName={'page-item'}
+                    pageLinkClassName={'page-link'}
+                    previousClassName={'page-item'}
+                    previousLinkClassName={'page-link'}
+                    nextClassName={'page-item'}
+                    nextLinkClassName={'page-link'}
+                    breakClassName={'page-item'}
+                    breakLinkClassName={'page-link'}
+                    activeClassName={'active'}
                   />
                 </div>
               </div>

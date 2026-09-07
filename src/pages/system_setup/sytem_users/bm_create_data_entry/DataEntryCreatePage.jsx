@@ -1,24 +1,24 @@
-import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import { toast } from "react-toastify";
-import { fetchData } from "../../../../services/$service";
-import Select from "react-select";
-import { PatternFormat } from "react-number-format";
-import { ROUTE_PATH } from "../../../../utils/route-util";
+import { useEffect, useState } from 'react';
+import { PatternFormat } from 'react-number-format';
+import { useNavigate } from 'react-router-dom';
+import Select from 'react-select';
+import { toast } from 'react-toastify';
+import { fetchData } from '../../../../services/$service';
+import { ROUTE_PATH } from '../../../../utils/route-util';
 
 const DataEntryCreatePage = () => {
-  document.title = "E-CHANNEL PORTAL | user - create";
+  document.title = 'E-CHANNEL PORTAL | user - create';
   const navigate = useNavigate();
-  const [textEmail, setTextEmail] = useState("");
-  const [phone, setPhone] = useState("");
-  const [textFirstName, setTextFirstName] = useState("");
-  const [textLastName, setTextLastName] = useState("");
+  const [textEmail, setTextEmail] = useState('');
+  const [phone, setPhone] = useState('');
+  const [textFirstName, setTextFirstName] = useState('');
+  const [textLastName, setTextLastName] = useState('');
 
   const [optionRole, setOptionRole] = useState([]);
-  const [selectedRole, setSelectedRole] = useState("");
+  const [selectedRole, setSelectedRole] = useState('');
 
   const getList = () => {
-    fetchData("/e-chanel-data-entry/access", {}, "GET").then((res) => {
+    fetchData('/e-chanel-data-entry/access', {}, 'GET').then((res) => {
       switch (res.status) {
         case 200:
           setOptionRole(res?.data?.role);
@@ -37,17 +37,17 @@ const DataEntryCreatePage = () => {
 
   const funcButtonHandleClickExecute = (e) => {
     let messages = [];
-    if (textEmail === "") {
-      toast.error("Email is required!");
+    if (textEmail === '') {
+      toast.error('Email is required!');
     }
-    if (textFirstName === "") {
-      toast.error("FirstName is required!");
+    if (textFirstName === '') {
+      toast.error('FirstName is required!');
     }
-    if (textLastName === "") {
-      toast.error("LastName is required!");
+    if (textLastName === '') {
+      toast.error('LastName is required!');
     }
-    if (selectedRole === "") {
-      toast.error("Level is required!");
+    if (selectedRole === '') {
+      toast.error('Level is required!');
     } else {
       if (messages.length < 1) {
         let data = {
@@ -58,7 +58,7 @@ const DataEntryCreatePage = () => {
           phone: phone,
         };
 
-        fetchData("/e-chanel-data-entry", data, "POST").then((res) => {
+        fetchData('/e-chanel-data-entry', data, 'POST').then((res) => {
           switch (res.status) {
             case 200:
               toast.success(res.data.message);
@@ -166,9 +166,9 @@ const DataEntryCreatePage = () => {
                       <input
                         type="email"
                         className={
-                          textEmail !== ""
-                            ? "form-control"
-                            : "form-control is-invalid is-invalid-lite"
+                          textEmail !== ''
+                            ? 'form-control'
+                            : 'form-control is-invalid is-invalid-lite'
                         }
                         placeholder="Email"
                         onChange={emailHandleChange}
@@ -197,9 +197,9 @@ const DataEntryCreatePage = () => {
                       <input
                         type="text"
                         className={
-                          textFirstName !== ""
-                            ? "form-control"
-                            : "form-control is-invalid is-invalid-lite"
+                          textFirstName !== ''
+                            ? 'form-control'
+                            : 'form-control is-invalid is-invalid-lite'
                         }
                         placeholder="First name"
                         onChange={firstNameHandleChange}
@@ -214,9 +214,9 @@ const DataEntryCreatePage = () => {
                       <input
                         type="text"
                         className={
-                          textLastName !== ""
-                            ? "form-control"
-                            : "form-control is-invalid is-invalid-lite"
+                          textLastName !== ''
+                            ? 'form-control'
+                            : 'form-control is-invalid is-invalid-lite'
                         }
                         placeholder="Last name"
                         onChange={lastNameHandleChange}

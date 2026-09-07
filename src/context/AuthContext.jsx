@@ -5,10 +5,10 @@ import ModuleContextProvider from './module/ModuleContext';
 
 const AuthContext = createContext({
   loading: true,
-  hasPermissionProccessTransaction: () => { },
-  hasPermissionAccessTransaction: () => { },
-  clearUser: () => { },
-  fetchUser: () => { },
+  hasPermissionProccessTransaction: () => {},
+  hasPermissionAccessTransaction: () => {},
+  clearUser: () => {},
+  fetchUser: () => {},
   user: null,
   isUserDRIAdmin: false,
   appName: '',
@@ -18,7 +18,7 @@ const AuthContext = createContext({
   selectedCompany: null,
   permission: null,
   module: [],
-  token:null,
+  token: null,
 });
 
 const fetchPermissionAccess = async () => {

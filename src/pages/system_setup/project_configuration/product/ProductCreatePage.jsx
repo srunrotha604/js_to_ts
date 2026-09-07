@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import Select from 'react-select';
 import { toast } from 'react-toastify';
 import { fetchData } from '../../../../services/$service';
-import Select from 'react-select';
 import { ROUTE_PATH } from '../../../../utils/route-util';
 
 const ProductCreatePage = () => {

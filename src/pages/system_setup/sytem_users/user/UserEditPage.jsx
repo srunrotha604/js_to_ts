@@ -1,22 +1,20 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
+import Select from 'react-select';
 import { toast } from 'react-toastify';
 import { fetchData } from '../../../../services/$service';
-import Select from 'react-select';
 import { ROUTE_PATH } from '../../../../utils/route-util';
 
 const UserEditPage = () => {
   document.title = 'E-CHANNEL PORTAL | user - create';
   const navigate = useNavigate();
   const params = useParams();
-
   const [textEmail, setTextEmail] = useState('');
   const [arrList, setArrList] = useState([]);
   const [textFirstName, setTextFirstName] = useState('');
   const [textLastName, setTextLastName] = useState('');
   const [RoleCategory, setOptionBranch] = useState([]);
   const [selectedRole, setSelectedRole] = useState('');
-
   const getList = () => {
     fetchData(
       `/e-chanel-user?transaction=${params.key}&branchName=`,

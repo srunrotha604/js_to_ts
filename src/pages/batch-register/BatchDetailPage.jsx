@@ -1,33 +1,30 @@
-import { useState } from 'react';
-import { useMemo } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useLocation, useNavigate, useParams } from 'react-router';
-import LabelValueList from '../../components/common/LabelValueList';
-import TransactionTabList from '../../components/transaction/TransactionTabList';
-import { useAuth } from '../../context/AuthContext';
-import { STATUS } from '../../utils/status';
-import Button from '../../components/common/Button';
-import ApproveRejectConfirmationModal from '../../components/common/ActionConfirmationModal';
-import { useModal } from '../../components/common/modal';
-import TransactionBatchProccessModal from '../../components/transaction/TransactionBatchProccessModal';
 import { useSearchParams } from 'react-router-dom';
-import { fetchDataAsync } from '../../services/$service';
 import { toast } from 'react-toastify';
-import { useRef } from 'react';
-import { useEffect } from 'react';
+import ApproveRejectConfirmationModal from '../../components/common/ActionConfirmationModal';
+import Button from '../../components/common/Button';
+import Checkbox from '../../components/common/Checkbox';
+import LabelValueList from '../../components/common/LabelValueList';
+import { useModal } from '../../components/common/modal';
+import Spinner, { useSpinner } from '../../components/common/Spinner.jsx';
 import TransactionNumber from '../../components/common/TransactionNumber';
-import { formatDay } from '../../utils/format-day';
-import { pluralize } from '../../utils/pluralize';
-import useLoading from '../../hooks/useLoading';
+import TransactionBatchProccessModal from '../../components/transaction/TransactionBatchProccessModal';
+import TransactionNumberTableItem from '../../components/transaction/TransactionNumberTableItem.jsx';
+import TransactionTabList from '../../components/transaction/TransactionTabList';
 import TransactionTabSelect, {
   useTransactionTabSelect,
 } from '../../components/transaction/TransactionTabSelect';
-import Checkbox from '../../components/common/Checkbox';
-import Spinner, { useSpinner } from '../../components/common/Spinner.jsx';
-import TransactionNumberTableItem from '../../components/transaction/TransactionNumberTableItem.jsx';
+import { useAuth } from '../../context/AuthContext';
+import useLoading from '../../hooks/useLoading';
 import useMessage from '../../hooks/useMessage.jsx';
-import { delay } from '../../utils/delay.js';
+import { fetchDataAsync } from '../../services/$service';
 import { actions } from '../../utils/actions';
+import { delay } from '../../utils/delay.js';
+import { formatDay } from '../../utils/format-day';
 import { getConfirmedMessageText } from '../../utils/get-confirm-message-text';
+import { pluralize } from '../../utils/pluralize';
+import { STATUS } from '../../utils/status';
 
 const BatchDetailPage = () => {
   const location = useLocation();

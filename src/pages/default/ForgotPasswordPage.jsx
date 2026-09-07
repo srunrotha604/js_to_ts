@@ -1,36 +1,36 @@
-import React, { useState } from "react";
-import { Link, redirect } from "react-router-dom";
-import { PatternFormat } from "react-number-format";
-import { fetchData } from "../../services/$service";
-import { toast } from "react-toastify";
-import { AiOutlineCheckCircle } from "react-icons/ai";
-import { ROUTE_PATH } from "../../utils/route-util";
+import React, { useState } from 'react';
+import { AiOutlineCheckCircle } from 'react-icons/ai';
+import { PatternFormat } from 'react-number-format';
+import { Link, redirect } from 'react-router-dom';
+import { toast } from 'react-toastify';
+import { fetchData } from '../../services/$service';
+import { ROUTE_PATH } from '../../utils/route-util';
 
 const ForgotPasswordPage = () => {
-  document.title = "E-CHANNEL PORTAL | Login";
+  document.title = 'E-CHANNEL PORTAL | Login';
 
   const [showSendEmail, setShowSendEmail] = useState(true);
   const [showSMSResend, setShowSMSResend] = useState(false);
-  const [email, setEmail] = useState("");
+  const [email, setEmail] = useState('');
   const [addressMessage, setAddressMessage] = useState();
   const [success, setSuccess] = useState(false);
-  const [confirmCode, setConfirmCode] = useState("");
-  const [confirmKey, setConfirmKey] = useState("");
-  const [invalidFeedBack, setInvalidFeedBack] = useState("");
+  const [confirmCode, setConfirmCode] = useState('');
+  const [confirmKey, setConfirmKey] = useState('');
+  const [invalidFeedBack, setInvalidFeedBack] = useState('');
 
-  const [confirmChangeKey, setConfirmChangeKey] = useState("");
-  const [newPassword, setNewPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
+  const [confirmChangeKey, setConfirmChangeKey] = useState('');
+  const [newPassword, setNewPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
   const [newPasswordShown, setNewPasswordShown] = useState(false);
   const [confirmPasswordShown, setConfirmPasswordShown] = useState(false);
   const [resetSuccess, setResetSuccess] = useState(false);
-  const [confirmCodeMessage, setConfirmCodeMessage] = useState("");
-  const [phoneNumber, setPhoneNumber] = useState("");
-  const [viaSMSCode, setViaSMSCode] = useState("");
+  const [confirmCodeMessage, setConfirmCodeMessage] = useState('');
+  const [phoneNumber, setPhoneNumber] = useState('');
+  const [viaSMSCode, setViaSMSCode] = useState('');
 
   const funcButtonHandleClickExecute = (e) => {
     let messages = [];
-    if (email === "") {
+    if (email === '') {
       messages.push(true);
     }
 
@@ -38,21 +38,21 @@ const ForgotPasswordPage = () => {
       let data = {
         email: email,
       };
-      fetchData("/login/forgot-password", data, "POST").then((res) => {
+      fetchData('/login/forgot-password', data, 'POST').then((res) => {
         switch (res.status) {
           case 200:
             setShowSendEmail(false);
             setSuccess(false);
-            setConfirmCode("");
+            setConfirmCode('');
             setConfirmKey(res?.data?.keyCode);
             setConfirmCodeMessage(
-              "Enter the code we sent to your email address at"
+              'Enter the code we sent to your email address at'
             );
             setAddressMessage(email);
             setPhoneNumber(res?.data?.phoneNumber);
             setViaSMSCode(res?.data?.viaSMSCode);
             setShowSMSResend(false);
-            setInvalidFeedBack("");
+            setInvalidFeedBack('');
             break;
           case 400:
             setShowSendEmail(true);
@@ -63,7 +63,7 @@ const ForgotPasswordPage = () => {
             toast.error(res?.data);
             break;
           default:
-            redirect("/404");
+            redirect('/404');
         }
       });
     }
@@ -72,7 +72,7 @@ const ForgotPasswordPage = () => {
 
   const funcConfirmCodeHandleClickExecute = (e) => {
     let messages = [];
-    if (confirmCode === "" || confirmCode === null) {
+    if (confirmCode === '' || confirmCode === null) {
       messages.push(true);
     }
     if (messages.length < 1) {
@@ -81,7 +81,7 @@ const ForgotPasswordPage = () => {
         keyCode: confirmKey,
         otpCode: confirmCode,
       };
-      fetchData("/login/confirm-code", data, "POST").then((res) => {
+      fetchData('/login/confirm-code', data, 'POST').then((res) => {
         switch (res.status) {
           case 200:
             setSuccess(true);
@@ -95,7 +95,7 @@ const ForgotPasswordPage = () => {
             toast.error(res?.data);
             break;
           default:
-            redirect("/404");
+            redirect('/404');
         }
       });
     }
@@ -111,14 +111,14 @@ const ForgotPasswordPage = () => {
     };
 
     console.log(data);
-    fetchData("/Login/via-sms", data, "POST").then((res) => {
+    fetchData('/Login/via-sms', data, 'POST').then((res) => {
       switch (res.status) {
         case 200:
-          setConfirmCodeMessage("Enter the code we sent to your phone number");
+          setConfirmCodeMessage('Enter the code we sent to your phone number');
           setAddressMessage(phoneNumber);
           setShowSMSResend(true);
           {
-            res?.data?.attempt == 3 ? setPhoneNumber("") : "";
+            res?.data?.attempt == 3 ? setPhoneNumber('') : '';
           }
           break;
         case 400:
@@ -129,27 +129,27 @@ const ForgotPasswordPage = () => {
           toast.error(res?.data);
           break;
         default:
-          redirect("/404");
+          redirect('/404');
       }
     });
   };
 
   const funcChangePasswordHandleClickExecute = (e) => {
     let messages = [];
-    if (email === "" || email === null) {
+    if (email === '' || email === null) {
       messages.push(true);
     }
-    if (confirmChangeKey === "" || confirmChangeKey === null) {
+    if (confirmChangeKey === '' || confirmChangeKey === null) {
       messages.push(true);
     }
-    if (newPassword === "" || newPassword === null) {
+    if (newPassword === '' || newPassword === null) {
       messages.push(true);
     }
-    if (confirmPassword === "" || confirmPassword === null) {
+    if (confirmPassword === '' || confirmPassword === null) {
       messages.push(true);
     }
     if (newPassword !== confirmPassword) {
-      toast.error("New password and confirm password not match");
+      toast.error('New password and confirm password not match');
       return;
     }
 
@@ -158,7 +158,7 @@ const ForgotPasswordPage = () => {
         newPassword
       ) === false
     ) {
-      toast.error("Invalid password requirement");
+      toast.error('Invalid password requirement');
       return;
     }
 
@@ -169,7 +169,7 @@ const ForgotPasswordPage = () => {
         newPassword: newPassword,
         confirmPassword: confirmPassword,
       };
-      fetchData("/login/confirm-change-password", data, "POST").then((res) => {
+      fetchData('/login/confirm-change-password', data, 'POST').then((res) => {
         switch (res.status) {
           case 200:
             setResetSuccess(true);
@@ -182,7 +182,7 @@ const ForgotPasswordPage = () => {
             toast.error(res?.data);
             break;
           default:
-            redirect("/404");
+            redirect('/404');
         }
       });
     }
@@ -191,21 +191,21 @@ const ForgotPasswordPage = () => {
 
   const emailHandleChange = (event) => {
     setEmail(event.target.value);
-    setInvalidFeedBack("");
+    setInvalidFeedBack('');
   };
 
   const confirmCodeHandleChange = (event) => {
     setConfirmCode(event.target.value);
-    setInvalidFeedBack("");
+    setInvalidFeedBack('');
   };
 
   const newPasswordHandleChange = (event) => {
     setNewPassword(event.target.value);
-    setInvalidFeedBack("");
+    setInvalidFeedBack('');
   };
   const ConfirmPasswordHandleChange = (event) => {
     setConfirmPassword(event.target.value);
-    setInvalidFeedBack("");
+    setInvalidFeedBack('');
   };
 
   const toggleNewPassword = () => {
@@ -223,17 +223,17 @@ const ForgotPasswordPage = () => {
           autoComplete="off"
         >
           <div className="card-body">
-            <h1 className={"text-center text-primary-blue"}>
+            <h1 className={'text-center text-primary-blue'}>
               E-CHANNEL PORTAL
             </h1>
             <h2 className="card-title text-center mb-2">
-              {resetSuccess ? "Reset password successfully" : "Forgot password"}
+              {resetSuccess ? 'Reset password successfully' : 'Forgot password'}
             </h2>
             {resetSuccess ? (
               <>
                 <div className="text-center text-green mt-2">
                   <div className="mt-3">
-                    <AiOutlineCheckCircle style={{ fontSize: "48px" }} />
+                    <AiOutlineCheckCircle style={{ fontSize: '48px' }} />
                   </div>
                   <p className="text-dark">
                     Your password has been reset successfully
@@ -263,11 +263,11 @@ const ForgotPasswordPage = () => {
                       </label>
                       <div className="input-group input-group-flat">
                         <input
-                          type={newPasswordShown ? "text" : "password"}
+                          type={newPasswordShown ? 'text' : 'password'}
                           className={
-                            newPassword !== ""
-                              ? "form-control"
-                              : "form-control is-invalid is-invalid-lite"
+                            newPassword !== ''
+                              ? 'form-control'
+                              : 'form-control is-invalid is-invalid-lite'
                           }
                           placeholder="New password"
                           autoComplete="off"
@@ -332,11 +332,11 @@ const ForgotPasswordPage = () => {
                       </label>
                       <div className="input-group input-group-flat">
                         <input
-                          type={confirmPasswordShown ? "text" : "password"}
+                          type={confirmPasswordShown ? 'text' : 'password'}
                           className={
-                            confirmPassword !== ""
-                              ? "form-control"
-                              : "form-control is-invalid is-invalid-lite"
+                            confirmPassword !== ''
+                              ? 'form-control'
+                              : 'form-control is-invalid is-invalid-lite'
                           }
                           placeholder="Confirm password"
                           autoComplete="off"
@@ -451,7 +451,10 @@ const ForgotPasswordPage = () => {
                             </svg>
                             Reset password
                           </button>
-                          <Link className="btn w-100 mt-2" to={ROUTE_PATH.login}>
+                          <Link
+                            className="btn w-100 mt-2"
+                            to={ROUTE_PATH.login}
+                          >
                             Back to login
                           </Link>
                         </div>
@@ -507,13 +510,13 @@ const ForgotPasswordPage = () => {
                             className="btn w-100 mt-2"
                             onClick={() => {
                               setShowSendEmail(true);
-                              setConfirmCode("");
+                              setConfirmCode('');
                               setShowSMSResend(false);
                             }}
                           >
                             Cancel
                           </button>
-                          {phoneNumber && phoneNumber != "" ? (
+                          {phoneNumber && phoneNumber != '' ? (
                             <div className="d-flex justify-content-start mt-3">
                               {!showSMSResend ? (
                                 <p className="mr-5">Don't get Code?</p>
@@ -523,13 +526,13 @@ const ForgotPasswordPage = () => {
                               <div onClick={() => resqustViaSMSSubmit()}>
                                 <p className="cursor-pointer text-underline text-primary">
                                   {!showSMSResend
-                                    ? "Let click here to get code via SMS instead"
-                                    : "Resend OTP Code via SMS again"}
+                                    ? 'Let click here to get code via SMS instead'
+                                    : 'Resend OTP Code via SMS again'}
                                 </p>
                               </div>
                             </div>
                           ) : (
-                            ""
+                            ''
                           )}
                         </div>
                       </>

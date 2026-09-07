@@ -1,28 +1,28 @@
-import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import ReactPaginate from "react-paginate";
-import { toast } from "react-toastify";
-import Loading from "../../../../components/Loading";
-import { fetchData } from "../../../../services/$service";
-import { useAuth } from "../../../../context/AuthContext.jsx";
-import TableCellStatus from "../../../../components/form/TableCellStatus";
-import TableCellAction from "../../../../components/form/TableCellAction";
-import TableCellDelete from "../../../../components/form/TableCellDelete";
-import AddPhoneNumber from "./components/AddPhoneNumber.jsx";
-import { ROUTE_PATH } from "../../../../utils/route-util";
+import { useEffect, useState } from 'react';
+import ReactPaginate from 'react-paginate';
+import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
+import TableCellAction from '../../../../components/form/TableCellAction';
+import TableCellDelete from '../../../../components/form/TableCellDelete';
+import TableCellStatus from '../../../../components/form/TableCellStatus';
+import Loading from '../../../../components/Loading';
+import { useAuth } from '../../../../context/AuthContext.jsx';
+import { fetchData } from '../../../../services/$service';
+import { ROUTE_PATH } from '../../../../utils/route-util';
+import AddPhoneNumber from './components/AddPhoneNumber.jsx';
 
 const DataEntryPage = () => {
-  document.title = "E-CHANNEL PORTAL | Data Entry";
+  document.title = 'E-CHANNEL PORTAL | Data Entry';
   const navigate = useNavigate();
   const { selectedBranch } = useAuth();
   const [loading, setLoading] = useState(false);
-  const [query, setQuery] = useState("");
+  const [query, setQuery] = useState('');
   const [arrList, setArrList] = useState([]);
   const getList = () => {
     fetchData(
       `/e-chanel-data-entry?branchName=${selectedBranch.value}`,
       {},
-      "GET",
+      'GET'
     ).then((res) => {
       switch (res.status) {
         case 200:
@@ -47,7 +47,7 @@ const DataEntryPage = () => {
       key: key,
     };
 
-    fetchData("/e-chanel-data-entry/status", data, "Post").then((res) => {
+    fetchData('/e-chanel-data-entry/status', data, 'Post').then((res) => {
       switch (res.status) {
         case 200:
           toast.success(res.data.message);
@@ -70,7 +70,7 @@ const DataEntryPage = () => {
       key: key,
     };
 
-    fetchData("/e-chanel-data-entry", data, "DELETE").then((res) => {
+    fetchData('/e-chanel-data-entry', data, 'DELETE').then((res) => {
       switch (res.status) {
         case 200:
           toast.success(res.data.message);
@@ -108,7 +108,7 @@ const DataEntryPage = () => {
   const filteredList = arrList?.filter((item) => {
     const search = query.toLowerCase().trim();
 
-    return search === ""
+    return search === ''
       ? true
       : item.userName?.toLowerCase()?.includes(search) ||
           item.email?.toLowerCase()?.includes(search) ||
@@ -320,7 +320,7 @@ const DataEntryPage = () => {
                   <table className="table table-vcenter card-table">
                     <thead>
                       <tr>
-                        <th style={{ width: "5%" }}>#</th>
+                        <th style={{ width: '5%' }}>#</th>
                         <th>USER NAME</th>
                         <th>EMAIL</th>
                         <th>PHONE</th>
@@ -328,8 +328,8 @@ const DataEntryPage = () => {
                         <th>LAST NAME</th>
                         <th>ROLE</th>
                         <th>TYPE</th>
-                        <th style={{ width: "15%" }}>STATUS</th>
-                        <th style={{ width: "40%" }}>ACTION</th>
+                        <th style={{ width: '15%' }}>STATUS</th>
+                        <th style={{ width: '40%' }}>ACTION</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -341,7 +341,7 @@ const DataEntryPage = () => {
                             <td className="text-muted">{item.userName}</td>
                             <td className="text-muted">{item.email}</td>
                             <td className="cursor-pointer">
-                              {item?.phone == "" ? (
+                              {item?.phone == '' ? (
                                 <AddPhoneNumber
                                   item={item}
                                   success={() => getList()}
@@ -368,12 +368,12 @@ const DataEntryPage = () => {
                                 <TableCellDelete
                                   deleteOnClick={() =>
                                     funcRemoveHandleClickExecute(
-                                      item?.transactionCode,
+                                      item?.transactionCode
                                     )
                                   }
                                 />
                               ) : (
-                                ""
+                                ''
                               )}
                             </TableCellAction>
                           </tr>
@@ -383,7 +383,7 @@ const DataEntryPage = () => {
                 </div>
                 <div className="d-flex align-items-center mt-2">
                   <p className="m-0 text-muted">
-                    Total <span>{arrList && arrList && arrList.length}</span>{" "}
+                    Total <span>{arrList && arrList && arrList.length}</span>{' '}
                     entries
                   </p>
                   <ReactPaginate
@@ -430,16 +430,16 @@ const DataEntryPage = () => {
                     marginPagesDisplayed={3}
                     pageRangeDisplayed={3}
                     onPageChange={handlePageClick}
-                    containerClassName={"pagination m-0 ms-auto"}
-                    pageClassName={"page-item"}
-                    pageLinkClassName={"page-link"}
-                    previousClassName={"page-item"}
-                    previousLinkClassName={"page-link"}
-                    nextClassName={"page-item"}
-                    nextLinkClassName={"page-link"}
-                    breakClassName={"page-item"}
-                    breakLinkClassName={"page-link"}
-                    activeClassName={"active"}
+                    containerClassName={'pagination m-0 ms-auto'}
+                    pageClassName={'page-item'}
+                    pageLinkClassName={'page-link'}
+                    previousClassName={'page-item'}
+                    previousLinkClassName={'page-link'}
+                    nextClassName={'page-item'}
+                    nextLinkClassName={'page-link'}
+                    breakClassName={'page-item'}
+                    breakLinkClassName={'page-link'}
+                    activeClassName={'active'}
                   />
                 </div>
               </div>

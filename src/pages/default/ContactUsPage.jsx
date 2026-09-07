@@ -1,15 +1,14 @@
-import React from 'react';
-import { Controller, useForm } from 'react-hook-form';
 import JoditEditor from 'jodit-react';
-import { fetchDataAsync } from '../../services/$service';
-import { useState } from 'react';
-import Spinner, { useSpinner } from '../../components/common/Spinner';
-import { Link } from 'react-router-dom';
+import React, { useState } from 'react';
+import { Controller, useForm } from 'react-hook-form';
 import { AiOutlineCheckCircle } from 'react-icons/ai';
-import useMessage from '../../hooks/useMessage.jsx';
-import { delay } from '../../utils/delay.js';
 import { NumericFormat } from 'react-number-format';
+import { Link } from 'react-router-dom';
+import Spinner, { useSpinner } from '../../components/common/Spinner';
+import useMessage from '../../hooks/useMessage.jsx';
+import { fetchDataAsync } from '../../services/$service';
 import { contactUs } from '../../utils/contact';
+import { delay } from '../../utils/delay.js';
 import { ROUTE_PATH } from '../../utils/route-util';
 
 const ContactUsPage = () => {
