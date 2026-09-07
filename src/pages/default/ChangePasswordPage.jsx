@@ -4,6 +4,7 @@ import { toast } from 'react-toastify';
 import { fetchData } from '../../services/$service';
 import EyeIcon from '../../components/Icons/EyeIcon';
 import EyeOffIcon from '../../components/Icons/EyeOffIcon';
+import { ROUTE_PATH } from '../../utils/route-util';
 
 const ChangePasswordPage = () => {
   const navigate = useNavigate();
@@ -70,7 +71,7 @@ const ChangePasswordPage = () => {
             toast.success(res?.data?.message ?? 'Password changed successfully', {
               autoClose: 50,
               pauseOnHover: false,
-              onClose: () => navigate('/dashboard/'),
+              onClose: () => navigate(ROUTE_PATH.dashboard),
             });
             break;
           }
@@ -105,7 +106,7 @@ const ChangePasswordPage = () => {
   };
 
   const goBackHandleClick = () => {
-    navigate('/dashboard/');
+    navigate(ROUTE_PATH.dashboard);
   };
 
   useEffect(() => {

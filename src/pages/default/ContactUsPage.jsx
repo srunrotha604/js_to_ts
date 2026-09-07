@@ -10,6 +10,7 @@ import useMessage from '../../hooks/useMessage.jsx';
 import { delay } from '../../utils/delay.js';
 import { NumericFormat } from 'react-number-format';
 import { contactUs } from '../../utils/contact';
+import { ROUTE_PATH } from '../../utils/route-util';
 
 const ContactUsPage = () => {
   const { control, handleSubmit, watch } = useForm();
@@ -179,7 +180,7 @@ const ContactUsPage = () => {
                   </p>
                   <p className="text-dark"></p>
                   <div className="mt-3">
-                    <Link to="/dashboard" className="btn btn-primary">
+                    <Link to={ROUTE_PATH.dashboard} className="btn btn-primary">
                       Back to Home
                     </Link>
                   </div>

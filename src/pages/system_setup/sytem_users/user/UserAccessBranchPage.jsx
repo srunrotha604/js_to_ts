@@ -4,6 +4,7 @@ import { toast } from 'react-toastify';
 import ReactPaginate from 'react-paginate';
 import Select from 'react-select';
 import { fetchData } from '../../../../services/$service';
+import { ROUTE_PATH } from '../../../../utils/route-util';
 
 const UserAccessBranchPage = () => {
   document.title = 'E-CHANNEL PORTAL | user access branch';
@@ -37,7 +38,7 @@ const UserAccessBranchPage = () => {
           toast.error(res?.data);
           break;
         default:
-          navigate('/error404');
+          navigate(ROUTE_PATH.error404);
       }
     });
   };
@@ -79,7 +80,7 @@ const UserAccessBranchPage = () => {
             toast.error(res?.data);
             break;
           default:
-            redirect('/error404');
+            redirect(ROUTE_PATH.error404);
         }
       });
     }
@@ -102,7 +103,7 @@ const UserAccessBranchPage = () => {
           toast.error(res?.data);
           break;
         default:
-          redirect('/error404');
+          redirect(ROUTE_PATH.error404);
       }
     });
   };
@@ -127,7 +128,7 @@ const UserAccessBranchPage = () => {
           toast.error(res?.data);
           break;
         default:
-          redirect('/error404');
+          redirect(ROUTE_PATH.error404);
       }
     });
   };
@@ -138,7 +139,7 @@ const UserAccessBranchPage = () => {
         setTransationCode(item.transactionCode);
         break;
       default:
-        navigate('/error404');
+        navigate(ROUTE_PATH.error404);
     }
   };
 
@@ -148,7 +149,7 @@ const UserAccessBranchPage = () => {
 
   const goBackHandleClick = () => {
     navigate(
-      '/dashboard/user/company/' + params.applicationId + '/' + params.userCode
+      ROUTE_PATH.userCompanyDetail(params.applicationId, params.userCode)
     );
   };
 

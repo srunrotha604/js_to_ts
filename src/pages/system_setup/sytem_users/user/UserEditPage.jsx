@@ -3,6 +3,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { fetchData } from '../../../../services/$service';
 import Select from 'react-select';
+import { ROUTE_PATH } from '../../../../utils/route-util';
 
 const UserEditPage = () => {
   document.title = 'E-CHANNEL PORTAL | user - create';
@@ -39,7 +40,7 @@ const UserEditPage = () => {
           toast.error(res?.data);
           break;
         default:
-          navigate('/error404');
+          navigate(ROUTE_PATH.error404);
       }
     });
     fetchData('/e-chanel-user/access', {}, 'GET').then((res) => {
@@ -55,7 +56,7 @@ const UserEditPage = () => {
           toast.error(res?.data);
           break;
         default:
-          navigate('/error404');
+          navigate(ROUTE_PATH.error404);
       }
     });
   };
@@ -83,7 +84,7 @@ const UserEditPage = () => {
           switch (res.status) {
             case 200:
               toast.success(res.data.message);
-              navigate('/dashboard/user');
+              navigate(ROUTE_PATH.user);
               break;
             case 400:
               toast.error(res?.data?.message);
@@ -92,7 +93,7 @@ const UserEditPage = () => {
               toast.error(res?.data);
               break;
             default:
-              navigate('/error404');
+              navigate(ROUTE_PATH.error404);
           }
         });
       }
@@ -115,7 +116,7 @@ const UserEditPage = () => {
   };
 
   const goBackHandleClick = () => {
-    navigate('/dashboard/user');
+    navigate(ROUTE_PATH.user);
   };
 
   const roleHandleChange = (e) => {

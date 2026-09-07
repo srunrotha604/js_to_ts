@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { redirect, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { fetchData } from '../../services/$service';
+import { ROUTE_PATH } from '../../utils/route-util';
 
 const BatchGroupCreatePage = () => {
   document.title = 'E-CHANNEL PORTAL | batch data - create';
@@ -34,7 +35,7 @@ const BatchGroupCreatePage = () => {
           toast.error(res?.data);
           break;
         default:
-          redirect('/error404');
+          redirect(ROUTE_PATH.error404);
       }
     });
   };
@@ -62,7 +63,7 @@ const BatchGroupCreatePage = () => {
           switch (res.status) {
             case 200:
               toast.success(res.data.message);
-              navigate('/dashboard/user');
+              navigate(ROUTE_PATH.user);
               break;
             case 400:
               toast.error(res?.data?.message);
@@ -71,7 +72,7 @@ const BatchGroupCreatePage = () => {
               toast.error(res?.data);
               break;
             default:
-              redirect('/error404');
+              redirect(ROUTE_PATH.error404);
           }
         });
       }
@@ -81,7 +82,7 @@ const BatchGroupCreatePage = () => {
 
   useEffect(() => {
     if (!module) {
-      navigate('/error404');
+      navigate(ROUTE_PATH.error404);
     } else if (module && module[4]?.status === 'A') {
       getList();
     }
@@ -98,7 +99,7 @@ const BatchGroupCreatePage = () => {
   };
 
   const goBackHandleClick = () => {
-    navigate('/dashboard/user');
+    navigate(ROUTE_PATH.user);
   };
   return (
     <React.Fragment>

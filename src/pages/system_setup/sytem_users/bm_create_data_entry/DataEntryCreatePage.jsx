@@ -4,6 +4,7 @@ import { toast } from "react-toastify";
 import { fetchData } from "../../../../services/$service";
 import Select from "react-select";
 import { PatternFormat } from "react-number-format";
+import { ROUTE_PATH } from "../../../../utils/route-util";
 
 const DataEntryCreatePage = () => {
   document.title = "E-CHANNEL PORTAL | user - create";
@@ -29,7 +30,7 @@ const DataEntryCreatePage = () => {
           toast.error(res?.data);
           break;
         default:
-          navigate("/error404");
+          navigate(ROUTE_PATH.error404);
       }
     });
   };
@@ -61,7 +62,7 @@ const DataEntryCreatePage = () => {
           switch (res.status) {
             case 200:
               toast.success(res.data.message);
-              navigate("/dashboard/data-entry");
+              navigate(ROUTE_PATH.dataEntry);
               break;
             case 400:
               toast.error(res?.data?.message);
@@ -70,7 +71,7 @@ const DataEntryCreatePage = () => {
               toast.error(res?.data);
               break;
             default:
-              navigate("/error404");
+              navigate(ROUTE_PATH.error404);
           }
         });
       }
@@ -93,7 +94,7 @@ const DataEntryCreatePage = () => {
   };
 
   const goBackHandleClick = () => {
-    navigate("/dashboard/data-entry");
+    navigate(ROUTE_PATH.dataEntry);
   };
 
   const roleHandleChange = (e) => {

@@ -4,6 +4,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import createAuthRefreshInterceptor from 'axios-auth-refresh';
 import { refreshToken } from '../services/$service';
+import { ROUTE_PATH } from '../utils/route-util';
 
 const AxiosInterceptor = ({ children }) => {
   const navigate = useNavigate();
@@ -39,7 +40,7 @@ const AxiosInterceptor = ({ children }) => {
           if (expiryDate <= now) {
             toast.error('Your session has expired. Please log in again.');
             localStorage.removeItem('e_chanel_storage');
-            navigate('/dashboard/logout', {
+            navigate(ROUTE_PATH.logout, {
               replace: true,
               state: { from: location }
             });
@@ -49,7 +50,7 @@ const AxiosInterceptor = ({ children }) => {
         console.error('Token parsing/decoding failed:', err);
         toast.error('Authentication error. Please log in again.');
         localStorage.removeItem('e_chanel_storage');
-        navigate('/dashboard/logout', {
+        navigate(ROUTE_PATH.logout, {
           replace: true,
           state: { from: location }
         });
@@ -67,7 +68,7 @@ const AxiosInterceptor = ({ children }) => {
       } catch (error) {
         localStorage.removeItem('e_chanel_storage');
         toast.error('Your session has expired. Please log in again.');
-        navigate('/dashboard/logout', {
+        navigate(ROUTE_PATH.logout, {
           replace: true,
           state: { from: location }
         });

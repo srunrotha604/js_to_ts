@@ -6,6 +6,7 @@ import Select from 'react-select';
 import Modal, { useModal } from '../../components/common/modal';
 import { useAuth } from '../../context/AuthContext';
 import { useModulePermission } from '../../context/module/ModuleContext';
+import { ROUTE_PATH } from '../../utils/route-util';
 
 const SideBarPage = () => {
   const {
@@ -91,7 +92,7 @@ const SideBarPage = () => {
         <div className="navbar-nav">
           {hasMainMenuPermission('mn9') && (
             <CustomNavItemLink
-              to="/dashboard"
+              to={ROUTE_PATH.dashboard}
               end
               label="Home"
               icon={
@@ -130,7 +131,7 @@ const SideBarPage = () => {
                 }
               >
                 <Link
-                  to="/dashboard/"
+                  to={ROUTE_PATH.dashboard}
                   className="nav-link dropdown-toggle"
                   data-bs-toggle="dropdown"
                   aria-label="Open user menu"
@@ -178,7 +179,7 @@ const SideBarPage = () => {
                                 ? 'dropdown-item active'
                                 : 'dropdown-item'
                             }
-                            to={`/dashboard/${menu.path}`}
+                            to={`${ROUTE_PATH.dashboard}/${menu.path}`}
                           >
                             {menu.label}
                           </Link>
@@ -250,7 +251,7 @@ const SideBarPage = () => {
                                 ? 'dropdown-item active'
                                 : 'dropdown-item'
                             }
-                            to={`/dashboard/${menu.path}`}
+                            to={`${ROUTE_PATH.dashboard}/${menu.path}`}
                           >
                             {menu.label}
                           </Link>
@@ -271,7 +272,7 @@ const SideBarPage = () => {
                 }
               >
                 <Link
-                  to="/dashboard/"
+                  to={ROUTE_PATH.dashboard}
                   className="nav-link dropdown-toggle"
                   data-bs-toggle="dropdown"
                   aria-label="Open user menu"
@@ -324,7 +325,7 @@ const SideBarPage = () => {
                                 ? 'dropdown-item active'
                                 : 'dropdown-item'
                             }
-                            to={`/dashboard/${menu.path}`}
+                            to={`${ROUTE_PATH.dashboard}/${menu.path}`}
                           >
                             {menu.label}
                           </Link>

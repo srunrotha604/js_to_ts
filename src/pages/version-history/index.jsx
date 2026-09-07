@@ -6,6 +6,7 @@ import VersionHistoryForm from '../../components/version-history/VersionHistoryF
 import VersionHistoryEdit from '../../components/version-history/VersionHistoryEdit';
 import { useModal } from '../../components/common/modal';
 import { getVersionList } from '../../pages/version-history/versionexport';
+import { ROUTE_PATH } from '../../utils/route-util';
 
 const VersionHistoryPage = () => {
   const [editItem, setEditItem] = useState(null);
@@ -38,7 +39,7 @@ const VersionHistoryPage = () => {
       } else if (error.response?.status === 403) {
         toast.error(error.response.data || 'Forbidden');
       } else if (error.response?.status === 404) {
-        navigate('/404');
+        navigate(ROUTE_PATH.notFound);
       } else {
         toast.error('Failed to load configuration.');
       }

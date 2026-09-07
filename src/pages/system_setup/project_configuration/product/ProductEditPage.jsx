@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { redirect, useNavigate, useParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { fetchData } from '../../../../services/$service';
+import { ROUTE_PATH } from '../../../../utils/route-util';
 
 const ProductEditPage = () => {
   document.title = 'E-chanel | product | edit';
@@ -21,7 +22,7 @@ const ProductEditPage = () => {
       } else if (res.status === 403) {
         toast.error(res?.data);
       } else {
-        navigate('/error404');
+        navigate(ROUTE_PATH.error404);
       }
     });
   };
@@ -44,7 +45,7 @@ const ProductEditPage = () => {
         switch (res.status) {
           case 200:
             toast.success(res.data.message);
-            navigate('/dashboard/product');
+            navigate(ROUTE_PATH.product);
             break;
           case 400:
             toast.error(res?.data?.message);
@@ -53,7 +54,7 @@ const ProductEditPage = () => {
             toast.error(res?.data);
             break;
           default:
-            redirect('/error404');
+            redirect(ROUTE_PATH.error404);
         }
       });
     }
@@ -67,7 +68,7 @@ const ProductEditPage = () => {
     setProductName(event.target.value);
   };
   const goBackHandleClick = () => {
-    navigate('/dashboard/product');
+    navigate(ROUTE_PATH.product);
   };
 
   useEffect(() => {

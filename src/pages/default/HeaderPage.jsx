@@ -3,6 +3,7 @@ import { useAuth } from '../../context/AuthContext';
 import userIcon from '../../assets/default-user.png';
 import companyLogoFull from '../../assets/logo-full.jpg';
 import companyLogo from '../../assets/DaraInsurancePlc.png';
+import { ROUTE_PATH } from '../../utils/route-util';
 
 const HeaderPage = () => {
   const { user, clearUser, mode } = useAuth();
@@ -11,7 +12,7 @@ const HeaderPage = () => {
     clearUser();
   };
   const location = useLocation();
-  const isAuthenticatePage = !location.pathname.includes('/dashboard');
+  const isAuthenticatePage = !location.pathname.includes(ROUTE_PATH.dashboard);
   return (
     <header className="sticky-top navbar-expand-lg  d-print-none">
       <div className="navbar navbar-light">
@@ -28,7 +29,7 @@ const HeaderPage = () => {
             <span className="navbar-toggler-icon"></span>
           </button>
           <div className="navbar-brand navbar-brand-autodark d-none-navbar-horizontal pe-0 p-0 pe-md-3">
-            <Link to="/dashboard/">
+            <Link to={ROUTE_PATH.dashboard}>
               {isAuthenticatePage ? (
                 <img
                   src={companyLogoFull}
@@ -176,7 +177,7 @@ const HeaderPage = () => {
                 >
                   {user ? (
                     <>
-                      <Link to="/dashboard/profile" className="dropdown-item">
+                      <Link to={ROUTE_PATH.profile} className="dropdown-item">
                         Profile
                       </Link>
                       <div className="dropdown-divider" />
@@ -184,14 +185,14 @@ const HeaderPage = () => {
                     Switch branch
                   </Link> */}
                       <Link
-                        to="/dashboard/contact-us"
+                        to={ROUTE_PATH.contactUs}
                         className="dropdown-item"
                         target={'_blank'}
                       >
                         Contact Us
                       </Link>
                       <Link
-                        to="/dashboard/change-password"
+                        to={ROUTE_PATH.changePassword}
                         className="dropdown-item"
                       >
                         Change password
@@ -205,7 +206,7 @@ const HeaderPage = () => {
                     </>
                   ) : (
                     <>
-                      <Link to="/login" className="dropdown-item">
+                      <Link to={ROUTE_PATH.login} className="dropdown-item">
                         Login
                       </Link>
                     </>

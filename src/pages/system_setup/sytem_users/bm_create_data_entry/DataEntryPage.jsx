@@ -9,6 +9,7 @@ import TableCellStatus from "../../../../components/form/TableCellStatus";
 import TableCellAction from "../../../../components/form/TableCellAction";
 import TableCellDelete from "../../../../components/form/TableCellDelete";
 import AddPhoneNumber from "./components/AddPhoneNumber.jsx";
+import { ROUTE_PATH } from "../../../../utils/route-util";
 
 const DataEntryPage = () => {
   document.title = "E-CHANNEL PORTAL | Data Entry";
@@ -36,7 +37,7 @@ const DataEntryPage = () => {
           toast.error(res?.data);
           break;
         default:
-          navigate("/error404");
+          navigate(ROUTE_PATH.error404);
       }
     });
   };
@@ -59,7 +60,7 @@ const DataEntryPage = () => {
           toast.error(res?.data);
           break;
         default:
-          navigate("/error404");
+          navigate(ROUTE_PATH.error404);
       }
     });
   };
@@ -82,7 +83,7 @@ const DataEntryPage = () => {
           toast.error(res?.data);
           break;
         default:
-          navigate("/error404");
+          navigate(ROUTE_PATH.error404);
       }
     });
   };
@@ -92,10 +93,10 @@ const DataEntryPage = () => {
   }, []);
 
   const createNewHandleClick = () => {
-    navigate("/dashboard/data-entry/create");
+    navigate(ROUTE_PATH.dataEntryCreate);
   };
   const importHandleClick = () => {
-    navigate("/dashboard/data-entry/import");
+    navigate(ROUTE_PATH.dataEntryImport);
   };
   const PER_PAGE = 10;
   const [currentPage, setCurrentPage] = useState(0);

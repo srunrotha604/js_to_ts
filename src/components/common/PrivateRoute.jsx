@@ -1,5 +1,6 @@
 import { Navigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
+import { ROUTE_PATH } from '../../utils/route-util';
 
 //  auth = true : if want redirect when user is login
 //  auth = false : if want redirect when use is not login
@@ -25,7 +26,7 @@ const PrivateRoute = ({ children, auth = false, redirect }) => {
         <Navigate
           to={redirect}
           state={{
-            from: location.pathname !== '/dashboard/logout' ? location : null,
+            from: location.pathname !== ROUTE_PATH.logout ? location : null,
           }}
         />
       </div>

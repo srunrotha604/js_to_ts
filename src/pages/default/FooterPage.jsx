@@ -4,13 +4,14 @@ import { NavLink, useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { fetchDataAsync } from '../../services/$service';
 import { getCurrentVersion } from '../../pages/version-history/versionexport';
+import { ROUTE_PATH } from '../../utils/route-util';
 
 const FooterPage = () => {
   const navigate = useNavigate();
   const [version, setVersion] = useState('');
   const { user } = useAuth();
   const VersionButton = () => {
-    navigate('/dashboard/version');
+    navigate(ROUTE_PATH.version);
   }
 
   const loadVersion = async () => {

@@ -14,6 +14,7 @@ import { MdDownload } from "react-icons/md";
 import { useModal } from "../common/modal/index.jsx";
 import ActionConfirmationModal from "../common/ActionConfirmationModal.jsx";
 import { useWatch } from "react-hook-form";
+import { ROUTE_PATH } from "../../utils/route-util";
 
 const downloadUrl =
   import.meta.env.VITE_API_URL + "/operation-customer/batch/download";
@@ -120,7 +121,7 @@ const ComponentExcelUpload = (props) => {
             break;
           default:
             stopLoading();
-            redirect("/error404");
+            redirect(ROUTE_PATH.error404);
         }
       },
     );

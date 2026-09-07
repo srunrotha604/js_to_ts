@@ -6,6 +6,7 @@ import Loading from '../../../../components/Loading';
 import { fetchData } from '../../../../services/$service';
 import Select from 'react-select';
 import Modal, { useModal } from '../../../../components/common/modal';
+import { ROUTE_PATH } from '../../../../utils/route-util';
 
 const RoleAccessPage = () => {
   document.title = 'E-CHANNEL PORTAL | Role access';
@@ -49,7 +50,7 @@ const RoleAccessPage = () => {
           toast.error(res?.data);
           break;
         default:
-          navigate('/error404');
+          navigate(ROUTE_PATH.error404);
       }
     });
     e.preventDefault();

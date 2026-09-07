@@ -1,5 +1,4 @@
 import React from 'react';
-import { BrowserRouter } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
 // import './App.css';
 
@@ -11,6 +10,7 @@ import AxiosInterceptor from './components/AxiosInterceptor.jsx';
 // Version History
 
 // Report
+import { BrowserRouter as Router } from 'react-router-dom';
 import AuthContextProvider from './context/AuthContext.jsx';
 import AllRoutes from './router/index.tsx';
 
@@ -29,7 +29,8 @@ function App() {
           theme: 'colored',
         }}
       />
-      <BrowserRouter basename={import.meta.env.BASE_URL}>
+      <Router basename={import.meta.env.BASE_URL}>
+        {/* <BrowserRouter basename={import.meta.env.BASE_URL}> */}
         <AxiosInterceptor>
           <AuthContextProvider>
             {/* <HeaderPage />
@@ -220,7 +221,8 @@ function App() {
             <AllRoutes />
           </AuthContextProvider>
         </AxiosInterceptor>
-      </BrowserRouter>
+        {/* </BrowserRouter> */}
+      </Router>
     </React.Fragment>
   );
 }

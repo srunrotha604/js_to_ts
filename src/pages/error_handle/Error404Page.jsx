@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom';
+import { ROUTE_PATH } from '../../utils/route-util';
 function Error404Page() {
   document.title = 'Error 404';
   return (
@@ -10,7 +11,7 @@ function Error404Page() {
           We are sorry but the page you are looking for was not found
         </p>
         <div className="empty-action">
-          <Link to="/dashboard/" className="btn btn-primary">
+          <Link to={ROUTE_PATH.dashboard} className="btn btn-primary">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               className="icon"

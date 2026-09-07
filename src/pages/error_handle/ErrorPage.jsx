@@ -3,6 +3,7 @@ import { HiOutlineFaceFrown } from 'react-icons/hi2';
 import { useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext.jsx';
 import { fetchDataAsync } from '../../services/$service.jsx';
+import { ROUTE_PATH } from '../../utils/route-util';
 
 const ErrorPage = ({ error }) => {
   document.title = 'Something wen wrong';
@@ -56,7 +57,7 @@ const ErrorPage = ({ error }) => {
           You may need to refresh the page or try again later
         </p>
         <div className="empty-action btn-list">
-          <Link to="/dashboard/" className="btn btn-primary">
+          <Link to={ROUTE_PATH.dashboard} className="btn btn-primary">
             Take me home
           </Link>
           <button onClick={handleRefresh} className="btn btn-secondary">

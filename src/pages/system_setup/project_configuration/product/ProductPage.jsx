@@ -6,6 +6,7 @@ import { toast } from 'react-toastify';
 import { fetchData } from '../../../../services/$service';
 import ActionConfirmationModal from '../../../../components/common/ActionConfirmationModal.jsx';
 import { useModal } from '../../../../components/common/modal/index.jsx';
+import { ROUTE_PATH } from '../../../../utils/route-util';
 
 const ProductPage = () => {
   document.title = 'E-CHANNEL PORTAL | product';
@@ -32,7 +33,7 @@ const ProductPage = () => {
           toast.error(res?.data);
           break;
         default:
-          navigate('/error404');
+          navigate(ROUTE_PATH.error404);
       }
     });
   };
@@ -43,7 +44,7 @@ const ProductPage = () => {
         setArrDetails(item);
         break;
       default:
-        navigate('/error404');
+        navigate(ROUTE_PATH.error404);
     }
   };
 
@@ -65,7 +66,7 @@ const ProductPage = () => {
           toast.error(res?.data);
           break;
         default:
-          redirect('/error404');
+          redirect(ROUTE_PATH.error404);
       }
     });
   };
@@ -75,7 +76,7 @@ const ProductPage = () => {
   }, []);
 
   const createNewHandleClick = () => {
-    navigate('/dashboard/product/create');
+    navigate(ROUTE_PATH.productCreate);
   };
 
   let nf = new Intl.NumberFormat();
@@ -299,10 +300,9 @@ const ProductPage = () => {
                                 </svg>
                               </a>
                               <Link
-                                to={
-                                  '/dashboard/product/edit/' +
-                                  item.transactionCode
-                                }
+                                to={ROUTE_PATH.productEdit(
+                                  item.transactionCode,
+                                )}
                               >
                                 <svg
                                   xmlns="http://www.w3.org/2000/svg"

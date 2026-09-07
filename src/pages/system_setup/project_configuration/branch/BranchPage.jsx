@@ -6,6 +6,7 @@ import Loading from "../../../../components/Loading";
 import { fetchData } from "../../../../services/$service";
 import Select from "react-select";
 import Modal, { useModal } from "../../../../components/common/modal";
+import { ROUTE_PATH } from "../../../../utils/route-util";
 
 const BranchPage = () => {
   document.title = "E-CHANNEL PORTAL | Branch";
@@ -35,7 +36,7 @@ const BranchPage = () => {
           toast.error(res?.data);
           break;
         default:
-          redirect("/404");
+          redirect(ROUTE_PATH.notFound);
       }
     });
   };
@@ -45,7 +46,7 @@ const BranchPage = () => {
   }, []);
 
   const createNewHandleClick = () => {
-    navigate("/dashboard/branch/create");
+    navigate(ROUTE_PATH.branchCreate);
   };
 
   const funcButtonHandleClickExecute = (e) => {
@@ -67,7 +68,7 @@ const BranchPage = () => {
           toast.error(res?.data);
           break;
         default:
-          redirect("/error404");
+          redirect(ROUTE_PATH.error404);
       }
     });
     e.preventDefault();
@@ -311,10 +312,9 @@ const BranchPage = () => {
                             </td>
                             <td className="text-underline">
                               <Link
-                                to={
-                                  "/dashboard/branch/project/" +
-                                  item.transactionCode
-                                }
+                                to={ROUTE_PATH.branchProject(
+                                  item.transactionCode,
+                                )}
                               >
                                 project
                               </Link>
@@ -326,10 +326,9 @@ const BranchPage = () => {
                             )}
                             <td>
                               <Link
-                                to={
-                                  "/dashboard/project/edit/" +
-                                  item.transactionCode
-                                }
+                                to={ROUTE_PATH.projectEdit(
+                                  item.transactionCode,
+                                )}
                               >
                                 <svg
                                   xmlns="http://www.w3.org/2000/svg"

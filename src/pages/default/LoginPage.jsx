@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useLocation, useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { fetchData } from '../../services/$service';
+import { ROUTE_PATH } from '../../utils/route-util';
 
 const LoginPage = () => {
   document.title = 'E-CHANNEL PORTAL | Login';
@@ -43,7 +44,7 @@ const LoginPage = () => {
             if (location?.state?.from?.pathname) {
               navigate(location?.state?.from?.pathname);
             } else {
-              navigate('/dashboard/');
+              navigate(ROUTE_PATH.dashboard);
             }
             break;
           }
@@ -111,7 +112,7 @@ const LoginPage = () => {
               <label className="form-label required">
                 Password
                 <span className="form-label-description">
-                  <Link to="/forgot-password" tabIndex={-1}>
+                  <Link to={ROUTE_PATH.forgotPassword} tabIndex={-1}>
                     I forgot password
                   </Link>
                 </span>

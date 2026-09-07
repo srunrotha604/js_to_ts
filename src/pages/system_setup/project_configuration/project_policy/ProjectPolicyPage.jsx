@@ -4,6 +4,7 @@ import ReactPaginate from 'react-paginate';
 import { toast } from 'react-toastify';
 import Loading from '../../../../components/Loading';
 import { fetchData } from '../../../../services/$service';
+import { ROUTE_PATH } from '../../../../utils/route-util';
 
 const ProjectPolicyPage = () => {
   document.title = 'E-CHANNEL PORTAL | project';
@@ -31,7 +32,7 @@ const ProjectPolicyPage = () => {
             toast.error(res?.data);
             break;
           default:
-            navigate('/error404');
+            navigate(ROUTE_PATH.error404);
         }
       }
     );
@@ -54,7 +55,7 @@ const ProjectPolicyPage = () => {
           toast.error(res?.data);
           break;
         default:
-          navigate('/error404');
+          navigate(ROUTE_PATH.error404);
       }
     });
   };
@@ -65,7 +66,7 @@ const ProjectPolicyPage = () => {
         setTransationCode(item.transactionCode);
         break;
       default:
-        navigate('/error404');
+        navigate(ROUTE_PATH.error404);
     }
   };
 
@@ -74,11 +75,11 @@ const ProjectPolicyPage = () => {
   }, []);
 
   const createNewHandleClick = () => {
-    navigate('/dashboard/project/policy/create/' + params.key);
+    navigate(ROUTE_PATH.projectPolicyCreate(params.key));
   };
 
   const goBackHandleClick = () => {
-    navigate('/dashboard/project');
+    navigate(ROUTE_PATH.project);
   };
 
   let nf = new Intl.NumberFormat();

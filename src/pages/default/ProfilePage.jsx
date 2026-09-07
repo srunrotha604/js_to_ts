@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { redirect, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { fetchData, fileUpload } from '../../services/$service';
+import { ROUTE_PATH } from '../../utils/route-util';
 
 const ProfilePage = () => {
   const navigate = useNavigate();
@@ -110,7 +111,7 @@ const ProfilePage = () => {
   };
 
   const goBackHandleClick = () => {
-    navigate('/dashboard/');
+    navigate(ROUTE_PATH.dashboard);
   };
 
   const handleFileSelect = (event) => {

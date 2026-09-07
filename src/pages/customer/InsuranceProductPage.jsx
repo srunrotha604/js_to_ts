@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { redirect, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { fetchData } from '../../services/$service';
+import { ROUTE_PATH } from '../../utils/route-util';
 
 const InsuranceProductPage = () => {
   document.title = 'E-CHANNEL PORTAL | insurance product';
@@ -36,7 +37,7 @@ const InsuranceProductPage = () => {
   }, []);
 
   const productHandleClick = (productCode) => {
-    navigate('/dashboard/customer/create/' + productCode);
+    navigate(ROUTE_PATH.customerCreateWithProduct(productCode));
   };
   return (
     <div className="page-wrapper full-height-dashboard-container justify-content-center">

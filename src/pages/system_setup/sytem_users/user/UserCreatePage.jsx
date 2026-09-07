@@ -5,6 +5,7 @@ import { fetchData } from "../../../../services/$service";
 import Select from "react-select";
 import { useAuth } from "../../../../context/AuthContext.jsx";
 import { PatternFormat } from "react-number-format";
+import { ROUTE_PATH } from "../../../../utils/route-util";
 
 const UserCreatePage = () => {
   document.title = "E-CHANNEL PORTAL | user - create";
@@ -62,7 +63,7 @@ const UserCreatePage = () => {
           switch (res.status) {
             case 200:
               toast.success(res.data.message);
-              navigate("/dashboard/user");
+              navigate(ROUTE_PATH.user);
               break;
             case 400:
               toast.error(res?.data?.message);
@@ -71,7 +72,7 @@ const UserCreatePage = () => {
               toast.error(res?.data);
               break;
             default:
-              navigate("/error404");
+              navigate(ROUTE_PATH.error404);
           }
         });
       }
@@ -102,7 +103,7 @@ const UserCreatePage = () => {
   };
 
   const goBackHandleClick = () => {
-    navigate("/dashboard/user");
+    navigate(ROUTE_PATH.user);
   };
 
   const branchHandleChange = (e) => {
@@ -124,7 +125,7 @@ const UserCreatePage = () => {
           toast.error(res?.data);
           break;
         default:
-          navigate("/error404");
+          navigate(ROUTE_PATH.error404);
       }
     });
   };

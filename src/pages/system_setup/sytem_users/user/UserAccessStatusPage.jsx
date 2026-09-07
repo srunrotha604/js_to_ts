@@ -3,6 +3,7 @@ import { redirect, useNavigate, useParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import Select from 'react-select';
 import { fetchData } from '../../../../services/$service';
+import { ROUTE_PATH } from '../../../../utils/route-util';
 
 const UserAccessStatusPage = () => {
   document.title = 'E-CHANNEL PORTAL | user access status';
@@ -35,7 +36,7 @@ const UserAccessStatusPage = () => {
             toast.error(res?.data);
             break;
           default:
-            redirect('/error404');
+            redirect(ROUTE_PATH.error404);
         }
       }
     );
@@ -66,7 +67,7 @@ const UserAccessStatusPage = () => {
             toast.error(res?.data);
             break;
           default:
-            redirect('/error404');
+            redirect(ROUTE_PATH.error404);
         }
       });
     }
@@ -78,7 +79,7 @@ const UserAccessStatusPage = () => {
   }, []);
 
   const goBackHandleClick = () => {
-    navigate('/dashboard/user');
+    navigate(ROUTE_PATH.user);
   };
 
   const accessHandleChange = (e) => {

@@ -11,6 +11,7 @@ import Spinner, { useSpinner } from "../common/Spinner.jsx";
 import useMessage from "../../hooks/useMessage.jsx";
 import { useNavigate } from "react-router-dom";
 import { STATUS } from "../../utils/status.js";
+import { ROUTE_PATH } from "../../utils/route-util";
 
 const TAB = {
   New: "New",
@@ -48,7 +49,7 @@ const ComponentReview = (props) => {
       } else {
         toast.success("Batch Customer saved successfully");
       }
-      navigate("/dashboard");
+      navigate(ROUTE_PATH.dashboard);
       closeModal();
     } catch (error) {
       showErrorResponseMessage(error);

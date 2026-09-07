@@ -6,6 +6,7 @@ import { FormProvider, useForm } from 'react-hook-form';
 import CustomerCreate from '../../components/customer/create/CustomerCreate';
 import CustomerCreateReview from '../../components/customer/create/CustomerCreateReview';
 import CostomerTransationSubmit from '../../components/customer/create/CustomerTransationSubmit';
+import { ROUTE_PATH } from '../../utils/route-util';
 
 const STEP = {
   Create: 'create',
@@ -43,7 +44,7 @@ const CustomerCreatePage = () => {
             toast.error(res?.data);
             break;
           default:
-            navigate('/404');
+            navigate(ROUTE_PATH.notFound);
         }
       }
     );
@@ -90,7 +91,7 @@ const CustomerCreatePage = () => {
   const handleSubmitted = (responseData, submitData) => {
     if (submitData?.status === 'Draft') {
       toast.success('Save draft successfully');
-      navigate('/dashboard/');
+      navigate(ROUTE_PATH.dashboard);
     } else {
       setTransationSubmitted(responseData);
       setStep(STEP.Submitted);

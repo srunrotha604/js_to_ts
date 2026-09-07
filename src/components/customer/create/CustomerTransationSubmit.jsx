@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../../context/AuthContext";
 import TransactionDetail from "../../transaction/TransactionDetail";
 import { STATUS } from "../../../utils/status.js";
+import { ROUTE_PATH } from "../../../utils/route-util";
 
 const CostomerTransationSubmit = (props) => {
   const { data, productName } = props;
@@ -46,7 +47,7 @@ const CostomerTransationSubmit = (props) => {
                       className="btn btn-secondary"
                       type="button"
                       onClick={() => {
-                        navigate("/dashboard/");
+                        navigate(ROUTE_PATH.dashboard);
                       }}
                     >
                       Go to Home
@@ -55,7 +56,7 @@ const CostomerTransationSubmit = (props) => {
                       className="btn btn-primary"
                       type="button"
                       onClick={() => {
-                        navigate("/dashboard/customer/create");
+                        navigate(ROUTE_PATH.customerCreate);
                       }}
                     >
                       Add New

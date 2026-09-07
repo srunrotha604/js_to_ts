@@ -4,6 +4,7 @@ import { PatternFormat } from "react-number-format";
 import { fetchData } from "../../services/$service";
 import { toast } from "react-toastify";
 import { AiOutlineCheckCircle } from "react-icons/ai";
+import { ROUTE_PATH } from "../../utils/route-util";
 
 const ForgotPasswordPage = () => {
   document.title = "E-CHANNEL PORTAL | Login";
@@ -238,7 +239,7 @@ const ForgotPasswordPage = () => {
                     Your password has been reset successfully
                   </p>
                   <div className="mt-3">
-                    <Link to="/login" className="btn btn-primary">
+                    <Link to={ROUTE_PATH.login} className="btn btn-primary">
                       Back to login
                     </Link>
                   </div>
@@ -450,7 +451,7 @@ const ForgotPasswordPage = () => {
                             </svg>
                             Reset password
                           </button>
-                          <Link className="btn w-100 mt-2" to="/login">
+                          <Link className="btn w-100 mt-2" to={ROUTE_PATH.login}>
                             Back to login
                           </Link>
                         </div>

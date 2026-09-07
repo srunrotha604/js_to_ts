@@ -3,6 +3,7 @@ import { redirect, useNavigate, useParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import Select from 'react-select';
 import { fetchData } from '../../../../services/$service';
+import { ROUTE_PATH } from '../../../../utils/route-util';
 
 const BranchProjectEditPage = () => {
   document.title = 'E-CHANNEL PORTAL | project | edit';
@@ -39,7 +40,7 @@ const BranchProjectEditPage = () => {
             toast.error(res?.data);
             break;
           default:
-            redirect('/404');
+            redirect(ROUTE_PATH.notFound);
         }
       }
     );
@@ -61,7 +62,7 @@ const BranchProjectEditPage = () => {
       fetchData('/opertion-branch/project', data, 'PUT').then((res) => {
         switch (res.status) {
           case 200:
-            navigate('/dashboard/branch/project/' + branch);
+            navigate(ROUTE_PATH.branchProject(branch));
             break;
           case 400:
             toast.error(res?.data?.message);
@@ -70,7 +71,7 @@ const BranchProjectEditPage = () => {
             toast.error(res?.data);
             break;
           default:
-            navigate('/404');
+            navigate(ROUTE_PATH.notFound);
         }
       });
     }
@@ -92,7 +93,7 @@ const BranchProjectEditPage = () => {
   };
 
   const goBackHandleClick = () => {
-    navigate('/dashboard/branch/project/' + branch);
+    navigate(ROUTE_PATH.branchProject(branch));
   };
 
   return (

@@ -22,6 +22,7 @@ import TransactionNumberTableItem from '../../components/transaction/Transaction
 import Spinner, { useSpinner } from '../../components/common/Spinner.jsx';
 import useMessage from '../../hooks/useMessage.jsx';
 import { delay } from '../../utils/delay.js';
+import { ROUTE_PATH } from '../../utils/route-util';
 
 const CustomerDeletePage = () => {
   const location = useLocation();
@@ -82,7 +83,7 @@ const CustomerDeletePage = () => {
   };
 
   const goBack = () => {
-    navigate('/dashboard');
+    navigate(ROUTE_PATH.dashboard);
   };
 
   const handleProcess = async (rejectRemark) => {

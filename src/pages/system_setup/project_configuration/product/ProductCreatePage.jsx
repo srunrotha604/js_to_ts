@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { fetchData } from '../../../../services/$service';
 import Select from 'react-select';
+import { ROUTE_PATH } from '../../../../utils/route-util';
 
 const ProductCreatePage = () => {
   document.title = 'E-CHANNEL PORTAL | product | create';
@@ -25,7 +26,7 @@ const ProductCreatePage = () => {
           toast.error(res?.data);
           break;
         default:
-          navigate('/error404');
+          navigate(ROUTE_PATH.error404);
       }
     });
   };
@@ -51,7 +52,7 @@ const ProductCreatePage = () => {
         switch (res.status) {
           case 200:
             toast.success(res.data.message);
-            navigate('/dashboard/product');
+            navigate(ROUTE_PATH.product);
             break;
           case 400:
             toast.error(res?.data?.message);
@@ -60,7 +61,7 @@ const ProductCreatePage = () => {
             toast.error(res?.data);
             break;
           default:
-            navigate('/error404');
+            navigate(ROUTE_PATH.error404);
         }
       });
     }
@@ -78,7 +79,7 @@ const ProductCreatePage = () => {
     setProductName(event.target.value);
   };
   const goBackHandleClick = () => {
-    navigate('/dashboard/product');
+    navigate(ROUTE_PATH.product);
   };
 
   useEffect(() => {

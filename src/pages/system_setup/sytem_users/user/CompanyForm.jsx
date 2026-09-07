@@ -8,6 +8,7 @@ import ListDetailsIcon from '../../../../components/Icons/ListDetailsIcon';
 import { fetchDataAsync } from '../../../../services/$service';
 import WrapperComponent from '../../../../components/WrapperComponent';
 import PageBodyComponent from '../../../../components/pages/PageBodyComponent';
+import { ROUTE_PATH } from '../../../../utils/route-util';
 
 const CompanyForm = () => {
   const navigate = useNavigate();
@@ -42,7 +43,7 @@ const CompanyForm = () => {
         <HeaderTableComponent
           title="Access company"
           refreshOnClick={() => fetchRows()}
-          back={() => navigate(`/dashboard/user`)}
+          back={() => navigate(ROUTE_PATH.user)}
           refresh
         />
         <PageBodyComponent>
@@ -102,7 +103,7 @@ const CompanyForm = () => {
                               stroke="#00abfb"
                               onClick={() => {
                                 navigate(
-                                  `/dashboard/user/company/branch?uuid=${params.get(
+                                  `${ROUTE_PATH.userCompanyBranch}?uuid=${params.get(
                                     'uuid'
                                   )}&appMember=${params.get(
                                     'appMember'

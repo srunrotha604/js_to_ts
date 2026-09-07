@@ -11,6 +11,7 @@ import TableBreakBar from "../../../../components/table/table_action/TableBreakB
 import TableCellTextDeleteConfirm from "../../../../components/table/table_action/TableCellTextDeleteConfirm.jsx";
 import TableCellStatusCodeHandle from "../../../../components/form/TableCellStatusCodeHandle.jsx";
 import AddPhoneNumber from "./components/AddPhoneNumber.jsx";
+import { ROUTE_PATH } from "../../../../utils/route-util";
 
 const UserPage = () => {
   document.title = "E-CHANNEL PORTAL | user";
@@ -63,7 +64,7 @@ const UserPage = () => {
   }, []);
 
   const createNewHandleClick = () => {
-    navigate("/dashboard/user/create");
+    navigate(ROUTE_PATH.userCreate);
   };
 
   const PER_PAGE = 10;
@@ -293,17 +294,12 @@ const UserPage = () => {
                             <TableCellStatusCodeHandle status={item?.status} />
                             <TableCellAction>
                               <Link
-                                to={`/dashboard/user/company?uuid=${item?.transactionCode}&appMember=${item?.applicationCode}`}
+                                to={`${ROUTE_PATH.userCompany}?uuid=${item?.transactionCode}&appMember=${item?.applicationCode}`}
                               >
                                 Company
                               </Link>
                               <TableBreakBar />
-                              <Link
-                                to={
-                                  "/dashboard/user/edit/" +
-                                  item?.transactionCode
-                                }
-                              >
+                              <Link to={ROUTE_PATH.userEdit(item?.transactionCode)}>
                                 Edit
                               </Link>
                               {item?.deleted ? (

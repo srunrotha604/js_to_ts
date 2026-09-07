@@ -4,6 +4,7 @@ import { toast } from 'react-toastify';
 import Loading from '../../../../components/Loading';
 
 import { fetchData } from '../../../../services/$service';
+import { ROUTE_PATH } from '../../../../utils/route-util';
 
 const UserRolePage = () => {
   document.title = 'E-CHANNEL PORTAL | user';
@@ -32,7 +33,7 @@ const UserRolePage = () => {
           toast.error(res?.data);
           break;
         default:
-          navigate('/error404');
+          navigate(ROUTE_PATH.error404);
       }
     });
   };
@@ -55,7 +56,7 @@ const UserRolePage = () => {
           toast.error(res?.data);
           break;
         default:
-          navigate('/error404');
+          navigate(ROUTE_PATH.error404);
       }
     });
   };
@@ -74,16 +75,16 @@ const UserRolePage = () => {
         setRoleName(item.roleFamilyLabel);
         break;
       default:
-        navigate('/error404');
+        navigate(ROUTE_PATH.error404);
     }
   };
 
   const createNewHandleClick = () => {
-    navigate('/dashboard/user/role/create/' + params.key);
+    navigate(ROUTE_PATH.userRoleCreate(params.key));
   };
 
   const goBackHandleClick = () => {
-    navigate('/dashboard/user');
+    navigate(ROUTE_PATH.user);
   };
 
   useEffect(() => {

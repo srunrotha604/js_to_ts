@@ -4,6 +4,7 @@ import ReactPaginate from 'react-paginate';
 import Loading from '../../components/Loading';
 import { toast } from 'react-toastify';
 import { fetchData } from '../../services/$service';
+import { ROUTE_PATH } from '../../utils/route-util';
 
 const BatchGroupPage = () => {
   document.title = 'E-CHANNEL PORTAL | batch data';
@@ -32,7 +33,7 @@ const BatchGroupPage = () => {
           toast.error(res?.data);
           break;
         default:
-          redirect('/error404');
+          redirect(ROUTE_PATH.error404);
       }
     });
   };
@@ -60,7 +61,7 @@ const BatchGroupPage = () => {
         setGetStatus(item.status);
         break;
       default:
-        navigate('/error404');
+        navigate(ROUTE_PATH.error404);
     }
   };
 
@@ -69,7 +70,7 @@ const BatchGroupPage = () => {
   }, []);
 
   const createNewHandleClick = () => {
-    navigate('/dashboard/batch/create');
+    navigate(ROUTE_PATH.batchCreate);
   };
 
   let nf = new Intl.NumberFormat();
@@ -254,10 +255,9 @@ const BatchGroupPage = () => {
                             <td className="text-muted">{item.projectName}</td>
                             <td className="text-underline">
                               <Link
-                                to={
-                                  '/dashboard/project/policy/' +
+                                to={ROUTE_PATH.projectPolicy(
                                   item.transactionCode
-                                }
+                                )}
                               >
                                 policies
                               </Link>
@@ -299,10 +299,9 @@ const BatchGroupPage = () => {
                               </a>
 
                               <Link
-                                to={
-                                  '/dashboard/project/edit/' +
+                                to={ROUTE_PATH.projectEdit(
                                   item.transactionCode
-                                }
+                                )}
                               >
                                 <svg
                                   xmlns="http://www.w3.org/2000/svg"

@@ -9,6 +9,7 @@ import {
 import { fetchData } from '../../../../services/$service';
 import ReactSelect from 'react-select';
 import { MdClear } from 'react-icons/md';
+import { ROUTE_PATH } from '../../../../utils/route-util';
 
 const ProjectPolicyCreatePage = () => {
   document.title = 'E-CHANNEL PORTAL | project | policy | create';
@@ -36,7 +37,7 @@ const ProjectPolicyCreatePage = () => {
         switch (res.status) {
           case 200:
             toast.success(res?.data?.message);
-            navigate('/dashboard/project/policy/' + params.key);
+            navigate(ROUTE_PATH.projectPolicy(params.key));
             break;
           case 400:
             toast.error(res?.data?.message);
@@ -45,7 +46,7 @@ const ProjectPolicyCreatePage = () => {
             toast.error(res?.data);
             break;
           default:
-            navigate('/error404');
+            navigate(ROUTE_PATH.error404);
         }
       });
     }
@@ -66,7 +67,7 @@ const ProjectPolicyCreatePage = () => {
           toast.error(res?.data);
           break;
         default:
-          navigate('/error404');
+          navigate(ROUTE_PATH.error404);
       }
     });
   };
@@ -90,7 +91,7 @@ const ProjectPolicyCreatePage = () => {
   };
 
   const goBackHandleClick = () => {
-    navigate('/dashboard/project/policy/' + params.key);
+    navigate(ROUTE_PATH.projectPolicy(params.key));
   };
 
   useEffect(() => {

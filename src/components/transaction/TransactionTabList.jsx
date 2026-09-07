@@ -31,6 +31,7 @@ import { delay } from "../../utils/delay";
 import IssueDateModal from "../../components/IssueDateModal";
 import IssueDateDetailModal from "../../components/IssueDateDetailModal";
 import "../../assets/style/custom_style.css";
+import { ROUTE_PATH } from "../../utils/route-util";
 
 const STATUS = {
   All: "All",
@@ -70,7 +71,7 @@ const TransactionTabList = forwardRef(
       branchFilter = true,
       renderTableHead,
       renderTableBody,
-      path = "/dashboard",
+      path = ROUTE_PATH.dashboard,
       url = "/operation-customer",
       extraParams = "",
       renderExtraFilter,
@@ -189,7 +190,7 @@ const TransactionTabList = forwardRef(
     };
 
     const navigateToDetailPage = (transactionCode) => {
-      navigate("/dashboard/customer/transaction/" + transactionCode);
+      navigate(ROUTE_PATH.customerTransaction(transactionCode));
     };
 
     const processTransaction = (status, item) => {
@@ -224,10 +225,10 @@ const TransactionTabList = forwardRef(
         case STATUS.Draft:
           if (hasPermissionProccessTransaction(["draft", "submitted"])) {
             navigate(
-              "/dashboard/customer/edit/" +
-                item.transactionCode +
-                "/" +
+              ROUTE_PATH.customerEdit(
+                item.transactionCode,
                 item.coreProductCode,
+              ),
             );
           } else {
             handleShowTransactionDetail(item);
@@ -244,7 +245,7 @@ const TransactionTabList = forwardRef(
           navigateToDetailPage(item.transactionCode);
           break;
         default:
-          navigate("/error404");
+          navigate(ROUTE_PATH.error404);
       }
     };
 
@@ -780,7 +781,9 @@ const TransactionTabList = forwardRef(
                                       if (!item.batchNumber)
                                         return handleRecordClick(item);
                                       navigate(
-                                        `/dashboard/customer/batch/${item.batchNumber}`,
+                                        ROUTE_PATH.customerBatch(
+                                          item.batchNumber,
+                                        ),
                                       );
                                     }}
                                   >

@@ -19,6 +19,7 @@ import SquareCheckIcon from '../../../../components/Icons/SquareCheckIcon';
 import useMessage from '../../../../hooks/useMessage';
 import SearchBox from '../../../../components/input/SearchBox';
 import PaginationComponent from '../../../../components/paginations/PaginationComponent';
+import { ROUTE_PATH } from '../../../../utils/route-util';
 
 const BranchForm = () => {
   const navigate = useNavigate();
@@ -149,7 +150,7 @@ const BranchForm = () => {
           refreshOnClick={() => fetchRows()}
           back={() =>
             navigate(
-              `/dashboard/user/company?uuid=${params.get(
+              `${ROUTE_PATH.userCompany}?uuid=${params.get(
                 'uuid'
               )}&appMember=${params.get('appMember')}`
             )

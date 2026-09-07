@@ -18,6 +18,7 @@ import { delay } from '../../utils/delay.js';
 import { getConfirmedMessageText } from '../../utils/get-confirm-message-text';
 import { actions } from '../../utils/actions';
 import ComponentStatus from '../../components/customer/ComponentStatus';
+import { ROUTE_PATH } from '../../utils/route-util';
 
 const HomePage = () => {
   document.title = 'E-CHANNEL PORTAL | Home';
@@ -321,7 +322,7 @@ const PopupInfo = forwardRef(({ data, onClose }, ref) => {
           <div style={{ display: 'flex', justifyContent: 'center' }}>
             <Button
               onClick={() => {
-                navigate(`/dashboard?status=${STATUS.DRI_Rejected}`);
+                navigate(`${ROUTE_PATH.dashboard}?status=${STATUS.DRI_Rejected}`);
                 onClose();
               }}
             >

@@ -7,6 +7,7 @@ import CustomerEdit from '../../components/customer/edit/CustomerEdit';
 import CustomerEditReview from '../../components/customer/edit/CustomerEditReview';
 import CostomerTransationSubmit from '../../components/customer/create/CustomerTransationSubmit';
 import Spinner, { useSpinner } from '../../components/common/Spinner.jsx';
+import { ROUTE_PATH } from '../../utils/route-util';
 
 const STEP = {
   Edited: 'Edited',
@@ -46,7 +47,7 @@ const CustomerEditPage = () => {
           toast.error(res?.data);
           break;
         default:
-          navigate('/404');
+          navigate(ROUTE_PATH.notFound);
       }
     });
   };

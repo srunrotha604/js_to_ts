@@ -6,6 +6,7 @@ import ComponentSelectedProduct from "../../components/batch_register/ComponentS
 import ComponentExcelUpload from "../../components/batch_register/ComponentExcelUpload";
 import ComponentReview from "../../components/batch_register/ComponentReview";
 import { toast } from "react-toastify";
+import { ROUTE_PATH } from "../../utils/route-util";
 
 const STEP = {
   SELECTE_PRODUCT: "SELECTE_PRODUCT",
@@ -37,7 +38,7 @@ const BatchRegister = () => {
           toast.error(res?.data);
           break;
         default:
-          navigate("/404");
+          navigate(ROUTE_PATH.notFound);
       }
     });
   };

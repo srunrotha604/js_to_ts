@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { fetchData } from '../../../../services/$service';
+import { ROUTE_PATH } from '../../../../utils/route-util';
 
 const DataEntryImportPage = () => {
   document.title = 'E-CHANNEL PORTAL | user - create';
@@ -22,7 +23,7 @@ const DataEntryImportPage = () => {
           switch (res.status) {
             case 200:
               toast.success(res.data.message);
-              navigate('/dashboard/data-entry');
+              navigate(ROUTE_PATH.dataEntry);
               break;
             case 400:
               toast.error(res?.data?.message);
@@ -31,7 +32,7 @@ const DataEntryImportPage = () => {
               toast.error(res?.data);
               break;
             default:
-              navigate('/error404');
+              navigate(ROUTE_PATH.error404);
           }
         });
       }
@@ -44,7 +45,7 @@ const DataEntryImportPage = () => {
   };
 
   const goBackHandleClick = () => {
-    navigate('/dashboard/data-entry');
+    navigate(ROUTE_PATH.dataEntry);
   };
 
   return (

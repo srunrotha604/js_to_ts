@@ -4,6 +4,7 @@ import ReactPaginate from 'react-paginate';
 import { toast } from 'react-toastify';
 import Loading from '../../../../components/Loading';
 import { fetchData } from '../../../../services/$service';
+import { ROUTE_PATH } from '../../../../utils/route-util';
 
 const BranchProjectPage = () => {
   document.title = 'E-CHANNEL PORTAL | Branch';
@@ -45,7 +46,7 @@ const BranchProjectPage = () => {
           toast.error(res?.data);
           break;
         default:
-          navigate('/404');
+          navigate(ROUTE_PATH.notFound);
       }
     });
   };
@@ -63,7 +64,7 @@ const BranchProjectPage = () => {
         setGetKey(item.transactionCode);
         break;
       default:
-        navigate('/error404');
+        navigate(ROUTE_PATH.error404);
     }
   };
 
@@ -72,10 +73,10 @@ const BranchProjectPage = () => {
   }, []);
 
   const createNewHandleClick = () => {
-    navigate('/dashboard/branch/project/create/' + params.key);
+    navigate(ROUTE_PATH.branchProjectCreate(params.key));
   };
   const goBackHandleClick = () => {
-    navigate('/dashboard/branch');
+    navigate(ROUTE_PATH.branch);
   };
 
   let nf = new Intl.NumberFormat();
@@ -312,10 +313,9 @@ const BranchProjectPage = () => {
                             )}
                             <td>
                               <Link
-                                to={
-                                  '/dashboard/branch/project/edit/' +
-                                  item.transactionCode
-                                }
+                                to={ROUTE_PATH.branchProjectEdit(
+                                  item.transactionCode,
+                                )}
                               >
                                 <svg
                                   xmlns="http://www.w3.org/2000/svg"
