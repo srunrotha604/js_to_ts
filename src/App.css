@@ -1,0 +1,351 @@
+:root {
+  --color-primary: #007bff;
+  --color-secondary: #6c757d;
+  --color-danger: #ff7782;
+  --color-success: #41f1b6;
+  --color-warning: #ffbb55;
+  --color-white: #fff;
+  --color-info-dark: #7d8da1;
+  --color-info-light: #dec1eb;
+  --color-dark: #363949;
+  --color-light: rgba(132, 139, 200, 0.18);
+  --color-primary-variant: #111e88;
+  --color-dark-variant: #677483;
+  --color-background: #f6f6f9;
+}
+
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
+    "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
+    monospace;
+}
+
+.profile-image-details {
+  width: 200px;
+  height: 200px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.profile-image {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.my-link:hover {
+  cursor: pointer;
+}
+
+.my-img-style {
+  width: 400px;
+  height: 275px;
+}
+
+.my-img-style img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.text-primary {
+  color: var(--color-primary);
+}
+
+.text-secondary {
+  color: var(--color-secondary);
+}
+
+.text-dark {
+  color: var(--color-dark);
+}
+
+.text-dark-light {
+  color: var(--color-info-dark);
+}
+
+.text-danger {
+  color: var(--color-danger);
+}
+
+.text-success {
+  color: var(--color-success);
+}
+
+.text-warning {
+  color: var(--color-warning);
+}
+
+.text-underline {
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.text-underline:hover {
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.t-udl {
+  cursor: pointer;
+}
+
+.t-udl:hover {
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.display-none {
+  display: none;
+}
+
+.padding-left-5 {
+  padding-left: 5px;
+}
+
+.pd-10 {
+  padding: 10px;
+}
+
+.pb-10 {
+  padding-bottom: 10px;
+}
+
+.padding-left-10 {
+  padding-left: 10px;
+}
+
+.padding-left-20 {
+  padding-left: 20px;
+}
+
+.padding-left-30 {
+  padding-left: 30px;
+}
+
+.padding-left-40 {
+  padding-left: 40px;
+}
+
+.padding-left-50 {
+  padding-left: 50px;
+}
+
+.padding-left-60 {
+  padding-left: 60px;
+}
+
+.table-role-padding {
+  padding: 10px 10px 10px 50px;
+}
+
+.tb-w-5 {
+  width: 5px;
+}
+
+.tb-w-10 {
+  width: 10px;
+}
+
+.tb-w-20 {
+  width: 20px;
+}
+
+.tb-w-30 {
+  width: 30px;
+}
+
+.tb-w-40 {
+  width: 40px;
+}
+
+.tb-w-50 {
+  width: 50px;
+}
+
+.tb-w-100 {
+  width: 100px;
+}
+
+.tb-w-150 {
+  width: 150px;
+}
+
+.margin-left-right-10 {
+  margin: 0 0 0 10px;
+}
+
+.margin-left-right-10:last-child {
+  margin-right: 10px;
+}
+
+.margin-right-10 {
+  margin-right: 10px;
+}
+
+.mr-5 {
+  margin-right: 5px;
+}
+
+.ml-5 {
+  margin-left: 5px;
+}
+
+.line-dropdown-menu {
+  margin-bottom: 5px;
+  width: auto;
+  height: 0.5px;
+  background-color: var(--color-info-dark);
+}
+
+.text-pre-wrap {
+  white-space: pre-wrap;
+}
+
+.text-pre-line {
+  white-space: pre-line;
+}
+
+.card-module-action-container {
+  display: flex;
+  justify-content: space-between;
+  justify-items: left;
+  padding: 10px 10px 5px 5px;
+  margin-left: 40px;
+  border-top: 1px dotted #c6c6c6;
+}
+
+.card-module-action-container:last-child {
+  margin-left: 0;
+}
+
+.card-module-action-container:hover {
+  background-color: #c6c6c6;
+}
+
+.card-module-action-container-left {
+  width: 20%;
+}
+
+.card-module-action-container-left h5 {
+  margin-top: 3px;
+}
+
+.card-module-action-container-center {
+  width: 140%;
+}
+
+.card-module-action-container-right {
+  width: 5%;
+}
+
+/* Insurance Product */
+.policy-wording {
+  width: auto;
+  height: 100px;
+}
+
+.product-image {
+  width: auto;
+  height: 100px;
+  object-fit: cover;
+}
+
+.mt-5 {
+  margin-top: 5px;
+}
+
+.mt-10 {
+  margin-top: 10px;
+}
+.md-10 {
+  padding-top: 10px;
+}
+
+.mt-30 {
+  padding-top: 30px;
+}
+
+.card-transaction-title {
+  font-size: 30px;
+  font-weight: 600;
+  color: #3750a3;
+}
+
+.transaction-submitted {
+  font-size: 30px;
+  font-weight: 600;
+  color: #00aeef;
+  text-decoration: underline;
+}
+
+.transaction-approved {
+  font-size: 30px;
+  font-weight: 600;
+  color: #2e3192;
+  text-decoration: underline;
+}
+
+.transaction-rejected {
+  font-size: 30px;
+  font-weight: 600;
+  color: #ed1c24;
+  text-decoration: underline;
+}
+
+.transaction-confirmed {
+  font-size: 30px;
+  font-weight: 600;
+  color: #0c9444;
+  text-decoration: underline;
+}
+
+.flex {
+  display: flex;
+}
+
+.btn-circle {
+  width: 30px !important;
+  height: 30px !important;
+  text-align: center !important;
+  padding: 6px 0 !important;
+  font-size: 12px !important;
+  line-height: 1.428571429 !important;
+  border-radius: 15px !important;
+}
+
+.btn-circle-sm {
+  width: 20px !important;
+  height: 20px !important;
+  text-align: center !important;
+  padding: 3px 0 !important;
+  font-size: 12px !important;
+  line-height: 1.428571429 !important;
+  border-radius: 13px !important;
+}
+
+.spinner-container {
+  /*height: 160px;*/
+}
+
+.min-height-0 {
+  min-height: 0 !important;
+}
+
+.ck-editor__editable_inline {
+  min-height: 300px;
+}
+
+.defult-background {
+  background: white;
+}
+

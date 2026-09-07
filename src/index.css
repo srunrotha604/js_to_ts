@@ -1,0 +1,155 @@
+/*screen xs down*/
+@media (max-width: 767px) {
+  .full-height-container {
+    min-height: 100vh;
+  }
+  .full-height-dashboard-container {
+    min-height: 100vh;
+  }
+  .full-height-dashboard-container-fixed {
+    min-height: 100vh;
+    max-height: 0;
+  }
+}
+
+/*screen md up*/
+@media (min-width: 768px) {
+  .full-height-container {
+    min-height: calc(100vh - (56px + 60px));
+  }
+  .full-height-dashboard-container {
+    min-height: calc(100vh - (56px * 2 + 60px));
+  }
+  .full-height-dashboard-container-nofooter {
+    min-height: calc(100vh - (56px * 2));
+  }
+  .full-height-dashboard-container-fixed {
+    min-height: calc(100vh - (56px * 2 + 60px));
+    max-height: calc(100vh - (56px * 2 + 60px));
+  }
+}
+
+/*screen xs up*/
+@media (min-width: 0px) {
+  .batch-detail-container {
+    min-height: 150vh;
+  }
+}
+
+/*screen sm up*/
+@media (min-width: 576px) {
+  .batch-detail-container {
+    min-height: 90vh;
+  }
+}
+
+.bg-light-gray {
+  background-color: #f4f4f4 !important;
+}
+
+.text-primary-blue {
+  color: #2d3194 !important;
+}
+
+div.rounded {
+  border-radius: 6px !important;
+}
+
+/* make modal stack on top  */
+.modal:nth-of-type(even) {
+  z-index: 1052 !important;
+}
+.modal-backdrop.show:nth-of-type(even) {
+  z-index: 1051 !important;
+}
+
+.modal:nth-of-type(odd) {
+  z-index: 1053 !important;
+}
+.modal-backdrop.show:nth-of-type(odd) {
+  z-index: 1052 !important;
+}
+
+div.sticky-top {
+  z-index: 1000 !important;
+}
+
+input[readonly] {
+  background-color: #f1f5f9;
+}
+
+.alert-danger {
+  background-color: #f8d7da !important;
+  color: #721c24 !important;
+}
+
+.flex-1 {
+  flex: 1 !important;
+}
+.react-datepicker__triangle {
+  display: none !important;
+}
+
+/* transaction status color */
+:root {
+  --Draft: #818285;
+  --Submitted: #21aae1;
+  --Approved: #383a96;
+  --BM-Rejected: #ed1c24;
+  --Confirmed: #0c9444;
+  --DRI-Rejected: #ed1c24;
+}
+.text-Draft {
+  color: var(--Draft) !important;
+}
+
+.text-Submitted,
+.text-DEL_Submitted {
+  color: var(--Submitted) !important;
+}
+
+.text-Approved,
+.text-DEL_Approved {
+  color: var(--Approved) !important;
+}
+
+.text-BM-Rejected,
+.text-DEL_BM-Rejected,
+.text-DEL_DRI-Rejected {
+  color: var(--BM-Rejected) !important;
+}
+
+.text-Deleted-END,
+.text-Confirmed,
+.text-DEL_Confirmed {
+  color: var(--Confirmed) !important;
+}
+
+.text-DRI-Rejected {
+  color: var(--DRI-Rejected) !important;
+}
+
+.bg-Draft {
+  background-color: var(--Draft) !important;
+}
+
+.bg-Submitted {
+  background-color: var(--Submitted) !important;
+}
+
+.bg-Approved {
+  background-color: var(--Approved) !important;
+}
+
+.bg-BM-Rejected {
+  background-color: var(--BM-Rejected) !important;
+}
+
+.bg-Deleted-END,
+.bg-Confirmed {
+  background-color: var(--Confirmed) !important;
+}
+
+.bg-DRI-Rejected {
+  background-color: var(--DRI-Rejected) !important;
+}

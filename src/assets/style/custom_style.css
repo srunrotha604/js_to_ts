@@ -1,0 +1,38 @@
+.custom_range_date_picker {
+  position: absolute;
+  z-index: 999;
+  background-color: #fff;
+  padding: 16px;
+  margin-top: 4px;
+  border-radius: 8px;
+  box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.15);
+}
+
+.custom_range_date_input {
+  padding: 9px;
+  cursor: pointer;
+  background-color: #fff;
+}
+
+.custom_range_date_picker .rdrCalendarWrapper {
+  max-width: 581px;
+  min-width: 400px;
+}
+
+.custom_date_picker .MuiPickersInputBase-root {
+  height: 35px;
+}
+
+.custom_date_picker .MuiPickersSectionList-root {
+  font-size: 13px;
+}
+
+.custom_date_picker .MuiInputAdornment-root svg {
+  font-size: 16px;
+}
+
+.issue_btn_status {
+  height: 26px !important;
+  border-radius: 8px !important;
+  font-size: 11px !important;
+}

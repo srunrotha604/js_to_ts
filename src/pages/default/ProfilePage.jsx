@@ -1,0 +1,664 @@
+import React, { useState, useEffect } from 'react';
+import { redirect, useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
+import { fetchData, fileUpload } from '../../services/$service';
+
+const ProfilePage = () => {
+  const navigate = useNavigate();
+  document.title = 'Alt-Fa APIs Admin System | Profile';
+
+  const [arrProfile, setArrProfile] = useState([]);
+  const [selectedFile, setSelectedFile] = useState('');
+  const [email1, setEmail1] = useState('');
+  const [email2, setEmail2] = useState('');
+  const [phone1, setPhone1] = useState('');
+  const [phone2, setPhone2] = useState('');
+  const [website1, setWebsite1] = useState('');
+  const [website2, setWebsite2] = useState('');
+  const [otherContact, setOtherContact] = useState('');
+  const [address1, setAddress1] = useState('');
+  const [address2, setAddress2] = useState('');
+  const [userCode, setUserCode] = useState('');
+
+  const getList = () => {
+    fetchData('/login', {}, 'GET').then((res) => {
+      switch (res.status) {
+        case 200:
+          {
+            const profile = res?.data?.userProfile[0];
+            setArrProfile(profile);
+            setEmail1(profile.email1);
+            setEmail2(profile.email2);
+            setPhone2(profile.phone1);
+            setWebsite1(profile.website1);
+            setWebsite2(profile.website2);
+            setPhone1(profile.phone2);
+            setOtherContact(profile.otherContact);
+            setAddress1(profile.address1);
+            setAddress2(profile.address2);
+            setUserCode(profile.userCode);
+          }
+          break;
+        case 400:
+          toast.error(res?.data?.message);
+          break;
+        case 403:
+          toast.error(res?.data);
+          break;
+        default:
+          redirect('/404');
+      }
+    });
+  };
+
+  const profileUploadHandleClickExecute = () => {
+    let messages = [];
+    if (selectedFile === '') {
+      messages.push(true);
+    }
+    if (messages.length < 1) {
+      const formData = new FormData();
+      formData.append('selectedFile', selectedFile);
+      fileUpload('/system-user', formData, 'PATCH').then((res) => {
+        switch (res.status) {
+          case 200:
+            toast.success(res.data.message);
+            window.location.reload();
+            break;
+          case 400:
+            toast.error(res?.data?.message);
+            break;
+          case 403:
+            toast.error(res?.data);
+            break;
+          default:
+            redirect('/404');
+        }
+      });
+    }
+  };
+
+  const saveChangeHandleExecute = () => {
+    const data = {
+      userCode: userCode,
+      email1: email1,
+      email2: email2,
+      phone1: phone1,
+      phone2: phone2,
+      website1: website1,
+      website2: website2,
+      address1: address1,
+      address2: address2,
+      otherContact: otherContact,
+    };
+    fetchData('/system-user/info', data, 'POST').then((res) => {
+      switch (res.status) {
+        case 200:
+          toast.success(res.data.message);
+          window.location.reload();
+          break;
+        case 400:
+          toast.error(res?.data?.message);
+          break;
+        case 403:
+          toast.error(res?.data);
+          break;
+        default:
+          redirect('/404');
+      }
+    });
+  };
+
+  const goBackHandleClick = () => {
+    navigate('/dashboard/');
+  };
+
+  const handleFileSelect = (event) => {
+    setSelectedFile(event.target.files[0]);
+  };
+
+  useEffect(() => {
+    getList();
+  }, []);
+
+  return (
+    <React.Fragment>
+      <div className="page-wrapper">
+        <div className="page-body">
+          <div className="container-xl">
+            <div className="row row-cards">
+              <div className="col-lg-4">
+                <div className="card">
+                  <div className="card-status-top bg-primary" />
+                  <div className="card-body">
+                    <div className="d-flex align-items-center mb-3">
+                      <div>
+                        <h3 className="lh-1">Profile User</h3>
+                      </div>
+                    </div>
+                    <div
+                      style={{
+                        display: 'flex',
+                        justifyContent: 'center',
+                        borderRadius: 50,
+                      }}
+                    >
+                      <img
+                        src={arrProfile.profileImage}
+                        alt={arrProfile.displayName}
+                        className="profile-image-details"
+                      />
+                    </div>
+                    <div className="input-group input-group-flat mb-3 mt-3">
+                      <input
+                        type="file"
+                        className="form-control"
+                        onChange={handleFileSelect}
+                        accept=".jpg,.jpeg,.png"
+                      />
+                      <span className="input-group-text">
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          className="icon cursor-pointer"
+                          width={24}
+                          height={24}
+                          viewBox="0 0 24 24"
+                          strokeWidth={2}
+                          stroke="currentColor"
+                          fill="none"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          onClick={profileUploadHandleClickExecute}
+                        >
+                          <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                          <polyline points="9 11 12 14 20 6" />
+                          <path d="M20 12v6a2 2 0 0 1 -2 2h-12a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h9" />
+                        </svg>
+                      </span>
+                    </div>
+                    <ul className="list-unstyled space-y-2 mt-3">
+                      <li>
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          className="icon"
+                          width={24}
+                          height={24}
+                          viewBox="0 0 24 24"
+                          strokeWidth="1.5"
+                          stroke="#4F4F4F"
+                          fill="none"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        >
+                          <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                          <circle cx={12} cy={7} r={4} />
+                          <path d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" />
+                        </svg>
+                        <span className="p-l-10">{arrProfile.displayName}</span>
+                      </li>
+                      <li>
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          className="icon"
+                          width={24}
+                          height={24}
+                          viewBox="0 0 24 24"
+                          strokeWidth="1.5"
+                          stroke="#4F4F4F"
+                          fill="none"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        >
+                          <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                          <line x1={3} y1={21} x2={21} y2={21} />
+                          <path d="M5 21v-16a2 2 0 0 1 2 -2h10a2 2 0 0 1 2 2v16" />
+                          <path d="M9 21v-4a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v4" />
+                          <line x1={10} y1={9} x2={14} y2={9} />
+                          <line x1={12} y1={7} x2={12} y2={11} />
+                        </svg>
+                        <span className="p-l-10">{arrProfile.policyName}</span>
+                      </li>
+                      <li>
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          className="icon"
+                          width={24}
+                          height={24}
+                          viewBox="0 0 24 24"
+                          strokeWidth="1.5"
+                          stroke="#4F4F4F"
+                          fill="none"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        >
+                          <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                          <rect x={3} y={5} width={18} height={14} rx={2} />
+                          <polyline points="3 7 12 13 21 7" />
+                        </svg>
+                        <span className="p-l-10">{arrProfile.email}</span>
+                      </li>
+                      <li>
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          className="icon"
+                          width={24}
+                          height={24}
+                          viewBox="0 0 24 24"
+                          strokeWidth="1.5"
+                          stroke="#4F4F4F"
+                          fill="none"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        >
+                          <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                          <rect x={7} y={4} width={10} height={16} rx={1} />
+                          <line x1={11} y1={5} x2={13} y2={5} />
+                          <line x1={12} y1={17} x2={12} y2="17.01" />
+                        </svg>
+                        <span className="p-l-10">{arrProfile.phone1}</span>
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+                <div className="card mt-3">
+                  <div className="card-status-top bg-primary" />
+                  <div className="card-body">
+                    <div className="d-flex align-items-center mb-3">
+                      <div>
+                        <h3 className="lh-1">About Me</h3>
+                      </div>
+                    </div>
+                    <ul className="list-unstyled space-y-2 mt-3">
+                      <li>
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          className="icon font-bold"
+                          width={24}
+                          height={24}
+                          viewBox="0 0 24 24"
+                          strokeWidth="1.5"
+                          stroke="#4F4F4F"
+                          fill="none"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        >
+                          <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                          <rect x={3} y={5} width={18} height={14} rx={2} />
+                          <polyline points="3 7 12 13 21 7" />
+                        </svg>
+                        <span className="p-l-5 font-bold">Email 1:</span>
+                        <div className="text-secondary">
+                          {arrProfile.email1}
+                        </div>
+                      </li>
+                      <div className="line-dropdown-menu"></div>
+                      <li>
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          className="icon font-bold"
+                          width={24}
+                          height={24}
+                          viewBox="0 0 24 24"
+                          strokeWidth="1.5"
+                          stroke="#4F4F4F"
+                          fill="none"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        >
+                          <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                          <rect x={3} y={5} width={18} height={14} rx={2} />
+                          <polyline points="3 7 12 13 21 7" />
+                        </svg>
+                        <span className="p-l-5 font-bold">Email 2:</span>
+                        <div className="text-secondary">
+                          {arrProfile.email2}
+                        </div>
+                      </li>
+                      <div className="line-dropdown-menu"></div>
+                      <li>
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          className="icon font-bold"
+                          width={24}
+                          height={24}
+                          viewBox="0 0 24 24"
+                          strokeWidth="1.5"
+                          stroke="#4F4F4F"
+                          fill="none"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        >
+                          <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                          <rect x={7} y={4} width={10} height={16} rx={1} />
+                          <line x1={11} y1={5} x2={13} y2={5} />
+                          <line x1={12} y1={17} x2={12} y2="17.01" />
+                        </svg>
+
+                        <span className="p-l-5 font-bold">Phone 1:</span>
+                        <div className="text-secondary">
+                          {arrProfile.phone1}
+                        </div>
+                      </li>
+                      <div className="line-dropdown-menu"></div>
+                      <li>
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          className="icon font-bold"
+                          width={24}
+                          height={24}
+                          viewBox="0 0 24 24"
+                          strokeWidth="1.5"
+                          stroke="#4F4F4F"
+                          fill="none"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        >
+                          <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                          <rect x={7} y={4} width={10} height={16} rx={1} />
+                          <line x1={11} y1={5} x2={13} y2={5} />
+                          <line x1={12} y1={17} x2={12} y2="17.01" />
+                        </svg>
+
+                        <span className="p-l-5 font-bold">Phone 2:</span>
+                        <div className="text-secondary">
+                          {arrProfile.phone2}
+                        </div>
+                      </li>
+                      <div className="line-dropdown-menu"></div>
+                      <li>
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          className="icon font-bold"
+                          width={24}
+                          height={24}
+                          viewBox="0 0 24 24"
+                          strokeWidth="1.5"
+                          stroke="#4F4F4F"
+                          fill="none"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        >
+                          <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                          <rect x={7} y={4} width={10} height={16} rx={1} />
+                          <line x1={11} y1={5} x2={13} y2={5} />
+                          <line x1={12} y1={17} x2={12} y2="17.01" />
+                        </svg>
+
+                        <span className="p-l-5 font-bold">Website 1:</span>
+                        <div className="text-secondary">
+                          {arrProfile.website1}
+                        </div>
+                      </li>
+                      <div className="line-dropdown-menu"></div>
+                      <li>
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          className="icon font-bold"
+                          width={24}
+                          height={24}
+                          viewBox="0 0 24 24"
+                          strokeWidth="1.5"
+                          stroke="#4F4F4F"
+                          fill="none"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        >
+                          <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                          <rect x={7} y={4} width={10} height={16} rx={1} />
+                          <line x1={11} y1={5} x2={13} y2={5} />
+                          <line x1={12} y1={17} x2={12} y2="17.01" />
+                        </svg>
+
+                        <span className="p-l-5 font-bold">Website 2:</span>
+                        <div className="text-secondary">
+                          {arrProfile.website2}
+                        </div>
+                      </li>
+                      <div className="line-dropdown-menu"></div>
+                      <li>
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          className="icon icon-tabler icon-tabler-bookmark"
+                          width={24}
+                          height={24}
+                          viewBox="0 0 24 24"
+                          strokeWidth="1.5"
+                          stroke="#4F4F4F"
+                          fill="none"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        >
+                          <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                          <path d="M9 4h6a2 2 0 0 1 2 2v14l-5 -3l-5 3v-14a2 2 0 0 1 2 -2" />
+                        </svg>
+
+                        <span className="p-l-5 font-bold">Other Contact:</span>
+                        <div className="text-secondary">
+                          {arrProfile.otherContact}
+                        </div>
+                      </li>
+                      <div className="line-dropdown-menu"></div>
+                      <li>
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          className="icon icon-tabler icon-tabler-map-pin"
+                          width={24}
+                          height={24}
+                          viewBox="0 0 24 24"
+                          strokeWidth="1.5"
+                          stroke="#4F4F4F"
+                          fill="none"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        >
+                          <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                          <circle cx={12} cy={11} r={3} />
+                          <path d="M17.657 16.657l-4.243 4.243a2 2 0 0 1 -2.827 0l-4.244 -4.243a8 8 0 1 1 11.314 0z" />
+                        </svg>
+                        <span className="p-l-5 font-bold">Address 1:</span>
+                        <div className="text-secondary">
+                          {arrProfile.address1}
+                        </div>
+                      </li>
+                      <div className="line-dropdown-menu"></div>
+                      <li>
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          className="icon icon-tabler icon-tabler-map-pin"
+                          width={24}
+                          height={24}
+                          viewBox="0 0 24 24"
+                          strokeWidth="1.5"
+                          stroke="#4F4F4F"
+                          fill="none"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        >
+                          <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                          <circle cx={12} cy={11} r={3} />
+                          <path d="M17.657 16.657l-4.243 4.243a2 2 0 0 1 -2.827 0l-4.244 -4.243a8 8 0 1 1 11.314 0z" />
+                        </svg>
+                        <span className="p-l-5 font-bold">Address 2:</span>
+                        <div className="text-secondary">
+                          {arrProfile.address2}
+                        </div>
+                      </li>
+                      <div className="line-dropdown-menu"></div>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+              <div className="col-lg-8">
+                <div className="card">
+                  <div className="card-status-top bg-primary" />
+                  <div className="card-body">
+                    <div className="form-group mb-3">
+                      <label className="form-label">Email 1</label>
+                      <div>
+                        <input
+                          type="text"
+                          className="form-control"
+                          placeholder="Email 1"
+                          onChange={(e) => setEmail1(e.target.value)}
+                          value={email1}
+                          required
+                        />
+                      </div>
+                    </div>
+                    <div className="form-group mb-3">
+                      <label className="form-label">Email 2</label>
+                      <div>
+                        <input
+                          type="text"
+                          className="form-control"
+                          placeholder="Email 2"
+                          onChange={(e) => setEmail2(e.target.value)}
+                          value={email2}
+                          required
+                        />
+                      </div>
+                    </div>
+                    <div className="form-group mb-3">
+                      <label className="form-label">Phone 1</label>
+                      <div>
+                        <input
+                          type="text"
+                          className="form-control"
+                          placeholder="Phone 1"
+                          onChange={(e) => setPhone1(e.target.value)}
+                          value={phone1}
+                          required
+                        />
+                      </div>
+                    </div>
+                    <div className="form-group mb-3">
+                      <label className="form-label">Phone 2</label>
+                      <div>
+                        <input
+                          type="text"
+                          className="form-control"
+                          placeholder="Phone 2"
+                          onChange={(e) => setPhone2(e.target.value)}
+                          value={phone2}
+                          required
+                        />
+                      </div>
+                    </div>
+                    <div className="form-group mb-3">
+                      <label className="form-label">Website 1</label>
+                      <div>
+                        <input
+                          type="text"
+                          className="form-control"
+                          placeholder="Website 1"
+                          onChange={(e) => setWebsite1(e.target.value)}
+                          value={website1}
+                          required
+                        />
+                      </div>
+                    </div>
+                    <div className="form-group mb-3">
+                      <label className="form-label">Website 2</label>
+                      <div>
+                        <input
+                          type="text"
+                          className="form-control"
+                          placeholder="Website 2"
+                          onChange={(e) => setWebsite2(e.target.value)}
+                          value={website2}
+                          required
+                        />
+                      </div>
+                    </div>
+                    <div className="form-group mb-3">
+                      <label className="form-label">Other Contact</label>
+                      <div>
+                        <textarea
+                          className="form-control"
+                          placeholder="Other Contact"
+                          rows="3"
+                          onChange={(e) => setOtherContact(e.target.value)}
+                          value={otherContact}
+                        />
+                      </div>
+                    </div>
+                    <div className="form-group mb-3">
+                      <label className="form-label">Address 1</label>
+                      <div>
+                        <textarea
+                          className="form-control"
+                          placeholder="Address 1"
+                          rows="5"
+                          onChange={(e) => setAddress1(e.target.value)}
+                          value={address1}
+                        />
+                      </div>
+                    </div>
+                    <div className="form-group mb-3">
+                      <label className="form-label">Address 2</label>
+                      <div>
+                        <textarea
+                          className="form-control"
+                          placeholder="Address 2"
+                          rows="5"
+                          onChange={(e) => setAddress2(e.target.value)}
+                          value={address2}
+                        />
+                      </div>
+                    </div>
+                    <div className="btn-list">
+                      <button
+                        className="btn btn-primary"
+                        onClick={saveChangeHandleExecute}
+                      >
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          className="icon"
+                          width={24}
+                          height={24}
+                          viewBox="0 0 24 24"
+                          strokeWidth={2}
+                          stroke="currentColor"
+                          fill="none"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        >
+                          <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                          <polyline points="9 11 12 14 20 6" />
+                          <path d="M20 12v6a2 2 0 0 1 -2 2h-12a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h9" />
+                        </svg>
+                        Save change
+                      </button>
+                      <button
+                        className="btn btn-primary"
+                        onClick={goBackHandleClick}
+                      >
+                        <svg
+                          className="icon"
+                          width={24}
+                          height={24}
+                          viewBox="0 0 24 24"
+                          strokeWidth={2}
+                          stroke="currentColor"
+                          fill="none"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        >
+                          <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                          <path d="M9 13l-4 -4l4 -4m-4 4h11a4 4 0 0 1 0 8h-1" />
+                        </svg>
+                        Back
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </React.Fragment>
+  );
+};
+
+export default ProfilePage;

@@ -1,0 +1,72 @@
+import { forwardRef } from 'react';
+import Modal from '../common/modal';
+import { IoRemove } from 'react-icons/io5';
+
+// eslint-disable-next-line react/display-name
+const TransactionBatchProccessModal = forwardRef(
+  ({ data, actions, handleRemoveCustomer, loading }, ref) => {
+    return (
+      <Modal
+        loading={loading}
+        size="xl"
+        title={`Transaction Selected ${data?.selectedCustomerList?.length}`}
+        ref={ref}
+        bodyClassName="px-0 py-0 mb-2 vh-100 d-flex"
+        headerClassName="px-4"
+        actions={actions}
+      >
+        <div
+          className="card-table table-responsive border-top"
+          style={{ flex: 1 }}
+        >
+          <table className="table table-striped table-vcenter table-hover">
+            <thead className="position-sticky top-0 ">
+              <tr>
+                <th>#</th>
+                <th>TRANSACTION</th>
+                <th>Name</th>
+                <th>Tel No.</th>
+                <th>Gender</th>
+                {/* <th>Position</th> */}
+                <th>Nationality</th>
+                <th>NIC/Passport</th>
+                <th style={{ width: '10%' }}>Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              {data?.selectedCustomerList?.map((item, index) => (
+                <tr key={item.transactionCode} role="button">
+                  <>
+                    <td className="text-muted">{index + 1}</td>
+                    <td className="text-primary">{item.transactionNumber}</td>
+                    <td className="text-muted">
+                      {item.sureName + ' ' + item.firstName}
+                    </td>
+                    <td className="text-muted">{item.telNo}</td>
+                    <td className="text-muted">{item.gender}</td>
+                    {/* <td className="text-muted">{item.position}</td> */}
+                    <td className="text-muted">{item.nation}</td>
+                    <td className="text-muted">{item.nicPassport}</td>
+                    <td className="text-muted">
+                      {/* {<IoMdRemoveCircleOutlinel />} */}
+                      <button
+                        onClick={() => {
+                          handleRemoveCustomer(item);
+                        }}
+                        className="btn btn-default btn-circle"
+                      >
+                        <IoRemove color="red" fontSize="18px" />
+                      </button>
+                    </td>
+                  </>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </Modal>
+    );
+  }
+);
+
+export default TransactionBatchProccessModal;
