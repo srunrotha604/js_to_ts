@@ -1,8 +1,8 @@
-import { useLayoutEffect } from 'react';
 import axios from 'axios';
+import createAuthRefreshInterceptor from 'axios-auth-refresh';
+import { useLayoutEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import createAuthRefreshInterceptor from 'axios-auth-refresh';
 import { refreshToken } from '../services/$service';
 import { ROUTE_PATH } from '../utils/route-util';
 
@@ -42,7 +42,7 @@ const AxiosInterceptor = ({ children }) => {
             localStorage.removeItem('e_chanel_storage');
             navigate(ROUTE_PATH.logout, {
               replace: true,
-              state: { from: location }
+              state: { from: location },
             });
           }
         }
@@ -52,7 +52,7 @@ const AxiosInterceptor = ({ children }) => {
         localStorage.removeItem('e_chanel_storage');
         navigate(ROUTE_PATH.logout, {
           replace: true,
-          state: { from: location }
+          state: { from: location },
         });
       }
     };
@@ -70,7 +70,7 @@ const AxiosInterceptor = ({ children }) => {
         toast.error('Your session has expired. Please log in again.');
         navigate(ROUTE_PATH.logout, {
           replace: true,
-          state: { from: location }
+          state: { from: location },
         });
 
         return Promise.reject(error);
@@ -83,7 +83,7 @@ const AxiosInterceptor = ({ children }) => {
       { pauseInstanceWhileRefreshing: true }
     );
 
-    const intervalId = setInterval(checkTokenExpiry,15 * 60 * 1000);
+    const intervalId = setInterval(checkTokenExpiry, 15 * 60 * 1000);
 
     return () => {
       clearInterval(intervalId);
