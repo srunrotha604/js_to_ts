@@ -152,7 +152,7 @@ const HeaderPage = () => {
             {user && (
               <div className="nav-item dropdown" role="button">
                 <div
-                  className="nav-link d-flex lh-1 text-reset p-0"
+                  className="nav-link d-flex lh-1 text-reset p-0 "
                   data-bs-toggle="dropdown"
                   aria-label="Open user menu"
                 >
@@ -162,7 +162,7 @@ const HeaderPage = () => {
                       e.target.src = userIcon;
                     }}
                     alt="Profile User"
-                    className="profile-image"
+                    className="profile-image w-4"
                   />
                   <div className="d-none d-xl-block ps-2">
                     <div>{user?.displayName}</div>

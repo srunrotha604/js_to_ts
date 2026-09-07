@@ -29,30 +29,17 @@ function App() {
           theme: 'colored',
         }}
       />
-      <Router basename={import.meta.env.BASE_URL}>
+      <Router
+        basename={import.meta.env.VITE_BASE_URL}
+        future={{ v7_startTransition: true }}
+      >
         {/* <BrowserRouter basename={import.meta.env.BASE_URL}> */}
         <AxiosInterceptor>
           <AuthContextProvider>
             {/* <HeaderPage />
             <SideBarPage /> */}
             {/* <Routes>
-              <Route
-                path="/login"
-                element={
-                  <PrivateRoute auth={true} redirect="/dashboard">
-                    <LoginPage />
-                  </PrivateRoute>
-                }
-              />
-              <Route
-                path="/dashboard"
-                element={
-                  <PrivateRoute auth={false} redirect="/login">
-                    <RouteWithErrorBoundary />
-                  </PrivateRoute>
-                }
-              >
-                <Route index element={<HomePage />} />
+
                 <Route path="/dashboard/project" element={<ProjectPage />} />
                 <Route
                   path="/dashboard/project/create"

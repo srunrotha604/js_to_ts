@@ -42,12 +42,14 @@ const ROUTE_PATH = {
     `/dashboard/user/role/create/${key}`,
   userCompany: '/dashboard/user/company',
   userCompanyBranch: '/dashboard/user/company/branch',
-  userCompanyDetail: (applicationId: string | number, userCode: string | number) =>
-    `/dashboard/user/company/${applicationId}/${userCode}`,
+  userCompanyDetail: (
+    applicationId: string | number,
+    userCode: string | number
+  ) => `/dashboard/user/company/${applicationId}/${userCode}`,
   userAccessBranch: (
     applicationId: string | number,
     companyCode: string | number,
-    userCode: string | number,
+    userCode: string | number
   ) => `/dashboard/user/branch/${applicationId}/${companyCode}/${userCode}`,
   userAccessStatus: (userCode: string | number) =>
     `/dashboard/user/role/transaction/${userCode}`,

@@ -20,5 +20,6 @@
     "commandLineParser.ts",
     "tsc.ts",
     "diagnosticInformationMap.generated.ts"
-  ]
+  ],
+  "include": ["vite-env.d.ts"]
 }

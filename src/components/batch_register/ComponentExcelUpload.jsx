@@ -1,23 +1,22 @@
-import { useEffect, useState, useCallback } from "react";
-import { Controller, useFormContext } from "react-hook-form";
-import Select from "react-select";
-import { redirect } from "react-router-dom";
-import { useDropzone } from "react-dropzone";
-import { toast } from "react-toastify";
-import ExcelIcon from "../../assets/Excel.svg";
-import Image from "../Image";
-import { fileUpload } from "../../services/$service";
-import clsx from "clsx";
-import useLoading from "../../hooks/useLoading";
-import Button from "../common/Button";
-import { MdDownload } from "react-icons/md";
-import { useModal } from "../common/modal/index.jsx";
-import ActionConfirmationModal from "../common/ActionConfirmationModal.jsx";
-import { useWatch } from "react-hook-form";
-import { ROUTE_PATH } from "../../utils/route-util";
+import clsx from 'clsx';
+import { useCallback, useEffect, useState } from 'react';
+import { useDropzone } from 'react-dropzone';
+import { Controller, useFormContext, useWatch } from 'react-hook-form';
+import { MdDownload } from 'react-icons/md';
+import { redirect } from 'react-router-dom';
+import Select from 'react-select';
+import { toast } from 'react-toastify';
+import ExcelIcon from '../../assets/Excel.svg';
+import useLoading from '../../hooks/useLoading';
+import { fileUpload } from '../../services/$service';
+import { ROUTE_PATH } from '../../utils/route-util';
+import ActionConfirmationModal from '../common/ActionConfirmationModal.jsx';
+import Button from '../common/Button';
+import { useModal } from '../common/modal/index.jsx';
+import Image from '../Image';
 
 const downloadUrl =
-  import.meta.env.VITE_API_URL + "/operation-customer/batch/download";
+  import.meta.env.VITE_API_URL + '/operation-customer/batch/download';
 const ComponentExcelUpload = (props) => {
   const { project, handleReviewStep, handleGoBack, product } = props;
   const [policy, setPolicy] = useState([]);
@@ -29,13 +28,13 @@ const ComponentExcelUpload = (props) => {
     (acceptedFiles) => {
       setMyFiles([...acceptedFiles]);
     },
-    [myFiles],
+    [myFiles]
   );
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
     accept: {
-      "application/vnd.ms-excel": [".xlsx", ".xls"],
+      'application/vnd.ms-excel': ['.xlsx', '.xls'],
     },
     excludeAcceptAllOption: true,
     multiple: false,
@@ -77,15 +76,15 @@ const ComponentExcelUpload = (props) => {
 
   const resetHandleClick = () => {
     reset({
-      gender: "",
-      dateOfBirth: "",
-      nation: "",
-      physicalCard: "",
-      policy: "",
-      project: "",
-      telNo: "",
-      position: "",
-      identifyNumber: "",
+      gender: '',
+      dateOfBirth: '',
+      nation: '',
+      physicalCard: '',
+      policy: '',
+      project: '',
+      telNo: '',
+      position: '',
+      identifyNumber: '',
     });
     setPolicy([]);
   };
@@ -93,18 +92,18 @@ const ComponentExcelUpload = (props) => {
   const onSubmit = (data) => {
     const formData = new FormData();
     myFiles.forEach((item) => {
-      formData.append("files", item);
+      formData.append('files', item);
     });
     formData.append(
-      "data",
+      'data',
       JSON.stringify({
         ProjectCode: data.project.value,
         Policies: data.policy.value,
         ProductCode: product,
-      }),
+      })
     );
     startLoading();
-    fileUpload("/operation-customer/batch/upload", formData, "POST").then(
+    fileUpload('/operation-customer/batch/upload', formData, 'POST').then(
       (res) => {
         switch (res?.status) {
           case 200:
@@ -123,33 +122,33 @@ const ComponentExcelUpload = (props) => {
             stopLoading();
             redirect(ROUTE_PATH.error404);
         }
-      },
+      }
     );
   };
 
-  const projectWatch = useWatch({ control, name: "project" });
+  const projectWatch = useWatch({ control, name: 'project' });
 
   useEffect(() => {
     if (!projectWatch) {
       setPolicy([]);
-      setValue("policy", null, { shouldValidate: true, shouldDirty: true });
+      setValue('policy', null, { shouldValidate: true, shouldDirty: true });
       return;
     }
 
     const policies = projectWatch?.policies ?? [];
     setPolicy(policies);
-    const currentPolicy = getValues("policy");
+    const currentPolicy = getValues('policy');
     const stillValid =
       currentPolicy &&
       policies.some((p) => String(p.value) === String(currentPolicy.value));
 
     const nextPolicy = stillValid ? currentPolicy : policies[0] ?? null;
-    setValue("policy", nextPolicy, { shouldValidate: true, shouldDirty: true });
+    setValue('policy', nextPolicy, { shouldValidate: true, shouldDirty: true });
   }, [projectWatch, getValues, setValue]);
 
   const downloadExcelTemplate = () => {
     closeModal();
-    document.querySelector("#excel-template").click();
+    document.querySelector('#excel-template').click();
   };
 
   return (
@@ -214,8 +213,8 @@ const ComponentExcelUpload = (props) => {
                             }}
                             placeholder={
                               policy?.length
-                                ? "Select a policy..."
-                                : "Select a project first"
+                                ? 'Select a policy...'
+                                : 'Select a project first'
                             }
                           />
                         )}
@@ -241,14 +240,14 @@ const ComponentExcelUpload = (props) => {
                                 onClick={openModal}
                                 className="mx-1 text-green cursor-pointer"
                               >
-                                <MdDownload style={{ fontSize: "24px" }} />
+                                <MdDownload style={{ fontSize: '24px' }} />
                               </div>
                             </div>
                           </div>
                           <div
                             {...getRootProps({
-                              className: clsx("dropzone cursor-pointer", {
-                                ["border-primary"]: isDragActive,
+                              className: clsx('dropzone cursor-pointer', {
+                                ['border-primary']: isDragActive,
                               }),
                             })}
                           >
