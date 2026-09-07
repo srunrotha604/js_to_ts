@@ -8,12 +8,10 @@ import SideBarPage from '../pages/default/SideBarPage';
 export default function Layout() {
   return (
     <>
-      <HeaderPage />
-      <SideBarPage />
       <Box sx={{ display: 'flex' }}>
-        <Box
-          sx={{ overflow: 'hidden',flexGrow:1 }}
-        >
+        <Box sx={{ overflow: 'hidden', flexGrow: 1 }}>
+          <HeaderPage />
+          <SideBarPage />
           <Toolbar />
           <Outlet />
         </Box>

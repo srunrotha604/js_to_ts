@@ -1,73 +1,18 @@
 import React from 'react';
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
-import './App.css';
+import { BrowserRouter } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
+// import './App.css';
 
-import AxiosInterceptor from './components/AxiosInterceptor';
+import AxiosInterceptor from './components/AxiosInterceptor.jsx';
 
 // Default
-import HeaderPage from './pages/default/HeaderPage';
-import FooterPage from './pages/default/FooterPage';
-import HomePage from './pages/default/HomePage';
-import LoginPage from './pages/default/LoginPage';
-import ProfilePage from './pages/default/ProfilePage';
-import ChangePasswordPage from './pages/default/ChangePasswordPage';
-import ForgotPasswordPage from './pages/default/ForgotPasswordPage';
-import SwitchBranchPage from './pages/default/SwitchBranchPage';
 // Error_handle
-import Error404Page from './pages/error_handle/Error404Page';
-import Error500Page from './pages/error_handle/Error500Page';
 
-import ProjectPage from './pages/system_setup/project_configuration/project/ProjectPage';
-import ProjectCreatePage from './pages/system_setup/project_configuration/project/ProjectCreatePage';
-import ProjectEditPage from './pages/system_setup/project_configuration/project/ProjectEditPage';
-import ProjectPolicyPage from './pages/system_setup/project_configuration/project_policy/ProjectPolicyPage';
-import ProjectPolicyCreatePage from './pages/system_setup/project_configuration/project_policy/ProjectPolicyCreatePage';
-import BranchPage from './pages/system_setup/project_configuration/branch/BranchPage';
-import BranchCreatePage from './pages/system_setup/project_configuration/branch/BranchCreatePage';
-import BranchProjectPage from './pages/system_setup/project_configuration/branch/BranchProjectPage';
-import BranchProjectCreatePage from './pages/system_setup/project_configuration/branch/BranchProjectCreatePage';
-import BranchProjectEditPage from './pages/system_setup/project_configuration/branch/BranchProjectEditPage';
-
-import UserPage from './pages/system_setup/sytem_users/user/UserPage';
-import UserCreatePage from './pages/system_setup/sytem_users/user/UserCreatePage';
-import UserEditPage from './pages/system_setup/sytem_users/user/UserEditPage';
-import UserRolePage from './pages/system_setup/sytem_users/user/UserRolePage';
-import UserRoleCreatePage from './pages/system_setup/sytem_users/user/UserRoleCreatePage';
-import CompanyForm from './pages/system_setup/sytem_users/user/CompanyForm.jsx';
-import BranchForm from './pages/system_setup/sytem_users/user/BranchForm.jsx';
-import UserAccessBranchPage from './pages/system_setup/sytem_users/user/UserAccessBranchPage';
-import UserAccessStatusPage from './pages/system_setup/sytem_users/user/UserAccessStatusPage';
-import RoleAccessPage from './pages/system_setup/sytem_users/role_access/RoleAccessPage';
-
-import ProductPage from './pages/system_setup/project_configuration/product/ProductPage';
-import ProductCreatePage from './pages/system_setup/project_configuration/product/ProductCreatePage';
-
-import InsuranceProductPage from './pages/customer/InsuranceProductPage';
-import CustomerPage from './pages/customer/CustomerPage';
-import CustomerCreatePage from './pages/customer/CustomerCreatePage';
-import CustomerEditPage from './pages/customer/CustomerEditPage';
-
-import BatchRegister from './pages/batch-register/BatchRegister';
 // Version History
-import VersionHandlePage from './pages/version-history/index';
 
 // Report
-import CustomerReportPage from './pages/reports/customer_report/CustomerReportPage';
-import UserReportPage from './pages/reports/UserRportPage';
-import AuthContextProvider from './context/AuthContext';
-import PrivateRoute from './components/common/PrivateRoute';
-import SideBarPage from './pages/default/SideBarPage';
-import CustomerTransationDetailPage from './pages/customer/CustomerTransationDetailPage';
-import BatchDetailPage from './pages/batch-register/BatchDetailPage';
-import CustomerDeletePage from './pages/customer/CustomerDeletePage';
-import LogoutPage from './pages/default/LogoutPage.jsx';
-import RouteWithErrorBoundary from './components/RouteWithErrorBoundary.jsx';
-import ProductEditPage from './pages/system_setup/project_configuration/product/ProductEditPage.jsx';
-import ContactUsPage from './pages/default/ContactUsPage';
-import DataEntryPage from './pages/system_setup/sytem_users/bm_create_data_entry/DataEntryPage';
-import DataEntryCreatePage from './pages/system_setup/sytem_users/bm_create_data_entry/DataEntryCreatePage';
-import DataEntryImportPage from './pages/system_setup/sytem_users/bm_create_data_entry/DataEntryImportPage';
+import AuthContextProvider from './context/AuthContext.jsx';
+import AllRoutes from './router/index.tsx';
 
 function App() {
   return (
@@ -87,9 +32,9 @@ function App() {
       <BrowserRouter basename={import.meta.env.BASE_URL}>
         <AxiosInterceptor>
           <AuthContextProvider>
-            <HeaderPage />
-            <SideBarPage />
-            <Routes>
+            {/* <HeaderPage />
+            <SideBarPage /> */}
+            {/* <Routes>
               <Route
                 path="/login"
                 element={
@@ -98,7 +43,6 @@ function App() {
                   </PrivateRoute>
                 }
               />
-              {/* Application */}
               <Route
                 path="/dashboard"
                 element={
@@ -237,13 +181,13 @@ function App() {
                   element={<BatchDetailPage />}
                 />
 
-                {/* Handle Version */}
+
 
                 <Route
                   path="/dashboard/version"
                   element={<VersionHandlePage />}
                 />
-                {/* Report */}
+
                 <Route
                   path="/dashboard/customer-report"
                   element={<CustomerReportPage />}
@@ -272,7 +216,8 @@ function App() {
               <Route path="/error500" element={<Error500Page />} />
               <Route path="*" element={<Navigate to="/login" />} />
             </Routes>
-            <FooterPage />
+            <FooterPage /> */}
+            <AllRoutes />
           </AuthContextProvider>
         </AxiosInterceptor>
       </BrowserRouter>
