@@ -1,7 +1,4 @@
-import { useContext } from 'react';
-import { useState } from 'react';
-import { useEffect } from 'react';
-import { createContext } from 'react';
+import { createContext, useContext, useEffect, useState } from 'react';
 import { fetchDataAsync } from '../services/$service';
 import { clearTransactionStatusCount } from '../utils/status';
 import ModuleContextProvider from './module/ModuleContext';
@@ -21,6 +18,7 @@ const AuthContext = createContext({
   selectedCompany: null,
   permission: null,
   module: [],
+  token:null,
 });
 
 const fetchPermissionAccess = async () => {
@@ -133,6 +131,7 @@ const AuthContextProvider = ({ children }) => {
         isUserDRIAdmin,
         appName,
         module,
+        token,
       }}
     >
       <ModuleContextProvider {...module}>{children}</ModuleContextProvider>
