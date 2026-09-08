@@ -1,17 +1,28 @@
+import type { AxiosError } from 'axios';
 import axios from 'axios';
 import createAuthRefreshInterceptor from 'axios-auth-refresh';
+import type { ReactNode } from 'react';
 import { useLayoutEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { refreshToken } from '../services/$service';
 import { ROUTE_PATH } from '../utils/route-util';
 
-const AxiosInterceptor = ({ children }) => {
+interface JwtPayload {
+  exp?: number;
+  [key: string]: unknown;
+}
+
+interface AxiosInterceptorProps {
+  children?: ReactNode;
+}
+
+const AxiosInterceptor = ({ children }: AxiosInterceptorProps) => {
   const navigate = useNavigate();
   const location = useLocation();
 
   useLayoutEffect(() => {
-    const decodeJwtPayload = (jwt) => {
+    const decodeJwtPayload = (jwt: string): JwtPayload => {
       const parts = jwt.split('.');
       if (parts.length < 2) {
         throw new Error('Invalid token format');
@@ -57,11 +68,13 @@ const AxiosInterceptor = ({ children }) => {
       }
     };
 
-    const refreshAuthLogic = async (failedRequest) => {
+    const refreshAuthLogic = async (failedRequest: AxiosError) => {
       try {
         const tokenObj = await refreshToken();
-        failedRequest.response.config.headers['Authorization'] =
-          'Bearer ' + tokenObj.token;
+        if (failedRequest.response) {
+          failedRequest.response.config.headers['Authorization'] =
+            'Bearer ' + tokenObj.token;
+        }
         axios.defaults.headers.common['Authorization'] =
           'Bearer ' + tokenObj.token;
         return Promise.resolve();

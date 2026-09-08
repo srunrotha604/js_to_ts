@@ -1,8 +1,31 @@
+import type { RefObject } from 'react';
 import { useEffect, useState } from 'react';
 import Modal from '../components/common/modal';
 import { fetchDataAsync } from '../services/$service';
 import { ROUTE_API } from '../utils/route-util';
 import IssueDateDetailModal from './IssueDateDetailModal';
+
+interface IssueDateModalItem {
+  sureName?: string;
+  firstName?: string;
+  issueDateStatus?: boolean | null;
+  customerIssueDate?: {
+    cardNumber?: string;
+    issueDate?: string;
+    remark?: string;
+    secureCode?: string;
+  };
+}
+
+interface IssueDateModalProps {
+  open?: boolean;
+  closeModal?: () => void;
+  modalRef?: RefObject<HTMLDivElement>;
+  item?: IssueDateModalItem | null;
+  onStatusChange?: (status: string) => void;
+  arrCustomer?: unknown;
+  onUpdate?: (cardNumber: string) => void;
+}
 
 const IssueDateModal = ({
   open,
@@ -10,12 +33,11 @@ const IssueDateModal = ({
   modalRef,
   item,
   onStatusChange,
-  arrCustomer,
   onUpdate,
-}) => {
-  const [issueStatus, setIssueStatus] = useState(null);
+}: IssueDateModalProps) => {
+  const [issueStatus, setIssueStatus] = useState<boolean | null>(null);
   const [showDetailIssueModal, setShowDetailIssueModal] = useState(false);
-  const [remark, setRemark] = useState(''); // 🆕 Add dynamic remark state
+  const [remark, setRemark] = useState('');
 
   const hasIssueDate = !!item?.customerIssueDate?.issueDate;
   const datalist = item?.issueDateStatus;
@@ -30,13 +52,13 @@ const IssueDateModal = ({
     }
   }, [item, open]);
 
-  const updateCardConfirmation = async (status) => {
+  const updateCardConfirmation = async (status: 'confirm' | 'cancel') => {
     const secureCode = item?.customerIssueDate?.secureCode;
 
     if (!secureCode) return;
 
     try {
-      const response = await fetchDataAsync(
+      const response = await fetchDataAsync<{ message?: string }>(
         ROUTE_API.operationCustomerCardConfirmation,
         {
           method: 'PUT',
@@ -64,32 +86,27 @@ const IssueDateModal = ({
         );
       }
     } catch (err) {
-      console.error('Error during update:', err.message);
+      console.error('Error during update:', err instanceof Error ? err.message : err);
     }
   };
 
   const handleYes = async () => {
     await updateCardConfirmation('confirm');
     setIssueStatus(true);
-    closeModal();
+    closeModal?.();
     setTimeout(() => setShowDetailIssueModal(true), 150);
   };
 
   const handleNo = async () => {
     await updateCardConfirmation('cancel');
     setIssueStatus(false);
-    closeModal();
+    closeModal?.();
   };
 
   return (
     <>
       {open && (
-        <Modal
-          ref={modalRef}
-          title="Date of Issue Card"
-          closeButton
-          onClose={closeModal}
-        >
+        <Modal ref={modalRef} title="Date of Issue Card" closeButton>
           <div>
             {hasIssueDate ? (
               <>
@@ -136,8 +153,6 @@ const IssueDateModal = ({
           open={showDetailIssueModal}
           onClose={() => setShowDetailIssueModal(false)}
           item={item}
-          arrCustomer={arrCustomer}
-          onStatusChange={onStatusChange}
         />
       )}
     </>

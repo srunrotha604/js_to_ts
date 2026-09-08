@@ -1,6 +1,10 @@
-import React, { useState } from "react";
+import { useState } from 'react';
 
-function Loading(props) {
+interface LoadingProps {
+  value?: boolean;
+}
+
+function Loading(props: LoadingProps) {
   const [loading] = useState(props.value);
   return (
     <>
@@ -18,7 +22,7 @@ function Loading(props) {
           </div>
         </div>
       ) : (
-        ""
+        ''
       )}
     </>
   );

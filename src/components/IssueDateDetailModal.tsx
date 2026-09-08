@@ -1,10 +1,33 @@
+import type { RefObject } from 'react';
 import { useEffect, useState } from 'react';
 import Modal from '../components/common/modal';
 import { fetchDataAsync } from '../services/$service';
 import { ROUTE_API } from '../utils/route-util';
 
-const IssueDateDetailModal = ({ open, onClose, modalRef, item }) => {
-  const [detail, setDetail] = useState(null);
+interface IssueDateDetailItem {
+  sureName?: string;
+  firstName?: string;
+  customerIssueDate?: {
+    cardNumber?: string;
+    issueDate?: string;
+  };
+}
+
+interface IssueConfirmationDetail {
+  inputter?: string;
+  creationDate?: string;
+  remark?: string;
+}
+
+interface IssueDateDetailModalProps {
+  open?: boolean;
+  onClose?: () => void;
+  modalRef?: RefObject<HTMLDivElement>;
+  item?: IssueDateDetailItem | null;
+}
+
+const IssueDateDetailModal = ({ open, onClose, modalRef, item }: IssueDateDetailModalProps) => {
+  const [detail, setDetail] = useState<IssueConfirmationDetail | null>(null);
 
   useEffect(() => {
     if (!open || !item?.customerIssueDate?.cardNumber) return;
@@ -12,7 +35,7 @@ const IssueDateDetailModal = ({ open, onClose, modalRef, item }) => {
     const fetchDetail = async () => {
       try {
         const secureCode = item.customerIssueDate?.cardNumber;
-        const res = await fetchDataAsync(
+        const res = await fetchDataAsync<{ data?: IssueConfirmationDetail }>(
           ROUTE_API.operationCustomerCardConfirmation +
             `?secureCode=${secureCode}`
         );
@@ -28,12 +51,7 @@ const IssueDateDetailModal = ({ open, onClose, modalRef, item }) => {
   if (!open || !item) return null;
 
   return (
-    <Modal
-      ref={modalRef}
-      title="Date of Issue Card"
-      closeButton
-      onClose={onClose}
-    >
+    <Modal ref={modalRef} title="Date of Issue Card" closeButton>
       <div className="pb-1">
         <p>
           <strong className="mx-2">Insured Name:</strong>{' '}

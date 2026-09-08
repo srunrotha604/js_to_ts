@@ -1,4 +1,11 @@
-function Image(props) {
+interface ImageProps {
+  url?: string;
+  name?: string;
+  width?: number | string;
+  height?: number | string;
+}
+
+function Image(props: ImageProps) {
   return (
     <img
       src={props.url}

@@ -1,6 +1,7 @@
-// components/VersionButton.jsx
+// components/VersionButton.tsx
 import { Typography } from '@mui/material';
 import { useEffect, useState } from 'react';
+import type { VersionListResponse } from '../@type/version';
 import { fetchDataAsync } from '../services/$service'; // adjust the path if needed
 import { ROUTE_API } from '../utils/route-util';
 
@@ -10,8 +11,10 @@ const VersionButton = () => {
   useEffect(() => {
     const getVersion = async () => {
       try {
-        const res = await fetchDataAsync(ROUTE_API.applicationVersionActive);
-        setVersion(res.data?.list?.[0]?.version || '');
+        const res = await fetchDataAsync<VersionListResponse>(
+          ROUTE_API.applicationVersionActive
+        );
+        setVersion(res?.data?.list?.[0]?.version || '');
       } catch (err) {
         console.error('Error fetching version:', err);
       }
