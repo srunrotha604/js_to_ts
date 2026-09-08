@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { fetchData } from '../../../../services/$service';
-import { ROUTE_PATH } from '../../../../utils/route-util';
+import { ROUTE_API, ROUTE_PATH } from '../../../../utils/route-util';
 
 const ProjectEditPage = () => {
   document.title = 'E-CHANNEL PORTAL | project | create';
@@ -12,23 +12,25 @@ const ProjectEditPage = () => {
   const [projectName, setProjectName] = useState('');
 
   const getList = () => {
-    fetchData('/operation-project/' + params.key, {}, 'GET').then((res) => {
-      switch (res.status) {
-        case 200:
-          // eslint-disable-next-line no-case-declarations
-          let data = res?.data?.list[0];
-          setProjectName(data.projectName);
-          break;
-        case 400:
-          toast.error(res?.data?.message);
-          break;
-        case 403:
-          toast.error(res?.data);
-          break;
-        default:
-          navigate(ROUTE_PATH.error404);
+    fetchData(`${ROUTE_API.operationProject}/` + params.key, {}, 'GET').then(
+      (res) => {
+        switch (res.status) {
+          case 200:
+            // eslint-disable-next-line no-case-declarations
+            let data = res?.data?.list[0];
+            setProjectName(data.projectName);
+            break;
+          case 400:
+            toast.error(res?.data?.message);
+            break;
+          case 403:
+            toast.error(res?.data);
+            break;
+          default:
+            navigate(ROUTE_PATH.error404);
+        }
       }
-    });
+    );
   };
 
   const funcButtonHandleClickExecute = (e) => {
@@ -41,7 +43,7 @@ const ProjectEditPage = () => {
         transactionCode: params.key,
         projectName: projectName,
       };
-      fetchData('/operation-project', data, 'PUT').then((res) => {
+      fetchData(ROUTE_API.operationProject, data, 'PUT').then((res) => {
         switch (res.status) {
           case 200:
             toast.success(res.data.message);

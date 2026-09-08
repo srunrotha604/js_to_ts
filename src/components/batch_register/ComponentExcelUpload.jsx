@@ -9,7 +9,7 @@ import { toast } from 'react-toastify';
 import ExcelIcon from '../../assets/Excel.svg';
 import useLoading from '../../hooks/useLoading';
 import { fileUpload } from '../../services/$service';
-import { ROUTE_PATH } from '../../utils/route-util';
+import { ROUTE_API, ROUTE_PATH } from '../../utils/route-util';
 import ActionConfirmationModal from '../common/ActionConfirmationModal.jsx';
 import Button from '../common/Button';
 import { useModal } from '../common/modal/index.jsx';
@@ -103,7 +103,7 @@ const ComponentExcelUpload = (props) => {
       })
     );
     startLoading();
-    fileUpload('/operation-customer/batch/upload', formData, 'POST').then(
+    fileUpload(ROUTE_API.operationCustomerBatchUpload, formData, 'POST').then(
       (res) => {
         switch (res?.status) {
           case 200:

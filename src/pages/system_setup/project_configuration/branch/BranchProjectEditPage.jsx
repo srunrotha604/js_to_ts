@@ -3,7 +3,7 @@ import { redirect, useNavigate, useParams } from 'react-router-dom';
 import Select from 'react-select';
 import { toast } from 'react-toastify';
 import { fetchData } from '../../../../services/$service';
-import { ROUTE_PATH } from '../../../../utils/route-util';
+import { ROUTE_API, ROUTE_PATH } from '../../../../utils/route-util';
 
 const BranchProjectEditPage = () => {
   document.title = 'E-CHANNEL PORTAL | project | edit';
@@ -17,33 +17,35 @@ const BranchProjectEditPage = () => {
   const [branch, setBranch] = useState('');
 
   const getList = () => {
-    fetchData('/opertion-branch/project/' + params.key, {}, 'GET').then(
-      (res) => {
-        switch (res.status) {
-          case 200:
-            {
-              let project = res?.data?.options;
-              setOptionProject(res?.data?.options);
-              setSelectdProject(res?.data?.list[0]?.projectFamily);
-              setBranch(res?.data?.list[0]?.branchFamily);
-              let policiesItem = project.find(
-                (item) => item.value === res?.data?.list[0]?.projectFamily
-              );
-              setOptionPolicies(policiesItem.policies);
-              setSelectdPolicies(res?.data?.list[0]?.policies);
-            }
-            break;
-          case 400:
-            toast.error(res?.data?.message);
-            break;
-          case 403:
-            toast.error(res?.data);
-            break;
-          default:
-            redirect(ROUTE_PATH.notFound);
-        }
+    fetchData(
+      `${ROUTE_API.opertionBranchProject}/` + params.key,
+      {},
+      'GET'
+    ).then((res) => {
+      switch (res.status) {
+        case 200:
+          {
+            let project = res?.data?.options;
+            setOptionProject(res?.data?.options);
+            setSelectdProject(res?.data?.list[0]?.projectFamily);
+            setBranch(res?.data?.list[0]?.branchFamily);
+            let policiesItem = project.find(
+              (item) => item.value === res?.data?.list[0]?.projectFamily
+            );
+            setOptionPolicies(policiesItem.policies);
+            setSelectdPolicies(res?.data?.list[0]?.policies);
+          }
+          break;
+        case 400:
+          toast.error(res?.data?.message);
+          break;
+        case 403:
+          toast.error(res?.data);
+          break;
+        default:
+          redirect(ROUTE_PATH.notFound);
       }
-    );
+    });
   };
 
   const funcButtonHandleClickExecute = (e) => {
@@ -59,7 +61,7 @@ const BranchProjectEditPage = () => {
         transactionCode: params.key,
         policies: selectedPolicies.toString(),
       };
-      fetchData('/opertion-branch/project', data, 'PUT').then((res) => {
+      fetchData(ROUTE_API.opertionBranchProject, data, 'PUT').then((res) => {
         switch (res.status) {
           case 200:
             navigate(ROUTE_PATH.branchProject(branch));

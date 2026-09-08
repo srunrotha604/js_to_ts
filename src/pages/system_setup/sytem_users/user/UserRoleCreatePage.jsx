@@ -3,7 +3,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import Select from 'react-select';
 import { toast } from 'react-toastify';
 import { fetchData } from '../../../../services/$service';
-import { ROUTE_PATH } from '../../../../utils/route-util';
+import { ROUTE_API, ROUTE_PATH } from '../../../../utils/route-util';
 
 const UserRoleCreatePage = () => {
   document.title = 'E-CHANNEL PORTAL | user role create';
@@ -50,7 +50,7 @@ const UserRoleCreatePage = () => {
           userCode: params.key,
         };
 
-        fetchData('/e-chanel-user/role', data, 'POST').then((res) => {
+        fetchData(ROUTE_API.eChanelUserRole, data, 'POST').then((res) => {
           switch (res.status) {
             case 200:
               toast.success(res.data.message);

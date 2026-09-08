@@ -3,7 +3,7 @@ import { redirect, useNavigate, useParams } from 'react-router-dom';
 import Select from 'react-select';
 import { toast } from 'react-toastify';
 import { fetchData } from '../../../../services/$service';
-import { ROUTE_PATH } from '../../../../utils/route-util';
+import { ROUTE_API, ROUTE_PATH } from '../../../../utils/route-util';
 
 const UserAccessStatusPage = () => {
   document.title = 'E-CHANNEL PORTAL | user access status';
@@ -17,28 +17,30 @@ const UserAccessStatusPage = () => {
   const [selectedProcessValue, setSelectedProcessValue] = useState([]);
 
   const getList = () => {
-    fetchData('/e-chanel-user/access/' + params.userCode, {}, 'GET').then(
-      (res) => {
-        switch (res.status) {
-          case 200:
-            setValue(res?.data?.role[0].value);
-            setOptionsAccess(res?.data?.access);
-            setOptionsProcess(res?.data?.access);
-            setAdmin(res?.data?.role[0].keyCode);
-            setSelectedAccessValue(res?.data?.role[0]?.label);
-            setSelectedProcessValue(res?.data?.role[0]?.labelSecond);
-            break;
-          case 400:
-            toast.error(res?.data?.message);
-            break;
-          case 403:
-            toast.error(res?.data);
-            break;
-          default:
-            redirect(ROUTE_PATH.error404);
-        }
+    fetchData(
+      `${ROUTE_API.eChanelUserAccess}/` + params.userCode,
+      {},
+      'GET'
+    ).then((res) => {
+      switch (res.status) {
+        case 200:
+          setValue(res?.data?.role[0].value);
+          setOptionsAccess(res?.data?.access);
+          setOptionsProcess(res?.data?.access);
+          setAdmin(res?.data?.role[0].keyCode);
+          setSelectedAccessValue(res?.data?.role[0]?.label);
+          setSelectedProcessValue(res?.data?.role[0]?.labelSecond);
+          break;
+        case 400:
+          toast.error(res?.data?.message);
+          break;
+        case 403:
+          toast.error(res?.data);
+          break;
+        default:
+          redirect(ROUTE_PATH.error404);
       }
-    );
+    });
   };
 
   const funcButtonHandleClickExecute = (e) => {
@@ -53,7 +55,7 @@ const UserAccessStatusPage = () => {
         processStatus: selectedProcessValue.toString(),
         adminBranch: admin,
       };
-      fetchData('/e-chanel-user/access', data, 'POST').then((res) => {
+      fetchData(ROUTE_API.eChanelUserAccess, data, 'POST').then((res) => {
         switch (res.status) {
           case 200:
             toast.success(res.data.message);

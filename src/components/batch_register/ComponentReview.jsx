@@ -1,23 +1,23 @@
-import { useState } from "react";
-import ReactPaginate from "react-paginate";
-import { toast } from "react-toastify";
-import { useFormContext } from "react-hook-form";
-import { fetchDataAsync } from "../../services/$service";
-import { useModal } from "../common/modal";
-import ActionSaveDraftConfirmationModal from "../common/ActionSaveDraftConfirmationModal";
-import { useAuth } from "../../context/AuthContext";
-import { formatDay } from "../../utils/format-day";
-import Spinner, { useSpinner } from "../common/Spinner.jsx";
-import useMessage from "../../hooks/useMessage.jsx";
-import { useNavigate } from "react-router-dom";
-import { STATUS } from "../../utils/status.js";
-import { ROUTE_PATH } from "../../utils/route-util";
+import { useState } from 'react';
+import { useFormContext } from 'react-hook-form';
+import ReactPaginate from 'react-paginate';
+import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
+import { useAuth } from '../../context/AuthContext';
+import useMessage from '../../hooks/useMessage.jsx';
+import { fetchDataAsync } from '../../services/$service';
+import { formatDay } from '../../utils/format-day';
+import { ROUTE_API, ROUTE_PATH } from '../../utils/route-util';
+import { STATUS } from '../../utils/status.js';
+import ActionSaveDraftConfirmationModal from '../common/ActionSaveDraftConfirmationModal';
+import { useModal } from '../common/modal';
+import Spinner, { useSpinner } from '../common/Spinner.jsx';
 
 const TAB = {
-  New: "New",
-  Duplicate: "Duplicate",
-  Invalid: "Invalid",
-  Existing: "Existing",
+  New: 'New',
+  Duplicate: 'Duplicate',
+  Invalid: 'Invalid',
+  Existing: 'Existing',
 };
 
 const ComponentReview = (props) => {
@@ -40,14 +40,14 @@ const ComponentReview = (props) => {
         status: isDraft ? STATUS.Draft : STATUS.Submitted,
       };
 
-      await fetchDataAsync("/operation-customer/batch", {
+      await fetchDataAsync(ROUTE_API.operationCustomerBatch, {
         data,
-        method: "POST",
+        method: 'POST',
       });
       if (isDraft) {
-        toast.success("Draft saved successfully");
+        toast.success('Draft saved successfully');
       } else {
-        toast.success("Batch Customer saved successfully");
+        toast.success('Batch Customer saved successfully');
       }
       navigate(ROUTE_PATH.dashboard);
       closeModal();
@@ -168,7 +168,7 @@ const ComponentReview = (props) => {
                                   href={`#${item.status}`}
                                   onClick={() => tabHandleClick(item.status)}
                                   className={`nav-link ${
-                                    tabStatus === item.status ? "active" : ""
+                                    tabStatus === item.status ? 'active' : ''
                                   }`}
                                   data-bs-toggle="tab"
                                 >
@@ -229,31 +229,31 @@ const ComponentReview = (props) => {
                                           {item.dateOfBirth
                                             ? formatDay(
                                                 item.dateOfBirth,
-                                                "DD/MM/YYYY",
+                                                'DD/MM/YYYY'
                                               )
-                                            : "N/A"}
+                                            : 'N/A'}
                                         </td>
                                         <td
                                           className="text-dark"
                                           style={{
                                             background:
                                               duplicated?.nic?.get(
-                                                item.nicPassport,
-                                              ) || "white",
+                                                item.nicPassport
+                                              ) || 'white',
                                           }}
                                         >
                                           {item.nicPassport}
                                         </td>
                                         <td className="text-muted">
-                                          {item.parentId || "N/A"}
+                                          {item.parentId || 'N/A'}
                                         </td>
                                         <td
                                           className="text-dark"
                                           style={{
                                             background:
                                               duplicated?.customerId?.get(
-                                                item.customerId,
-                                              ) || "white",
+                                                item.customerId
+                                              ) || 'white',
                                           }}
                                         >
                                           {item.customerId}
@@ -268,9 +268,9 @@ const ComponentReview = (props) => {
                                           {item.openingDate
                                             ? formatDay(
                                                 item.openingDate,
-                                                "DD/MM/YYYY",
+                                                'DD/MM/YYYY'
                                               )
-                                            : "N/A"}
+                                            : 'N/A'}
                                         </td>
                                       </tr>
                                     ))}
@@ -334,17 +334,17 @@ const ComponentReview = (props) => {
                                     pageRangeDisplayed={3}
                                     onPageChange={handlePageClick}
                                     containerClassName={
-                                      "pagination m-0 ms-auto"
+                                      'pagination m-0 ms-auto'
                                     }
-                                    pageClassName={"page-item"}
-                                    pageLinkClassName={"page-link"}
-                                    previousClassName={"page-item"}
-                                    previousLinkClassName={"page-link"}
-                                    nextClassName={"page-item"}
-                                    nextLinkClassName={"page-link"}
-                                    breakClassName={"page-item"}
-                                    breakLinkClassName={"page-link"}
-                                    activeClassName={"active"}
+                                    pageClassName={'page-item'}
+                                    pageLinkClassName={'page-link'}
+                                    previousClassName={'page-item'}
+                                    previousLinkClassName={'page-link'}
+                                    nextClassName={'page-item'}
+                                    nextLinkClassName={'page-link'}
+                                    breakClassName={'page-item'}
+                                    breakLinkClassName={'page-link'}
+                                    activeClassName={'active'}
                                   />
                                 </div>
                               </div>
@@ -370,10 +370,10 @@ const ComponentReview = (props) => {
                                     modalRef={modalRef}
                                     closeModal={closeModal}
                                     confirm={hasPermissionProccessTransaction(
-                                      "submitted",
+                                      'submitted'
                                     )}
                                     saveDraft={hasPermissionProccessTransaction(
-                                      "draft",
+                                      'draft'
                                     )}
                                     onSaveDraft={() => {
                                       handleSubmit({ isDraft: true });
@@ -399,26 +399,26 @@ const ComponentReview = (props) => {
 };
 
 const duplicatedColorCode = [
-  "#EBB99A",
-  "#CDFC92",
-  "#E6A9D9",
-  "#ACD8E6",
-  "#E4F4A4",
-  "#CFCFE0",
-  "#FBD1A6",
-  "#98E6D2",
-  "#C096F6",
-  "#B4F4C6",
-  "#FFA390",
-  "#AEDEF4",
-  "#E9A9F1",
-  "#A3F3E3",
-  "#C7E19A",
-  "#D9D9A2",
-  "#E1A2F5",
-  "#F5C5A2",
-  "#B5E5E5",
-  "#D3B5B5",
+  '#EBB99A',
+  '#CDFC92',
+  '#E6A9D9',
+  '#ACD8E6',
+  '#E4F4A4',
+  '#CFCFE0',
+  '#FBD1A6',
+  '#98E6D2',
+  '#C096F6',
+  '#B4F4C6',
+  '#FFA390',
+  '#AEDEF4',
+  '#E9A9F1',
+  '#A3F3E3',
+  '#C7E19A',
+  '#D9D9A2',
+  '#E1A2F5',
+  '#F5C5A2',
+  '#B5E5E5',
+  '#D3B5B5',
 ];
 
 const generateColorForDuplicateItem = (data) => {
@@ -440,7 +440,7 @@ const generateColorForDuplicateItem = (data) => {
       } else if (!acc.customerId.get(item.customerId)) {
         acc.customerId.set(
           item.customerId,
-          duplicatedColorCode[acc.customerIdColor],
+          duplicatedColorCode[acc.customerIdColor]
         );
         if (acc.customerIdColor < duplicatedColorCode.length) {
           acc.customerIdColor += 1;
@@ -451,7 +451,7 @@ const generateColorForDuplicateItem = (data) => {
 
       return acc;
     },
-    { nic: new Map(), customerId: new Map(), nicColor: 1, customerIdColor: 0 },
+    { nic: new Map(), customerId: new Map(), nicColor: 1, customerIdColor: 0 }
   );
 };
 

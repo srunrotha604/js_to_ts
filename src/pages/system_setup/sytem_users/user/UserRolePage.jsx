@@ -4,7 +4,7 @@ import { toast } from 'react-toastify';
 import Loading from '../../../../components/Loading';
 
 import { fetchData } from '../../../../services/$service';
-import { ROUTE_PATH } from '../../../../utils/route-util';
+import { ROUTE_API, ROUTE_PATH } from '../../../../utils/route-util';
 
 const UserRolePage = () => {
   document.title = 'E-CHANNEL PORTAL | user';
@@ -19,23 +19,25 @@ const UserRolePage = () => {
   const [getRoleName, setRoleName] = useState('');
 
   const getList = () => {
-    fetchData('/e-chanel-user/role/' + params.key, {}, 'GET').then((res) => {
-      switch (res.status) {
-        case 200:
-          setLoading(true);
-          setArrList(res?.data?.item);
-          setLoading(false);
-          break;
-        case 400:
-          toast.error(res?.data?.message);
-          break;
-        case 403:
-          toast.error(res?.data);
-          break;
-        default:
-          navigate(ROUTE_PATH.error404);
+    fetchData(`${ROUTE_API.eChanelUserRole}/` + params.key, {}, 'GET').then(
+      (res) => {
+        switch (res.status) {
+          case 200:
+            setLoading(true);
+            setArrList(res?.data?.item);
+            setLoading(false);
+            break;
+          case 400:
+            toast.error(res?.data?.message);
+            break;
+          case 403:
+            toast.error(res?.data);
+            break;
+          default:
+            navigate(ROUTE_PATH.error404);
+        }
       }
-    });
+    );
   };
 
   const funcRemoveHandleClickExecute = () => {
@@ -43,7 +45,7 @@ const UserRolePage = () => {
       key: getKey,
     };
 
-    fetchData('/e-chanel-user/role', data, 'DELETE').then((res) => {
+    fetchData(ROUTE_API.eChanelUserRole, data, 'DELETE').then((res) => {
       switch (res.status) {
         case 200:
           toast.success(res.data.message);

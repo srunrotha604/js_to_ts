@@ -3,7 +3,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import Select from 'react-select';
 import { toast } from 'react-toastify';
 import { fetchData } from '../../../../services/$service';
-import { ROUTE_PATH } from '../../../../utils/route-util';
+import { ROUTE_API, ROUTE_PATH } from '../../../../utils/route-util';
 
 const UserEditPage = () => {
   document.title = 'E-CHANNEL PORTAL | user - create';
@@ -17,7 +17,7 @@ const UserEditPage = () => {
   const [selectedRole, setSelectedRole] = useState('');
   const getList = () => {
     fetchData(
-      `/e-chanel-user?transaction=${params.key}&branchName=`,
+      `${ROUTE_API.eChanelUser}?transaction=${params.key}&branchName=`,
       {},
       'GET'
     ).then((res) => {
@@ -41,7 +41,7 @@ const UserEditPage = () => {
           navigate(ROUTE_PATH.error404);
       }
     });
-    fetchData('/e-chanel-user/access', {}, 'GET').then((res) => {
+    fetchData(ROUTE_API.eChanelUserAccess, {}, 'GET').then((res) => {
       switch (res.status) {
         case 200:
           setOptionBranch(res?.data?.role);
@@ -78,7 +78,7 @@ const UserEditPage = () => {
           role: selectedRole,
         };
 
-        fetchData('/e-chanel-user', data, 'PUT').then((res) => {
+        fetchData(ROUTE_API.eChanelUser, data, 'PUT').then((res) => {
           switch (res.status) {
             case 200:
               toast.success(res.data.message);

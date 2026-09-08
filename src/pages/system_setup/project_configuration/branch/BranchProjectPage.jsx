@@ -4,7 +4,7 @@ import { Link, useNavigate, useParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import Loading from '../../../../components/Loading';
 import { fetchData } from '../../../../services/$service';
-import { ROUTE_PATH } from '../../../../utils/route-util';
+import { ROUTE_API, ROUTE_PATH } from '../../../../utils/route-util';
 
 const BranchProjectPage = () => {
   document.title = 'E-CHANNEL PORTAL | Branch';
@@ -16,22 +16,24 @@ const BranchProjectPage = () => {
   const [getKey, setGetKey] = useState('');
 
   const getList = () => {
-    fetchData('/opertion-branch/project/' + params.key, {}, 'GET').then(
-      (res) => {
-        if (res?.status === 200) {
-          setLoading(true);
-          setArrList(res?.data?.list);
-          setLoading(false);
-        }
+    fetchData(
+      `${ROUTE_API.opertionBranchProject}/` + params.key,
+      {},
+      'GET'
+    ).then((res) => {
+      if (res?.status === 200) {
+        setLoading(true);
+        setArrList(res?.data?.list);
+        setLoading(false);
       }
-    );
+    });
   };
 
   const deleteProjectHandleClickExecute = () => {
     let data = {
       transactionCode: getKey,
     };
-    fetchData('/opertion-branch/project', data, 'DELETE').then((res) => {
+    fetchData(ROUTE_API.opertionBranchProject, data, 'DELETE').then((res) => {
       switch (res.status) {
         case 200:
           setLoading(true);

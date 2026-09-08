@@ -3,7 +3,7 @@ import { HiOutlineFaceFrown } from 'react-icons/hi2';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext.jsx';
 import { fetchDataAsync } from '../../services/$service.jsx';
-import { ROUTE_PATH } from '../../utils/route-util';
+import { ROUTE_API, ROUTE_PATH } from '../../utils/route-util';
 
 const ErrorPage = ({ error }) => {
   document.title = 'Something wen wrong';
@@ -26,7 +26,7 @@ const ErrorPage = ({ error }) => {
       };
       try {
         if (import.meta.env.PROD) {
-          await fetchDataAsync('/log', {
+          await fetchDataAsync(ROUTE_API.log, {
             method: 'POST',
             data: errorBody,
           });

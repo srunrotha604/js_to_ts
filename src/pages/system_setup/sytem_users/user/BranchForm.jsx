@@ -19,7 +19,7 @@ import HeaderTableComponent from '../../../../components/table/table_action/Head
 import TableRowStatusComponentHandle from '../../../../components/table/table_action/TableRowStatusComponentHandle';
 import useMessage from '../../../../hooks/useMessage';
 import { fetchDataAsync } from '../../../../services/$service';
-import { ROUTE_PATH } from '../../../../utils/route-util';
+import { ROUTE_API, ROUTE_PATH } from '../../../../utils/route-util';
 
 const BranchForm = () => {
   const navigate = useNavigate();
@@ -46,7 +46,7 @@ const BranchForm = () => {
 
   const fetchRows = async () => {
     try {
-      const response = await fetchDataAsync(`/e-chanel-user/branch`, {
+      const response = await fetchDataAsync(ROUTE_API.eChanelUserBranch, {
         params: {
           app: params.get('appMember'),
           company: params.get('companyMember'),
@@ -63,13 +63,16 @@ const BranchForm = () => {
 
   const fetchBranchRows = async () => {
     try {
-      const response = await fetchDataAsync(`/e-chanel-user/branch/category`, {
-        params: {
-          app: params.get('appMember'),
-          company: params.get('companyMember'),
-          user: params.get('uuid'),
-        },
-      });
+      const response = await fetchDataAsync(
+        ROUTE_API.eChanelUserBranchCategory,
+        {
+          params: {
+            app: params.get('appMember'),
+            company: params.get('companyMember'),
+            user: params.get('uuid'),
+          },
+        }
+      );
       const data = response?.data;
       setBranch(data?.company);
     } catch (error) {
@@ -85,7 +88,7 @@ const BranchForm = () => {
         userCode: params.get('uuid'),
         branchFamily: selectedBranch,
       };
-      await fetchDataAsync('/e-chanel-user/branch', {
+      await fetchDataAsync(ROUTE_API.eChanelUserBranch, {
         data,
         method: 'post',
       });
@@ -107,7 +110,7 @@ const BranchForm = () => {
         companyFamily: params.get('companyMember'),
         userCode: params.get('uuid'),
       };
-      await fetchDataAsync('/e-chanel-user/branch', {
+      await fetchDataAsync(ROUTE_API.eChanelUserBranch, {
         data,
         method: 'put',
       });
@@ -235,7 +238,7 @@ const BranchForm = () => {
                                 active={item?.active}
                                 success={() => fetchRows()}
                                 uuid={item?.uuid}
-                                route="/system-user-role/branch/status"
+                                route={ROUTE_API.systemUserRoleBranchStatus}
                               />
                               <span
                                 className={`${
@@ -254,7 +257,7 @@ const BranchForm = () => {
                                 message={`Delete branch?
                                 ${item?.branch}`}
                                 uuid={item?.uuid}
-                                route="/system-user-role/branch"
+                                route={ROUTE_API.systemUserRoleBranch}
                                 success={() => fetchRows()}
                               />
                             </td>

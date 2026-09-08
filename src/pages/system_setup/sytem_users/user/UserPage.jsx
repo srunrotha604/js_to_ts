@@ -10,7 +10,7 @@ import TableCellTextDeleteConfirm from '../../../../components/table/table_actio
 import { selectCustomStyles } from '../../../../components/transaction/TransactionTabList';
 import { useAuth } from '../../../../context/AuthContext.jsx';
 import { fetchData } from '../../../../services/$service';
-import { ROUTE_PATH } from '../../../../utils/route-util';
+import { ROUTE_API, ROUTE_PATH } from '../../../../utils/route-util';
 import AddPhoneNumber from './components/AddPhoneNumber.jsx';
 
 const UserPage = () => {
@@ -24,7 +24,7 @@ const UserPage = () => {
   const [selectedBranch, setSelectdBranch] = useState('');
   const getList = () => {
     fetchData(
-      '/e-chanel-user?branchName=' + selectedBranch.toString(),
+      `${ROUTE_API.eChanelUser}?branchName=` + selectedBranch.toString(),
       {},
       'GET'
     ).then((res) => {
@@ -39,7 +39,7 @@ const UserPage = () => {
   const branchHandleChange = (data) => {
     setSelectdBranch(data.value);
     fetchData(
-      '/e-chanel-user?branchName=' + data.value.toString(),
+      `${ROUTE_API.eChanelUser}?branchName=` + data.value.toString(),
       {},
       'GET'
     ).then((res) => {
@@ -310,7 +310,7 @@ const UserPage = () => {
                                   <TableCellTextDeleteConfirm
                                     success={() => getList()}
                                     uuid={item?.transactionCode}
-                                    route="/e-chanel-user"
+                                    route={ROUTE_API.eChanelUser}
                                     title="Delete User"
                                     message={`Confirm delete user: ${item.givenName} ${item.sureName}?`}
                                     data={{

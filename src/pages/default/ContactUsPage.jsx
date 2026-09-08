@@ -9,7 +9,7 @@ import useMessage from '../../hooks/useMessage.jsx';
 import { fetchDataAsync } from '../../services/$service';
 import { contactUs } from '../../utils/contact';
 import { delay } from '../../utils/delay.js';
-import { ROUTE_PATH } from '../../utils/route-util';
+import { ROUTE_API, ROUTE_PATH } from '../../utils/route-util';
 
 const ContactUsPage = () => {
   const { control, handleSubmit, watch } = useForm();
@@ -22,7 +22,7 @@ const ContactUsPage = () => {
   const onSubmit = async (data) => {
     try {
       openSpinner();
-      await fetchDataAsync('/log/contact-us', {
+      await fetchDataAsync(ROUTE_API.logContactUs, {
         method: 'POST',
         data,
       });

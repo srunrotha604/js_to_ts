@@ -6,7 +6,7 @@ import { toast } from 'react-toastify';
 import Modal, { useModal } from '../../../../components/common/modal';
 import Loading from '../../../../components/Loading';
 import { fetchData } from '../../../../services/$service';
-import { ROUTE_PATH } from '../../../../utils/route-util';
+import { ROUTE_API, ROUTE_PATH } from '../../../../utils/route-util';
 
 const RoleAccessPage = () => {
   document.title = 'E-CHANNEL PORTAL | Role access';
@@ -20,7 +20,7 @@ const RoleAccessPage = () => {
   const [selectedAccess, setSelectedAccess] = useState('');
   const [selectedProcess, setSelectedProcess] = useState('');
   const getList = () => {
-    fetchData('/application-role/access', {}, 'GET').then((res) => {
+    fetchData(ROUTE_API.applicationRoleAccess, {}, 'GET').then((res) => {
       if (res?.status == 200) {
         setLoading(true);
         setArrList(res?.data?.list);
@@ -36,7 +36,7 @@ const RoleAccessPage = () => {
       access: selectedAccess.toString(),
       process: selectedProcess.toString(),
     };
-    fetchData('/application-role/access', data, 'PUT').then((res) => {
+    fetchData(ROUTE_API.applicationRoleAccess, data, 'PUT').then((res) => {
       switch (res.status) {
         case 200:
           toast.success(res.data.message);

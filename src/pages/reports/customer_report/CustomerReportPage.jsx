@@ -16,6 +16,7 @@ import useLoading from '../../../hooks/useLoading';
 import useMessage from '../../../hooks/useMessage.jsx';
 import { fetchDataAsync } from '../../../services/$service';
 import { formatDay, getStartOfMonthDate } from '../../../utils/format-day';
+import { ROUTE_API } from '../../../utils/route-util.js';
 import { STATUS } from '../../../utils/status';
 
 const CustomerReportPage = () => {
@@ -204,12 +205,10 @@ const CustomerReportPage = () => {
         branchName: selectedBranch?.map((item) => item.value).join(',') || '',
         projectName: selectedProject?.map((item) => item.value).join(',') || '',
       };
-
-      const response = await fetchDataAsync('/export/operation-customer', {
+      const response = await fetchDataAsync(ROUTE_API.exportOperationCustomer, {
         params,
         responseType: 'blob',
       });
-
       fileDownload(
         response?.data,
         `${

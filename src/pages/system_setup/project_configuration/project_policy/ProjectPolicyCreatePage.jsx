@@ -1,15 +1,15 @@
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
+import { MdClear } from 'react-icons/md';
 import { useNavigate, useParams } from 'react-router-dom';
+import ReactSelect from 'react-select';
 import { toast } from 'react-toastify';
 import {
+  components,
   createFilter,
   WindowedMenuList,
-  components,
 } from 'react-windowed-select';
 import { fetchData } from '../../../../services/$service';
-import ReactSelect from 'react-select';
-import { MdClear } from 'react-icons/md';
-import { ROUTE_PATH } from '../../../../utils/route-util';
+import { ROUTE_API, ROUTE_PATH } from '../../../../utils/route-util';
 
 const ProjectPolicyCreatePage = () => {
   document.title = 'E-CHANNEL PORTAL | project | policy | create';
@@ -54,7 +54,7 @@ const ProjectPolicyCreatePage = () => {
   };
 
   const getPolicyOption = () => {
-    fetchData('/core-system-operation-policy/PG00', {}, 'GET').then((res) => {
+    fetchData(ROUTE_API.coreSystemOperationPolicy, {}, 'GET').then((res) => {
       switch (res.status) {
         case 200:
           setOptionProduct(res?.data?.product);

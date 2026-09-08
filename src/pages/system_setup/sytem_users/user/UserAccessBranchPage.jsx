@@ -4,7 +4,7 @@ import { redirect, useNavigate, useParams } from 'react-router-dom';
 import Select from 'react-select';
 import { toast } from 'react-toastify';
 import { fetchData } from '../../../../services/$service';
-import { ROUTE_PATH } from '../../../../utils/route-util';
+import { ROUTE_API, ROUTE_PATH } from '../../../../utils/route-util';
 
 const UserAccessBranchPage = () => {
   document.title = 'E-CHANNEL PORTAL | user access branch';
@@ -17,7 +17,7 @@ const UserAccessBranchPage = () => {
 
   const getList = () => {
     let route =
-      '/e-chanel-user/branch/' +
+      `${ROUTE_API.eChanelUserBranch}/` +
       params.applicationId +
       '/' +
       params.companyCode +
@@ -66,7 +66,7 @@ const UserAccessBranchPage = () => {
         branchFamily: selectedValue,
       };
 
-      fetchData('/e-chanel-user/branch', data, 'POST').then((res) => {
+      fetchData(ROUTE_API.eChanelUserBranch, data, 'POST').then((res) => {
         switch (res.status) {
           case 200:
             toast.success(res.data.message);
@@ -90,7 +90,7 @@ const UserAccessBranchPage = () => {
     let data = {
       transactionCode: transactionCode,
     };
-    fetchData('/e-chanel-user/branch', data, 'DELETE').then((res) => {
+    fetchData(ROUTE_API.eChanelUserBranch, data, 'DELETE').then((res) => {
       switch (res.status) {
         case 200:
           toast.success(res.data.message);
@@ -115,7 +115,7 @@ const UserAccessBranchPage = () => {
       companyFamily: item.companyFamily,
       userCode: params.userCode,
     };
-    fetchData('/e-chanel-user/branch', data, 'PUT').then((res) => {
+    fetchData(ROUTE_API.eChanelUserBranch, data, 'PUT').then((res) => {
       switch (res.status) {
         case 200:
           toast.success(res.data.message);

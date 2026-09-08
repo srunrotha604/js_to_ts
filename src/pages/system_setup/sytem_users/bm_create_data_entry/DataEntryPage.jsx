@@ -8,7 +8,7 @@ import TableCellStatus from '../../../../components/form/TableCellStatus';
 import Loading from '../../../../components/Loading';
 import { useAuth } from '../../../../context/AuthContext.jsx';
 import { fetchData } from '../../../../services/$service';
-import { ROUTE_PATH } from '../../../../utils/route-util';
+import { ROUTE_API, ROUTE_PATH } from '../../../../utils/route-util';
 import AddPhoneNumber from './components/AddPhoneNumber.jsx';
 
 const DataEntryPage = () => {
@@ -20,7 +20,7 @@ const DataEntryPage = () => {
   const [arrList, setArrList] = useState([]);
   const getList = () => {
     fetchData(
-      `/e-chanel-data-entry?branchName=${selectedBranch.value}`,
+      `${ROUTE_API.eChanelDataEntry}?branchName=${selectedBranch.value}`,
       {},
       'GET'
     ).then((res) => {
@@ -47,7 +47,7 @@ const DataEntryPage = () => {
       key: key,
     };
 
-    fetchData('/e-chanel-data-entry/status', data, 'Post').then((res) => {
+    fetchData(ROUTE_API.eChanelDataEntryStatus, data, 'Post').then((res) => {
       switch (res.status) {
         case 200:
           toast.success(res.data.message);
@@ -70,7 +70,7 @@ const DataEntryPage = () => {
       key: key,
     };
 
-    fetchData('/e-chanel-data-entry', data, 'DELETE').then((res) => {
+    fetchData(ROUTE_API.eChanelDataEntry, data, 'DELETE').then((res) => {
       switch (res.status) {
         case 200:
           toast.success(res.data.message);

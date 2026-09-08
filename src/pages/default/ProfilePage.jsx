@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { redirect, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { fetchData, fileUpload } from '../../services/$service';
-import { ROUTE_PATH } from '../../utils/route-util';
+import { ROUTE_API, ROUTE_PATH } from '../../utils/route-util';
 
 const ProfilePage = () => {
   const navigate = useNavigate();
@@ -60,7 +60,7 @@ const ProfilePage = () => {
     if (messages.length < 1) {
       const formData = new FormData();
       formData.append('selectedFile', selectedFile);
-      fileUpload('/system-user', formData, 'PATCH').then((res) => {
+      fileUpload(ROUTE_API.systemUser, formData, 'PATCH').then((res) => {
         switch (res.status) {
           case 200:
             toast.success(res.data.message);
@@ -92,7 +92,7 @@ const ProfilePage = () => {
       address2: address2,
       otherContact: otherContact,
     };
-    fetchData('/system-user/info', data, 'POST').then((res) => {
+    fetchData(ROUTE_API.systemUserInfo, data, 'POST').then((res) => {
       switch (res.status) {
         case 200:
           toast.success(res.data.message);

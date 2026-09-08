@@ -4,7 +4,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import Loading from '../../../../components/Loading';
 import { fetchData } from '../../../../services/$service';
-import { ROUTE_PATH } from '../../../../utils/route-util';
+import { ROUTE_API, ROUTE_PATH } from '../../../../utils/route-util';
 
 const ProjectPage = () => {
   document.title = 'E-CHANNEL PORTAL | project';
@@ -18,7 +18,7 @@ const ProjectPage = () => {
   const [getStatus, setGetStatus] = useState('');
 
   const getList = () => {
-    fetchData('/operation-project', {}, 'GET').then((res) => {
+    fetchData(ROUTE_API.operationProject, {}, 'GET').then((res) => {
       switch (res.status) {
         case 200:
           setLoading(true);

@@ -5,7 +5,7 @@ import Select from 'react-select';
 import { toast } from 'react-toastify';
 import { useAuth } from '../../../../context/AuthContext.jsx';
 import { fetchData } from '../../../../services/$service';
-import { ROUTE_PATH } from '../../../../utils/route-util';
+import { ROUTE_API, ROUTE_PATH } from '../../../../utils/route-util';
 
 const UserCreatePage = () => {
   document.title = 'E-CHANNEL PORTAL | user - create';
@@ -24,7 +24,7 @@ const UserCreatePage = () => {
   const [message, setMessage] = useState('');
 
   const getList = () => {
-    fetchData('/e-chanel-user/access', {}, 'GET').then((res) => {
+    fetchData(ROUTE_API.eChanelUserAccess, {}, 'GET').then((res) => {
       if (res?.status == 200) {
         setOptionRole(res?.data?.role);
       }
@@ -58,7 +58,7 @@ const UserCreatePage = () => {
           phone: phone,
         };
 
-        fetchData('/e-chanel-user', data, 'POST').then((res) => {
+        fetchData(ROUTE_API.eChanelUser, data, 'POST').then((res) => {
           switch (res.status) {
             case 200:
               toast.success(res.data.message);

@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { fetchData } from '../../../../services/$service';
-import { ROUTE_PATH } from '../../../../utils/route-util';
+import { ROUTE_API, ROUTE_PATH } from '../../../../utils/route-util';
 
 const DataEntryImportPage = () => {
   document.title = 'E-CHANNEL PORTAL | user - create';
@@ -19,22 +19,24 @@ const DataEntryImportPage = () => {
           email: textEmail,
         };
 
-        fetchData('/e-chanel-data-entry/import', data, 'POST').then((res) => {
-          switch (res.status) {
-            case 200:
-              toast.success(res.data.message);
-              navigate(ROUTE_PATH.dataEntry);
-              break;
-            case 400:
-              toast.error(res?.data?.message);
-              break;
-            case 403:
-              toast.error(res?.data);
-              break;
-            default:
-              navigate(ROUTE_PATH.error404);
+        fetchData(ROUTE_API.eChanelDataEntryImport, data, 'POST').then(
+          (res) => {
+            switch (res.status) {
+              case 200:
+                toast.success(res.data.message);
+                navigate(ROUTE_PATH.dataEntry);
+                break;
+              case 400:
+                toast.error(res?.data?.message);
+                break;
+              case 403:
+                toast.error(res?.data);
+                break;
+              default:
+                navigate(ROUTE_PATH.error404);
+            }
           }
-        });
+        );
       }
     }
     e.preventDefault();

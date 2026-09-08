@@ -24,6 +24,7 @@ import { delay } from '../../utils/delay.js';
 import { formatDay } from '../../utils/format-day';
 import { getConfirmedMessageText } from '../../utils/get-confirm-message-text';
 import { pluralize } from '../../utils/pluralize';
+import { ROUTE_API } from '../../utils/route-util.js';
 import { STATUS } from '../../utils/status';
 
 const BatchDetailPage = () => {
@@ -109,7 +110,7 @@ const BatchDetailPage = () => {
       let response;
       if (selectedAll) {
         response = await fetchDataAsync(
-          `/operation-customer/batch?batchNumber=${key}`,
+          `${ROUTE_API.operationCustomerBatch}?batchNumber=${key}`,
           {
             params: {
               status: currentTabStatus,
@@ -183,7 +184,7 @@ const BatchDetailPage = () => {
         summaryDate.remark = rejectRemark;
       }
 
-      await fetchDataAsync('/operation-customer/batch', {
+      await fetchDataAsync(ROUTE_API.operationCustomerBatch, {
         data: summaryDate,
         method: 'POST',
       });
@@ -285,7 +286,7 @@ const BatchDetailPage = () => {
             tab={navTab}
             onRowClick={handleSelectTransaction}
             ref={tabListRef}
-            url={'/operation-customer/batch/'}
+            url={`${ROUTE_API.operationCustomerBatch}/`}
             extraParams={`batchNumber=${key}`}
             onFetchSuccess={({ data, tabStatus }) => {
               setBatchDetail(data);

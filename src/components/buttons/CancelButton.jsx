@@ -1,5 +1,5 @@
-import { Tooltip } from "react-tooltip";
-import XIcon from "../Icons/XIcon";
+import { Tooltip } from 'react-tooltip';
+import XIcon from '../Icons/XIcon';
 
 const CancelButton = (props) => {
   const { onClick, tooltip, disabled, label } = props;
@@ -12,7 +12,7 @@ const CancelButton = (props) => {
         disabled={disabled}
       >
         <XIcon />
-        {label ? label : "Cancel"}
+        {label ? label : 'Cancel'}
       </button>
       <button
         className="btn btn-danger d-sm-none btn-icon"

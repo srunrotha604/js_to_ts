@@ -6,6 +6,7 @@ import CancelButton from '../../../../../components/buttons/CancelButton';
 import SubmitButton from '../../../../../components/Buttons/SubmitButton';
 import Modal, { useModal } from '../../../../../components/common/modal';
 import { fetchDataAsync } from '../../../../../services/$service';
+import { ROUTE_API } from '../../../../../utils/route-util';
 
 const AddPhoneNumber = (props) => {
   const { item, success } = props;
@@ -18,7 +19,7 @@ const AddPhoneNumber = (props) => {
         uuid: item?.userCode,
         phoneNumber: phone,
       };
-      await fetchDataAsync(`/e-chanel-data-entry/add-phone-number`, {
+      await fetchDataAsync(ROUTE_API.eChanelDataEntryAddPhoneNumber, {
         data,
         method: 'post',
       });

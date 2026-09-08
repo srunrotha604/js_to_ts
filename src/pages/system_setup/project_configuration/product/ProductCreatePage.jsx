@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import Select from 'react-select';
 import { toast } from 'react-toastify';
 import { fetchData } from '../../../../services/$service';
-import { ROUTE_PATH } from '../../../../utils/route-util';
+import { ROUTE_API, ROUTE_PATH } from '../../../../utils/route-util';
 
 const ProductCreatePage = () => {
   document.title = 'E-CHANNEL PORTAL | product | create';
@@ -14,7 +14,7 @@ const ProductCreatePage = () => {
   const [productList, setProductList] = useState([]);
   const [selectedProduct, setSelectedProduct] = useState('');
   const getList = () => {
-    fetchData('/operation-product/product', {}, 'GET').then((res) => {
+    fetchData(ROUTE_API.operationProductProduct, {}, 'GET').then((res) => {
       switch (res.status) {
         case 200:
           setProductList(res?.data?.options);
@@ -48,7 +48,7 @@ const ProductCreatePage = () => {
         productName: productName,
       };
 
-      fetchData('/operation-product', data, 'POST').then((res) => {
+      fetchData(ROUTE_API.operationProduct, data, 'POST').then((res) => {
         switch (res.status) {
           case 200:
             toast.success(res.data.message);

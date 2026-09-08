@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { redirect, useNavigate, useParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { fetchData } from '../../../../services/$service';
-import { ROUTE_PATH } from '../../../../utils/route-util';
+import { ROUTE_API, ROUTE_PATH } from '../../../../utils/route-util';
 
 const BranchCreatePage = () => {
   document.title = 'E-CHANNEL PORTAL | branch | create';
@@ -40,7 +40,7 @@ const BranchCreatePage = () => {
         address: address,
       };
 
-      fetchData('/opertion-branch', data, 'POST').then((res) => {
+      fetchData(ROUTE_API.opertionBranch, data, 'POST').then((res) => {
         switch (res.status) {
           case 200:
             navigate(`${ROUTE_PATH.branch}/${params.key}`);

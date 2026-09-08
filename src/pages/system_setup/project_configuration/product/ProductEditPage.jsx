@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { redirect, useNavigate, useParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { fetchData } from '../../../../services/$service';
-import { ROUTE_PATH } from '../../../../utils/route-util';
+import { ROUTE_API, ROUTE_PATH } from '../../../../utils/route-util';
 
 const ProductEditPage = () => {
   document.title = 'E-chanel | product | edit';
@@ -41,7 +41,7 @@ const ProductEditPage = () => {
         productName: productName,
       };
 
-      fetchData('/operation-product', data, 'PUT').then((res) => {
+      fetchData(ROUTE_API.operationProduct, data, 'PUT').then((res) => {
         switch (res.status) {
           case 200:
             toast.success(res.data.message);

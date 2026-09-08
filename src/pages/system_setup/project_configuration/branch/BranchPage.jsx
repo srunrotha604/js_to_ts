@@ -6,7 +6,7 @@ import { toast } from 'react-toastify';
 import Modal, { useModal } from '../../../../components/common/modal';
 import Loading from '../../../../components/Loading';
 import { fetchData } from '../../../../services/$service';
-import { ROUTE_PATH } from '../../../../utils/route-util';
+import { ROUTE_API, ROUTE_PATH } from '../../../../utils/route-util';
 
 const BranchPage = () => {
   document.title = 'E-CHANNEL PORTAL | Branch';
@@ -21,7 +21,7 @@ const BranchPage = () => {
   const { modalRef, openModal, closeModal } = useModal();
 
   const getList = () => {
-    fetchData('/opertion-branch', {}, 'GET').then((res) => {
+    fetchData(ROUTE_API.opertionBranch, {}, 'GET').then((res) => {
       switch (res.status) {
         case 200:
           setLoading(true);
@@ -54,7 +54,7 @@ const BranchPage = () => {
       branchCode: selectedBranch,
       value: selectedAdminValue.toString(),
     };
-    fetchData('/opertion-branch/admin', data, 'PUT').then((res) => {
+    fetchData(ROUTE_API.opertionBranchAdmin, data, 'PUT').then((res) => {
       switch (res.status) {
         case 200:
           toast.success(res.data.message);

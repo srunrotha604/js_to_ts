@@ -6,7 +6,7 @@ import ActionConfirmationModal from '../../../../components/common/ActionConfirm
 import { useModal } from '../../../../components/common/modal/index.jsx';
 import Loading from '../../../../components/Loading';
 import { fetchData } from '../../../../services/$service';
-import { ROUTE_PATH } from '../../../../utils/route-util';
+import { ROUTE_API, ROUTE_PATH } from '../../../../utils/route-util';
 
 const ProductPage = () => {
   document.title = 'E-CHANNEL PORTAL | product';
@@ -19,7 +19,7 @@ const ProductPage = () => {
   const [query, setQuery] = useState('');
   const [transactionCode, setTransationCode] = useState('');
   const getList = () => {
-    fetchData('/operation-product', {}, 'GET').then((res) => {
+    fetchData(ROUTE_API.operationProduct, {}, 'GET').then((res) => {
       switch (res.status) {
         case 200:
           setLoading(true);
@@ -52,7 +52,7 @@ const ProductPage = () => {
     let data = {
       transactionCode: transactionCode,
     };
-    fetchData('/operation-product', data, 'DELETE').then((res) => {
+    fetchData(ROUTE_API.operationProduct, data, 'DELETE').then((res) => {
       switch (res.status) {
         case 200:
           toast.success(res.data.message);

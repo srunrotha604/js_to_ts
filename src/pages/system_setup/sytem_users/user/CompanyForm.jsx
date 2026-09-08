@@ -8,7 +8,7 @@ import TableCell from '../../../../components/table/TableCell';
 import TableRow from '../../../../components/table/TableRow';
 import WrapperComponent from '../../../../components/WrapperComponent';
 import { fetchDataAsync } from '../../../../services/$service';
-import { ROUTE_PATH } from '../../../../utils/route-util';
+import { ROUTE_API, ROUTE_PATH } from '../../../../utils/route-util';
 
 const CompanyForm = () => {
   const navigate = useNavigate();
@@ -20,7 +20,7 @@ const CompanyForm = () => {
 
   const fetchRows = async () => {
     try {
-      const response = await fetchDataAsync(`/e-chanel-user/company`, {
+      const response = await fetchDataAsync(ROUTE_API.eChanelUserCompany, {
         params: {
           application_code: params.get('appMember'),
           user_code: params.get('uuid'),
@@ -89,7 +89,7 @@ const CompanyForm = () => {
                               active={item?.active}
                               success={() => fetchRows()}
                               uuid={item?.uuid}
-                              route="/system-user-role/company/status"
+                              route={ROUTE_API.systemUserRoleCompanyStatus}
                             />
                             <span
                               className={`${

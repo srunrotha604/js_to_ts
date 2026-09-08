@@ -12,6 +12,7 @@ import useLoading from '../../hooks/useLoading';
 import useMessage from '../../hooks/useMessage.jsx';
 import { fetchDataAsync } from '../../services/$service';
 import { formatDay } from '../../utils/format-day';
+import { ROUTE_API } from '../../utils/route-util.js';
 import { RECORDSTATUS } from '../../utils/status';
 
 const UserReportPage = () => {
@@ -70,7 +71,7 @@ const UserReportPage = () => {
   const getList = async ({ pageNumber, pageSize }) => {
     try {
       startLoading();
-      const response = await fetchDataAsync('/export/operation-user', {
+      const response = await fetchDataAsync(ROUTE_API.exportOperationUser, {
         params: {
           status: status?.map((item) => item.value).join(',') || '',
           pageSize,
@@ -100,7 +101,7 @@ const UserReportPage = () => {
   const exportList = async () => {
     try {
       startExportLoading();
-      const response = await fetchDataAsync('/export/operation-user', {
+      const response = await fetchDataAsync(ROUTE_API.exportOperationUser, {
         params: {
           status: status?.map((item) => item.value).join(',') || '',
           branchName: selectedBranch?.map((item) => item.value).join(',') || '',

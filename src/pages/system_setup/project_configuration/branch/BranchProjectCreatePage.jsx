@@ -3,7 +3,7 @@ import { redirect, useNavigate, useParams } from 'react-router-dom';
 import Select from 'react-select';
 import { toast } from 'react-toastify';
 import { fetchData } from '../../../../services/$service';
-import { ROUTE_PATH } from '../../../../utils/route-util';
+import { ROUTE_API, ROUTE_PATH } from '../../../../utils/route-util';
 
 const BranchProjectCreatePage = () => {
   document.title = 'E-CHANNEL PORTAL | project | import';
@@ -16,23 +16,25 @@ const BranchProjectCreatePage = () => {
   const [selectedPolicies, setSelectdPolicies] = useState('');
 
   const getList = () => {
-    fetchData('/opertion-branch/project/' + params.key, {}, 'GET').then(
-      (res) => {
-        switch (res.status) {
-          case 200:
-            setOptionProject(res?.data?.options);
-            break;
-          case 400:
-            toast.error(res?.data?.message);
-            break;
-          case 403:
-            toast.error(res?.data);
-            break;
-          default:
-            redirect(ROUTE_PATH.notFound);
-        }
+    fetchData(
+      `${ROUTE_API.opertionBranchProject}/` + params.key,
+      {},
+      'GET'
+    ).then((res) => {
+      switch (res.status) {
+        case 200:
+          setOptionProject(res?.data?.options);
+          break;
+        case 400:
+          toast.error(res?.data?.message);
+          break;
+        case 403:
+          toast.error(res?.data);
+          break;
+        default:
+          redirect(ROUTE_PATH.notFound);
       }
-    );
+    });
   };
 
   const funcButtonHandleClickExecute = (e) => {
@@ -49,7 +51,7 @@ const BranchProjectCreatePage = () => {
         projectFamily: selectedProject,
         policies: selectedPolicies.toString(),
       };
-      fetchData('/opertion-branch/project', data, 'POST').then((res) => {
+      fetchData(ROUTE_API.opertionBranchProject, data, 'POST').then((res) => {
         switch (res.status) {
           case 200:
             navigate(ROUTE_PATH.branchProject(params.key));

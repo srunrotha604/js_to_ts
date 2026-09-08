@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { redirect, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { fetchData } from '../../services/$service';
-import { ROUTE_PATH } from '../../utils/route-util';
+import { ROUTE_API, ROUTE_PATH } from '../../utils/route-util';
 
 const BatchGroupCreatePage = () => {
   document.title = 'E-CHANNEL PORTAL | batch data - create';
@@ -16,13 +16,11 @@ const BatchGroupCreatePage = () => {
   const [textFirstName, setTextFirstName] = useState('');
   const [textLastName, setTextLastName] = useState('');
   const [options, setOptions] = useState([]);
-  const [selectedValue, setSelectedValue] = useState([]);
-
   const [optionsAccess, setOptionsAccess] = useState([]);
   const [selectedAccessValue, setSelectedAccessValue] = useState([]);
 
   const getList = () => {
-    fetchData('/e-chanel-user/access', {}, 'GET').then((res) => {
+    fetchData(ROUTE_API.eChanelUserAccess, {}, 'GET').then((res) => {
       switch (res.status) {
         case 200:
           setOptions(res?.data?.role);
@@ -91,13 +89,6 @@ const BatchGroupCreatePage = () => {
   const emailHandleChange = (event) => {
     setTextEmail(event.target.value);
   };
-  const firstNameHandleChange = (event) => {
-    setTextFirstName(event.target.value);
-  };
-  const lastNameHandleChange = (event) => {
-    setTextLastName(event.target.value);
-  };
-
   const goBackHandleClick = () => {
     navigate(ROUTE_PATH.user);
   };

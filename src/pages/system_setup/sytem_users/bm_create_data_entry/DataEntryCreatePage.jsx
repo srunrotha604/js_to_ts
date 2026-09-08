@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import Select from 'react-select';
 import { toast } from 'react-toastify';
 import { fetchData } from '../../../../services/$service';
-import { ROUTE_PATH } from '../../../../utils/route-util';
+import { ROUTE_API, ROUTE_PATH } from '../../../../utils/route-util';
 
 const DataEntryCreatePage = () => {
   document.title = 'E-CHANNEL PORTAL | user - create';
@@ -18,7 +18,7 @@ const DataEntryCreatePage = () => {
   const [selectedRole, setSelectedRole] = useState('');
 
   const getList = () => {
-    fetchData('/e-chanel-data-entry/access', {}, 'GET').then((res) => {
+    fetchData(ROUTE_API.eChanelDataEntryAccess, {}, 'GET').then((res) => {
       switch (res.status) {
         case 200:
           setOptionRole(res?.data?.role);
@@ -58,7 +58,7 @@ const DataEntryCreatePage = () => {
           phone: phone,
         };
 
-        fetchData('/e-chanel-data-entry', data, 'POST').then((res) => {
+        fetchData(ROUTE_API.eChanelDataEntry, data, 'POST').then((res) => {
           switch (res.status) {
             case 200:
               toast.success(res.data.message);
