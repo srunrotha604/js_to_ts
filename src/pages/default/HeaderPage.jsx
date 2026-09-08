@@ -184,11 +184,7 @@ const HeaderPage = () => {
                       {/* <Link to="/dashboard/switch-branch" className="dropdown-item">
                     Switch branch
                   </Link> */}
-                      <Link
-                        to={ROUTE_PATH.contactUs}
-                        className="dropdown-item"
-                        target={'_blank'}
-                      >
+                      <Link to={ROUTE_PATH.contactUs} className="dropdown-item">
                         Contact Us
                       </Link>
                       <Link
