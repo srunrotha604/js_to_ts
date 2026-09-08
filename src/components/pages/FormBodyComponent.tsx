@@ -1,6 +1,13 @@
-const FormBodyComponent = (props) => {
-  const { column, children, footer } = props;
+import type { ReactNode } from 'react';
 
+interface FormBodyComponentProps {
+  column?: string | number;
+  children?: ReactNode;
+  footer?: ReactNode;
+}
+
+const FormBodyComponent = (props: FormBodyComponentProps) => {
+  const { column, children, footer } = props;
   return (
     <>
       <div className="card">

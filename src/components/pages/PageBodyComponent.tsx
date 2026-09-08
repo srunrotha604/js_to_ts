@@ -1,4 +1,10 @@
-const PageBodyComponent = (props) => {
+import type { ReactNode } from 'react';
+
+interface PageBodyComponentProps {
+  children?: ReactNode;
+}
+
+const PageBodyComponent = (props: PageBodyComponentProps) => {
   const { children } = props;
   return (
     <div className="page-body">

@@ -1,5 +1,12 @@
+import type { ReactNode } from 'react';
 import ArrowBackIcon from '../Icons/ArrowBackIcon';
-const HeaderFormCreateComponent = (props) => {
+
+interface HeaderFormCreateComponentProps {
+  title?: ReactNode;
+  back?: () => void;
+}
+
+const HeaderFormCreateComponent = (props: HeaderFormCreateComponentProps) => {
   const { title, back } = props;
   return (
     <div className="container-xl">
