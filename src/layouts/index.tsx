@@ -1,4 +1,3 @@
-import { Toolbar } from '@mui/material';
 import { Box } from '@mui/system';
 import { Outlet } from 'react-router-dom';
 import FooterPage from '../pages/default/FooterPage';
@@ -12,7 +11,7 @@ export default function Layout() {
         <Box sx={{ overflow: 'hidden', flexGrow: 1 }}>
           <HeaderPage />
           <SideBarPage />
-          <Toolbar />
+          {/* <Toolbar /> */}
           <Outlet />
         </Box>
       </Box>

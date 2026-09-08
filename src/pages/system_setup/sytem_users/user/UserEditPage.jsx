@@ -254,18 +254,14 @@ const UserEditPage = () => {
                       </div>
                     </div>
                   </div>
-                  {module[0]?.status === 'A' ? (
-                    <div className="form-footer">
-                      <button
-                        className="btn btn-primary"
-                        onClick={funcButtonHandleClickExecute}
-                      >
-                        Submit
-                      </button>
-                    </div>
-                  ) : (
-                    ''
-                  )}
+                  <div className="form-footer">
+                    <button
+                      className="btn btn-primary"
+                      onClick={funcButtonHandleClickExecute}
+                    >
+                      Submit
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>

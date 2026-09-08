@@ -347,7 +347,7 @@ const getConfirmedMessageText = ({ status, selectedCustomerList }) => {
       {`${selectedCustomerList.length > 1 ? 'these' : 'this'}`}{' '}
       <b>
         {selectedCustomerList.length > 0 ? selectedCustomerList.length : ''}
-      </b>{' '}
+      </b>
       {pluralize('transaction', selectedCustomerList?.length)}?
     </p>
   );

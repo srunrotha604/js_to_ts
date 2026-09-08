@@ -61,6 +61,7 @@ const InsuranceProductPage = () => {
                     <div className="btn-list">
                       {arrProduct?.map((item, index) => (
                         <button
+                          type="button"
                           className="btn btn-primary d-sm-inline-block"
                           key={index}
                           onClick={() =>
