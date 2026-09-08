@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import type { UserProfile } from '../../@type/profile';
 import { useAuth } from '../../context/AuthContext';
 import { getCurrentVersion } from '../../pages/version-history/versionexport';
 import { contactUs } from '../../utils/contact';
@@ -8,7 +9,7 @@ import { ROUTE_PATH } from '../../utils/route-util';
 const FooterPage = () => {
   const navigate = useNavigate();
   const [version, setVersion] = useState('');
-  const { user } = useAuth();
+  const { user } = useAuth() as unknown as { user: UserProfile | null };
   const VersionButton = () => {
     navigate(ROUTE_PATH.version);
   };
@@ -16,7 +17,7 @@ const FooterPage = () => {
   const loadVersion = async () => {
     try {
       const res = await getCurrentVersion();
-      const newVersion = res?.data?.version || res?.version || '';
+      const newVersion = res?.data?.version || '';
       setVersion(newVersion);
     } catch (error) {
       console.error('Error fetching version:', error);

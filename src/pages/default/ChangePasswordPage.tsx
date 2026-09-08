@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { redirect, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
+import type { MessageResponse, UserProfileResponse } from '../../@type/profile';
 import EyeIcon from '../../components/Icons/EyeIcon';
 import EyeOffIcon from '../../components/Icons/EyeOffIcon';
 import { fetchData } from '../../services/$service';
@@ -11,6 +12,7 @@ const ChangePasswordPage = () => {
   document.title = 'Alt-Fa APIs Admin System | Change Password';
   const [userUrl, setUserUrl] = useState('');
   const [userName, setUserName] = useState('');
+  const [userCode, setUserCode] = useState('');
   const [password, setPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -20,24 +22,25 @@ const ChangePasswordPage = () => {
     newPassword: false,
     confirmPassword: false,
   });
-  const toggleEye = (key) => setShow((s) => ({ ...s, [key]: !s[key] }));
+  const toggleEye = (key: keyof typeof show) =>
+    setShow((s) => ({ ...s, [key]: !s[key] }));
 
   const getList = () => {
-    fetchData('/login', {}, 'GET').then((res) => {
-      switch (res.status) {
+    fetchData<UserProfileResponse>('/login', {}, 'GET').then((res) => {
+      switch (res?.status) {
         case 200:
           {
-            const profile = res?.data?.userProfile[0];
-            setUserUrl(profile?.profileImage);
-            setUserName(profile?.displayName);
-            setUserCode(profile?.userCode);
+            const profile = res?.data?.userProfile?.[0];
+            setUserUrl(profile?.profileImage ?? '');
+            setUserName(profile?.displayName ?? '');
+            setUserCode(profile?.userCode ?? '');
           }
           break;
         case 400:
-          toast.error(res?.data?.message);
+          toast.error(res?.data?.message ?? '');
           break;
         case 403:
-          toast.error(res?.data);
+          toast.error(String(res?.data));
           break;
         default:
           redirect('/404');
@@ -45,7 +48,9 @@ const ChangePasswordPage = () => {
     });
   };
 
-  const funcButtonHandleClickExecute = (e) => {
+  const funcButtonHandleClickExecute = (
+    e: React.FormEvent<HTMLFormElement>
+  ) => {
     let messages = [];
     if (userName === '') {
       messages.push(true);
@@ -65,8 +70,12 @@ const ChangePasswordPage = () => {
         newPassword: newPassword,
         confirmPassword: confirmPassword,
       };
-      fetchData(ROUTE_API.loginChangePassword, data, 'POST').then((res) => {
-        switch (res.status) {
+      fetchData<MessageResponse>(
+        ROUTE_API.loginChangePassword,
+        data,
+        'POST'
+      ).then((res) => {
+        switch (res?.status) {
           case 200: {
             toast.success(
               res?.data?.message ?? 'Password changed successfully',
@@ -79,10 +88,10 @@ const ChangePasswordPage = () => {
             break;
           }
           case 400:
-            toast.error(res?.data?.message);
+            toast.error(res?.data?.message ?? '');
             break;
           case 403:
-            toast.error(res?.data);
+            toast.error(String(res?.data));
             break;
           default:
             redirect('/404');
@@ -91,19 +100,23 @@ const ChangePasswordPage = () => {
     }
     e.preventDefault();
   };
-  const userNameHandleChange = (event) => {
+  const userNameHandleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setUserName(event.target.value);
     setInvalidFeedBack('');
   };
-  const PasswordHandleChange = (event) => {
+  const PasswordHandleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setPassword(event.target.value);
     setInvalidFeedBack('');
   };
-  const newPasswordHandleChange = (event) => {
+  const newPasswordHandleChange = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
     setNewPassword(event.target.value);
     setInvalidFeedBack('');
   };
-  const ConfirmPasswordHandleChange = (event) => {
+  const ConfirmPasswordHandleChange = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
     setConfirmPassword(event.target.value);
     setInvalidFeedBack('');
   };

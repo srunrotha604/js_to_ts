@@ -11,15 +11,20 @@ import { contactUs } from '../../utils/contact';
 import { delay } from '../../utils/delay';
 import { ROUTE_API, ROUTE_PATH } from '../../utils/route-util';
 
+interface ContactUsFormValues {
+  phone: string;
+  message: string;
+}
+
 const ContactUsPage = () => {
-  const { control, handleSubmit, watch } = useForm();
+  const { control, handleSubmit, watch } = useForm<ContactUsFormValues>();
   const data = watch();
   const [success, setSuccess] = useState(false);
 
   const { spinnerState, openSpinner, closeSpinner } = useSpinner();
   const { showErrorResponseMessage } = useMessage();
 
-  const onSubmit = async (data) => {
+  const onSubmit = async (data: ContactUsFormValues) => {
     try {
       openSpinner();
       await fetchDataAsync(ROUTE_API.logContactUs, {
@@ -136,7 +141,6 @@ const ContactUsPage = () => {
                       defaultValue={''}
                       name="message"
                       control={control}
-                      id="message"
                       render={({ field: { value, onChange } }) => (
                         <JoditEditor
                           value={value}

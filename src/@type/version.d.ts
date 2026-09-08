@@ -11,6 +11,7 @@ export interface VersionListResponse {
     list: VersionItem[];
   };
   list?: VersionItem[];
+  version?: string;
 }
 
 export interface CreateVersionArgs {
