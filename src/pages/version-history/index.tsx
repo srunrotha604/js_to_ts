@@ -1,8 +1,7 @@
 import { useEffect, useState } from 'react';
 import 'react-datepicker/dist/react-datepicker.css';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import { useModal } from '../../components/common/modal';
 import VersionHistoryEdit from '../../components/version-history/VersionHistoryEdit';
 import VersionHistoryForm from '../../components/version-history/VersionHistoryFrom';
 import { getVersionList } from '../../pages/version-history/versionexport';
@@ -14,10 +13,7 @@ const VersionHistoryPage = () => {
   const [versionList, setVersionList] = useState([]);
   const [arrProject, setArrProject] = useState([]);
   const [refreshFlag, setRefreshFlag] = useState(false);
-  const location = useLocation();
   const navigate = useNavigate();
-  const { modalRef, openModal, closeModal } = useModal();
-
   const getList = async () => {
     try {
       const response = await getVersionList();
