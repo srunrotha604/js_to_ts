@@ -1,4 +1,4 @@
-const ComponentStatus = ({ status, deleted }) => {
+const ComponentStatus = ({ status, deleted = false }) => {
   const lower = status?.toLowerCase();
 
   const overrideColor =

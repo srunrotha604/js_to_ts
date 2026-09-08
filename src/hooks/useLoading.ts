@@ -11,7 +11,7 @@ const useLoading = () => {
     setLoading(false);
   };
 
-  return [loading, startLoading, stopLoading, setLoading];
+  return [loading, startLoading, stopLoading, setLoading] as const;
 };
 
 export default useLoading;

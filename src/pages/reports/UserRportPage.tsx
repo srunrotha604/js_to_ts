@@ -3,44 +3,59 @@ import fileDownload from 'js-file-download';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import ReactPaginate from 'react-paginate';
 import Select from 'react-select';
+import type {
+  CompanyBranchOption,
+  SelectOption,
+  UserReportItem,
+  UserReportListResponse,
+} from '../../@type/report';
 import Button from '../../components/common/Button.jsx';
 import ComponentStatus from '../../components/customer/ComponentStatus.jsx';
 import DateRangeSelector from '../../components/form/DateRangeSelector.jsx';
 import { selectCustomStyles } from '../../components/transaction/TransactionTabList.jsx';
 import { useAuth } from '../../context/AuthContext.jsx';
-import useLoading from '../../hooks/useLoading.jsx';
+import useLoading from '../../hooks/useLoading';
 import useMessage from '../../hooks/useMessage.jsx';
-import { fetchDataAsync } from '../../services/$service.js';
-import { formatDay } from '../../utils/format-day.js';
-import { ROUTE_API } from '../../utils/route-util.js';
-import { RECORDSTATUS } from '../../utils/status.js';
+import { fetchDataAsync } from '../../services/$service';
+import { formatDay } from '../../utils/format-day';
+import { ROUTE_API } from '../../utils/route-util';
+import { RECORDSTATUS } from '../../utils/status';
 
 const UserReportPage = () => {
   document.title = 'Report | User report';
 
-  const { hasPermissionAccessTransaction, company } = useAuth();
-  const [data, setData] = useState(null);
+  const { hasPermissionAccessTransaction, company } = useAuth() as {
+    hasPermissionAccessTransaction: (execution: string) => boolean;
+    company: CompanyBranchOption[] | null;
+  };
+  const [data, setData] = useState<UserReportItem[] | null>(null);
   const [loading, startLoading, stopLoading] = useLoading();
 
-  const [status, setStatus] = useState([]);
+  const [status, setStatus] = useState<SelectOption[]>([]);
   const [rowPerPage, setRowPerPage] = useState(25);
   const [pageNum, setPageNum] = useState(1);
   const [totalDocs, setTotalDocs] = useState(0);
-  const [branch, setBranch] = useState([]);
-  const [selectedBranch, setSelectedBranch] = useState([]);
-  const [date, setDate] = useState({
+  const [branch, setBranch] = useState<SelectOption[]>([]);
+  const [selectedBranch, setSelectedBranch] = useState<SelectOption[]>([]);
+  const [date, setDate] = useState<{
+    startDate: Date | null;
+    endDate: Date | null;
+  }>({
     startDate: null,
     endDate: null,
   });
 
-  const onDateChange = (newDate) => {
+  const onDateChange = (newDate: {
+    startDate: Date | null;
+    endDate: Date | null;
+  }) => {
     setDate(newDate);
   };
 
   useEffect(() => {
     if (company) {
       const e_chanel_storage = localStorage.getItem('e_chanel_storage');
-      const token_text = JSON.parse(e_chanel_storage);
+      const token_text = e_chanel_storage ? JSON.parse(e_chanel_storage) : null;
       const companyDetails = company?.find(
         (item) => item?.value === token_text?.company
       );
@@ -68,24 +83,36 @@ const UserReportPage = () => {
     [hasPermissionAccessTransaction]
   );
 
-  const getList = async ({ pageNumber, pageSize }) => {
+  const getList = async ({
+    pageNumber,
+    pageSize,
+  }: {
+    pageNumber: number;
+    pageSize: number;
+  }) => {
     try {
       startLoading();
-      const response = await fetchDataAsync(ROUTE_API.exportOperationUser, {
-        params: {
-          status: status?.map((item) => item.value).join(',') || '',
-          pageSize,
-          pageNumber,
-          branchName: selectedBranch?.map((item) => item.value).join(',') || '',
-          startDate: date?.startDate
-            ? formatDay(date?.startDate, 'YYYYMMDD')
-            : null,
-          endDate: date?.endDate ? formatDay(date?.endDate, 'YYYYMMDD') : null,
-          type: 'filter',
-        },
-      });
-      setTotalDocs(response?.data?.totalDocs);
-      setData(response?.data?.list);
+      const response = await fetchDataAsync<UserReportListResponse>(
+        ROUTE_API.exportOperationUser,
+        {
+          params: {
+            status: status?.map((item) => item.value).join(',') || '',
+            pageSize,
+            pageNumber,
+            branchName:
+              selectedBranch?.map((item) => item.value).join(',') || '',
+            startDate: date?.startDate
+              ? formatDay(date?.startDate, 'YYYYMMDD')
+              : null,
+            endDate: date?.endDate
+              ? formatDay(date?.endDate, 'YYYYMMDD')
+              : null,
+            type: 'filter',
+          },
+        }
+      );
+      setTotalDocs(response?.data?.totalDocs ?? 0);
+      setData(response?.data?.list ?? []);
       setIsFieldDirty(false);
       resetTableScroll();
     } catch (error) {
@@ -101,20 +128,27 @@ const UserReportPage = () => {
   const exportList = async () => {
     try {
       startExportLoading();
-      const response = await fetchDataAsync(ROUTE_API.exportOperationUser, {
-        params: {
-          status: status?.map((item) => item.value).join(',') || '',
-          branchName: selectedBranch?.map((item) => item.value).join(',') || '',
-          startDate: date?.startDate
-            ? formatDay(date?.startDate, 'YYYYMMDD')
-            : null,
-          endDate: date?.endDate ? formatDay(date?.endDate, 'YYYYMMDD') : null,
-          type: 'export',
-        },
-        responseType: 'blob',
-      });
+      const response = await fetchDataAsync<Blob>(
+        ROUTE_API.exportOperationUser,
+        {
+          params: {
+            status: status?.map((item) => item.value).join(',') || '',
+            branchName:
+              selectedBranch?.map((item) => item.value).join(',') || '',
+            startDate: date?.startDate
+              ? formatDay(date?.startDate, 'YYYYMMDD')
+              : null,
+            endDate: date?.endDate
+              ? formatDay(date?.endDate, 'YYYYMMDD')
+              : null,
+            type: 'export',
+          },
+          responseType: 'blob',
+        }
+      );
+      if (!response?.data) return;
       fileDownload(
-        response?.data,
+        response.data,
         `user_export ${formatDay(new Date(), 'DD-MM-YY')}.xlsx`
       );
     } catch (error) {
@@ -125,7 +159,7 @@ const UserReportPage = () => {
     }
   };
 
-  const tableRef = useRef(null);
+  const tableRef = useRef<HTMLDivElement | null>(null);
 
   const resetTableScroll = (position = 0) => {
     if (tableRef.current) {
@@ -174,8 +208,8 @@ const UserReportPage = () => {
                       <Select
                         menuPortalTarget={document.body}
                         value={status}
-                        onChange={setStatus}
-                        filterOption={(option) => !option.hidden}
+                        onChange={(value) => setStatus([...value])}
+                        filterOption={(option) => !option.data.hidden}
                         closeMenuOnSelect={false}
                         isMulti
                         isClearable
@@ -194,7 +228,7 @@ const UserReportPage = () => {
                       </label>
                       <Select
                         value={selectedBranch}
-                        onChange={setSelectedBranch}
+                        onChange={(value) => setSelectedBranch([...value])}
                         closeMenuOnSelect={false}
                         isMulti
                         options={branch}
@@ -288,7 +322,7 @@ const UserReportPage = () => {
                 value={rowPerPage}
                 onChange={(e) => {
                   setRowPerPage(Number(e.target.value));
-                  getList({ pageNum: 1, pageSize: Number(e.target.value) });
+                  getList({ pageNumber: 1, pageSize: Number(e.target.value) });
                 }}
                 className="form-select w-auto"
                 aria-label="multiple select example"

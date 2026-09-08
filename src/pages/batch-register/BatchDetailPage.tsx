@@ -24,7 +24,7 @@ import TransactionTabSelect, {
   useTransactionTabSelect,
 } from '../../components/transaction/TransactionTabSelect.jsx';
 import { useAuth } from '../../context/AuthContext.jsx';
-import useLoading from '../../hooks/useLoading.jsx';
+import useLoading from '../../hooks/useLoading';
 import useMessage from '../../hooks/useMessage.jsx';
 import { fetchDataAsync } from '../../services/$service';
 import { actions } from '../../utils/actions';
@@ -265,7 +265,7 @@ const BatchDetailPage = () => {
   }, []);
 
   const [processLoading, startProcessLoading, stopProcessLoading] =
-    useLoading() as [boolean, () => void, () => void, unknown];
+    useLoading();
 
   const { showErrorResponseMessage } = useMessage();
   const handleProcessSelected = async () => {

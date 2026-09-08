@@ -19,13 +19,15 @@ export const getFutureDate = (dayCount: number, format = 'YYYY-MM-DD') => {
   return dayjs().add(dayCount, 'day').format(format);
 };
 
-export const getStartOfMonthDate = (format: string) => {
+export function getStartOfMonthDate(format: string): string;
+export function getStartOfMonthDate(): dayjs.Dayjs;
+export function getStartOfMonthDate(format?: string) {
   const day = dayjs().startOf('month');
 
   if (!format) return day;
 
   return day.format(format);
-};
+}
 
 export const convertAge = (date: string) => {
   const birthDate = dayjs(date);

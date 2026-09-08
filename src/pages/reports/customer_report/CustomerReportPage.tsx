@@ -3,15 +3,21 @@ import fileDownload from 'js-file-download';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import ReactPaginate from 'react-paginate';
 import ReactSelect from 'react-select';
-import Button from '../../../components/common/Button';
-import ComponentStatus from '../../../components/customer/ComponentStatus';
-import DateRangeSelector from '../../../components/form/DateRangeSelector';
+import type {
+  CompanyBranchOption,
+  CustomerReportItem,
+  CustomerReportListResponse,
+  SelectOption,
+} from '../../../@type/report';
+import Button from '../../../components/common/Button.jsx';
+import ComponentStatus from '../../../components/customer/ComponentStatus.jsx';
+import DateRangeSelector from '../../../components/form/DateRangeSelector.jsx';
 import ProjectSelect from '../../../components/form/ProjectSelect.jsx';
 import {
   selectCustomStyles,
   typeOptions,
-} from '../../../components/transaction/TransactionTabList';
-import { useAuth } from '../../../context/AuthContext';
+} from '../../../components/transaction/TransactionTabList.jsx';
+import { useAuth } from '../../../context/AuthContext.jsx';
 import useLoading from '../../../hooks/useLoading';
 import useMessage from '../../../hooks/useMessage.jsx';
 import { fetchDataAsync } from '../../../services/$service';
@@ -22,28 +28,43 @@ import { STATUS } from '../../../utils/status';
 const CustomerReportPage = () => {
   document.title = 'Report | customer report';
 
-  const { hasPermissionAccessTransaction, company } = useAuth();
-  const [data, setData] = useState(null);
+  const { hasPermissionAccessTransaction, company } = useAuth() as {
+    hasPermissionAccessTransaction: (execution: string) => boolean;
+    company: CompanyBranchOption[] | null;
+  };
+  const [data, setData] = useState<CustomerReportItem[] | null>(null);
   const [loading, startLoading, stopLoading] = useLoading();
-  const [type, setType] = useState([typeOptions[1], typeOptions[2]]);
-  const [status, setStatus] = useState([]);
+  const [type, setType] = useState<SelectOption[]>([
+    typeOptions[1],
+    typeOptions[2],
+  ]);
+  const [status, setStatus] = useState<SelectOption[]>([]);
   const [rowPerPage, setRowPerPage] = useState(25);
   const [pageNum, setPageNum] = useState(1);
   const [totalDocs, setTotalDocs] = useState(0);
-  const [branch, setBranch] = useState([]);
-  const [selectedBranch, setSelectedBranch] = useState([]);
+  const [branch, setBranch] = useState<SelectOption[]>([]);
+  const [selectedBranch, setSelectedBranch] = useState<SelectOption[]>([]);
   const [expirePolicy, setExpirePolicy] = useState(false);
-  const [selectedProject, setSelectedProject] = useState([]);
-  const [issueDateRange, setIssueDateRange] = useState({
+  const [selectedProject, setSelectedProject] = useState<SelectOption[]>([]);
+  const [issueDateRange, setIssueDateRange] = useState<{
+    startIssueDate: Date | null;
+    endIssueDate: Date | null;
+  }>({
     startIssueDate: getStartOfMonthDate().toDate(),
     endIssueDate: new Date(),
   });
-  const [date, setDate] = useState({
+  const [date, setDate] = useState<{ startDate: Date; endDate: Date }>({
     startDate: getStartOfMonthDate().toDate(),
     endDate: new Date(),
   });
 
-  const onDateChange = ({ startDate, endDate }) => {
+  const onDateChange = ({
+    startDate,
+    endDate,
+  }: {
+    startDate: Date;
+    endDate: Date;
+  }) => {
     setDate({ startDate, endDate });
   };
 
@@ -55,33 +76,10 @@ const CustomerReportPage = () => {
       const companyDetails = company.find(
         (item) => item?.value === token_text?.company
       );
-
-      // const tempProjects = companyDetails?.project || [];
-      // const formattedProjects = tempProjects.map((item, index) => ({
-      //   value: item.transactionCode || item.projectCode || `${index}`,
-      //   label: item.projectName || item.name || `Project ${index + 1}`,
-      // }));
-      // setProjectList(formattedProjects);
-
       const tempBranch = companyDetails?.branch || [];
       setBranch(tempBranch);
     }
   }, [company]);
-
-  // useEffect(() => {
-  //   const cached = localStorage.getItem("cached_project_list");
-  //   if (cached) {
-  //     try {
-  //       const parsed = JSON.parse(cached);
-  //       setProjectList(parsed);
-  //     } catch (err) {
-  //       console.error("Failed to parse cached projects:", err);
-  //     }
-  //   } else {
-  //     console.warn("No cached project list found in localStorage");
-  //   }
-  // }, []);
-
   useEffect(() => {
     const defaultSelectedStatus = [
       ...(hasPermissionAccessTransaction('confirmed')
@@ -125,10 +123,16 @@ const CustomerReportPage = () => {
     [hasPermissionAccessTransaction]
   );
 
-  const getList = async ({ pageNumber = 1, pageSize = 25 }) => {
+  const getList = async ({
+    pageNumber = 1,
+    pageSize = 25,
+  }: {
+    pageNumber?: number;
+    pageSize?: number;
+  }) => {
     try {
       startLoading();
-      const response = await fetchDataAsync(
+      const response = await fetchDataAsync<CustomerReportListResponse>(
         '/export/operation-customer/filter',
         {
           params: {
@@ -169,16 +173,23 @@ const CustomerReportPage = () => {
     }
   };
 
-  const handleCheckboxChange = (e) => {
+  const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setExpirePolicy(e.target.checked);
   };
 
-  const onIssueDateChange = (payload = {}) => {
+  const onIssueDateChange = (
+    payload: {
+      startDate?: Date | null;
+      endDate?: Date | null;
+      startIssueDate?: Date | null;
+      endIssueDate?: Date | null;
+    } = {}
+  ) => {
     const { startDate, endDate, startIssueDate, endIssueDate } = payload;
 
     const s = startIssueDate ?? startDate ?? null;
     const e = endIssueDate ?? endDate ?? null;
-    const toJsDate = (d) => (d?.toDate ? d.toDate() : d);
+    const toJsDate = (d: Date | null) => d;
 
     setIssueDateRange({
       startIssueDate: toJsDate(s),
@@ -188,7 +199,8 @@ const CustomerReportPage = () => {
 
   const [exportLoading, startExportLoading, stopExportLoading] = useLoading();
   const { showErrorResponseMessage } = useMessage();
-  const safeFormat = (d, f) => (d ? formatDay(d, f) : '');
+  const safeFormat = (d: Date | null | undefined, f: string) =>
+    d ? formatDay(d, f) : '';
 
   const exportList = async () => {
     try {
@@ -204,12 +216,16 @@ const CustomerReportPage = () => {
         branchName: selectedBranch?.map((item) => item.value).join(',') || '',
         projectName: selectedProject?.map((item) => item.value).join(',') || '',
       };
-      const response = await fetchDataAsync(ROUTE_API.exportOperationCustomer, {
-        params,
-        responseType: 'blob',
-      });
+      const response = await fetchDataAsync<Blob>(
+        ROUTE_API.exportOperationCustomer,
+        {
+          params,
+          responseType: 'blob',
+        }
+      );
+      if (!response?.data) return;
       fileDownload(
-        response?.data,
+        response.data,
         `${
           issueDateRange?.startIssueDate && issueDateRange?.endIssueDate
             ? `customer_export card_issue_date ${safeFormat(
@@ -229,7 +245,7 @@ const CustomerReportPage = () => {
     }
   };
 
-  const tableRef = useRef(null);
+  const tableRef = useRef<HTMLDivElement | null>(null);
 
   const resetTableScroll = (position = 0) => {
     if (tableRef.current) {
@@ -302,7 +318,6 @@ const CustomerReportPage = () => {
                         }}
                         placeholder="Select Issue Date"
                         onDateChange={onIssueDateChange}
-                        onDateIssuceChange={onIssueDateChange}
                       />
                     </div>
                   </div>
@@ -315,7 +330,7 @@ const CustomerReportPage = () => {
                         isMulti
                         options={typeOptions.slice(1)}
                         value={type}
-                        onChange={setType}
+                        onChange={(value) => setType([...value])}
                         closeMenuOnSelect
                         styles={customSelectStyle}
                       />
@@ -328,8 +343,8 @@ const CustomerReportPage = () => {
                       </label>
                       <ReactSelect
                         value={status}
-                        onChange={setStatus}
-                        filterOption={(option) => !option.hidden}
+                        onChange={(value) => setStatus([...value])}
+                        filterOption={(option) => !option.data.hidden}
                         closeMenuOnSelect={false}
                         isMulti
                         options={statusOptions}
@@ -344,7 +359,7 @@ const CustomerReportPage = () => {
                       </label>
                       <ReactSelect
                         value={selectedBranch}
-                        onChange={setSelectedBranch}
+                        onChange={(value) => setSelectedBranch([...value])}
                         closeMenuOnSelect={false}
                         isMulti
                         options={branch}
@@ -386,8 +401,7 @@ const CustomerReportPage = () => {
                       loading={exportLoading}
                       loadingText={'Exporting...'}
                       style={{ width: '100px' }}
-                      // onClick={exportList}
-                      onClick={() => exportList(selectedProject)}
+                      onClick={exportList}
                       variant="primary"
                     >
                       Export
@@ -468,7 +482,7 @@ const CustomerReportPage = () => {
                 value={rowPerPage}
                 onChange={(e) => {
                   setRowPerPage(Number(e.target.value));
-                  getList({ pageNum: 1, pageSize: Number(e.target.value) });
+                  getList({ pageNumber: 1, pageSize: Number(e.target.value) });
                 }}
                 className="form-select w-auto"
                 aria-label="multiple select example"

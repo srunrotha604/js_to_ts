@@ -1086,8 +1086,11 @@ export const selectCustomStyles = {
     // whiteSpace: "nowrap",
     overflow: 'hidden',
   }),
-  // eslint-disable-next-line no-unused-vars
-  menu: ({ width, ...css }) => ({ ...css, minWidth: '300px' }),
+  menu: (base) => {
+    // eslint-disable-next-line no-unused-vars
+    const { width, ...css } = base;
+    return { ...css, minWidth: '300px' };
+  },
 };
 
 export default TransactionTabList;
