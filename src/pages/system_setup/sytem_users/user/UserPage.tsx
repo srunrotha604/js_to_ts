@@ -8,7 +8,7 @@ import type {
   UserListResponse,
 } from '../../../../@type/system_users';
 import TableCellAction from '../../../../components/form/TableCellAction';
-import TableCellStatusCodeHandle from '../../../../components/form/TableCellStatusCodeHandle.jsx';
+import TableCellStatusCodeHandle from '../../../../components/form/TableCellStatusCodeHandle';
 import Loading from '../../../../components/Loading';
 import TableBreakBar from '../../../../components/table/table_action/TableBreakBar.jsx';
 import TableCellTextDeleteConfirm from '../../../../components/table/table_action/TableCellTextDeleteConfirm.jsx';

@@ -1,8 +1,19 @@
-// CustomDatePicker.jsx
+import type { ChangeEvent } from 'react';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
+import type { PickerValidDate } from '@mui/x-date-pickers/models';
 import { format } from 'date-fns';
+
+interface CustomDatePickerProps {
+  label?: string;
+  value?: Date | string | number | null;
+  onChange?: (value: string | null) => void;
+  onTextChange?: (event: ChangeEvent<HTMLInputElement>) => void;
+  required?: boolean;
+  placeholder?: string;
+  includeCurrentTime?: boolean;
+}
 
 const CustomDatePicker = ({
   label = '',
@@ -12,16 +23,18 @@ const CustomDatePicker = ({
   required = false,
   placeholder = 'DD-MM-YYYY',
   includeCurrentTime = false,
-}) => {
+}: CustomDatePickerProps) => {
   const parsedValue = value ? new Date(value) : null;
 
-  const handleChange = (picked) => {
-    if (!picked || isNaN(picked)) {
+  const handleChange = (value: PickerValidDate | null) => {
+    // AdapterDateFns is configured below, so the picker always hands back a Date here.
+    const picked = value as Date | null;
+    if (!picked || isNaN(picked.getTime())) {
       onChange?.(null);
       return;
     }
 
-    let d = new Date(picked);
+    const d = new Date(picked);
     if (includeCurrentTime) {
       const now = new Date();
       d.setHours(now.getHours(), now.getMinutes(), now.getSeconds(), now.getMilliseconds());

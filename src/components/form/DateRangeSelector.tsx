@@ -1,14 +1,25 @@
-// props: date = { startDate: Date|null, endDate: Date|null }, onDateChange({startDate, endDate})
-import React, { useState, useRef, useEffect } from 'react';
-import { DateRange } from 'react-date-range';
+import { useState, useRef, useEffect } from 'react';
+import type { ChangeEvent, KeyboardEvent } from 'react';
+import { DateRange, type RangeKeyDict } from 'react-date-range';
 import { format, parse, isValid } from 'date-fns';
 import 'react-date-range/dist/styles.css';
 import 'react-date-range/dist/theme/default.css';
 import '../../assets/style/custom_style.css';
 
-export default function DateRangeSelector({ date, onDateChange, placeholder }) {
+interface DateRangeValue {
+  startDate: Date | null;
+  endDate: Date | null;
+}
+
+interface DateRangeSelectorProps {
+  date?: DateRangeValue;
+  onDateChange?: (value: DateRangeValue) => void;
+  placeholder?: string;
+}
+
+export default function DateRangeSelector({ date, onDateChange, placeholder }: DateRangeSelectorProps) {
     const [open, setOpen] = useState(false);
-    const [committed, setCommitted] = useState({
+    const [committed, setCommitted] = useState<DateRangeValue>({
         startDate: date?.startDate ?? null,
         endDate: date?.endDate ?? null,
     });
@@ -45,11 +56,11 @@ export default function DateRangeSelector({ date, onDateChange, placeholder }) {
         }
     }, [date?.startDate, date?.endDate]);
 
-    const ref = useRef(null);
+    const ref = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
-        const handleClickOutside = (e) => {
-            if (ref.current && !ref.current.contains(e.target)) {
+        const handleClickOutside = (e: MouseEvent) => {
+            if (ref.current && !ref.current.contains(e.target as Node)) {
                 setOpen(false);
                 setDraftRange([
                     {
@@ -76,9 +87,9 @@ export default function DateRangeSelector({ date, onDateChange, placeholder }) {
         return () => document.removeEventListener('mousedown', handleClickOutside);
     }, [committed]);
 
-    const onPickerChange = (item) => {
+    const onPickerChange = (item: RangeKeyDict) => {
         const { startDate, endDate } = item.selection;
-        setDraftRange([item.selection]);
+        setDraftRange([item.selection as (typeof draftRange)[number]]);
 
         if (startDate && endDate) {
             setTextValue(
@@ -126,7 +137,7 @@ export default function DateRangeSelector({ date, onDateChange, placeholder }) {
         setOpen(false);
     };
 
-    const clear = (e) => {
+    const clear = (e: React.MouseEvent) => {
         e.stopPropagation();
         setCommitted({ startDate: null, endDate: null });
         setDraftRange([
@@ -190,7 +201,7 @@ export default function DateRangeSelector({ date, onDateChange, placeholder }) {
         onDateChange?.({ startDate, endDate });
     };
 
-    const handleInputChange = (e) => {
+    const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
         setTextValue(e.target.value);
     };
 
@@ -198,7 +209,7 @@ export default function DateRangeSelector({ date, onDateChange, placeholder }) {
         applyFromInput();
     };
 
-    const handleInputKeyDown = (e) => {
+    const handleInputKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
         if (e.key === 'Enter') {
             applyFromInput();
             setOpen(false);

@@ -1,9 +1,27 @@
 import { useEffect, useMemo, useState } from 'react';
 import Select from 'react-select';
+import type { StylesConfig } from 'react-select';
+import type { ProjectCategoryResponse, ProjectPolicyOption } from '../../@type/batch';
 import { fetchData } from '../../services/$service';
 import { ROUTE_API } from '../../utils/route-util';
+
 const fetchProject = async () =>
-  fetchData(ROUTE_API.operationCustomerProduct, {}, 'GET');
+  fetchData<ProjectCategoryResponse>(ROUTE_API.operationCustomerProduct, {}, 'GET');
+
+export interface ProjectSelectOption {
+  label: string;
+  value: string;
+  _raw?: ProjectPolicyOption;
+}
+
+interface ProjectSelectProps {
+  value?: ProjectSelectOption[] | null;
+  onChange?: (value: ProjectSelectOption[]) => void;
+  placeholder?: string;
+  isMulti?: boolean;
+  closeMenuOnSelect?: boolean;
+  styles?: StylesConfig<ProjectSelectOption, boolean>;
+}
 
 export default function ProjectSelect({
   value,
@@ -12,10 +30,10 @@ export default function ProjectSelect({
   isMulti = true,
   closeMenuOnSelect = false,
   styles,
-}) {
-  const [options, setOptions] = useState([]);
+}: ProjectSelectProps) {
+  const [options, setOptions] = useState<ProjectSelectOption[]>([]);
   const [loading, setLoading] = useState(false);
-  const [loadError, setLoadError] = useState(null);
+  const [loadError, setLoadError] = useState<string | null>(null);
 
   useEffect(() => {
     let mounted = true;
@@ -25,30 +43,22 @@ export default function ProjectSelect({
       try {
         const res = await fetchProject();
 
-        const payload =
-          res?.category ||
-          res?.data?.category ||
-          res?.data?.data?.category ||
-          res?.result?.category ||
-          res?.body?.category ||
-          [];
+        const payload = res?.data?.category ?? [];
 
-        const mapped = (Array.isArray(payload) ? payload : []).map((item) => ({
-          label: item?.label ?? String(item?.name ?? item?.value ?? ''),
-          value:
-            item?.value ??
-            item?.uuid ??
-            item?.id ??
-            item?.code ??
-            item?.label ??
-            '',
+        const mapped = payload.map((item) => ({
+          label: item?.label ?? String(item?.value ?? ''),
+          value: item?.value ?? item?.label ?? '',
           _raw: item,
         }));
 
         if (mounted) setOptions(mapped);
       } catch (e) {
         console.error('[ProjectSelect] load error:', e);
-        if (mounted) setLoadError(e?.message, 'Failed to load projects');
+        if (mounted) {
+          setLoadError(
+            e instanceof Error ? e.message : 'Failed to load projects'
+          );
+        }
       } finally {
         if (mounted) setLoading(false);
       }
@@ -67,7 +77,7 @@ export default function ProjectSelect({
   return (
     <Select
       value={value}
-      onChange={onChange}
+      onChange={(selected) => onChange?.(selected as ProjectSelectOption[])}
       options={options}
       isMulti={isMulti}
       placeholder={placeholder}

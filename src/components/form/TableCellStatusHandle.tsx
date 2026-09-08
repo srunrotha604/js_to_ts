@@ -1,6 +1,11 @@
 import { Tooltip } from 'react-tooltip';
 
-const TableCellStatusHandle = (props) => {
+interface TableCellStatusHandleProps {
+  onClick?: () => void;
+  active?: boolean;
+}
+
+const TableCellStatusHandle = (props: TableCellStatusHandleProps) => {
   const { onClick, active } = props;
   return (
     <td>
@@ -9,7 +14,7 @@ const TableCellStatusHandle = (props) => {
           className="cursor-pointer table-cell-icon-action"
           data-tooltip-id="delete-tooltip"
           data-tooltip-content="Status"
-          onClick={() => onClick()}
+          onClick={() => onClick?.()}
         >
           {active ? (
             <td className="text-primary">Active</td>

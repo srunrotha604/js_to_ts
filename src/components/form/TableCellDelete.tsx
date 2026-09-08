@@ -4,8 +4,13 @@ import DeleteButton from '../buttons/DeleteButton';
 import CancelButton from '../buttons/CancelButton';
 import Modal, { useModal } from '../common/modal';
 
-const TableCellDelete = (props) => {
-  const { onClick, deleteOnClick } = props;
+interface TableCellDeleteProps {
+  onClick?: () => void;
+  deleteOnClick: () => void;
+}
+
+const TableCellDelete = (props: TableCellDeleteProps) => {
+  const { deleteOnClick } = props;
   const { modalRef, openModal, closeModal } = useModal();
   return (
     <>
@@ -25,7 +30,7 @@ const TableCellDelete = (props) => {
         className="cursor-pointer table-cell-icon-action"
         data-tooltip-id="delete-tooltip"
         data-tooltip-content="Delete"
-        onClick={() => (onClick, openModal())}
+        onClick={() => openModal()}
       >
         <TrashIcon />
         <Tooltip id="delete-tooltip" />

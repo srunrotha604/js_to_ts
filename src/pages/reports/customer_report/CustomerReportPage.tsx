@@ -11,8 +11,8 @@ import type {
 } from '../../../@type/report';
 import Button from '../../../components/common/Button';
 import ComponentStatus from '../../../components/customer/ComponentStatus.jsx';
-import DateRangeSelector from '../../../components/form/DateRangeSelector.jsx';
-import ProjectSelect from '../../../components/form/ProjectSelect.jsx';
+import DateRangeSelector from '../../../components/form/DateRangeSelector';
+import ProjectSelect from '../../../components/form/ProjectSelect';
 import {
   selectCustomStyles,
   typeOptions,
@@ -53,7 +53,10 @@ const CustomerReportPage = () => {
     startIssueDate: getStartOfMonthDate().toDate(),
     endIssueDate: new Date(),
   });
-  const [date, setDate] = useState<{ startDate: Date; endDate: Date }>({
+  const [date, setDate] = useState<{
+    startDate: Date | null;
+    endDate: Date | null;
+  }>({
     startDate: getStartOfMonthDate().toDate(),
     endDate: new Date(),
   });
@@ -62,8 +65,8 @@ const CustomerReportPage = () => {
     startDate,
     endDate,
   }: {
-    startDate: Date;
-    endDate: Date;
+    startDate: Date | null;
+    endDate: Date | null;
   }) => {
     setDate({ startDate, endDate });
   };

@@ -11,7 +11,7 @@ import type {
 } from '../../@type/report';
 import Button from '../../components/common/Button';
 import ComponentStatus from '../../components/customer/ComponentStatus.jsx';
-import DateRangeSelector from '../../components/form/DateRangeSelector.jsx';
+import DateRangeSelector from '../../components/form/DateRangeSelector';
 import { selectCustomStyles } from '../../components/transaction/TransactionTabList.jsx';
 import { useAuth } from '../../context/AuthContext';
 import useLoading from '../../hooks/useLoading';
