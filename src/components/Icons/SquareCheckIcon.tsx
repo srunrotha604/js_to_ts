@@ -1,4 +1,4 @@
-const SquareCheckIcon = (props) => {
+const SquareCheckIcon = (props: { onClick: () => void }) => {
   const { onClick } = props;
   return (
     <svg

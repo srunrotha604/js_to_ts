@@ -1,4 +1,4 @@
-const ListDetailsIcon = (props) => {
+const ListDetailsIcon = (props: { onClick: () => void; stroke: string }) => {
   const { onClick, stroke } = props;
   return (
     <svg
