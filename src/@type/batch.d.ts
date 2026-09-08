@@ -38,3 +38,24 @@ export interface CustomerTransaction {
   nicPassport?: string;
   deleted?: boolean;
 }
+
+export interface ProductOption {
+  productsequenceCode?: string;
+  productCode?: string;
+}
+
+export interface ProductListResponse {
+  list?: ProductOption[];
+  message?: string;
+}
+
+export interface ProjectPolicyOption {
+  label?: string;
+  value?: string;
+  policies?: { label?: string; value?: string }[];
+}
+
+export interface ProjectCategoryResponse {
+  category?: ProjectPolicyOption[];
+  message?: string;
+}

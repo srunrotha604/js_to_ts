@@ -2,6 +2,13 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Select from 'react-select';
 import { toast } from 'react-toastify';
+import type { SelectOption } from '../../../../@type/report';
+import type {
+  UserBranchCategoryResponse,
+  UserBranchDetail,
+  UserBranchListItem,
+  UserBranchResponse,
+} from '../../../../@type/system_users';
 import TableRowDeleteComponentHandle from '../../../..//components/table/table_action/TableRowDeleteComponentHandle';
 import ButtonGroup from '../../../../components/buttons/ButtonGroup';
 import CancelButton from '../../../../components/buttons/CancelButton';
@@ -21,6 +28,14 @@ import useMessage from '../../../../hooks/useMessage';
 import { fetchDataAsync } from '../../../../services/$service';
 import { ROUTE_API, ROUTE_PATH } from '../../../../utils/route-util';
 
+const TypedModal = Modal as unknown as React.ForwardRefExoticComponent<
+  React.RefAttributes<HTMLDivElement> & {
+    title?: React.ReactNode;
+    size?: 'sm' | 'lg' | 'xl';
+    children?: React.ReactNode;
+  }
+>;
+
 const BranchForm = () => {
   const navigate = useNavigate();
   const params = new URLSearchParams(location.search);
@@ -29,16 +44,20 @@ const BranchForm = () => {
 
   const { showErrorResponseMessage } = useMessage();
 
-  const [details, setDetail] = useState(null);
-  const [list, setList] = useState(null);
-  const [branchs, setBranch] = useState(null);
+  const [details, setDetail] = useState<UserBranchDetail | null>(null);
+  const [list, setList] = useState<UserBranchListItem[] | null>(null);
+  const [branchs, setBranch] = useState<SelectOption[] | null>(null);
   const [selectedBranch, setSelectedBranch] = useState('');
   const [search, setSearch] = useState('');
   const [roleCurrentPage, setRoleCurrentPage] = useState(1);
   const [rolePageNum, setRolePageNum] = useState(1);
   const rolePerPage = 10;
   const roleOffset = (roleCurrentPage - 1) * rolePerPage;
-  function roleHandlePageClick({ selected: selectedPage }) {
+  function roleHandlePageClick({
+    selected: selectedPage,
+  }: {
+    selected: number;
+  }) {
     setRoleCurrentPage(selectedPage + 1);
     setRolePageNum(selectedPage + 1);
     setRoleCurrentPage(selectedPage + 1);
@@ -46,16 +65,19 @@ const BranchForm = () => {
 
   const fetchRows = async () => {
     try {
-      const response = await fetchDataAsync(ROUTE_API.eChanelUserBranch, {
-        params: {
-          app: params.get('appMember'),
-          company: params.get('companyMember'),
-          user: params.get('uuid'),
-        },
-      });
+      const response = await fetchDataAsync<UserBranchResponse>(
+        ROUTE_API.eChanelUserBranch,
+        {
+          params: {
+            app: params.get('appMember'),
+            company: params.get('companyMember'),
+            user: params.get('uuid'),
+          },
+        }
+      );
       const data = response?.data;
-      setDetail(data?.detail);
-      setList(data?.list);
+      setDetail(data?.detail ?? null);
+      setList(data?.list ?? null);
     } catch (error) {
       console.log(error);
     }
@@ -63,7 +85,7 @@ const BranchForm = () => {
 
   const fetchBranchRows = async () => {
     try {
-      const response = await fetchDataAsync(
+      const response = await fetchDataAsync<UserBranchCategoryResponse>(
         ROUTE_API.eChanelUserBranchCategory,
         {
           params: {
@@ -74,7 +96,7 @@ const BranchForm = () => {
         }
       );
       const data = response?.data;
-      setBranch(data?.company);
+      setBranch(data?.company ?? null);
     } catch (error) {
       console.log(error);
     }
@@ -94,7 +116,7 @@ const BranchForm = () => {
       });
       toast.success('Success!');
       fetchBranchRows();
-      setSelectedBranch(branchs[0]?.value);
+      setSelectedBranch(branchs?.[0]?.value ?? '');
       fetchRows();
     } catch (error) {
       showErrorResponseMessage(error);
@@ -102,7 +124,7 @@ const BranchForm = () => {
     }
   };
 
-  const branchDefaultSubmit = async (item) => {
+  const branchDefaultSubmit = async (item: UserBranchListItem) => {
     try {
       const data = {
         transactionCode: item.uuid,
@@ -127,7 +149,7 @@ const BranchForm = () => {
   }, []);
   return (
     <>
-      <Modal ref={modalRef} title={'BRANCH CONFIGURATION'} size="lg">
+      <TypedModal ref={modalRef} title={'BRANCH CONFIGURATION'} size="lg">
         <div className="form-group mb-3 ">
           <label className={`form-label required`}>Branch</label>
           <div>
@@ -136,8 +158,8 @@ const BranchForm = () => {
               menuPortalTarget={document.body}
               placeholder="Select Option"
               value={branchs?.filter(({ value }) => value === selectedBranch)}
-              options={branchs}
-              onChange={(e) => setSelectedBranch(e?.value)}
+              options={branchs ?? []}
+              onChange={(e) => setSelectedBranch(e?.value ?? '')}
             />
           </div>
         </div>
@@ -146,7 +168,7 @@ const BranchForm = () => {
           <SubmitButton tooltip="Submit" onClick={() => branchCreateSubmit()} />
           <CancelButton tooltip="Cancel" onClick={() => closeModal()} />
         </ButtonGroup>
-      </Modal>
+      </TypedModal>
       <WrapperComponent>
         <HeaderTableComponent
           title="Access branch"
@@ -207,7 +229,7 @@ const BranchForm = () => {
                   </div>
                   <div className="col d-flex justify-content-end">
                     <SearchBox
-                      onChange={(e) => (
+                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => (
                         setSearch(e.target.value), setRoleCurrentPage(1)
                       )}
                     />
@@ -222,9 +244,9 @@ const BranchForm = () => {
                         ?.filter((item) => {
                           return search === ''
                             ? item
-                            : item?.branch
+                            : (item?.branch
                                 ?.toLowerCase()
-                                ?.indexOf(search?.toLowerCase()) >= 0;
+                                ?.indexOf(search?.toLowerCase()) ?? -1) >= 0;
                         })
                         ?.slice(roleOffset, roleOffset + rolePerPage)
                         ?.map((item, index) => (

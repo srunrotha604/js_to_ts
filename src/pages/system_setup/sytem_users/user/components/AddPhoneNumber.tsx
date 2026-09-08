@@ -1,6 +1,11 @@
+import axios from 'axios';
 import { useState } from 'react';
 import { PatternFormat } from 'react-number-format';
 import { toast } from 'react-toastify';
+import type {
+  MessageResponse,
+  UserItem,
+} from '../../../../../@type/system_users';
 import ButtonGroup from '../../../../../components/buttons/ButtonGroup';
 import CancelButton from '../../../../../components/buttons/CancelButton';
 import SubmitButton from '../../../../../components/buttons/SubmitButton';
@@ -8,7 +13,20 @@ import Modal, { useModal } from '../../../../../components/common/modal';
 import { fetchDataAsync } from '../../../../../services/$service';
 import { ROUTE_API } from '../../../../../utils/route-util';
 
-const AddPhoneNumber = (props) => {
+interface AddPhoneNumberProps {
+  item: UserItem;
+  success: () => void;
+}
+
+const TypedModal = Modal as unknown as React.ForwardRefExoticComponent<
+  React.RefAttributes<HTMLDivElement> & {
+    title?: React.ReactNode;
+    size?: 'sm' | 'lg' | 'xl';
+    children?: React.ReactNode;
+  }
+>;
+
+const AddPhoneNumber = (props: AddPhoneNumberProps) => {
   const { item, success } = props;
   const { modalRef, openModal, closeModal } = useModal();
   const [phone, setPhone] = useState('');
@@ -19,26 +37,31 @@ const AddPhoneNumber = (props) => {
         uuid: item?.userCode,
         phoneNumber: phone,
       };
-      await fetchDataAsync(ROUTE_API.eChanelUserAddPhoneNumber, {
-        data,
-        method: 'post',
-      });
+      await fetchDataAsync<MessageResponse>(
+        ROUTE_API.eChanelUserAddPhoneNumber,
+        {
+          data,
+          method: 'post',
+        }
+      );
       toast.success('Success!');
       success();
       closeModal();
     } catch (error) {
-      toast.error(error?.response?.data?.message);
-      console.log(error?.response?.data?.message);
+      const message = axios.isAxiosError(error)
+        ? error.response?.data?.message
+        : undefined;
+      toast.error(message);
+      console.log(message);
     }
   };
 
   return (
     <>
-      <Modal ref={modalRef} title={'Add Phone Number'} size="lg">
+      <TypedModal ref={modalRef} title={'Add Phone Number'} size="lg">
         <div className="mb-3">
           <label className="form-label">Phone number</label>
           <PatternFormat
-            cursor="pointer"
             type="text"
             className="form-control"
             placeholder="### ## ## ## #"
@@ -54,11 +77,11 @@ const AddPhoneNumber = (props) => {
           <SubmitButton tooltip="Submit" onClick={() => handleSubmit()} />
           <CancelButton tooltip="Cancel" onClick={() => closeModal()} />
         </ButtonGroup>
-      </Modal>
+      </TypedModal>
       <span
         className="badge bg-azure"
         onClick={() => {
-          openModal(), setPhone(item?.phone);
+          openModal(), setPhone(item?.phone ?? '');
         }}
       >
         {item?.phone == '' ? '+ Add phone number' : item?.phone}

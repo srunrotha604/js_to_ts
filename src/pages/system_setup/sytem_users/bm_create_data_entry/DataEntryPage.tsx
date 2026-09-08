@@ -1,76 +1,120 @@
 import { useEffect, useState } from 'react';
 import ReactPaginate from 'react-paginate';
-import { Link, useNavigate } from 'react-router-dom';
-import Select from 'react-select';
+import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
+import type {
+  DataEntryItem,
+  DataEntryListResponse,
+  MessageResponse,
+} from '../../../../@type/system_users';
 import TableCellAction from '../../../../components/form/TableCellAction';
-import TableCellStatusCodeHandle from '../../../../components/form/TableCellStatusCodeHandle.jsx';
+import TableCellDelete from '../../../../components/form/TableCellDelete';
+import TableCellStatus from '../../../../components/form/TableCellStatus';
 import Loading from '../../../../components/Loading';
-import TableBreakBar from '../../../../components/table/table_action/TableBreakBar.jsx';
-import TableCellTextDeleteConfirm from '../../../../components/table/table_action/TableCellTextDeleteConfirm.jsx';
-import { selectCustomStyles } from '../../../../components/transaction/TransactionTabList';
 import { useAuth } from '../../../../context/AuthContext.jsx';
 import { fetchData } from '../../../../services/$service';
 import { ROUTE_API, ROUTE_PATH } from '../../../../utils/route-util';
-import AddPhoneNumber from './components/AddPhoneNumber.jsx';
+import AddPhoneNumber from './components/AddPhoneNumber.tsx';
 
-const UserPage = () => {
-  document.title = 'E-CHANNEL PORTAL | user';
+const DataEntryPage = () => {
+  document.title = 'E-CHANNEL PORTAL | Data Entry';
   const navigate = useNavigate();
-  const { company } = useAuth();
+  const { selectedBranch } = useAuth() as {
+    selectedBranch: { value?: string } | null;
+  };
   const [loading, setLoading] = useState(false);
   const [query, setQuery] = useState('');
-  const [arrList, setArrList] = useState([]);
-  const [optionBranch, setOptionBranch] = useState([]);
-  const [selectedBranch, setSelectdBranch] = useState('');
+  const [arrList, setArrList] = useState<DataEntryItem[]>([]);
   const getList = () => {
-    fetchData(
-      `${ROUTE_API.eChanelUser}?branchName=` + selectedBranch.toString(),
+    fetchData<DataEntryListResponse>(
+      `${ROUTE_API.eChanelDataEntry}?branchName=${selectedBranch?.value}`,
       {},
       'GET'
     ).then((res) => {
-      if (res?.status == 200) {
-        setLoading(true);
-        setArrList(res?.data?.list);
-        setLoading(false);
+      switch (res?.status) {
+        case 200:
+          setLoading(true);
+          setArrList(res?.data?.list ?? []);
+          setLoading(false);
+          break;
+        case 400:
+          toast.error(res?.data?.message);
+          break;
+        case 403:
+          toast.error(res?.data as unknown as string);
+          break;
+        default:
+          navigate(ROUTE_PATH.error404);
       }
     });
   };
 
-  const branchHandleChange = (data) => {
-    setSelectdBranch(data.value);
-    fetchData(
-      `${ROUTE_API.eChanelUser}?branchName=` + data.value.toString(),
-      {},
-      'GET'
+  const statusHandleClickExecute = (key?: string) => {
+    let data = {
+      key: key,
+    };
+
+    fetchData<MessageResponse>(
+      ROUTE_API.eChanelDataEntryStatus,
+      data,
+      'Post'
     ).then((res) => {
-      if (res.status == 200) {
-        setLoading(true);
-        setArrList(res?.data?.list);
-        setLoading(false);
+      switch (res?.status) {
+        case 200:
+          toast.success(res?.data?.message);
+          getList();
+          break;
+        case 400:
+          toast.error(res?.data?.message);
+          break;
+        case 403:
+          toast.error(res?.data as unknown as string);
+          break;
+        default:
+          navigate(ROUTE_PATH.error404);
       }
     });
+  };
+
+  const funcRemoveHandleClickExecute = (key?: string) => {
+    let data = {
+      key: key,
+    };
+
+    fetchData<MessageResponse>(ROUTE_API.eChanelDataEntry, data, 'DELETE').then(
+      (res) => {
+        switch (res?.status) {
+          case 200:
+            toast.success(res?.data?.message);
+            getList();
+            break;
+          case 400:
+            toast.error(res?.data?.message);
+            break;
+          case 403:
+            toast.error(res?.data as unknown as string);
+            break;
+          default:
+            navigate(ROUTE_PATH.error404);
+        }
+      }
+    );
   };
 
   useEffect(() => {
     getList();
-    const e_chanel_storage = localStorage.getItem('e_chanel_storage');
-    const token_text = JSON.parse(e_chanel_storage);
-    const companyDetails = company?.find(
-      (item) => item?.value === token_text?.company
-    );
-    const tempBranch = companyDetails?.branch || [];
-
-    setOptionBranch(tempBranch);
   }, []);
 
   const createNewHandleClick = () => {
-    navigate(ROUTE_PATH.userCreate);
+    navigate(ROUTE_PATH.dataEntryCreate);
   };
-
+  const importHandleClick = () => {
+    navigate(ROUTE_PATH.dataEntryImport);
+  };
   const PER_PAGE = 10;
   const [currentPage, setCurrentPage] = useState(0);
 
-  function handlePageClick({ selected: selectedPage }) {
+  function handlePageClick({ selected: selectedPage }: { selected: number }) {
     setCurrentPage(selectedPage);
   }
 
@@ -87,8 +131,7 @@ const UserPage = () => {
   });
 
   const offset = currentPage * PER_PAGE;
-  const pageCount = Math.ceil(filteredList?.length / PER_PAGE);
-
+  const pageCount = Math.ceil((filteredList?.length ?? 0) / PER_PAGE);
   return (
     <>
       <Loading value={loading} />
@@ -97,7 +140,7 @@ const UserPage = () => {
           <div className="page-header d-print-none">
             <div className="row align-items-center">
               <div className="col">
-                <h2 className="page-title">User</h2>
+                <h2 className="page-title">Data Entry</h2>
               </div>
               <div className="col-auto ms-auto d-print-none">
                 <div className="btn-list">
@@ -148,6 +191,54 @@ const UserPage = () => {
                   </div>
                   <button
                     className="btn btn-primary d-none d-sm-inline-block"
+                    onClick={importHandleClick}
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="icon icon-tabler icon-tabler-upload"
+                      width={24}
+                      height={24}
+                      viewBox="0 0 24 24"
+                      strokeWidth="1.5"
+                      stroke="currentColor"
+                      fill="none"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    >
+                      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                      <path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2 -2v-2" />
+                      <polyline points="7 9 12 4 17 9" />
+                      <line x1={12} y1={4} x2={12} y2={16} />
+                    </svg>
+                    Import data entry
+                  </button>
+                  <button
+                    className="btn btn-primary d-sm-none btn-icon"
+                    data-bs-toggle="modal"
+                    data-bs-target="#modal-input-field"
+                    aria-label="Create new category"
+                    onClick={importHandleClick}
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="icon icon-tabler icon-tabler-upload"
+                      width={24}
+                      height={24}
+                      viewBox="0 0 24 24"
+                      strokeWidth="1.5"
+                      stroke="currentColor"
+                      fill="none"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    >
+                      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                      <path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2 -2v-2" />
+                      <polyline points="7 9 12 4 17 9" />
+                      <line x1={12} y1={4} x2={12} y2={16} />
+                    </svg>
+                  </button>
+                  <button
+                    className="btn btn-primary d-none d-sm-inline-block"
                     onClick={createNewHandleClick}
                   >
                     <svg
@@ -166,7 +257,7 @@ const UserPage = () => {
                       <line x1={12} y1={5} x2={12} y2={19} />
                       <line x1={5} y1={12} x2={19} y2={12} />
                     </svg>
-                    Create user
+                    Create data entry
                   </button>
                   <button
                     className="btn btn-primary d-sm-none btn-icon"
@@ -202,18 +293,6 @@ const UserPage = () => {
             <div className="row align-items-center mb-2">
               <div className="col-auto ms-auto d-print-none">
                 <div className="btn-list">
-                  <div>
-                    <Select
-                      menuPortalTarget={document.body}
-                      value={optionBranch.find(function (option) {
-                        return option.value === selectedBranch;
-                      })}
-                      onChange={branchHandleChange}
-                      options={optionBranch}
-                      styles={selectCustomStyles}
-                      required
-                    />
-                  </div>
                   <div className="input-icon">
                     <span className="input-icon-addon">
                       <svg
@@ -234,7 +313,6 @@ const UserPage = () => {
                       </svg>
                     </span>
                     <input
-                      cursor="pointer"
                       type="text"
                       className="form-control"
                       placeholder="Search…"
@@ -257,12 +335,13 @@ const UserPage = () => {
                         <th style={{ width: '5%' }}>#</th>
                         <th>USER NAME</th>
                         <th>EMAIL</th>
-                        <th>PHONE NUMBER</th>
-                        <th>DISPLAY NAME</th>
+                        <th>PHONE</th>
+                        <th>FIRST NAME</th>
+                        <th>LAST NAME</th>
                         <th>ROLE</th>
                         <th>TYPE</th>
-                        <th style={{ width: '10%' }}>STATUS</th>
-                        <th style={{ width: '15%' }}>ACTION</th>
+                        <th style={{ width: '15%' }}>STATUS</th>
+                        <th style={{ width: '40%' }}>ACTION</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -286,38 +365,25 @@ const UserPage = () => {
                                 />
                               )}
                             </td>
-                            <td className="text-muted">
-                              {item.givenName} {item.sureName}
-                            </td>
+                            <td className="text-muted">{item.givenName}</td>
+                            <td className="text-muted">{item.sureName}</td>
                             <td className="text-muted">{item.roleName}</td>
                             <td className="text-muted">{item.userType}</td>
-                            <TableCellStatusCodeHandle status={item?.status} />
+                            <TableCellStatus
+                              status={item?.status}
+                              statusOnClick={() =>
+                                statusHandleClickExecute(item?.transactionCode)
+                              }
+                            />
                             <TableCellAction>
-                              <Link
-                                to={`${ROUTE_PATH.userCompany}?uuid=${item?.transactionCode}&appMember=${item?.applicationCode}`}
-                              >
-                                Company
-                              </Link>
-                              <TableBreakBar />
-                              <Link
-                                to={ROUTE_PATH.userEdit(item?.transactionCode)}
-                              >
-                                Edit
-                              </Link>
                               {item?.deleted ? (
-                                <>
-                                  <TableBreakBar />
-                                  <TableCellTextDeleteConfirm
-                                    success={() => getList()}
-                                    uuid={item?.transactionCode}
-                                    route={ROUTE_API.eChanelUser}
-                                    title="Delete User"
-                                    message={`Confirm delete user: ${item.givenName} ${item.sureName}?`}
-                                    data={{
-                                      uuid: item?.transactionCode,
-                                    }}
-                                  />
-                                </>
+                                <TableCellDelete
+                                  deleteOnClick={() =>
+                                    funcRemoveHandleClickExecute(
+                                      item?.transactionCode
+                                    )
+                                  }
+                                />
                               ) : (
                                 ''
                               )}
@@ -396,4 +462,5 @@ const UserPage = () => {
     </>
   );
 };
-export default UserPage;
+
+export default DataEntryPage;

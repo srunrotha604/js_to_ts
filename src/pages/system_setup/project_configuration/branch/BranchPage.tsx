@@ -1,44 +1,67 @@
 import React, { useEffect, useState } from 'react';
 import ReactPaginate from 'react-paginate';
 import { Link, redirect, useNavigate } from 'react-router-dom';
-import Select from 'react-select';
+import Select, { MultiValue } from 'react-select';
 import { toast } from 'react-toastify';
-import Modal, { useModal } from '../../../../components/common/modal';
+import type {
+  BranchItem,
+  BranchListResponse,
+  MessageResponse,
+} from '../../../../@type/project_configuration';
+import type { SelectOption } from '../../../../@type/report';
+import ModalUntyped, { useModal } from '../../../../components/common/modal';
 import Loading from '../../../../components/Loading';
 import { fetchData } from '../../../../services/$service';
 import { ROUTE_API, ROUTE_PATH } from '../../../../utils/route-util';
+
+type ModalProps = {
+  title?: React.ReactNode;
+  content?: React.ReactNode;
+  children?: React.ReactNode;
+  actions?: React.ReactNode;
+  size?: string;
+  closeButton?: boolean;
+  bodyClassName?: string;
+  headerClassName?: string;
+  noTransition?: boolean;
+};
+const Modal = ModalUntyped as React.ForwardRefExoticComponent<
+  ModalProps & React.RefAttributes<HTMLDivElement>
+>;
 
 const BranchPage = () => {
   document.title = 'E-CHANNEL PORTAL | Branch';
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
-  const [arrList, setArrList] = useState([]);
-  const [listUser, setListUser] = useState([]);
-  const [selectedAdminValue, setSelectedAdminValue] = useState([]);
+  const [arrList, setArrList] = useState<BranchItem[]>([]);
+  const [listUser, setListUser] = useState<SelectOption[]>([]);
+  const [selectedAdminValue, setSelectedAdminValue] = useState<string[]>([]);
   const [selectedBranch, setSelectedBranch] = useState('');
   const [query, setQuery] = useState('');
 
   const { modalRef, openModal, closeModal } = useModal();
 
   const getList = () => {
-    fetchData(ROUTE_API.opertionBranch, {}, 'GET').then((res) => {
-      switch (res.status) {
-        case 200:
-          setLoading(true);
-          setArrList(res?.data?.list);
-          setListUser(res?.data?.user);
-          setLoading(false);
-          break;
-        case 400:
-          toast.error(res?.data?.message);
-          break;
-        case 403:
-          toast.error(res?.data);
-          break;
-        default:
-          redirect(ROUTE_PATH.notFound);
+    fetchData<BranchListResponse>(ROUTE_API.opertionBranch, {}, 'GET').then(
+      (res) => {
+        switch (res?.status) {
+          case 200:
+            setLoading(true);
+            setArrList(res?.data?.list ?? []);
+            setListUser(res?.data?.user ?? []);
+            setLoading(false);
+            break;
+          case 400:
+            toast.error(res?.data?.message);
+            break;
+          case 403:
+            toast.error(String(res?.data));
+            break;
+          default:
+            redirect(ROUTE_PATH.notFound);
+        }
       }
-    });
+    );
   };
 
   useEffect(() => {
@@ -49,40 +72,45 @@ const BranchPage = () => {
     navigate(ROUTE_PATH.branchCreate);
   };
 
-  const funcButtonHandleClickExecute = (e) => {
+  const funcButtonHandleClickExecute = (
+    e: React.MouseEvent<HTMLButtonElement>
+  ) => {
     const data = {
       branchCode: selectedBranch,
       value: selectedAdminValue.toString(),
     };
-    fetchData(ROUTE_API.opertionBranchAdmin, data, 'PUT').then((res) => {
-      switch (res.status) {
-        case 200:
-          toast.success(res.data.message);
-          closeModal();
-          getList();
-          break;
-        case 400:
-          toast.error(res?.data?.message);
-          break;
-        case 403:
-          toast.error(res?.data);
-          break;
-        default:
-          redirect(ROUTE_PATH.error404);
+    fetchData<MessageResponse>(ROUTE_API.opertionBranchAdmin, data, 'PUT').then(
+      (res) => {
+        switch (res?.status) {
+          case 200:
+            toast.success(res?.data?.message);
+            closeModal();
+            getList();
+            break;
+          case 400:
+            toast.error(res?.data?.message);
+            break;
+          case 403:
+            toast.error(String(res?.data));
+            break;
+          default:
+            redirect(ROUTE_PATH.error404);
+        }
       }
-    });
+    );
     e.preventDefault();
   };
 
-  const userHandleChange = (e) => {
-    setSelectedAdminValue(Array.isArray(e) ? e.map((x) => x.value) : []);
-    setSelectedAdminValue && JSON.stringify(setSelectedAdminValue, null, 2);
+  const userHandleChange = (value: MultiValue<SelectOption> | null) => {
+    setSelectedAdminValue(
+      Array.isArray(value) ? value.map((x) => x.value) : []
+    );
   };
 
   let nf = new Intl.NumberFormat();
   const PER_PAGE = 10;
   const [currentPage, setCurrentPage] = useState(0);
-  function handlePageClick({ selected: selectedPage }) {
+  function handlePageClick({ selected: selectedPage }: { selected: number }) {
     setCurrentPage(selectedPage);
   }
 
@@ -265,7 +293,7 @@ const BranchPage = () => {
                     </svg>
                   </span>
                   <input
-                    cursor="pointer"
+                    style={{ cursor: 'pointer' }}
                     type="text"
                     className="form-control"
                     placeholder="Search…"
@@ -304,8 +332,8 @@ const BranchPage = () => {
                               className="text-underline text-primary text-pre-line"
                               onClick={() => {
                                 openModal();
-                                setSelectedBranch(item.transactionCode);
-                                setSelectedAdminValue(item.adminValue);
+                                setSelectedBranch(item.transactionCode ?? '');
+                                setSelectedAdminValue(item.adminValue ?? []);
                               }}
                             >
                               {item.admin === '' ? 'N/A' : item.admin}
@@ -313,7 +341,7 @@ const BranchPage = () => {
                             <td className="text-underline">
                               <Link
                                 to={ROUTE_PATH.branchProject(
-                                  item.transactionCode
+                                  item.transactionCode ?? ''
                                 )}
                               >
                                 project
@@ -327,7 +355,7 @@ const BranchPage = () => {
                             <td>
                               <Link
                                 to={ROUTE_PATH.projectEdit(
-                                  item.transactionCode
+                                  item.transactionCode ?? ''
                                 )}
                               >
                                 <svg
@@ -360,7 +388,7 @@ const BranchPage = () => {
                 </div>
                 <div className="d-flex align-items-center mt-3">
                   <p className="m-0 text-muted">
-                    Total <span>{nf.format(arrList?.length)}</span> entries
+                    Total <span>{nf.format(arrList?.length ?? 0)}</span> entries
                   </p>
                   <ReactPaginate
                     previousLabel={

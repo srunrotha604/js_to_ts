@@ -1,5 +1,10 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import type {
+  UserCompanyDetail,
+  UserCompanyListItem,
+  UserCompanyResponse,
+} from '../../../../@type/system_users';
 import ListDetailsIcon from '../../../../components/Icons/ListDetailsIcon';
 import PageBodyComponent from '../../../../components/pages/PageBodyComponent';
 import HeaderTableComponent from '../../../../components/table/table_action/HeaderTableComponent';
@@ -15,20 +20,23 @@ const CompanyForm = () => {
   const params = new URLSearchParams(location.search);
   document.title = 'Alt-Fa APIs Admin System | System user-company';
 
-  const [details, setDetail] = useState(null);
-  const [list, setList] = useState(null);
+  const [details, setDetail] = useState<UserCompanyDetail | null>(null);
+  const [list, setList] = useState<UserCompanyListItem[] | null>(null);
 
   const fetchRows = async () => {
     try {
-      const response = await fetchDataAsync(ROUTE_API.eChanelUserCompany, {
-        params: {
-          application_code: params.get('appMember'),
-          user_code: params.get('uuid'),
-        },
-      });
+      const response = await fetchDataAsync<UserCompanyResponse>(
+        ROUTE_API.eChanelUserCompany,
+        {
+          params: {
+            application_code: params.get('appMember'),
+            user_code: params.get('uuid'),
+          },
+        }
+      );
       const data = response?.data;
-      setDetail(data?.detail);
-      setList(data?.list);
+      setDetail(data?.detail ?? null);
+      setList(data?.list ?? null);
     } catch (error) {
       console.log(error);
     }

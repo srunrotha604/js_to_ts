@@ -2,18 +2,28 @@ import { useEffect, useState } from 'react';
 import ReactPaginate from 'react-paginate';
 import { redirect, useNavigate, useParams } from 'react-router-dom';
 import Select from 'react-select';
+import type { StylesConfig } from 'react-select';
 import { toast } from 'react-toastify';
+import type { SelectOption } from '../../../../@type/report';
+import type {
+  UserAccessBranchItem,
+  UserAccessBranchListResponse,
+} from '../../../../@type/system_users';
 import { fetchData } from '../../../../services/$service';
 import { ROUTE_API, ROUTE_PATH } from '../../../../utils/route-util';
 
 const UserAccessBranchPage = () => {
   document.title = 'E-CHANNEL PORTAL | user access branch';
   const navigate = useNavigate();
-  const params = useParams();
-  const [arrList, setArrList] = useState([]);
+  const params = useParams<{
+    applicationId: string;
+    companyCode: string;
+    userCode: string;
+  }>();
+  const [arrList, setArrList] = useState<UserAccessBranchItem[]>([]);
   const [transactionCode, setTransationCode] = useState('');
   const [selectedValue, setSelectedValue] = useState('');
-  const [options, setOptions] = useState([]);
+  const [options, setOptions] = useState<SelectOption[]>([]);
 
   const getList = () => {
     let route =
@@ -25,17 +35,17 @@ const UserAccessBranchPage = () => {
       params.userCode;
     let method = 'GET';
 
-    fetchData(route, {}, method).then((res) => {
-      switch (res.status) {
+    fetchData<UserAccessBranchListResponse>(route, {}, method).then((res) => {
+      switch (res?.status) {
         case 200:
-          setArrList(res?.data?.list);
-          setOptions(res?.data?.options);
+          setArrList(res?.data?.list ?? []);
+          setOptions(res?.data?.options ?? []);
           break;
         case 400:
           toast.error(res?.data?.message);
           break;
         case 403:
-          toast.error(res?.data);
+          toast.error(res?.data as unknown as string);
           break;
         default:
           navigate(ROUTE_PATH.error404);
@@ -44,7 +54,7 @@ const UserAccessBranchPage = () => {
   };
 
   const addCompanyHandleExecute = () => {
-    let messages = [];
+    let messages: boolean[] = [];
     if (selectedValue === '') {
       messages.push(true);
       toast.error('Please select company!', {
@@ -66,10 +76,14 @@ const UserAccessBranchPage = () => {
         branchFamily: selectedValue,
       };
 
-      fetchData(ROUTE_API.eChanelUserBranch, data, 'POST').then((res) => {
-        switch (res.status) {
+      fetchData<UserAccessBranchListResponse>(
+        ROUTE_API.eChanelUserBranch,
+        data,
+        'POST'
+      ).then((res) => {
+        switch (res?.status) {
           case 200:
-            toast.success(res.data.message);
+            toast.success(res?.data?.message);
             getList();
             setSelectedValue('');
             break;
@@ -77,7 +91,7 @@ const UserAccessBranchPage = () => {
             toast.error(res?.data?.message);
             break;
           case 403:
-            toast.error(res?.data);
+            toast.error(res?.data as unknown as string);
             break;
           default:
             redirect(ROUTE_PATH.error404);
@@ -90,17 +104,21 @@ const UserAccessBranchPage = () => {
     let data = {
       transactionCode: transactionCode,
     };
-    fetchData(ROUTE_API.eChanelUserBranch, data, 'DELETE').then((res) => {
-      switch (res.status) {
+    fetchData<UserAccessBranchListResponse>(
+      ROUTE_API.eChanelUserBranch,
+      data,
+      'DELETE'
+    ).then((res) => {
+      switch (res?.status) {
         case 200:
-          toast.success(res.data.message);
+          toast.success(res?.data?.message);
           getList();
           break;
         case 400:
           toast.error(res?.data?.message);
           break;
         case 403:
-          toast.error(res?.data);
+          toast.error(res?.data as unknown as string);
           break;
         default:
           redirect(ROUTE_PATH.error404);
@@ -108,24 +126,28 @@ const UserAccessBranchPage = () => {
     });
   };
 
-  const makeDefaultBranchHandleClickExecute = (item) => {
+  const makeDefaultBranchHandleClickExecute = (item: UserAccessBranchItem) => {
     let data = {
       transactionCode: item.transactionCode,
       applicationFamily: item.applicationFamily,
       companyFamily: item.companyFamily,
       userCode: params.userCode,
     };
-    fetchData(ROUTE_API.eChanelUserBranch, data, 'PUT').then((res) => {
-      switch (res.status) {
+    fetchData<UserAccessBranchListResponse>(
+      ROUTE_API.eChanelUserBranch,
+      data,
+      'PUT'
+    ).then((res) => {
+      switch (res?.status) {
         case 200:
-          toast.success(res.data.message);
+          toast.success(res?.data?.message);
           getList();
           break;
         case 400:
           toast.error(res?.data?.message);
           break;
         case 403:
-          toast.error(res?.data);
+          toast.error(res?.data as unknown as string);
           break;
         default:
           redirect(ROUTE_PATH.error404);
@@ -133,10 +155,13 @@ const UserAccessBranchPage = () => {
     });
   };
 
-  const getRecordHandleClick = (option, item) => {
+  const getRecordHandleClick = (
+    option: string,
+    item: UserAccessBranchItem
+  ) => {
     switch (option) {
       case 'delete':
-        setTransationCode(item.transactionCode);
+        setTransationCode(item.transactionCode ?? '');
         break;
       default:
         navigate(ROUTE_PATH.error404);
@@ -149,36 +174,39 @@ const UserAccessBranchPage = () => {
 
   const goBackHandleClick = () => {
     navigate(
-      ROUTE_PATH.userCompanyDetail(params.applicationId, params.userCode)
+      ROUTE_PATH.userCompanyDetail(
+        params.applicationId ?? '',
+        params.userCode ?? ''
+      )
     );
   };
 
-  const companyHandleChange = (e) => {
-    setSelectedValue(e.value);
+  const companyHandleChange = (e: SelectOption | null) => {
+    setSelectedValue(e?.value ?? '');
   };
 
   const PER_PAGE = 10;
   const [currentPage, setCurrentPage] = useState(0);
 
-  function handlePageClick({ selected: selectedPage }) {
+  function handlePageClick({ selected: selectedPage }: { selected: number }) {
     setCurrentPage(selectedPage);
   }
 
   let offset = currentPage * PER_PAGE;
   let pageCount = Math.ceil(arrList.length / PER_PAGE);
 
-  const customStyles = {
+  const customStyles: StylesConfig<SelectOption, false> = {
     control: (provided, state) => ({
       ...provided,
       background: '#fff',
       minHeight: '35px',
       height: '35px',
-      boxShadow: state.isFocused ? null : null,
+      boxShadow: state.isFocused ? undefined : undefined,
     }),
     option: (styles, { isFocused }) => {
       return {
         ...styles,
-        backgroundColor: isFocused ? '#999999' : null,
+        backgroundColor: isFocused ? '#999999' : undefined,
         color: '#333333',
       };
     },
@@ -564,7 +592,7 @@ const UserAccessBranchPage = () => {
                   <label className="form-label">Branch</label>
                   <div>
                     <Select
-                      defaultValue={selectedValue}
+                      defaultValue={selectedValue as unknown as SelectOption}
                       onChange={companyHandleChange}
                       options={options}
                       styles={customStyles}

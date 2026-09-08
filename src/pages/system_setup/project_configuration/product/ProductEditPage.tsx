@@ -1,103 +1,89 @@
 import React, { useEffect, useState } from 'react';
 import { redirect, useNavigate, useParams } from 'react-router-dom';
-import Select from 'react-select';
 import { toast } from 'react-toastify';
+import type {
+  MessageResponse,
+  ProductListResponse,
+} from '../../../../@type/project_configuration';
 import { fetchData } from '../../../../services/$service';
 import { ROUTE_API, ROUTE_PATH } from '../../../../utils/route-util';
 
-const BranchProjectEditPage = () => {
-  document.title = 'E-CHANNEL PORTAL | project | edit';
+const ProductEditPage = () => {
+  document.title = 'E-chanel | product | edit';
+  const params = useParams<{ key: string }>();
   const navigate = useNavigate();
-  const params = useParams();
 
-  const [optionProject, setOptionProject] = useState([]);
-  const [selectedProject, setSelectdProject] = useState('');
-  const [optionPolicies, setOptionPolicies] = useState([]);
-  const [selectedPolicies, setSelectdPolicies] = useState('');
-  const [branch, setBranch] = useState('');
-
+  const [productCode, setProductCode] = useState('');
+  const [productName, setProductName] = useState('');
   const getList = () => {
-    fetchData(
-      `${ROUTE_API.opertionBranchProject}/` + params.key,
+    fetchData<ProductListResponse>(
+      '/operation-product/' + params.key,
       {},
       'GET'
     ).then((res) => {
-      switch (res.status) {
-        case 200:
-          {
-            let project = res?.data?.options;
-            setOptionProject(res?.data?.options);
-            setSelectdProject(res?.data?.list[0]?.projectFamily);
-            setBranch(res?.data?.list[0]?.branchFamily);
-            let policiesItem = project.find(
-              (item) => item.value === res?.data?.list[0]?.projectFamily
-            );
-            setOptionPolicies(policiesItem.policies);
-            setSelectdPolicies(res?.data?.list[0]?.policies);
-          }
-          break;
-        case 400:
-          toast.error(res?.data?.message);
-          break;
-        case 403:
-          toast.error(res?.data);
-          break;
-        default:
-          redirect(ROUTE_PATH.notFound);
+      if (res?.status === 200) {
+        const data = res?.data?.list?.[0];
+        setProductCode(data?.productCode ?? '');
+        setProductName(data?.productName ?? '');
+      } else if (res?.status === 400) {
+        toast.error(res?.data?.message);
+      } else if (res?.status === 403) {
+        toast.error(String(res?.data));
+      } else {
+        navigate(ROUTE_PATH.error404);
       }
     });
   };
-
-  const funcButtonHandleClickExecute = (e) => {
+  const funcButtonHandleClickExecute = (e: React.MouseEvent<HTMLButtonElement>) => {
     let messages = [];
-    if (selectedProject === '') {
+    if (productCode === '') {
       messages.push(true);
     }
-    if (selectedProject === '') {
+    if (productName === '') {
       messages.push(true);
     }
     if (messages.length < 1) {
       let data = {
         transactionCode: params.key,
-        policies: selectedPolicies.toString(),
+        productCode: productCode,
+        productName: productName,
       };
-      fetchData(ROUTE_API.opertionBranchProject, data, 'PUT').then((res) => {
-        switch (res.status) {
-          case 200:
-            navigate(ROUTE_PATH.branchProject(branch));
-            break;
-          case 400:
-            toast.error(res?.data?.message);
-            break;
-          case 403:
-            toast.error(res?.data);
-            break;
-          default:
-            navigate(ROUTE_PATH.notFound);
+
+      fetchData<MessageResponse>(ROUTE_API.operationProduct, data, 'PUT').then(
+        (res) => {
+          switch (res?.status) {
+            case 200:
+              toast.success(res?.data?.message);
+              navigate(ROUTE_PATH.product);
+              break;
+            case 400:
+              toast.error(res?.data?.message);
+              break;
+            case 403:
+              toast.error(String(res?.data));
+              break;
+            default:
+              redirect(ROUTE_PATH.error404);
+          }
         }
-      });
+      );
     }
     e.preventDefault();
+  };
+
+  const productCodeHandleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setProductCode(event.target.value);
+  };
+  const productNameHandleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setProductName(event.target.value);
+  };
+  const goBackHandleClick = () => {
+    navigate(ROUTE_PATH.product);
   };
 
   useEffect(() => {
     getList();
   }, []);
-
-  const projectHandleChange = (e) => {
-    setSelectdProject(e.value);
-    let policiesItem = optionProject?.find((item) => item.value === e.value);
-    setOptionPolicies(policiesItem?.policies);
-  };
-  const PoliciesHandleChange = (e) => {
-    setSelectdPolicies(Array.isArray(e) ? e.map((x) => x.value) : []);
-    selectedPolicies && JSON.stringify(selectedPolicies, null, 2);
-  };
-
-  const goBackHandleClick = () => {
-    navigate(ROUTE_PATH.branchProject(branch));
-  };
-
   return (
     <React.Fragment>
       <div className="page-wrapper">
@@ -105,7 +91,7 @@ const BranchProjectEditPage = () => {
           <div className="page-header d-print-none">
             <div className="row align-items-center">
               <div className="col">
-                <h2 className="page-title">Project Edit</h2>
+                <h2 className="page-title">Product create</h2>
               </div>
               <div className="col-auto ms-auto d-print-none">
                 <div className="btn-list">
@@ -157,34 +143,41 @@ const BranchProjectEditPage = () => {
           <div className="container-xl">
             <div className="card">
               <div className="card-body">
-                <div className="col-md-12">
+                <div className="col-md-6">
                   <div className="form-group mb-3">
-                    <label className="form-label required">Project name</label>
-                    <Select
-                      value={optionProject?.filter(function (option) {
-                        return option.value === selectedProject;
-                      })}
-                      onChange={projectHandleChange}
-                      options={optionProject}
-                      required
-                      isDisabled
-                    />
+                    <label className="form-label required">Product Label</label>
+                    <div>
+                      <input
+                        type="text"
+                        className={
+                          productCode !== ''
+                            ? 'form-control'
+                            : 'form-control is-invalid is-invalid-lite'
+                        }
+                        placeholder="Product label"
+                        onChange={productCodeHandleChange}
+                        value={productCode}
+                        required
+                      />
+                    </div>
                   </div>
                   <div className="form-group mb-3">
-                    <label className="form-label required">Polocies</label>
-                    <Select
-                      placeholder="Select Option"
-                      value={optionPolicies.filter((obj) =>
-                        selectedPolicies.includes(obj.value)
-                      )}
-                      options={optionPolicies}
-                      onChange={PoliciesHandleChange}
-                      isMulti
-                      isClearable
-                      closeMenuOnSelect={false}
-                    />
+                    <label className="form-label required">Product name</label>
+                    <div>
+                      <input
+                        type="text"
+                        className={
+                          productName !== ''
+                            ? 'form-control'
+                            : 'form-control is-invalid is-invalid-lite'
+                        }
+                        placeholder="Product name"
+                        onChange={productNameHandleChange}
+                        value={productName}
+                        required
+                      />
+                    </div>
                   </div>
-
                   <div className="form-footer">
                     <button
                       className="btn btn-primary"
@@ -218,4 +211,4 @@ const BranchProjectEditPage = () => {
   );
 };
 
-export default BranchProjectEditPage;
+export default ProductEditPage;

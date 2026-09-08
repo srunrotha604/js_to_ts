@@ -75,15 +75,15 @@ export const refreshToken = async () => {
   return alt_fa_token;
 };
 
-export const fetchData = async (
+export const fetchData = async <T = unknown>(
   url: string,
   data: unknown,
   method = 'GET'
-) => {
+): Promise<import('axios').AxiosResponse<T> | undefined> => {
   valid_token_data();
   let alt_fa_storage = localStorage.getItem('e_chanel_storage') || '';
   let token_text = JSON.parse(alt_fa_storage);
-  const respond = await axios({
+  const respond = await axios<T>({
     url: import.meta.env.VITE_API_URL + url,
     method: method,
     data: data,
@@ -141,15 +141,15 @@ export const fetchDataAsync = async <T = unknown>(
   });
 };
 
-export const fileUpload = async (
+export const fileUpload = async <T = unknown>(
   url: string,
   data: unknown,
   method = 'GET'
-) => {
+): Promise<import('axios').AxiosResponse<T> | undefined> => {
   valid_token_data();
   let alt_fa_storage = localStorage.getItem('e_chanel_storage') || '';
   let token_text = JSON.parse(alt_fa_storage);
-  const respond = await axios({
+  const respond = await axios<T>({
     url: import.meta.env.VITE_API_URL + url,
     method: method,
     data: data,

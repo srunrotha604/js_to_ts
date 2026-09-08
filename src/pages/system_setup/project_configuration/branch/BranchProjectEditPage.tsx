@@ -1,90 +1,116 @@
 import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import Select from 'react-select';
+import { redirect, useNavigate, useParams } from 'react-router-dom';
+import Select, { MultiValue, SingleValue } from 'react-select';
 import { toast } from 'react-toastify';
+import type { SelectOption } from '../../../../@type/report';
+import type {
+  BranchProjectDetailResponse,
+  BranchProjectOption,
+  MessageResponse,
+} from '../../../../@type/project_configuration';
 import { fetchData } from '../../../../services/$service';
 import { ROUTE_API, ROUTE_PATH } from '../../../../utils/route-util';
 
-const ProductCreatePage = () => {
-  document.title = 'E-CHANNEL PORTAL | product | create';
+const BranchProjectEditPage = () => {
+  document.title = 'E-CHANNEL PORTAL | project | edit';
   const navigate = useNavigate();
+  const params = useParams<{ key: string }>();
 
-  const [productCode, setProductCode] = useState('');
-  const [productName, setProductName] = useState('');
-  const [productList, setProductList] = useState([]);
-  const [selectedProduct, setSelectedProduct] = useState('');
+  const [optionProject, setOptionProject] = useState<BranchProjectOption[]>([]);
+  const [selectedProject, setSelectdProject] = useState('');
+  const [optionPolicies, setOptionPolicies] = useState<SelectOption[]>([]);
+  const [selectedPolicies, setSelectdPolicies] = useState<string[]>([]);
+  const [branch, setBranch] = useState('');
+
   const getList = () => {
-    fetchData(ROUTE_API.operationProductProduct, {}, 'GET').then((res) => {
-      switch (res.status) {
+    fetchData<BranchProjectDetailResponse>(
+      `${ROUTE_API.opertionBranchProject}/` + params.key,
+      {},
+      'GET'
+    ).then((res) => {
+      switch (res?.status) {
         case 200:
-          setProductList(res?.data?.options);
+          {
+            let project = res?.data?.options ?? [];
+            setOptionProject(project);
+            setSelectdProject(res?.data?.list?.[0]?.projectFamily ?? '');
+            setBranch(res?.data?.list?.[0]?.branchFamily ?? '');
+            let policiesItem = project.find(
+              (item) => item.value === res?.data?.list?.[0]?.projectFamily
+            );
+            setOptionPolicies(policiesItem?.policies ?? []);
+            setSelectdPolicies(
+              (res?.data?.list?.[0]?.policies ?? '')
+                .split(',')
+                .filter(Boolean)
+            );
+          }
           break;
         case 400:
           toast.error(res?.data?.message);
           break;
         case 403:
-          toast.error(res?.data);
+          toast.error(String(res?.data));
           break;
         default:
-          navigate(ROUTE_PATH.error404);
+          redirect(ROUTE_PATH.notFound);
       }
     });
   };
-  const funcButtonHandleClickExecute = (e) => {
+
+  const funcButtonHandleClickExecute = (e: React.MouseEvent<HTMLButtonElement>) => {
     let messages = [];
-    if (selectedProduct === '') {
+    if (selectedProject === '') {
       messages.push(true);
     }
-    if (productCode === '') {
-      messages.push(true);
-    }
-    if (productName === '') {
+    if (selectedProject === '') {
       messages.push(true);
     }
     if (messages.length < 1) {
       let data = {
-        productsequenceCode: selectedProduct,
-        productCode: productCode,
-        productName: productName,
+        transactionCode: params.key,
+        policies: selectedPolicies.toString(),
       };
-
-      fetchData(ROUTE_API.operationProduct, data, 'POST').then((res) => {
-        switch (res.status) {
+      fetchData<MessageResponse>(
+        ROUTE_API.opertionBranchProject,
+        data,
+        'PUT'
+      ).then((res) => {
+        switch (res?.status) {
           case 200:
-            toast.success(res.data.message);
-            navigate(ROUTE_PATH.product);
+            navigate(ROUTE_PATH.branchProject(branch));
             break;
           case 400:
             toast.error(res?.data?.message);
             break;
           case 403:
-            toast.error(res?.data);
+            toast.error(String(res?.data));
             break;
           default:
-            navigate(ROUTE_PATH.error404);
+            navigate(ROUTE_PATH.notFound);
         }
       });
     }
     e.preventDefault();
   };
 
-  const roleHandleChange = (e) => {
-    setSelectedProduct(e.value);
-  };
-
-  const productCodeHandleChange = (event) => {
-    setProductCode(event.target.value);
-  };
-  const productNameHandleChange = (event) => {
-    setProductName(event.target.value);
-  };
-  const goBackHandleClick = () => {
-    navigate(ROUTE_PATH.product);
-  };
-
   useEffect(() => {
     getList();
   }, []);
+
+  const projectHandleChange = (value: SingleValue<BranchProjectOption>) => {
+    setSelectdProject(value?.value ?? '');
+    let policiesItem = optionProject?.find((item) => item.value === value?.value);
+    setOptionPolicies(policiesItem?.policies ?? []);
+  };
+  const PoliciesHandleChange = (value: MultiValue<SelectOption> | null) => {
+    setSelectdPolicies(Array.isArray(value) ? value.map((x) => x.value) : []);
+  };
+
+  const goBackHandleClick = () => {
+    navigate(ROUTE_PATH.branchProject(branch));
+  };
+
   return (
     <React.Fragment>
       <div className="page-wrapper">
@@ -92,7 +118,7 @@ const ProductCreatePage = () => {
           <div className="page-header d-print-none">
             <div className="row align-items-center">
               <div className="col">
-                <h2 className="page-title">Product create</h2>
+                <h2 className="page-title">Project Edit</h2>
               </div>
               <div className="col-auto ms-auto d-print-none">
                 <div className="btn-list">
@@ -144,58 +170,34 @@ const ProductCreatePage = () => {
           <div className="container-xl">
             <div className="card">
               <div className="card-body">
-                <div className="col-md-6">
+                <div className="col-md-12">
                   <div className="form-group mb-3">
-                    <label className="form-label required">Product code</label>
-                    <div>
-                      <Select
-                        styles={{
-                          menuPortal: (base) => ({ ...base, zIndex: 9999 }),
-                        }}
-                        menuPortalTarget={document.body}
-                        value={productList.find(function (option) {
-                          return option.value === selectedProduct;
-                        })}
-                        onChange={roleHandleChange}
-                        options={productList}
-                        required
-                      />
-                    </div>
+                    <label className="form-label required">Project name</label>
+                    <Select
+                      value={optionProject?.filter(function (option) {
+                        return option.value === selectedProject;
+                      })}
+                      onChange={projectHandleChange}
+                      options={optionProject}
+                      required
+                      isDisabled
+                    />
                   </div>
                   <div className="form-group mb-3">
-                    <label className="form-label required">Product Label</label>
-                    <div>
-                      <input
-                        type="text"
-                        className={
-                          productCode !== ''
-                            ? 'form-control'
-                            : 'form-control is-invalid is-invalid-lite'
-                        }
-                        placeholder="Product label"
-                        onChange={productCodeHandleChange}
-                        value={productCode}
-                        required
-                      />
-                    </div>
+                    <label className="form-label required">Polocies</label>
+                    <Select
+                      placeholder="Select Option"
+                      value={optionPolicies.filter((obj) =>
+                        selectedPolicies.includes(obj.value)
+                      )}
+                      options={optionPolicies}
+                      onChange={PoliciesHandleChange}
+                      isMulti
+                      isClearable
+                      closeMenuOnSelect={false}
+                    />
                   </div>
-                  <div className="form-group mb-3">
-                    <label className="form-label required">Product name</label>
-                    <div>
-                      <input
-                        type="text"
-                        className={
-                          productName !== ''
-                            ? 'form-control'
-                            : 'form-control is-invalid is-invalid-lite'
-                        }
-                        placeholder="Product name"
-                        onChange={productNameHandleChange}
-                        value={productName}
-                        required
-                      />
-                    </div>
-                  </div>
+
                   <div className="form-footer">
                     <button
                       className="btn btn-primary"
@@ -229,4 +231,4 @@ const ProductCreatePage = () => {
   );
 };
 
-export default ProductCreatePage;
+export default BranchProjectEditPage;

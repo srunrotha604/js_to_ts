@@ -1,29 +1,36 @@
 import { useEffect, useState } from 'react';
 import { MdClear } from 'react-icons/md';
 import { useNavigate, useParams } from 'react-router-dom';
-import ReactSelect from 'react-select';
+import type { ClearIndicatorProps, SingleValue } from 'react-select';
 import { toast } from 'react-toastify';
 import {
   components,
   createFilter,
   WindowedMenuList,
 } from 'react-windowed-select';
+import ReactSelect from 'react-select';
+import type { SelectOption } from '../../../../@type/report';
+import type {
+  MessageResponse,
+  PolicyOption,
+  ProjectPolicyOptionResponse,
+} from '../../../../@type/project_configuration';
 import { fetchData } from '../../../../services/$service';
 import { ROUTE_API, ROUTE_PATH } from '../../../../utils/route-util';
 
 const ProjectPolicyCreatePage = () => {
   document.title = 'E-CHANNEL PORTAL | project | policy | create';
   const navigate = useNavigate();
-  const params = useParams();
+  const params = useParams<{ key: string }>();
 
-  const [optionPolicy, setOptionPolicy] = useState([]);
-  const [arrPolicy, setArrPolicy] = useState([]);
+  const [optionPolicy, setOptionPolicy] = useState<PolicyOption[]>([]);
+  const [arrPolicy, setArrPolicy] = useState<PolicyOption[]>([]);
   const [selectedPolicy, setSelectdPolicy] = useState('');
 
-  const [optionProduct, setOptionProduct] = useState([]);
+  const [optionProduct, setOptionProduct] = useState<SelectOption[]>([]);
   const [selectedProduct, setSelectdProduct] = useState('');
 
-  const funcButtonHandleClickExecute = (e) => {
+  const funcButtonHandleClickExecute = (e: React.MouseEvent<HTMLButtonElement>) => {
     let messages = [];
     if (selectedPolicy === '') {
       messages.push(true);
@@ -33,38 +40,44 @@ const ProjectPolicyCreatePage = () => {
         projectFamily: params.key,
         policyCode: selectedPolicy,
       };
-      fetchData('/operation-project/policy', data, 'POST').then((res) => {
-        switch (res.status) {
-          case 200:
-            toast.success(res?.data?.message);
-            navigate(ROUTE_PATH.projectPolicy(params.key));
-            break;
-          case 400:
-            toast.error(res?.data?.message);
-            break;
-          case 403:
-            toast.error(res?.data);
-            break;
-          default:
-            navigate(ROUTE_PATH.error404);
+      fetchData<MessageResponse>('/operation-project/policy', data, 'POST').then(
+        (res) => {
+          switch (res?.status) {
+            case 200:
+              toast.success(res?.data?.message);
+              navigate(ROUTE_PATH.projectPolicy(params.key ?? ''));
+              break;
+            case 400:
+              toast.error(res?.data?.message);
+              break;
+            case 403:
+              toast.error(String(res?.data));
+              break;
+            default:
+              navigate(ROUTE_PATH.error404);
+          }
         }
-      });
+      );
     }
     e.preventDefault();
   };
 
   const getPolicyOption = () => {
-    fetchData(ROUTE_API.coreSystemOperationPolicy, {}, 'GET').then((res) => {
-      switch (res.status) {
+    fetchData<ProjectPolicyOptionResponse>(
+      ROUTE_API.coreSystemOperationPolicy,
+      {},
+      'GET'
+    ).then((res) => {
+      switch (res?.status) {
         case 200:
-          setOptionProduct(res?.data?.product);
-          setArrPolicy(res?.data?.policy);
+          setOptionProduct(res?.data?.product ?? []);
+          setArrPolicy(res?.data?.policy ?? []);
           break;
         case 400:
           toast.error(res?.data?.message);
           break;
         case 403:
-          toast.error(res?.data);
+          toast.error(String(res?.data));
           break;
         default:
           navigate(ROUTE_PATH.error404);
@@ -72,17 +85,17 @@ const ProjectPolicyCreatePage = () => {
     });
   };
 
-  const policyHandleChange = (e) => {
+  const policyHandleChange = (value: SingleValue<PolicyOption>) => {
     {
-      e != null ? setSelectdPolicy(e.value) : setSelectdPolicy('');
+      value != null ? setSelectdPolicy(value.value) : setSelectdPolicy('');
     }
   };
 
-  const productHandleChange = (e) => {
-    if (e !== null) {
-      setSelectdProduct(e.value);
+  const productHandleChange = (value: SingleValue<SelectOption>) => {
+    if (value !== null) {
+      setSelectdProduct(value.value);
       const policyList = arrPolicy?.filter((item) => {
-        return item.keyCode === e.value.toString();
+        return item.keyCode === value.value.toString();
       });
       setOptionPolicy(policyList);
     } else {
@@ -91,7 +104,7 @@ const ProjectPolicyCreatePage = () => {
   };
 
   const goBackHandleClick = () => {
-    navigate(ROUTE_PATH.projectPolicy(params.key));
+    navigate(ROUTE_PATH.projectPolicy(params.key ?? ''));
   };
 
   useEffect(() => {
@@ -101,7 +114,9 @@ const ProjectPolicyCreatePage = () => {
   const customFilter = createFilter({ ignoreAccents: false });
   const customComponents = {
     MenuList: WindowedMenuList,
-    ClearIndicator: (props) => (
+    ClearIndicator: (
+      props: ClearIndicatorProps<SelectOption | PolicyOption, false>
+    ) => (
       <components.ClearIndicator {...props}>
         <MdClear />
       </components.ClearIndicator>

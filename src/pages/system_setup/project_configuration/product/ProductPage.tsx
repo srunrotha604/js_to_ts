@@ -1,73 +1,83 @@
 import React, { useEffect, useState } from 'react';
 import ReactPaginate from 'react-paginate';
-import { Link, useNavigate, useParams } from 'react-router-dom';
+import { Link, redirect, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
+import type {
+  MessageResponse,
+  ProductItem,
+  ProductListResponse,
+} from '../../../../@type/project_configuration';
+import ActionConfirmationModal from '../../../../components/common/ActionConfirmationModal.jsx';
+import { useModal } from '../../../../components/common/modal/index.jsx';
 import Loading from '../../../../components/Loading';
 import { fetchData } from '../../../../services/$service';
 import { ROUTE_API, ROUTE_PATH } from '../../../../utils/route-util';
 
-const BranchProjectPage = () => {
-  document.title = 'E-CHANNEL PORTAL | Branch';
+const ProductPage = () => {
+  document.title = 'E-CHANNEL PORTAL | product';
   const navigate = useNavigate();
-  const params = useParams();
+
+  const { modalRef, closeModal, openModal } = useModal();
   const [loading, setLoading] = useState(false);
-  const [arrList, setArrList] = useState([]);
+  const [arrList, setArrList] = useState<ProductItem[]>([]);
+  const [arrDetails, setArrDetails] = useState<ProductItem>({});
   const [query, setQuery] = useState('');
-  const [getKey, setGetKey] = useState('');
-
+  const [transactionCode, setTransationCode] = useState('');
   const getList = () => {
-    fetchData(
-      `${ROUTE_API.opertionBranchProject}/` + params.key,
-      {},
-      'GET'
-    ).then((res) => {
-      if (res?.status === 200) {
-        setLoading(true);
-        setArrList(res?.data?.list);
-        setLoading(false);
+    fetchData<ProductListResponse>(ROUTE_API.operationProduct, {}, 'GET').then(
+      (res) => {
+        switch (res?.status) {
+          case 200:
+            setLoading(true);
+            setArrList(res?.data?.list ?? []);
+            setLoading(false);
+            break;
+          case 400:
+            toast.error(res?.data?.message);
+            break;
+          case 403:
+            toast.error(String(res?.data));
+            break;
+          default:
+            navigate(ROUTE_PATH.error404);
+        }
       }
-    });
+    );
   };
 
-  const deleteProjectHandleClickExecute = () => {
-    let data = {
-      transactionCode: getKey,
-    };
-    fetchData(ROUTE_API.opertionBranchProject, data, 'DELETE').then((res) => {
-      switch (res.status) {
-        case 200:
-          setLoading(true);
-          getList();
-          setLoading(false);
-          toast.success(res?.data?.message);
-          break;
-        case 400:
-          toast.error(res?.data?.message);
-          break;
-        case 403:
-          toast.error(res?.data);
-          break;
-        default:
-          navigate(ROUTE_PATH.notFound);
-      }
-    });
-  };
-
-  const getRecordHandleClick = (option, item) => {
+  const getRecordHandleClick = (option: string, item: ProductItem) => {
     switch (option) {
-      case 'delete':
-        setGetKey(item.transactionCode);
-        break;
-      case 'edit':
-        setGetKey(item.transactionCode);
-
-        break;
       case 'view':
-        setGetKey(item.transactionCode);
+        setArrDetails(item);
         break;
       default:
         navigate(ROUTE_PATH.error404);
     }
+  };
+
+  const deleteRecordHandleClick = () => {
+    let data = {
+      transactionCode: transactionCode,
+    };
+    fetchData<MessageResponse>(ROUTE_API.operationProduct, data, 'DELETE').then(
+      (res) => {
+        switch (res?.status) {
+          case 200:
+            toast.success(res?.data?.message);
+            getList();
+            closeModal();
+            break;
+          case 400:
+            toast.error(res?.data?.message);
+            break;
+          case 403:
+            toast.error(String(res?.data));
+            break;
+          default:
+            redirect(ROUTE_PATH.error404);
+        }
+      }
+    );
   };
 
   useEffect(() => {
@@ -75,17 +85,14 @@ const BranchProjectPage = () => {
   }, []);
 
   const createNewHandleClick = () => {
-    navigate(ROUTE_PATH.branchProjectCreate(params.key));
-  };
-  const goBackHandleClick = () => {
-    navigate(ROUTE_PATH.branch);
+    navigate(ROUTE_PATH.productCreate);
   };
 
   let nf = new Intl.NumberFormat();
   const PER_PAGE = 10;
   const [currentPage, setCurrentPage] = useState(0);
 
-  function handlePageClick({ selected: selectedPage }) {
+  function handlePageClick({ selected: selectedPage }: { selected: number }) {
     setCurrentPage(selectedPage);
   }
 
@@ -99,7 +106,7 @@ const BranchProjectPage = () => {
           <div className="page-header d-print-none">
             <div className="row align-items-center">
               <div className="col">
-                <h2 className="page-title">Branch - project</h2>
+                <h2 className="page-title">Product</h2>
               </div>
               <div className="col-auto ms-auto d-print-none">
                 <div className="row align-items-center">
@@ -150,49 +157,6 @@ const BranchProjectPage = () => {
                           </svg>
                         </button>
                       </div>
-
-                      <>
-                        <button
-                          className="btn btn-primary d-none d-sm-inline-block"
-                          onClick={goBackHandleClick}
-                        >
-                          <svg
-                            className="icon"
-                            width={24}
-                            height={24}
-                            viewBox="0 0 24 24"
-                            strokeWidth={2}
-                            stroke="currentColor"
-                            fill="none"
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                          >
-                            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                            <path d="M9 13l-4 -4l4 -4m-4 4h11a4 4 0 0 1 0 8h-1" />
-                          </svg>
-                          Back
-                        </button>
-                        <button
-                          className="btn btn-primary d-sm-none btn-icon"
-                          onClick={goBackHandleClick}
-                        >
-                          <svg
-                            className="icon"
-                            width={24}
-                            height={24}
-                            viewBox="0 0 24 24"
-                            strokeWidth={2}
-                            stroke="currentColor"
-                            fill="none"
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                          >
-                            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                            <path d="M9 13l-4 -4l4 -4m-4 4h11a4 4 0 0 1 0 8h-1" />
-                          </svg>
-                        </button>
-                      </>
-
                       <>
                         <button
                           className="btn btn-primary d-none d-sm-inline-block"
@@ -214,7 +178,7 @@ const BranchProjectPage = () => {
                             <line x1={12} y1={5} x2={12} y2={19} />
                             <line x1={5} y1={12} x2={19} y2={12} />
                           </svg>
-                          Add project
+                          Create product
                         </button>
                         <button
                           className="btn btn-primary d-sm-none btn-icon"
@@ -270,7 +234,7 @@ const BranchProjectPage = () => {
                     </svg>
                   </span>
                   <input
-                    cursor="pointer"
+                    style={{ cursor: 'pointer' }}
                     type="text"
                     className="form-control"
                     placeholder="Search…"
@@ -286,8 +250,9 @@ const BranchProjectPage = () => {
                     <thead>
                       <tr>
                         <th className="tb-w-10">#</th>
-                        <th>PROJECT NAME</th>
-                        <th>POLICIES</th>
+                        <th>PRODUCT CODE</th>
+                        <th>PRODUCT LABEL</th>
+                        <th>PRODUCT NAME</th>
                         <th className="tb-w-10">STATUS</th>
                         <th className="tb-w-100">ACTION</th>
                       </tr>
@@ -297,26 +262,55 @@ const BranchProjectPage = () => {
                         ?.filter((item) => {
                           return query.toLowerCase() === ''
                             ? item
-                            : item.branchCode.toLowerCase().includes(query) ||
-                                item.branchName.toLowerCase().includes(query);
+                            : item.productName?.toLowerCase().includes(query);
                         })
                         .slice(offset, offset + PER_PAGE)
                         .map((item, index) => (
                           <tr key={index}>
                             <td>{index + 1}</td>
-                            <td className="text-muted">{item?.projectLabel}</td>
-                            <td className="text-muted text-pre-line">
-                              {item.policies}
+                            <td className="text-muted">
+                              {item.productsequenceCode}
                             </td>
+                            <td className="text-muted">{item.productCode}</td>
+                            <td className="text-muted">{item.productName}</td>
                             {item.status === 'Active' ? (
                               <td className="text-primary">{item.status}</td>
                             ) : (
                               <td className="text-danger">{item.status}</td>
                             )}
                             <td>
+                              <a
+                                className="cursor-pointer"
+                                data-bs-toggle="offcanvas"
+                                href="#offcanvasView"
+                                onClick={() =>
+                                  getRecordHandleClick('view', item)
+                                }
+                              >
+                                <svg
+                                  xmlns="http://www.w3.org/2000/svg"
+                                  className="icon icon-tabler icon-tabler-eye"
+                                  width={24}
+                                  height={24}
+                                  viewBox="0 0 24 24"
+                                  strokeWidth="1.5"
+                                  stroke="#00abfb"
+                                  fill="none"
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                >
+                                  <path
+                                    stroke="none"
+                                    d="M0 0h24v24H0z"
+                                    fill="none"
+                                  />
+                                  <circle cx={12} cy={12} r={2} />
+                                  <path d="M22 12c-2.667 4.667 -6 7 -10 7s-7.333 -2.333 -10 -7c2.667 -4.667 6 -7 10 -7s7.333 2.333 10 7" />
+                                </svg>
+                              </a>
                               <Link
-                                to={ROUTE_PATH.branchProjectEdit(
-                                  item.transactionCode
+                                to={ROUTE_PATH.productEdit(
+                                  item.transactionCode ?? ''
                                 )}
                               >
                                 <svg
@@ -341,62 +335,37 @@ const BranchProjectPage = () => {
                                   <line x1={16} y1={5} x2={19} y2={8} />
                                 </svg>
                               </Link>
-
-                              <span
-                                data-bs-toggle="modal"
-                                data-bs-target="#modal-remove"
-                                className="cursor-pointer text-red text-underline"
-                                onClick={() =>
-                                  getRecordHandleClick('delete', item)
-                                }
+                              <a
+                                className="cursor-pointer"
+                                onClick={() => {
+                                  setTransationCode(item.transactionCode ?? '');
+                                  openModal();
+                                }}
                               >
-                                {item.status === 'Active' ? (
-                                  <svg
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    className="icon icon-tabler icon-tabler-trash"
-                                    width={24}
-                                    height={24}
-                                    viewBox="0 0 24 24"
-                                    strokeWidth="1.5"
-                                    stroke="#ff2825"
+                                <svg
+                                  xmlns="http://www.w3.org/2000/svg"
+                                  className="icon icon-tabler icon-tabler-trash"
+                                  width={24}
+                                  height={24}
+                                  viewBox="0 0 24 24"
+                                  strokeWidth="1.5"
+                                  stroke="#ff2825"
+                                  fill="none"
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                >
+                                  <path
+                                    stroke="none"
+                                    d="M0 0h24v24H0z"
                                     fill="none"
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                  >
-                                    <path
-                                      stroke="none"
-                                      d="M0 0h24v24H0z"
-                                      fill="none"
-                                    />
-                                    <line x1={4} y1={7} x2={20} y2={7} />
-                                    <line x1={10} y1={11} x2={10} y2={17} />
-                                    <line x1={14} y1={11} x2={14} y2={17} />
-                                    <path d="M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12" />
-                                    <path d="M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3" />
-                                  </svg>
-                                ) : (
-                                  <svg
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    className="icon icon-tabler icon-tabler-checkbox"
-                                    width={24}
-                                    height={24}
-                                    viewBox="0 0 24 24"
-                                    strokeWidth="1.5"
-                                    stroke="#6f32be"
-                                    fill="none"
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                  >
-                                    <path
-                                      stroke="none"
-                                      d="M0 0h24v24H0z"
-                                      fill="none"
-                                    />
-                                    <polyline points="9 11 12 14 20 6" />
-                                    <path d="M20 12v6a2 2 0 0 1 -2 2h-12a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h9" />
-                                  </svg>
-                                )}
-                              </span>
+                                  />
+                                  <line x1={4} y1={7} x2={20} y2={7} />
+                                  <line x1={10} y1={11} x2={10} y2={17} />
+                                  <line x1={14} y1={11} x2={14} y2={17} />
+                                  <path d="M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12" />
+                                  <path d="M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3" />
+                                </svg>
+                              </a>
                             </td>
                           </tr>
                         ))}
@@ -405,7 +374,7 @@ const BranchProjectPage = () => {
                 </div>
                 <div className="d-flex align-items-center mt-3">
                   <p className="m-0 text-muted">
-                    Total <span>{nf.format(arrList?.length)}</span> entries
+                    Total <span>{nf.format(arrList?.length ?? 0)}</span> entries
                   </p>
                   <ReactPaginate
                     previousLabel={
@@ -487,79 +456,40 @@ const BranchProjectPage = () => {
         <div className="offcanvas-body">
           <div className="text-left">
             <table className="table table-hover">
-              <tbody></tbody>
+              <tbody>
+                <tr>
+                  <td>Product code :</td>
+                  <td className="text-muted">
+                    {arrDetails.productsequenceCode}
+                  </td>
+                </tr>
+                <tr>
+                  <td>Product Label :</td>
+                  <td className="text-muted">{arrDetails.productCode}</td>
+                </tr>
+                <tr>
+                  <td>Product Name :</td>
+                  <td className="text-muted">{arrDetails.productName}</td>
+                </tr>
+                <tr>
+                  <td>Status :</td>
+                  <td className="text-muted">{arrDetails.status}</td>
+                </tr>
+              </tbody>
             </table>
           </div>
         </div>
       </div>
-      <div
-        className="modal modal-blur fade"
-        id="modal-remove"
-        tabIndex={-1}
-        role="dialog"
-        aria-hidden="true"
-      >
-        <div
-          className="modal-dialog modal-sm modal-dialog-centered"
-          role="document"
-        >
-          <div className="modal-content">
-            <button
-              type="button"
-              className="btn-close"
-              data-bs-dismiss="modal"
-              aria-label="Close"
-            />
-            <div className="modal-status bg-danger" />
-            <div className="modal-body py-4">
-              <div className="text-center mb-3">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="icon mb-2 text-danger icon-lg"
-                  width={24}
-                  height={24}
-                  viewBox="0 0 24 24"
-                  strokeWidth={2}
-                  stroke="currentColor"
-                  fill="none"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                >
-                  <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                  <path d="M12 9v2m0 4v.01" />
-                  <path d="M5 19h14a2 2 0 0 0 1.84 -2.75l-7.1 -12.25a2 2 0 0 0 -3.5 0l-7.1 12.25a2 2 0 0 0 1.75 2.75" />
-                </svg>
-                <h3>Are you sure?</h3>
-                <div className="text-muted">
-                  Do you really want to delete this project?
-                </div>
-              </div>
-            </div>
-            <div className="modal-footer">
-              <div className="w-100">
-                <div className="row">
-                  <div className="col">
-                    <button className="btn w-100" data-bs-dismiss="modal">
-                      Cancel
-                    </button>
-                  </div>
-                  <div className="col">
-                    <button
-                      className="btn btn-danger w-100"
-                      data-bs-dismiss="modal"
-                      onClick={deleteProjectHandleClickExecute}
-                    >
-                      Confirm
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+      <ActionConfirmationModal
+        closeModal={closeModal}
+        modalRef={modalRef}
+        isApprove
+        confirmMessageText="Are you sure you want to delete product?"
+        onApprove={deleteRecordHandleClick}
+        onReject={() => {}}
+      />
     </React.Fragment>
   );
 };
 
-export default BranchProjectPage;
+export default ProductPage;

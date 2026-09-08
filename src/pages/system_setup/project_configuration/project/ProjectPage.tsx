@@ -2,6 +2,10 @@ import React, { useEffect, useState } from 'react';
 import ReactPaginate from 'react-paginate';
 import { Link, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
+import type {
+  ProjectItem,
+  ProjectListResponse,
+} from '../../../../@type/project_configuration';
 import Loading from '../../../../components/Loading';
 import { fetchData } from '../../../../services/$service';
 import { ROUTE_API, ROUTE_PATH } from '../../../../utils/route-util';
@@ -10,54 +14,56 @@ const ProjectPage = () => {
   document.title = 'E-CHANNEL PORTAL | project';
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
-  const [arrList, setArrList] = useState([]);
+  const [arrList, setArrList] = useState<ProjectItem[]>([]);
   const [query, setQuery] = useState('');
-  const [setGetKey] = useState('');
+  const [getKey, setGetKey] = useState('');
   const [getApplicationName, setGetApplicationName] = useState('');
   const [getApplicationCode, setGetApplicationCode] = useState('');
   const [getStatus, setGetStatus] = useState('');
 
   const getList = () => {
-    fetchData(ROUTE_API.operationProject, {}, 'GET').then((res) => {
-      switch (res.status) {
-        case 200:
-          setLoading(true);
-          setArrList(res?.data?.list);
-          setLoading(false);
-          break;
-        case 400:
-          toast.error(res?.data?.message);
-          break;
-        case 403:
-          toast.error(res?.data);
-          break;
-        default:
-          navigate(ROUTE_PATH.error404);
+    fetchData<ProjectListResponse>(ROUTE_API.operationProject, {}, 'GET').then(
+      (res) => {
+        switch (res?.status) {
+          case 200:
+            setLoading(true);
+            setArrList(res?.data?.list ?? []);
+            setLoading(false);
+            break;
+          case 400:
+            toast.error(res?.data?.message);
+            break;
+          case 403:
+            toast.error(String(res?.data));
+            break;
+          default:
+            navigate(ROUTE_PATH.error404);
+        }
       }
-    });
+    );
   };
 
-  const getRecordHandleClick = (option, item) => {
+  const getRecordHandleClick = (option: string, item: ProjectItem) => {
     switch (option) {
       case 'delete':
-        setGetKey(item.key);
+        setGetKey(item.key ?? '');
         item.status === 'Active'
           ? setGetStatus('#disable this application?')
           : setGetStatus('#active this application?');
-        setGetApplicationName(item.applicationName);
-        setGetApplicationCode(item.applicationCode);
+        setGetApplicationName(item.applicationName ?? '');
+        setGetApplicationCode(item.applicationCode ?? '');
         break;
       case 'edit':
-        setGetKey(item.key);
-        setGetApplicationName(item.moduleName);
-        setGetApplicationCode(item.description);
+        setGetKey(item.key ?? '');
+        setGetApplicationName(item.moduleName ?? '');
+        setGetApplicationCode(item.description ?? '');
 
         break;
       case 'view':
-        setGetKey(item.key);
-        setGetApplicationName(item.applicationName);
-        setGetApplicationCode(item.applicationCode);
-        setGetStatus(item.status);
+        setGetKey(item.key ?? '');
+        setGetApplicationName(item.applicationName ?? '');
+        setGetApplicationCode(item.applicationCode ?? '');
+        setGetStatus(item.status ?? '');
         break;
       default:
         navigate(ROUTE_PATH.error404);
@@ -76,7 +82,7 @@ const ProjectPage = () => {
   const PER_PAGE = 10;
   const [currentPage, setCurrentPage] = useState(0);
 
-  function handlePageClick({ selected: selectedPage }) {
+  function handlePageClick({ selected: selectedPage }: { selected: number }) {
     setCurrentPage(selectedPage);
   }
 
@@ -219,7 +225,7 @@ const ProjectPage = () => {
                     </svg>
                   </span>
                   <input
-                    cursor="pointer"
+                    style={{ cursor: 'pointer' }}
                     type="text"
                     className="form-control"
                     placeholder="Search…"
@@ -247,7 +253,7 @@ const ProjectPage = () => {
                         ?.filter((item) => {
                           return query.toLowerCase() === ''
                             ? item
-                            : item.projectName.toLowerCase().includes(query);
+                            : item.projectName?.toLowerCase().includes(query);
                         })
                         .slice(offset, offset + PER_PAGE)
                         .map((item, index) => (
@@ -258,7 +264,7 @@ const ProjectPage = () => {
                             <td className="text-underline">
                               <Link
                                 to={ROUTE_PATH.projectPolicy(
-                                  item.transactionCode
+                                  item.transactionCode ?? ''
                                 )}
                               >
                                 policies
@@ -301,7 +307,7 @@ const ProjectPage = () => {
                               </a>
                               <Link
                                 to={ROUTE_PATH.projectEdit(
-                                  item.transactionCode
+                                  item.transactionCode ?? ''
                                 )}
                               >
                                 <svg
@@ -334,7 +340,7 @@ const ProjectPage = () => {
                 </div>
                 <div className="d-flex align-items-center mt-3">
                   <p className="m-0 text-muted">
-                    Total <span>{nf.format(arrList?.length)}</span> entries
+                    Total <span>{nf.format(arrList?.length ?? 0)}</span> entries
                   </p>
                   <ReactPaginate
                     previousLabel={

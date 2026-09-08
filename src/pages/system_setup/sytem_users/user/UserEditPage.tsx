@@ -1,38 +1,76 @@
-import { useEffect, useState } from 'react';
-import { PatternFormat } from 'react-number-format';
-import { useNavigate } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 import Select from 'react-select';
 import { toast } from 'react-toastify';
-import { useAuth } from '../../../../context/AuthContext.jsx';
+import type { SelectOption } from '../../../../@type/report';
+import type {
+  MessageResponse,
+  RoleOptionsResponse,
+  UserItem,
+  UserListResponse,
+} from '../../../../@type/system_users';
 import { fetchData } from '../../../../services/$service';
 import { ROUTE_API, ROUTE_PATH } from '../../../../utils/route-util';
 
-const UserCreatePage = () => {
+const UserEditPage = () => {
   document.title = 'E-CHANNEL PORTAL | user - create';
   const navigate = useNavigate();
-  const { company } = useAuth();
+  const params = useParams<{ key: string }>();
   const [textEmail, setTextEmail] = useState('');
-  const [phone, setPhone] = useState('');
+  const [arrList, setArrList] = useState<UserItem | null>(null);
   const [textFirstName, setTextFirstName] = useState('');
   const [textLastName, setTextLastName] = useState('');
-
-  const [optionRole, setOptionRole] = useState([]);
+  const [RoleCategory, setOptionBranch] = useState<SelectOption[]>([]);
   const [selectedRole, setSelectedRole] = useState('');
-
-  const [optionBranch, setOptionBranch] = useState([]);
-  const [selectedBranch, setSelectedBranch] = useState('');
-  const [message, setMessage] = useState('');
-
   const getList = () => {
-    fetchData(ROUTE_API.eChanelUserAccess, {}, 'GET').then((res) => {
-      if (res?.status == 200) {
-        setOptionRole(res?.data?.role);
+    fetchData<UserListResponse>(
+      `${ROUTE_API.eChanelUser}?transaction=${params.key}&branchName=`,
+      {},
+      'GET'
+    ).then((res) => {
+      switch (res?.status) {
+        case 200: {
+          const dataList = res?.data?.list?.[0];
+          setArrList(dataList ?? null);
+          console.log(arrList);
+          setTextEmail(dataList?.email ?? '');
+          setTextFirstName(dataList?.givenName ?? '');
+          setTextLastName(dataList?.sureName ?? '');
+          break;
+        }
+        case 400:
+          toast.error(res?.data?.message);
+          break;
+        case 403:
+          toast.error(res?.data as unknown as string);
+          break;
+        default:
+          navigate(ROUTE_PATH.error404);
       }
     });
-  };
+    fetchData<RoleOptionsResponse>(ROUTE_API.eChanelUserAccess, {}, 'GET').then(
+      (res) => {
+        switch (res?.status) {
+          case 200:
+            setOptionBranch(res?.data?.role ?? []);
 
-  const funcButtonHandleClickExecute = (e) => {
-    let messages = [];
+            break;
+          case 400:
+            toast.error(res?.data?.message);
+            break;
+          case 403:
+            toast.error(res?.data as unknown as string);
+            break;
+          default:
+            navigate(ROUTE_PATH.error404);
+        }
+      }
+    );
+  };
+  const funcButtonHandleClickExecute = (
+    e: React.MouseEvent<HTMLButtonElement>
+  ) => {
+    let messages: boolean[] = [];
     if (textEmail === '') {
       messages.push(true);
     }
@@ -42,38 +80,33 @@ const UserCreatePage = () => {
     if (textLastName === '') {
       messages.push(true);
     }
-    if (selectedBranch === '') {
-      messages.push(true);
-    }
     if (selectedRole === '') {
       messages.push(true);
     } else {
       if (messages.length < 1) {
         let data = {
-          email: textEmail,
-          givenName: textFirstName,
-          sureName: textLastName,
+          key: params.key,
           role: selectedRole,
-          branch: selectedBranch,
-          phone: phone,
         };
 
-        fetchData(ROUTE_API.eChanelUser, data, 'POST').then((res) => {
-          switch (res.status) {
-            case 200:
-              toast.success(res.data.message);
-              navigate(ROUTE_PATH.user);
-              break;
-            case 400:
-              toast.error(res?.data?.message);
-              break;
-            case 403:
-              toast.error(res?.data);
-              break;
-            default:
-              navigate(ROUTE_PATH.error404);
+        fetchData<MessageResponse>(ROUTE_API.eChanelUser, data, 'PUT').then(
+          (res) => {
+            switch (res?.status) {
+              case 200:
+                toast.success(res?.data?.message);
+                navigate(ROUTE_PATH.user);
+                break;
+              case 400:
+                toast.error(res?.data?.message);
+                break;
+              case 403:
+                toast.error(res?.data as unknown as string);
+                break;
+              default:
+                navigate(ROUTE_PATH.error404);
+            }
           }
-        });
+        );
       }
     }
     e.preventDefault();
@@ -81,23 +114,19 @@ const UserCreatePage = () => {
 
   useEffect(() => {
     getList();
-    const e_chanel_storage = localStorage.getItem('e_chanel_storage');
-    const token_text = JSON.parse(e_chanel_storage);
-    const companyDetails = company?.find(
-      (item) => item?.value === token_text?.company
-    );
-    const tempBranch = companyDetails?.branch || [];
-
-    setOptionBranch(tempBranch);
   }, []);
 
-  const emailHandleChange = (event) => {
+  const emailHandleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setTextEmail(event.target.value);
   };
-  const firstNameHandleChange = (event) => {
+  const firstNameHandleChange = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
     setTextFirstName(event.target.value);
   };
-  const lastNameHandleChange = (event) => {
+  const lastNameHandleChange = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
     setTextLastName(event.target.value);
   };
 
@@ -105,36 +134,11 @@ const UserCreatePage = () => {
     navigate(ROUTE_PATH.user);
   };
 
-  const branchHandleChange = (e) => {
-    setSelectedBranch(e.value);
-    console.log(e.value);
-    fetchData(
-      `/e-chanel-user/access/branch-manager?transaction=${e.value}`,
-      {},
-      'GET'
-    ).then((res) => {
-      switch (res.status) {
-        case 200:
-          setMessage(res?.data?.message);
-          break;
-        case 400:
-          toast.error(res?.data?.message);
-          break;
-        case 403:
-          toast.error(res?.data);
-          break;
-        default:
-          navigate(ROUTE_PATH.error404);
-      }
-    });
+  const roleHandleChange = (e: SelectOption | null) => {
+    setSelectedRole(e?.value ?? '');
   };
-
-  const roleHandleChange = (e) => {
-    setSelectedRole(e.value);
-  };
-
   return (
-    <>
+    <React.Fragment>
       <div className="page-wrapper">
         <div className="container-xl">
           <div className="page-header d-print-none">
@@ -192,16 +196,6 @@ const UserCreatePage = () => {
           <div className="container-xl">
             <div className="card">
               <div className="card-body">
-                {message != '' ? (
-                  <div className="alert alert-danger">
-                    User <b>{message}</b> is currently the <b>Branch Manager</b>{' '}
-                    for this branch. Create user with same role will result in
-                    replacement.
-                  </div>
-                ) : (
-                  ''
-                )}
-
                 <div className="col-md-6">
                   <div className="form-group mb-3">
                     <label className="form-label required">Email</label>
@@ -216,23 +210,10 @@ const UserCreatePage = () => {
                         placeholder="Email"
                         onChange={emailHandleChange}
                         value={textEmail}
+                        readOnly
                         required
                       />
                     </div>
-                  </div>
-                  <div className="form-group mb-3">
-                    <label className="form-label">Phone number</label>
-                    <PatternFormat
-                      cursor="pointer"
-                      type="text"
-                      className="form-control"
-                      placeholder="### ## ## ## #"
-                      onChange={(e) => setPhone(e?.target?.value)}
-                      value={phone}
-                      required
-                      max={10}
-                      format="### ## ## ## #"
-                    />
                   </div>
                   <div className="form-group mb-3">
                     <label className="form-label required">First name</label>
@@ -247,6 +228,7 @@ const UserCreatePage = () => {
                         placeholder="First name"
                         onChange={firstNameHandleChange}
                         value={textFirstName}
+                        readOnly
                         required
                       />
                     </div>
@@ -264,35 +246,24 @@ const UserCreatePage = () => {
                         placeholder="Last name"
                         onChange={lastNameHandleChange}
                         value={textLastName}
+                        readOnly
                         required
                       />
-                    </div>
-                  </div>
-                  <div className="form-group mb-3">
-                    <label className="form-label required">Branch</label>
-                    <div>
-                      <Select
-                        value={optionBranch?.filter(function (option) {
-                          return option.value === selectedBranch;
-                        })}
-                        onChange={branchHandleChange}
-                        options={optionBranch}
-                        required
-                      />
-                      <div className="invalid-feedback">
-                        Please select Role!
-                      </div>
                     </div>
                   </div>
                   <div className="form-group mb-3">
                     <label className="form-label required">Role</label>
                     <div>
                       <Select
-                        value={optionRole?.filter(function (option) {
-                          return option?.value === selectedRole;
+                        styles={{
+                          menuPortal: (base) => ({ ...base, zIndex: 9999 }),
+                        }}
+                        menuPortalTarget={document.body}
+                        value={RoleCategory.find(function (option) {
+                          return option.value === selectedRole;
                         })}
                         onChange={roleHandleChange}
-                        options={optionRole}
+                        options={RoleCategory}
                         required
                       />
                       <div className="invalid-feedback">
@@ -314,8 +285,8 @@ const UserCreatePage = () => {
           </div>
         </div>
       </div>
-    </>
+    </React.Fragment>
   );
 };
 
-export default UserCreatePage;
+export default UserEditPage;

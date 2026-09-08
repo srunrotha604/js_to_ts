@@ -1,87 +1,60 @@
-import React, { useEffect, useState } from 'react';
-import { redirect, useNavigate, useParams } from 'react-router-dom';
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
+import type { MessageResponse } from '../../../../@type/project_configuration';
 import { fetchData } from '../../../../services/$service';
 import { ROUTE_API, ROUTE_PATH } from '../../../../utils/route-util';
 
-const ProductEditPage = () => {
-  document.title = 'E-chanel | product | edit';
-  const params = useParams();
+const ProjectCreatePage = () => {
+  document.title = 'E-CHANNEL PORTAL | project | create';
   const navigate = useNavigate();
 
-  const [productCode, setProductCode] = useState('');
-  const [productName, setProductName] = useState('');
-  const getList = () => {
-    fetchData('/operation-product/' + params.key, {}, 'GET').then((res) => {
-      if (res.status === 200) {
-        const data = res?.data?.list[0];
-        setProductCode(data.productCode);
-        setProductName(data.productName);
-      } else if (res.status === 400) {
-        toast.error(res?.data?.message);
-      } else if (res.status === 403) {
-        toast.error(res?.data);
-      } else {
-        navigate(ROUTE_PATH.error404);
-      }
-    });
-  };
-  const funcButtonHandleClickExecute = (e) => {
+  const [projectName, setProjectName] = useState('');
+  const funcButtonHandleClickExecute = (e: React.MouseEvent<HTMLButtonElement>) => {
     let messages = [];
-    if (productCode === '') {
-      messages.push(true);
-    }
-    if (productName === '') {
+    if (projectName === '') {
       messages.push(true);
     }
     if (messages.length < 1) {
       let data = {
-        transactionCode: params.key,
-        productCode: productCode,
-        productName: productName,
+        projectName: projectName,
       };
-
-      fetchData(ROUTE_API.operationProduct, data, 'PUT').then((res) => {
-        switch (res.status) {
-          case 200:
-            toast.success(res.data.message);
-            navigate(ROUTE_PATH.product);
-            break;
-          case 400:
-            toast.error(res?.data?.message);
-            break;
-          case 403:
-            toast.error(res?.data);
-            break;
-          default:
-            redirect(ROUTE_PATH.error404);
+      fetchData<MessageResponse>(ROUTE_API.operationProject, data, 'POST').then(
+        (res) => {
+          switch (res?.status) {
+            case 200:
+              toast.success(res?.data?.message);
+              navigate(ROUTE_PATH.project);
+              break;
+            case 400:
+              toast.error(res?.data?.message);
+              break;
+            case 403:
+              toast.error(String(res?.data));
+              break;
+            default:
+              navigate(ROUTE_PATH.error404);
+          }
         }
-      });
+      );
     }
     e.preventDefault();
   };
 
-  const productCodeHandleChange = (event) => {
-    setProductCode(event.target.value);
-  };
-  const productNameHandleChange = (event) => {
-    setProductName(event.target.value);
+  const projectNameHandleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setProjectName(event.target.value);
   };
   const goBackHandleClick = () => {
-    navigate(ROUTE_PATH.product);
+    navigate(ROUTE_PATH.project);
   };
-
-  useEffect(() => {
-    getList();
-  }, []);
   return (
-    <React.Fragment>
+    <>
       <div className="page-wrapper">
         <div className="container-xl">
           <div className="page-header d-print-none">
             <div className="row align-items-center">
               <div className="col">
-                <h2 className="page-title">Product create</h2>
+                <h2 className="page-title">Project create</h2>
               </div>
               <div className="col-auto ms-auto d-print-none">
                 <div className="btn-list">
@@ -135,39 +108,23 @@ const ProductEditPage = () => {
               <div className="card-body">
                 <div className="col-md-6">
                   <div className="form-group mb-3">
-                    <label className="form-label required">Product Label</label>
+                    <label className="form-label required">Project name</label>
                     <div>
                       <input
                         type="text"
                         className={
-                          productCode !== ''
+                          projectName !== ''
                             ? 'form-control'
                             : 'form-control is-invalid is-invalid-lite'
                         }
-                        placeholder="Product label"
-                        onChange={productCodeHandleChange}
-                        value={productCode}
+                        placeholder="Project name"
+                        onChange={projectNameHandleChange}
+                        value={projectName}
                         required
                       />
                     </div>
                   </div>
-                  <div className="form-group mb-3">
-                    <label className="form-label required">Product name</label>
-                    <div>
-                      <input
-                        type="text"
-                        className={
-                          productName !== ''
-                            ? 'form-control'
-                            : 'form-control is-invalid is-invalid-lite'
-                        }
-                        placeholder="Product name"
-                        onChange={productNameHandleChange}
-                        value={productName}
-                        required
-                      />
-                    </div>
-                  </div>
+
                   <div className="form-footer">
                     <button
                       className="btn btn-primary"
@@ -197,8 +154,8 @@ const ProductEditPage = () => {
           </div>
         </div>
       </div>
-    </React.Fragment>
+    </>
   );
 };
 
-export default ProductEditPage;
+export default ProjectCreatePage;

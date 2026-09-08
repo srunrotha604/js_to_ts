@@ -1,6 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
+import type {
+  MessageResponse,
+  UserRoleItem,
+  UserRoleListResponse,
+} from '../../../../@type/system_users';
 import Loading from '../../../../components/Loading';
 
 import { fetchData } from '../../../../services/$service';
@@ -9,29 +14,56 @@ import { ROUTE_API, ROUTE_PATH } from '../../../../utils/route-util';
 const UserRolePage = () => {
   document.title = 'E-CHANNEL PORTAL | user';
   const navigate = useNavigate();
-  const params = useParams();
+  const params = useParams<{ key: string }>();
 
   const [loading, setLoading] = useState(false);
-  const [arrList, setArrList] = useState([]);
+  const [arrList, setArrList] = useState<UserRoleItem[]>([]);
   const [getKey, setGetKey] = useState('');
   const [getStatus, setStatus] = useState('');
   const [getApplicationName, setApplicationName] = useState('');
   const [getRoleName, setRoleName] = useState('');
 
   const getList = () => {
-    fetchData(`${ROUTE_API.eChanelUserRole}/` + params.key, {}, 'GET').then(
+    fetchData<UserRoleListResponse>(
+      `${ROUTE_API.eChanelUserRole}/` + params.key,
+      {},
+      'GET'
+    ).then((res) => {
+      switch (res?.status) {
+        case 200:
+          setLoading(true);
+          setArrList(res?.data?.item ?? []);
+          setLoading(false);
+          break;
+        case 400:
+          toast.error(res?.data?.message);
+          break;
+        case 403:
+          toast.error(res?.data as unknown as string);
+          break;
+        default:
+          navigate(ROUTE_PATH.error404);
+      }
+    });
+  };
+
+  const funcRemoveHandleClickExecute = () => {
+    let data = {
+      key: getKey,
+    };
+
+    fetchData<MessageResponse>(ROUTE_API.eChanelUserRole, data, 'DELETE').then(
       (res) => {
-        switch (res.status) {
+        switch (res?.status) {
           case 200:
-            setLoading(true);
-            setArrList(res?.data?.item);
-            setLoading(false);
+            toast.success(res?.data?.message);
+            getList();
             break;
           case 400:
             toast.error(res?.data?.message);
             break;
           case 403:
-            toast.error(res?.data);
+            toast.error(res?.data as unknown as string);
             break;
           default:
             navigate(ROUTE_PATH.error404);
@@ -40,41 +72,18 @@ const UserRolePage = () => {
     );
   };
 
-  const funcRemoveHandleClickExecute = () => {
-    let data = {
-      key: getKey,
-    };
-
-    fetchData(ROUTE_API.eChanelUserRole, data, 'DELETE').then((res) => {
-      switch (res.status) {
-        case 200:
-          toast.success(res.data.message);
-          getList();
-          break;
-        case 400:
-          toast.error(res?.data?.message);
-          break;
-        case 403:
-          toast.error(res?.data);
-          break;
-        default:
-          navigate(ROUTE_PATH.error404);
-      }
-    });
-  };
-
-  const funcGetRecord = (option, item) => {
+  const funcGetRecord = (option: string, item: UserRoleItem) => {
     switch (option) {
       case 'delete':
-        setGetKey(item.key);
+        setGetKey(item.key ?? '');
         item.status === 'Active'
           ? setStatus('delete this Role?')
           : setStatus('#active this Role?');
         break;
       case 'view':
-        setStatus(item.status);
-        setApplicationName(item.applicationFamilyLabel);
-        setRoleName(item.roleFamilyLabel);
+        setStatus(item.status ?? '');
+        setApplicationName(item.applicationFamilyLabel ?? '');
+        setRoleName(item.roleFamilyLabel ?? '');
         break;
       default:
         navigate(ROUTE_PATH.error404);
@@ -82,7 +91,7 @@ const UserRolePage = () => {
   };
 
   const createNewHandleClick = () => {
-    navigate(ROUTE_PATH.userRoleCreate(params.key));
+    navigate(ROUTE_PATH.userRoleCreate(params.key ?? ''));
   };
 
   const goBackHandleClick = () => {

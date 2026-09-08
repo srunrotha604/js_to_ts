@@ -1,113 +1,109 @@
-import { useEffect, useState } from 'react';
-import { PatternFormat } from 'react-number-format';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import Select from 'react-select';
+import Select, { SingleValue } from 'react-select';
 import { toast } from 'react-toastify';
+import type { SelectOption } from '../../../../@type/report';
+import type {
+  MessageResponse,
+  ProductOptionsResponse,
+} from '../../../../@type/project_configuration';
 import { fetchData } from '../../../../services/$service';
 import { ROUTE_API, ROUTE_PATH } from '../../../../utils/route-util';
 
-const DataEntryCreatePage = () => {
-  document.title = 'E-CHANNEL PORTAL | user - create';
+const ProductCreatePage = () => {
+  document.title = 'E-CHANNEL PORTAL | product | create';
   const navigate = useNavigate();
-  const [textEmail, setTextEmail] = useState('');
-  const [phone, setPhone] = useState('');
-  const [textFirstName, setTextFirstName] = useState('');
-  const [textLastName, setTextLastName] = useState('');
 
-  const [optionRole, setOptionRole] = useState([]);
-  const [selectedRole, setSelectedRole] = useState('');
-
+  const [productCode, setProductCode] = useState('');
+  const [productName, setProductName] = useState('');
+  const [productList, setProductList] = useState<SelectOption[]>([]);
+  const [selectedProduct, setSelectedProduct] = useState('');
   const getList = () => {
-    fetchData(ROUTE_API.eChanelDataEntryAccess, {}, 'GET').then((res) => {
-      switch (res.status) {
+    fetchData<ProductOptionsResponse>(
+      ROUTE_API.operationProductProduct,
+      {},
+      'GET'
+    ).then((res) => {
+      switch (res?.status) {
         case 200:
-          setOptionRole(res?.data?.role);
+          setProductList(res?.data?.options ?? []);
           break;
         case 400:
           toast.error(res?.data?.message);
           break;
         case 403:
-          toast.error(res?.data);
+          toast.error(String(res?.data));
           break;
         default:
           navigate(ROUTE_PATH.error404);
       }
     });
   };
-
-  const funcButtonHandleClickExecute = (e) => {
+  const funcButtonHandleClickExecute = (e: React.MouseEvent<HTMLButtonElement>) => {
     let messages = [];
-    if (textEmail === '') {
-      toast.error('Email is required!');
+    if (selectedProduct === '') {
+      messages.push(true);
     }
-    if (textFirstName === '') {
-      toast.error('FirstName is required!');
+    if (productCode === '') {
+      messages.push(true);
     }
-    if (textLastName === '') {
-      toast.error('LastName is required!');
+    if (productName === '') {
+      messages.push(true);
     }
-    if (selectedRole === '') {
-      toast.error('Level is required!');
-    } else {
-      if (messages.length < 1) {
-        let data = {
-          email: textEmail,
-          givenName: textFirstName,
-          sureName: textLastName,
-          role: selectedRole,
-          phone: phone,
-        };
+    if (messages.length < 1) {
+      let data = {
+        productsequenceCode: selectedProduct,
+        productCode: productCode,
+        productName: productName,
+      };
 
-        fetchData(ROUTE_API.eChanelDataEntry, data, 'POST').then((res) => {
-          switch (res.status) {
+      fetchData<MessageResponse>(ROUTE_API.operationProduct, data, 'POST').then(
+        (res) => {
+          switch (res?.status) {
             case 200:
-              toast.success(res.data.message);
-              navigate(ROUTE_PATH.dataEntry);
+              toast.success(res?.data?.message);
+              navigate(ROUTE_PATH.product);
               break;
             case 400:
               toast.error(res?.data?.message);
               break;
             case 403:
-              toast.error(res?.data);
+              toast.error(String(res?.data));
               break;
             default:
               navigate(ROUTE_PATH.error404);
           }
-        });
-      }
+        }
+      );
     }
     e.preventDefault();
+  };
+
+  const roleHandleChange = (value: SingleValue<SelectOption>) => {
+    setSelectedProduct(value?.value ?? '');
+  };
+
+  const productCodeHandleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setProductCode(event.target.value);
+  };
+  const productNameHandleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setProductName(event.target.value);
+  };
+  const goBackHandleClick = () => {
+    navigate(ROUTE_PATH.product);
   };
 
   useEffect(() => {
     getList();
   }, []);
-
-  const emailHandleChange = (event) => {
-    setTextEmail(event.target.value);
-  };
-  const firstNameHandleChange = (event) => {
-    setTextFirstName(event.target.value);
-  };
-  const lastNameHandleChange = (event) => {
-    setTextLastName(event.target.value);
-  };
-
-  const goBackHandleClick = () => {
-    navigate(ROUTE_PATH.dataEntry);
-  };
-
-  const roleHandleChange = (e) => {
-    setSelectedRole(e.value);
-  };
   return (
-    <>
+    <React.Fragment>
       <div className="page-wrapper">
         <div className="container-xl">
           <div className="page-header d-print-none">
             <div className="row align-items-center">
               <div className="col">
-                <h2 className="page-title">Data Entry #create new</h2>
+                <h2 className="page-title">Product create</h2>
               </div>
               <div className="col-auto ms-auto d-print-none">
                 <div className="btn-list">
@@ -161,84 +157,54 @@ const DataEntryCreatePage = () => {
               <div className="card-body">
                 <div className="col-md-6">
                   <div className="form-group mb-3">
-                    <label className="form-label required">Email</label>
-                    <div>
-                      <input
-                        type="email"
-                        className={
-                          textEmail !== ''
-                            ? 'form-control'
-                            : 'form-control is-invalid is-invalid-lite'
-                        }
-                        placeholder="Email"
-                        onChange={emailHandleChange}
-                        value={textEmail}
-                        required
-                      />
-                    </div>
-                  </div>
-                  <div className="form-group mb-3">
-                    <label className="form-label">Phone number</label>
-                    <PatternFormat
-                      cursor="pointer"
-                      type="text"
-                      className="form-control"
-                      placeholder="### ## ## ## #"
-                      onChange={(e) => setPhone(e?.target?.value)}
-                      value={phone}
-                      required
-                      max={10}
-                      format="### ## ## ## #"
-                    />
-                  </div>
-                  <div className="form-group mb-3">
-                    <label className="form-label required">First name</label>
-                    <div>
-                      <input
-                        type="text"
-                        className={
-                          textFirstName !== ''
-                            ? 'form-control'
-                            : 'form-control is-invalid is-invalid-lite'
-                        }
-                        placeholder="First name"
-                        onChange={firstNameHandleChange}
-                        value={textFirstName}
-                        required
-                      />
-                    </div>
-                  </div>
-                  <div className="form-group mb-3">
-                    <label className="form-label required">Last name</label>
-                    <div>
-                      <input
-                        type="text"
-                        className={
-                          textLastName !== ''
-                            ? 'form-control'
-                            : 'form-control is-invalid is-invalid-lite'
-                        }
-                        placeholder="Last name"
-                        onChange={lastNameHandleChange}
-                        value={textLastName}
-                        required
-                      />
-                    </div>
-                  </div>
-                  <div className="form-group mb-3">
-                    <label className="form-label required">Level</label>
+                    <label className="form-label required">Product code</label>
                     <div>
                       <Select
-                        value={optionRole?.filter(function (option) {
-                          return option.value === selectedRole;
+                        styles={{
+                          menuPortal: (base) => ({ ...base, zIndex: 9999 }),
+                        }}
+                        menuPortalTarget={document.body}
+                        value={productList.find(function (option) {
+                          return option.value === selectedProduct;
                         })}
                         onChange={roleHandleChange}
-                        options={optionRole}
+                        options={productList}
                         required
                       />
-                      <div className="invalid-feedback">
-                        Please select Role!
-                      </div>
+                    </div>
+                  </div>
+                  <div className="form-group mb-3">
+                    <label className="form-label required">Product Label</label>
+                    <div>
+                      <input
+                        type="text"
+                        className={
+                          productCode !== ''
+                            ? 'form-control'
+                            : 'form-control is-invalid is-invalid-lite'
+                        }
+                        placeholder="Product label"
+                        onChange={productCodeHandleChange}
+                        value={productCode}
+                        required
+                      />
+                    </div>
+                  </div>
+                  <div className="form-group mb-3">
+                    <label className="form-label required">Product name</label>
+                    <div>
+                      <input
+                        type="text"
+                        className={
+                          productName !== ''
+                            ? 'form-control'
+                            : 'form-control is-invalid is-invalid-lite'
+                        }
+                        placeholder="Product name"
+                        onChange={productNameHandleChange}
+                        value={productName}
+                        required
+                      />
                     </div>
                   </div>
                   <div className="form-footer">
@@ -246,6 +212,21 @@ const DataEntryCreatePage = () => {
                       className="btn btn-primary"
                       onClick={funcButtonHandleClickExecute}
                     >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="icon icon-tabler icon-tabler-check"
+                        width={24}
+                        height={24}
+                        viewBox="0 0 24 24"
+                        strokeWidth="1.5"
+                        stroke="currentColor"
+                        fill="none"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      >
+                        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                        <path d="M5 12l5 5l10 -10" />
+                      </svg>
                       Submit
                     </button>
                   </div>
@@ -255,8 +236,8 @@ const DataEntryCreatePage = () => {
           </div>
         </div>
       </div>
-    </>
+    </React.Fragment>
   );
 };
 
-export default DataEntryCreatePage;
+export default ProductCreatePage;

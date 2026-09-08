@@ -1,55 +1,86 @@
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
+import type {
+  MessageResponse,
+  ProjectListResponse,
+} from '../../../../@type/project_configuration';
 import { fetchData } from '../../../../services/$service';
 import { ROUTE_API, ROUTE_PATH } from '../../../../utils/route-util';
 
-const DataEntryImportPage = () => {
-  document.title = 'E-CHANNEL PORTAL | user - create';
+const ProjectEditPage = () => {
+  document.title = 'E-CHANNEL PORTAL | project | create';
   const navigate = useNavigate();
-  const [textEmail, setTextEmail] = useState('');
+  const params = useParams<{ key: string }>();
 
-  const funcButtonHandleClickExecute = (e) => {
-    let messages = [];
-    if (textEmail === '') {
-      messages.push(true);
-    } else {
-      if (messages.length < 1) {
-        let data = {
-          email: textEmail,
-        };
+  const [projectName, setProjectName] = useState('');
 
-        fetchData(ROUTE_API.eChanelDataEntryImport, data, 'POST').then(
-          (res) => {
-            switch (res.status) {
-              case 200:
-                toast.success(res.data.message);
-                navigate(ROUTE_PATH.dataEntry);
-                break;
-              case 400:
-                toast.error(res?.data?.message);
-                break;
-              case 403:
-                toast.error(res?.data);
-                break;
-              default:
-                navigate(ROUTE_PATH.error404);
-            }
-          }
-        );
+  const getList = () => {
+    fetchData<ProjectListResponse>(
+      `${ROUTE_API.operationProject}/` + params.key,
+      {},
+      'GET'
+    ).then((res) => {
+      switch (res?.status) {
+        case 200:
+          // eslint-disable-next-line no-case-declarations
+          let data = res?.data?.list?.[0];
+          setProjectName(data?.projectName ?? '');
+          break;
+        case 400:
+          toast.error(res?.data?.message);
+          break;
+        case 403:
+          toast.error(String(res?.data));
+          break;
+        default:
+          navigate(ROUTE_PATH.error404);
       }
+    });
+  };
+
+  const funcButtonHandleClickExecute = (e: React.MouseEvent<HTMLButtonElement>) => {
+    let messages = [];
+    if (projectName === '') {
+      messages.push(true);
+    }
+    if (messages.length < 1) {
+      let data = {
+        transactionCode: params.key,
+        projectName: projectName,
+      };
+      fetchData<MessageResponse>(ROUTE_API.operationProject, data, 'PUT').then(
+        (res) => {
+          switch (res?.status) {
+            case 200:
+              toast.success(res?.data?.message);
+              navigate(ROUTE_PATH.project);
+              break;
+            case 400:
+              toast.error(res?.data?.message);
+              break;
+            case 403:
+              toast.error(String(res?.data));
+              break;
+            default:
+              navigate(ROUTE_PATH.error404);
+          }
+        }
+      );
     }
     e.preventDefault();
   };
 
-  const emailHandleChange = (event) => {
-    setTextEmail(event.target.value);
+  const projectNameHandleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setProjectName(event.target.value);
   };
-
   const goBackHandleClick = () => {
-    navigate(ROUTE_PATH.dataEntry);
+    navigate(ROUTE_PATH.project);
   };
 
+  useEffect(() => {
+    getList();
+  }, []);
   return (
     <>
       <div className="page-wrapper">
@@ -57,7 +88,7 @@ const DataEntryImportPage = () => {
           <div className="page-header d-print-none">
             <div className="row align-items-center">
               <div className="col">
-                <h2 className="page-title">Import data entry</h2>
+                <h2 className="page-title">Project create</h2>
               </div>
               <div className="col-auto ms-auto d-print-none">
                 <div className="btn-list">
@@ -111,18 +142,18 @@ const DataEntryImportPage = () => {
               <div className="card-body">
                 <div className="col-md-6">
                   <div className="form-group mb-3">
-                    <label className="form-label required">Email</label>
+                    <label className="form-label required">Project name</label>
                     <div>
                       <input
-                        type="email"
+                        type="text"
                         className={
-                          textEmail !== ''
+                          projectName !== ''
                             ? 'form-control'
                             : 'form-control is-invalid is-invalid-lite'
                         }
-                        placeholder="Email"
-                        onChange={emailHandleChange}
-                        value={textEmail}
+                        placeholder="Project name"
+                        onChange={projectNameHandleChange}
+                        value={projectName}
                         required
                       />
                     </div>
@@ -132,6 +163,21 @@ const DataEntryImportPage = () => {
                       className="btn btn-primary"
                       onClick={funcButtonHandleClickExecute}
                     >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="icon icon-tabler icon-tabler-check"
+                        width={24}
+                        height={24}
+                        viewBox="0 0 24 24"
+                        strokeWidth="1.5"
+                        stroke="currentColor"
+                        fill="none"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      >
+                        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                        <path d="M5 12l5 5l10 -10" />
+                      </svg>
                       Submit
                     </button>
                   </div>
@@ -145,4 +191,4 @@ const DataEntryImportPage = () => {
   );
 };
 
-export default DataEntryImportPage;
+export default ProjectEditPage;

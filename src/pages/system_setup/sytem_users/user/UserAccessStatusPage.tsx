@@ -2,40 +2,49 @@ import React, { useEffect, useState } from 'react';
 import { redirect, useNavigate, useParams } from 'react-router-dom';
 import Select from 'react-select';
 import { toast } from 'react-toastify';
+import type { SelectOption } from '../../../../@type/report';
+import type {
+  MessageResponse,
+  UserAccessDetailResponse,
+} from '../../../../@type/system_users';
 import { fetchData } from '../../../../services/$service';
 import { ROUTE_API, ROUTE_PATH } from '../../../../utils/route-util';
 
 const UserAccessStatusPage = () => {
   document.title = 'E-CHANNEL PORTAL | user access status';
   const navigate = useNavigate();
-  const params = useParams();
+  const params = useParams<{ userCode: string }>();
   const [value, setValue] = useState('');
   const [admin, setAdmin] = useState('');
-  const [optionsAccess, setOptionsAccess] = useState([]);
-  const [selectedAccessValue, setSelectedAccessValue] = useState([]);
-  const [optionsProcess, setOptionsProcess] = useState([]);
-  const [selectedProcessValue, setSelectedProcessValue] = useState([]);
+  const [optionsAccess, setOptionsAccess] = useState<SelectOption[]>([]);
+  const [selectedAccessValue, setSelectedAccessValue] = useState<
+    string | string[]
+  >([]);
+  const [optionsProcess, setOptionsProcess] = useState<SelectOption[]>([]);
+  const [selectedProcessValue, setSelectedProcessValue] = useState<
+    string | string[]
+  >([]);
 
   const getList = () => {
-    fetchData(
+    fetchData<UserAccessDetailResponse>(
       `${ROUTE_API.eChanelUserAccess}/` + params.userCode,
       {},
       'GET'
     ).then((res) => {
-      switch (res.status) {
+      switch (res?.status) {
         case 200:
-          setValue(res?.data?.role[0].value);
-          setOptionsAccess(res?.data?.access);
-          setOptionsProcess(res?.data?.access);
-          setAdmin(res?.data?.role[0].keyCode);
-          setSelectedAccessValue(res?.data?.role[0]?.label);
-          setSelectedProcessValue(res?.data?.role[0]?.labelSecond);
+          setValue(res?.data?.role?.[0]?.value ?? '');
+          setOptionsAccess(res?.data?.access ?? []);
+          setOptionsProcess(res?.data?.access ?? []);
+          setAdmin(res?.data?.role?.[0]?.keyCode ?? '');
+          setSelectedAccessValue(res?.data?.role?.[0]?.label ?? '');
+          setSelectedProcessValue(res?.data?.role?.[0]?.labelSecond ?? '');
           break;
         case 400:
           toast.error(res?.data?.message);
           break;
         case 403:
-          toast.error(res?.data);
+          toast.error(res?.data as unknown as string);
           break;
         default:
           redirect(ROUTE_PATH.error404);
@@ -43,8 +52,10 @@ const UserAccessStatusPage = () => {
     });
   };
 
-  const funcButtonHandleClickExecute = (e) => {
-    let messages = [];
+  const funcButtonHandleClickExecute = (
+    e: React.MouseEvent<HTMLButtonElement>
+  ) => {
+    let messages: boolean[] = [];
     if (selectedAccessValue === '') {
       messages.push(true);
     }
@@ -55,17 +66,21 @@ const UserAccessStatusPage = () => {
         processStatus: selectedProcessValue.toString(),
         adminBranch: admin,
       };
-      fetchData(ROUTE_API.eChanelUserAccess, data, 'POST').then((res) => {
-        switch (res.status) {
+      fetchData<MessageResponse>(
+        ROUTE_API.eChanelUserAccess,
+        data,
+        'POST'
+      ).then((res) => {
+        switch (res?.status) {
           case 200:
-            toast.success(res.data.message);
+            toast.success(res?.data?.message);
             getList();
             break;
           case 400:
             toast.error(res?.data?.message);
             break;
           case 403:
-            toast.error(res?.data);
+            toast.error(res?.data as unknown as string);
             break;
           default:
             redirect(ROUTE_PATH.error404);
@@ -83,12 +98,12 @@ const UserAccessStatusPage = () => {
     navigate(ROUTE_PATH.user);
   };
 
-  const accessHandleChange = (e) => {
+  const accessHandleChange = (e: readonly SelectOption[] | null) => {
     setSelectedAccessValue(Array.isArray(e) ? e.map((x) => x.value) : []);
     selectedAccessValue && JSON.stringify(selectedAccessValue, null, 2);
   };
 
-  const processHandleChange = (e) => {
+  const processHandleChange = (e: readonly SelectOption[] | null) => {
     setSelectedProcessValue(Array.isArray(e) ? e.map((x) => x.value) : []);
     selectedProcessValue && JSON.stringify(selectedProcessValue, null, 2);
   };

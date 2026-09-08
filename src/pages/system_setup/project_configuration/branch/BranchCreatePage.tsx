@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { redirect, useNavigate, useParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
+import type { MessageResponse } from '../../../../@type/project_configuration';
 import { fetchData } from '../../../../services/$service';
 import { ROUTE_API, ROUTE_PATH } from '../../../../utils/route-util';
 
@@ -17,9 +18,9 @@ const BranchCreatePage = () => {
   const [email, setEmail] = useState('');
   const [website, setWebsite] = useState('');
   const [address, setAddress] = useState('');
-  const params = useParams();
+  const params = useParams<{ key: string }>();
 
-  const funcButtonHandleClickExecute = (e) => {
+  const funcButtonHandleClickExecute = (e: React.MouseEvent<HTMLButtonElement>) => {
     let messages = [];
     if (branchCode === '') {
       messages.push(true);
@@ -40,50 +41,52 @@ const BranchCreatePage = () => {
         address: address,
       };
 
-      fetchData(ROUTE_API.opertionBranch, data, 'POST').then((res) => {
-        switch (res.status) {
-          case 200:
-            navigate(`${ROUTE_PATH.branch}/${params.key}`);
-            break;
-          case 400:
-            toast.error(res?.data?.message);
-            break;
-          case 403:
-            toast.error(res?.data);
-            break;
-          default:
-            redirect(ROUTE_PATH.notFound);
+      fetchData<MessageResponse>(ROUTE_API.opertionBranch, data, 'POST').then(
+        (res) => {
+          switch (res?.status) {
+            case 200:
+              navigate(`${ROUTE_PATH.branch}/${params.key}`);
+              break;
+            case 400:
+              toast.error(res?.data?.message);
+              break;
+            case 403:
+              toast.error(String(res?.data));
+              break;
+            default:
+              redirect(ROUTE_PATH.notFound);
+          }
         }
-      });
+      );
     }
     e.preventDefault();
   };
 
-  const branchCodeHandleChange = (event) => {
+  const branchCodeHandleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setBranchCode(event.target.value);
   };
-  const branchNameHandleChange = (event) => {
+  const branchNameHandleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setBranchName(event.target.value);
   };
-  const contactsHandleChange = (event) => {
+  const contactsHandleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setContacts(event.target.value);
   };
-  const phoneHandleChange = (event) => {
+  const phoneHandleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setPhone(event.target.value);
   };
-  const mobileOneHandleChange = (event) => {
+  const mobileOneHandleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setMobileOne(event.target.value);
   };
-  const mobileTwoHandleChange = (event) => {
+  const mobileTwoHandleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setMobileTwo(event.target.value);
   };
-  const emailHandleChange = (event) => {
+  const emailHandleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setEmail(event.target.value);
   };
-  const websiteHandleChange = (event) => {
+  const websiteHandleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setWebsite(event.target.value);
   };
-  const addressHandleChange = (event) => {
+  const addressHandleChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
     setAddress(event.target.value);
   };
 
@@ -269,7 +272,7 @@ const BranchCreatePage = () => {
                       <textarea
                         className="form-control"
                         placeholder="Address ..."
-                        rows="8"
+                        rows={8}
                         onChange={addressHandleChange}
                         value={address}
                       />

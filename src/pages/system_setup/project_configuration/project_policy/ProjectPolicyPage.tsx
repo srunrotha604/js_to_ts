@@ -2,6 +2,11 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import ReactPaginate from 'react-paginate';
 import { toast } from 'react-toastify';
+import type {
+  MessageResponse,
+  ProjectPolicyItem,
+  ProjectPolicyListResponse,
+} from '../../../../@type/project_configuration';
 import Loading from '../../../../components/Loading';
 import { fetchData } from '../../../../services/$service';
 import { ROUTE_PATH } from '../../../../utils/route-util';
@@ -9,27 +14,53 @@ import { ROUTE_PATH } from '../../../../utils/route-util';
 const ProjectPolicyPage = () => {
   document.title = 'E-CHANNEL PORTAL | project';
   const navigate = useNavigate();
-  const params = useParams();
+  const params = useParams<{ key: string }>();
 
   const [loading, setLoading] = useState(false);
-  const [arrList, setArrList] = useState([]);
+  const [arrList, setArrList] = useState<ProjectPolicyItem[]>([]);
   const [query, setQuery] = useState('');
   const [transactionCode, setTransationCode] = useState('');
 
   const getList = () => {
-    fetchData('/operation-project/policy/' + params.key, {}, 'GET').then(
+    fetchData<ProjectPolicyListResponse>(
+      '/operation-project/policy/' + params.key,
+      {},
+      'GET'
+    ).then((res) => {
+      switch (res?.status) {
+        case 200:
+          setLoading(true);
+          setArrList(res?.data?.list ?? []);
+          setLoading(false);
+          break;
+        case 400:
+          toast.error(res?.data?.message);
+          break;
+        case 403:
+          toast.error(String(res?.data));
+          break;
+        default:
+          navigate(ROUTE_PATH.error404);
+      }
+    });
+  };
+
+  const funcRemoveHandleClickExecute = () => {
+    let data = {
+      transactionCode: transactionCode,
+    };
+    fetchData<MessageResponse>('/operation-project/policy', data, 'DELETE').then(
       (res) => {
-        switch (res.status) {
+        switch (res?.status) {
           case 200:
-            setLoading(true);
-            setArrList(res?.data?.list);
-            setLoading(false);
+            toast.success(res?.data?.message);
+            getList();
             break;
           case 400:
             toast.error(res?.data?.message);
             break;
           case 403:
-            toast.error(res?.data);
+            toast.error(String(res?.data));
             break;
           default:
             navigate(ROUTE_PATH.error404);
@@ -38,32 +69,10 @@ const ProjectPolicyPage = () => {
     );
   };
 
-  const funcRemoveHandleClickExecute = () => {
-    let data = {
-      transactionCode: transactionCode,
-    };
-    fetchData('/operation-project/policy', data, 'DELETE').then((res) => {
-      switch (res.status) {
-        case 200:
-          toast.success(res.data.message);
-          getList();
-          break;
-        case 400:
-          toast.error(res?.data?.message);
-          break;
-        case 403:
-          toast.error(res?.data);
-          break;
-        default:
-          navigate(ROUTE_PATH.error404);
-      }
-    });
-  };
-
-  const getRecordHandleClick = (option, item) => {
+  const getRecordHandleClick = (option: string, item: ProjectPolicyItem) => {
     switch (option) {
       case 'delete':
-        setTransationCode(item.transactionCode);
+        setTransationCode(item.transactionCode ?? '');
         break;
       default:
         navigate(ROUTE_PATH.error404);
@@ -75,7 +84,7 @@ const ProjectPolicyPage = () => {
   }, []);
 
   const createNewHandleClick = () => {
-    navigate(ROUTE_PATH.projectPolicyCreate(params.key));
+    navigate(ROUTE_PATH.projectPolicyCreate(params.key ?? ''));
   };
 
   const goBackHandleClick = () => {
@@ -86,7 +95,7 @@ const ProjectPolicyPage = () => {
   const PER_PAGE = 10;
   const [currentPage, setCurrentPage] = useState(0);
 
-  function handlePageClick({ selected: selectedPage }) {
+  function handlePageClick({ selected: selectedPage }: { selected: number }) {
     setCurrentPage(selectedPage);
   }
 
@@ -270,7 +279,7 @@ const ProjectPolicyPage = () => {
                     </svg>
                   </span>
                   <input
-                    cursor="pointer"
+                    style={{ cursor: 'pointer' }}
                     type="text"
                     className="form-control"
                     placeholder="Search…"
@@ -298,7 +307,7 @@ const ProjectPolicyPage = () => {
                         ?.filter((item) => {
                           return query.toLowerCase() === ''
                             ? item
-                            : item.projectLabel.toLowerCase().includes(query);
+                            : item.projectLabel?.toLowerCase().includes(query);
                         })
                         .slice(offset, offset + PER_PAGE)
                         .map((item, index) => (
@@ -354,7 +363,7 @@ const ProjectPolicyPage = () => {
                 </div>
                 <div className="d-flex align-items-center mt-3">
                   <p className="m-0 text-muted">
-                    Total <span>{nf.format(arrList?.length)}</span> entries
+                    Total <span>{nf.format(arrList?.length ?? 0)}</span> entries
                   </p>
                   <ReactPaginate
                     previousLabel={
