@@ -52,6 +52,7 @@ export interface CustomerTransaction {
   productCode?: string;
   productName?: string;
   policyName?: string;
+  policies?: string;
   inputter?: string;
   inputBranch?: string;
   inputCompany?: string;
@@ -87,7 +88,7 @@ export interface ProductListResponse {
 export interface ProjectPolicyOption {
   label?: string;
   value?: string;
-  policies?: { label?: string; value?: string }[];
+  policies?: { label?: string; value?: string; policyExpireDate?: string }[];
 }
 
 export interface ProjectCategoryResponse {

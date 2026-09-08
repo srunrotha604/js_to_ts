@@ -1,6 +1,16 @@
+import type { ChangeEventHandler, ReactNode } from 'react';
 import { useState } from 'react';
 
-const Password = (props) => {
+interface PasswordProps {
+  label?: ReactNode;
+  placeholder?: string;
+  required?: boolean;
+  readOnly?: boolean;
+  value?: string | number;
+  onChange?: ChangeEventHandler<HTMLInputElement>;
+}
+
+const Password = (props: PasswordProps) => {
   const { label, placeholder, required, readOnly, value, onChange } = props;
   const [show, setShow] = useState(false);
   return (

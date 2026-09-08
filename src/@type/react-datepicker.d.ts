@@ -1,5 +1,5 @@
 declare module 'react-datepicker' {
-  import type { ComponentType } from 'react';
+  import type { ComponentType, ReactElement } from 'react';
 
   export interface ReactDatePickerProps {
     selected?: Date | null;
@@ -14,6 +14,11 @@ declare module 'react-datepicker' {
     disabled?: boolean;
     minDate?: Date;
     maxDate?: Date;
+    selectsRange?: boolean;
+    popperPlacement?: string;
+    customInput?: ReactElement;
+    tabIndex?: number;
+    required?: boolean;
   }
 
   const ReactDatePicker: ComponentType<ReactDatePickerProps>;

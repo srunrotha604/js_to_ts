@@ -3,11 +3,12 @@ import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import type { PickerValidDate } from '@mui/x-date-pickers/models';
+import type { Dayjs } from 'dayjs';
 import { format } from 'date-fns';
 
 interface CustomDatePickerProps {
   label?: string;
-  value?: Date | string | number | null;
+  value?: Date | string | number | Dayjs | null;
   onChange?: (value: string | null) => void;
   onTextChange?: (event: ChangeEvent<HTMLInputElement>) => void;
   required?: boolean;
@@ -24,7 +25,11 @@ const CustomDatePicker = ({
   placeholder = 'DD-MM-YYYY',
   includeCurrentTime = false,
 }: CustomDatePickerProps) => {
-  const parsedValue = value ? new Date(value) : null;
+  const parsedValue = value
+    ? typeof value === 'object' && 'toDate' in value
+      ? value.toDate()
+      : new Date(value)
+    : null;
 
   const handleChange = (value: PickerValidDate | null) => {
     // AdapterDateFns is configured below, so the picker always hands back a Date here.

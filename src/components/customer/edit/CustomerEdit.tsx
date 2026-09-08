@@ -1,4 +1,5 @@
 import dayjs from 'dayjs';
+import type { Dispatch, SetStateAction } from 'react';
 import { useEffect, useState } from 'react';
 import ReactDatePicker from 'react-datepicker';
 import { Controller, useFormContext, useWatch } from 'react-hook-form';
@@ -6,24 +7,43 @@ import { NumericFormat, PatternFormat } from 'react-number-format';
 import { useNavigate, useParams } from 'react-router-dom';
 import Select from 'react-select';
 import { useDebouncedCallback } from 'use-debounce';
+import type {
+  CustomerTransaction,
+  ProjectPolicyOption,
+} from '../../../@type/batch';
 import CustomDatePicker from '../../../components/form/CustomDatePicker';
 import nation from '../../../data/nationlity.json';
 import useMessage from '../../../hooks/useMessage';
 import { fetchDataAsync } from '../../../services/$service';
 import { pluralize } from '../../../utils/pluralize';
+import { ROUTE_API } from '../../../utils/route-util';
 import { useModal } from '../../common/modal';
-import { CustomPattern } from '../create/CustomerCreate.jsx';
+import { CustomPattern } from '../create/CustomerCreate';
 import ExistedPolicyModal from '../create/ExistedPolicyModal';
 
-const CustomerEdit = (props) => {
+type PolicyOption = NonNullable<ProjectPolicyOption['policies']>[number];
+
+interface DuplicateCustomerResult {
+  totalDocs?: number;
+  list?: CustomerTransaction[];
+}
+
+interface CustomerEditProps {
+  project?: ProjectPolicyOption[];
+  handleNextStep?: () => void;
+  setProduct?: Dispatch<SetStateAction<string>>;
+  closeSpinner?: () => void;
+}
+
+const CustomerEdit = (props: CustomerEditProps) => {
   const { project, handleNextStep, setProduct, closeSpinner } = props;
   const navigate = useNavigate();
   const params = useParams();
-  const [policy, setPolicy] = useState([]);
-  const [rejectRemark, setRejectRemark] = useState(null);
-  const [policyDetails, setPolicyDetails] = useState({});
+  const [policy, setPolicy] = useState<PolicyOption[]>([]);
+  const [rejectRemark, setRejectRemark] = useState<string | null>(null);
+  const [policyDetails, setPolicyDetails] = useState<PolicyOption | null>({});
   const [isUnderage, setIsUnderage] = useState(false);
-  const [age, setAge] = useState(null);
+  const [age, setAge] = useState<string | null>(null);
   const { register, control, handleSubmit, setValue, reset, getValues } =
     useFormContext();
 
@@ -34,11 +54,11 @@ const CustomerEdit = (props) => {
 
   const getListDetails = async () => {
     try {
-      const response = await fetchDataAsync(
-        '/operation-customer?transactionCode=' + params.key
+      const response = await fetchDataAsync<{ list?: CustomerTransaction[] }>(
+        `${ROUTE_API.operationCustomer}?transactionCode=` + params.key
       );
-      const responseData = response?.data?.list[0];
-      setProduct(responseData.productName);
+      const responseData = response?.data?.list?.[0];
+      setProduct?.(responseData?.productName ?? '');
       const selectedProject = project?.find((item) => {
         return item.value === responseData?.projectCode;
       });
@@ -49,35 +69,39 @@ const CustomerEdit = (props) => {
         setRejectRemark(responseData.remark);
       }
 
-      setPolicy(selectedProject?.policies);
-      setPolicyDetails(selectedPolicies);
+      setPolicy(selectedProject?.policies ?? []);
+      setPolicyDetails(selectedPolicies ?? null);
       reset({
         ...responseData,
-        dateOfBirth: new Date(responseData?.dateOfBirth),
+        dateOfBirth: new Date(responseData?.dateOfBirth ?? ''),
         openingDate: new Date(responseData?.openingDate ?? new Date()),
         nation: { nationality: responseData?.nation },
         project: selectedProject,
         policy: selectedPolicies,
-        transactionCode: responseData.transactionCode,
+        transactionCode: responseData?.transactionCode,
       });
     } catch (error) {
       console.log(error);
       showErrorResponseMessage(error);
     } finally {
-      closeSpinner();
+      closeSpinner?.();
     }
   };
 
   const dobWatch = useWatch({ control, name: 'dateOfBirth' });
 
-  const handleDateChange = (input, onChange, commitToForm = true) => {
+  const handleDateChange = (
+    input: unknown,
+    onChange: (value: Date | null) => void,
+    commitToForm = true
+  ) => {
     const d = !input
       ? null
-      : input?.toDate
-      ? input
+      : (input as { toDate?: () => Date }).toDate
+      ? (input as dayjs.Dayjs)
       : input instanceof Date
       ? dayjs(input)
-      : dayjs(input, ['YYYY-MM-DD', 'DD-MM-YYYY', dayjs.ISO_8601], true);
+      : dayjs(input as string, ['YYYY-MM-DD', 'DD-MM-YYYY'], true);
 
     if (!d || !d.isValid()) {
       setAge('');
@@ -152,7 +176,9 @@ const CustomerEdit = (props) => {
 
     const currentIsValid =
       currentPolicy &&
-      policies.some((p) => String(p.value) === String(currentPolicy.value));
+      policies.some(
+        (p: PolicyOption) => String(p.value) === String(currentPolicy.value)
+      );
 
     const nextPolicy = currentIsValid ? currentPolicy : policies[0];
 
@@ -160,17 +186,21 @@ const CustomerEdit = (props) => {
     setPolicyDetails(nextPolicy);
   }, [project]);
 
-  const [duplicateCustomer, setDuplicateCustomer] = useState(null);
+  const [duplicateCustomer, setDuplicateCustomer] =
+    useState<DuplicateCustomerResult | null>(null);
 
-  const checkDuplicateCustomer = async () => {
+  const checkDuplicateCustomer = async (_search?: string) => {
     try {
-      const response = await fetchDataAsync('/operation-customer/duplicate', {
-        params: {
-          nicPassport: getValues('nicPassport'),
-          customerId: getValues('customerId'),
-        },
-      });
-      setDuplicateCustomer(response.data);
+      const response = await fetchDataAsync<DuplicateCustomerResult>(
+        ROUTE_API.operationCustomerDuplicate,
+        {
+          params: {
+            nicPassport: getValues('nicPassport'),
+            customerId: getValues('customerId'),
+          },
+        }
+      );
+      setDuplicateCustomer(response?.data ?? null);
     } catch (error) {
       console.log(error);
     }
@@ -197,22 +227,23 @@ const CustomerEdit = (props) => {
                   <p>{rejectRemark}</p>
                 </div>
               )}
-              {duplicateCustomer?.totalDocs > 0 && (
-                <div
-                  className="alert cursor-pointer alert-warning p-3 mt-1 mb-3 d-flex justify-content-between align-items-center"
-                  role="button"
-                  title="Click to view Customer Existed Policy"
-                  onClick={() => openModal()}
-                >
-                  <h4 className="alert-heading mb-0 text-underline">
-                    This customer already has {duplicateCustomer.totalDocs}{' '}
-                    {pluralize('policy', duplicateCustomer.totalDocs)}.
-                  </h4>
-                </div>
-              )}
+              {!!duplicateCustomer?.totalDocs &&
+                duplicateCustomer.totalDocs > 0 && (
+                  <div
+                    className="alert cursor-pointer alert-warning p-3 mt-1 mb-3 d-flex justify-content-between align-items-center"
+                    role="button"
+                    title="Click to view Customer Existed Policy"
+                    onClick={() => openModal()}
+                  >
+                    <h4 className="alert-heading mb-0 text-underline">
+                      This customer already has {duplicateCustomer.totalDocs}{' '}
+                      {pluralize('policy', duplicateCustomer.totalDocs)}.
+                    </h4>
+                  </div>
+                )}
               <form
                 onSubmit={handleSubmit(() => {
-                  handleNextStep();
+                  handleNextStep?.();
                 })}
               >
                 <div className="row">
@@ -262,7 +293,6 @@ const CustomerEdit = (props) => {
                         render={({ field: { value, onChange } }) => {
                           return (
                             <PatternFormat
-                              cursor="pointer"
                               type="text"
                               className="form-control"
                               placeholder="Tel no."
@@ -325,7 +355,7 @@ const CustomerEdit = (props) => {
                         className="form-control"
                         {...register('nicPassport', { required: true })}
                         onKeyUp={(e) => {
-                          debouceCheckDuplicateCustomer(e.target.value);
+                          debouceCheckDuplicateCustomer(e.currentTarget.value);
                         }}
                         placeholder="NIC/Passport"
                       />
@@ -345,7 +375,9 @@ const CustomerEdit = (props) => {
                             className="form-control"
                             required
                             onKeyUp={(e) =>
-                              debouceCheckDuplicateCustomer(e.target.value)
+                              debouceCheckDuplicateCustomer(
+                                (e.target as HTMLInputElement).value
+                              )
                             }
                           />
                         )}
@@ -370,7 +402,9 @@ const CustomerEdit = (props) => {
                             <NumericFormat
                               {...other}
                               onKeyUp={(e) => {
-                                debouceCheckDuplicateCustomer(e.target.value);
+                                debouceCheckDuplicateCustomer(
+                                  (e.target as HTMLInputElement).value
+                                );
                               }}
                               getInputRef={ref}
                               placeholder="Children ID"
@@ -396,8 +430,10 @@ const CustomerEdit = (props) => {
                               ref={ref}
                               value={value}
                               onChange={onChange}
-                              isOptionSelected={(option, value) =>
-                                option.nationality === value.nationality
+                              isOptionSelected={(option, selectValue) =>
+                                selectValue.some(
+                                  (v) => v.nationality === option.nationality
+                                )
                               }
                               getOptionLabel={(option) => option.nationality}
                               options={nation}
@@ -406,31 +442,6 @@ const CustomerEdit = (props) => {
                         }}
                       ></Controller>
                     </div>
-                    {/* <div className="col-md-6">
-                      <div className="form-group mb-3">
-                        <label className="form-label required">
-                          Customer ID
-                        </label>
-                      </div>
-                      <Controller
-                        name="customerId"
-                        control={control}
-                        rules={{ required: true }}
-                        render={({ field: { ref, ...other } }) => {
-                          return (
-                            <NumericFormat
-                              {...other}
-                              onKeyUp={(e) => {
-                                debouceCheckDuplicateCustomer(e.target.value);
-                              }}
-                              getInputRef={ref}
-                              placeholder="Customer ID"
-                              className="form-control"
-                            />
-                          );
-                        }}
-                      />
-                    </div> */}
                   </div>
                 </div>
                 <div className="mt-10">
@@ -479,11 +490,11 @@ const CustomerEdit = (props) => {
                             value={value}
                             onChange={(selectedProject) => {
                               // set available policies
-                              setPolicy(selectedProject.policies);
+                              setPolicy(selectedProject?.policies ?? []);
 
                               // auto-pick first policy if available
                               if (
-                                selectedProject.policies &&
+                                selectedProject?.policies &&
                                 selectedProject.policies.length > 0
                               ) {
                                 const firstPolicy = selectedProject.policies[0];
@@ -496,7 +507,7 @@ const CustomerEdit = (props) => {
                               // update project field
                               onChange(selectedProject);
                             }}
-                            getOptionLabel={(option) => option.label}
+                            getOptionLabel={(option) => option.label ?? ''}
                             options={project}
                           />
                         )}
@@ -519,7 +530,7 @@ const CustomerEdit = (props) => {
                               setPolicyDetails(selectedPolicy);
                               onChange(selectedPolicy);
                             }}
-                            getOptionLabel={(option) => option.label}
+                            getOptionLabel={(option) => option.label ?? ''}
                             options={policy}
                           />
                         )}

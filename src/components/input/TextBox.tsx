@@ -1,19 +1,27 @@
-const TextArea = (props) => {
-  const { label, placeholder, required, readOnly, value, rows, onChange } =
-    props;
+import type { ChangeEventHandler, ReactNode } from 'react';
+
+interface TextBoxProps {
+  label?: ReactNode;
+  placeholder?: string;
+  required?: boolean;
+  readOnly?: boolean;
+  value?: string | number;
+  onChange?: ChangeEventHandler<HTMLInputElement>;
+}
+const TextBox = (props: TextBoxProps) => {
+  const { label, placeholder, required, readOnly, value, onChange } = props;
   return (
     <>
-      <div className="form-group mb-3">
+      <div className="form-group mb-3 ">
         <label className={`form-label ${required ? 'required' : ''}`}>
           {label}
         </label>
         <div>
-          <textarea
+          <input
             type="text"
             className={`form-control ${
               !value && required ? 'is-invalid is-invalid-lite' : ''
             }`}
-            rows={rows}
             value={value}
             onChange={onChange}
             placeholder={placeholder}
@@ -26,4 +34,4 @@ const TextArea = (props) => {
   );
 };
 
-export default TextArea;
+export default TextBox;

@@ -10,7 +10,7 @@ import type {
   SelectOption,
 } from '../../../@type/report';
 import Button from '../../../components/common/Button';
-import ComponentStatus from '../../../components/customer/ComponentStatus.jsx';
+import ComponentStatus from '../../../components/customer/ComponentStatus';
 import DateRangeSelector from '../../../components/form/DateRangeSelector';
 import ProjectSelect from '../../../components/form/ProjectSelect';
 import {

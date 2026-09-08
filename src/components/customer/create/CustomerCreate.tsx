@@ -1,20 +1,39 @@
+import type { ChangeEvent, FocusEvent, KeyboardEvent, MouseEvent } from 'react';
 import { forwardRef, useEffect, useState } from 'react';
 import { Controller, useFormContext } from 'react-hook-form';
 import { NumericFormat, PatternFormat } from 'react-number-format';
 import { useNavigate } from 'react-router-dom';
 import Select from 'react-select';
 import { useDebouncedCallback } from 'use-debounce';
+import type {
+  CustomerTransaction,
+  ProjectPolicyOption,
+} from '../../../@type/batch';
 import CustomDatePicker from '../../../components/form/CustomDatePicker';
 import nation from '../../../data/nationlity.json';
 import { fetchDataAsync } from '../../../services/$service';
 import { pluralize } from '../../../utils/pluralize';
+import { ROUTE_API } from '../../../utils/route-util';
 import { useModal } from '../../common/modal';
 import ExistedPolicyModal from './ExistedPolicyModal';
 
 const nationCambodia = nation.find((item) => item.nationality === 'Cambodian');
 
+interface PolicyOption {
+  label?: string;
+  value?: string;
+}
+
+interface CustomPatternProps {
+  value?: string;
+  onClick?: (event: MouseEvent<HTMLInputElement>) => void;
+  onChange?: (event: ChangeEvent<HTMLInputElement>) => void;
+  onFocus?: (event: FocusEvent<HTMLInputElement>) => void;
+  onKeyDown?: (event: KeyboardEvent<HTMLInputElement>) => void;
+}
+
 // eslint-disable-next-line react/display-name
-export const CustomPattern = forwardRef(
+export const CustomPattern = forwardRef<HTMLInputElement, CustomPatternProps>(
   ({ value, onClick, onChange, onFocus, onKeyDown }, ref) => {
     return (
       <PatternFormat
@@ -33,15 +52,27 @@ export const CustomPattern = forwardRef(
   }
 );
 
-const CustomerCreate = (props) => {
+interface DuplicateCustomerResult {
+  totalDocs?: number;
+  list?: CustomerTransaction[];
+}
+
+interface CustomerCreateProps {
+  productName?: string;
+  project?: ProjectPolicyOption[];
+  handleNextStep?: () => void;
+}
+
+const CustomerCreate = (props: CustomerCreateProps) => {
   const { productName, project, handleNextStep } = props;
   const navigate = useNavigate();
-  const [policy, setPolicy] = useState([]);
-  const [policyDetails, setPolicyDetails] = useState({});
+  const [policy, setPolicy] = useState<PolicyOption[]>([]);
+  const [policyDetails, setPolicyDetails] = useState<PolicyOption | null>({});
   const { register, control, handleSubmit, reset, getValues, setValue } =
     useFormContext();
-  const [duplicateCustomer, setDuplicateCustomer] = useState(null);
-  const [age, setAge] = useState(null);
+  const [duplicateCustomer, setDuplicateCustomer] =
+    useState<DuplicateCustomerResult | null>(null);
+  const [age, setAge] = useState<string | null>(null);
   const [isUnderage, setIsUnderage] = useState(false);
   const { modalRef, openModal } = useModal();
 
@@ -72,15 +103,18 @@ const CustomerCreate = (props) => {
     setIsUnderage(false);
   };
 
-  const checkDuplicateCustomer = async () => {
+  const checkDuplicateCustomer = async (_search?: string) => {
     try {
-      const response = await fetchDataAsync('/operation-customer/duplicate', {
-        params: {
-          nicPassport: getValues('identifyNumber'),
-          customerId: getValues('childrenId'),
-        },
-      });
-      setDuplicateCustomer(response.data);
+      const response = await fetchDataAsync<DuplicateCustomerResult>(
+        ROUTE_API.operationCustomerDuplicate,
+        {
+          params: {
+            nicPassport: getValues('identifyNumber'),
+            customerId: getValues('childrenId'),
+          },
+        }
+      );
+      setDuplicateCustomer(response?.data ?? null);
     } catch (error) {
       console.log(error);
     }
@@ -91,7 +125,10 @@ const CustomerCreate = (props) => {
     400
   );
 
-  const handleDateChange = (dateString, onChange) => {
+  const handleDateChange = (
+    dateString: string | null,
+    onChange: (value: string) => void
+  ) => {
     if (!dateString) return;
 
     const dob = new Date(dateString);
@@ -134,7 +171,9 @@ const CustomerCreate = (props) => {
       const hasPolicy = !!formData.policy;
       const stillValid =
         hasPolicy &&
-        policies.some((p) => String(p.value) === String(formData.policy.value));
+        policies.some(
+          (p: PolicyOption) => String(p.value) === String(formData.policy.value)
+        );
 
       if (!stillValid) {
         const first = policies[0] ?? null;
@@ -162,23 +201,24 @@ const CustomerCreate = (props) => {
               <h3>REGISTER - {productName}</h3>
             </div>
             <div className="card-body">
-              {duplicateCustomer?.totalDocs > 0 && (
-                <div
-                  className="alert alert-warning p-3 mt-1 mb-3 d-flex justify-content-between align-items-center"
-                  role="button"
-                  title="Click to view Customer Existed Policy"
-                  onClick={() => openModal()}
-                >
-                  <h4 className="alert-heading mb-0 text-underline">
-                    This customer already has {duplicateCustomer.totalDocs}{' '}
-                    {pluralize('policy', duplicateCustomer.totalDocs)}.
-                  </h4>
-                </div>
-              )}
+              {!!duplicateCustomer?.totalDocs &&
+                duplicateCustomer.totalDocs > 0 && (
+                  <div
+                    className="alert alert-warning p-3 mt-1 mb-3 d-flex justify-content-between align-items-center"
+                    role="button"
+                    title="Click to view Customer Existed Policy"
+                    onClick={() => openModal()}
+                  >
+                    <h4 className="alert-heading mb-0 text-underline">
+                      This customer already has {duplicateCustomer.totalDocs}{' '}
+                      {pluralize('policy', duplicateCustomer.totalDocs)}.
+                    </h4>
+                  </div>
+                )}
 
               <form
                 onSubmit={handleSubmit(() => {
-                  handleNextStep();
+                  handleNextStep?.();
                 })}
               >
                 <div className="row">
@@ -280,7 +320,9 @@ const CustomerCreate = (props) => {
                           className="form-control"
                           {...field}
                           onKeyUp={(e) =>
-                            debouceCheckDuplicateCustomer(e.target.value)
+                            debouceCheckDuplicateCustomer(
+                              (e.target as HTMLInputElement).value
+                            )
                           }
                           placeholder="NID/Passport Number /Birth Certi"
                         />
@@ -302,7 +344,9 @@ const CustomerCreate = (props) => {
                           className="form-control"
                           required
                           onKeyUp={(e) =>
-                            debouceCheckDuplicateCustomer(e.target.value)
+                            debouceCheckDuplicateCustomer(
+                              (e.target as HTMLInputElement).value
+                            )
                           }
                         />
                       )}
@@ -326,7 +370,9 @@ const CustomerCreate = (props) => {
                           className="form-control"
                           required
                           onKeyUp={(e) =>
-                            debouceCheckDuplicateCustomer(e.target.value)
+                            debouceCheckDuplicateCustomer(
+                              (e.target as HTMLInputElement).value
+                            )
                           }
                         />
                       )}
@@ -362,7 +408,7 @@ const CustomerCreate = (props) => {
                         render={({ field: { value, onChange } }) => (
                           <CustomDatePicker
                             value={value}
-                            onChange={onChange}
+                            onChange={(date) => onChange(date)}
                             required={true}
                             placeholder="dd-mm-yyyy"
                             includeCurrentTime={true}
@@ -381,7 +427,7 @@ const CustomerCreate = (props) => {
                             ref={ref}
                             value={value}
                             options={project}
-                            getOptionLabel={(opt) => opt.label}
+                            getOptionLabel={(opt) => opt.label ?? ''}
                             getOptionValue={(opt) => String(opt.value)}
                             onChange={(val) => {
                               const policies = val?.policies ?? [];
@@ -409,7 +455,7 @@ const CustomerCreate = (props) => {
                             ref={ref}
                             value={value}
                             options={policy}
-                            getOptionLabel={(opt) => opt.label}
+                            getOptionLabel={(opt) => opt.label ?? ''}
                             getOptionValue={(opt) => String(opt.value)}
                             isDisabled={!policy?.length}
                             onChange={(val) => {
@@ -428,7 +474,7 @@ const CustomerCreate = (props) => {
                   </div>
                   <input
                     className="form-control"
-                    value={policyDetails?.policies ?? ''}
+                    value={policyDetails?.value ?? ''}
                     readOnly
                   />
                 </div>

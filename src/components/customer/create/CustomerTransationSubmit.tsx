@@ -5,7 +5,16 @@ import { ROUTE_PATH } from '../../../utils/route-util';
 import { STATUS } from '../../../utils/status';
 import TransactionDetail from '../../transaction/TransactionDetail';
 
-const CostomerTransationSubmit = (props) => {
+interface CustomerTransationSubmitData {
+  transaction?: string;
+  transactionDateTime?: string;
+  [key: string]: unknown;
+}
+interface CustomerTransationSubmitProps {
+  data?: unknown;
+  productName?: string;
+}
+const CostomerTransationSubmit = (props: CustomerTransationSubmitProps) => {
   const { data, productName } = props;
   const { getValues } = useFormContext();
   const { user, selectedBranch, selectedCompany } = useAuth();
@@ -29,15 +38,18 @@ const CostomerTransationSubmit = (props) => {
                     <div className="col-md-12 py-2 px-2">
                       <ReviewDetail
                         data={{
-                          ...data,
+                          ...(data as CustomerTransationSubmitData),
                           ...formData,
                           productName,
                           inputter: user?.displayName,
                           inputBranch: selectedBranch?.label,
                           inputCompany: selectedCompany?.label,
-                          inputDateTime: data?.transactionDateTime,
+                          inputDateTime: (data as CustomerTransationSubmitData)
+                            ?.transactionDateTime,
                           status: STATUS.Submitted,
-                          transactionNumber: data?.transaction,
+                          transactionNumber: (
+                            data as CustomerTransationSubmitData
+                          )?.transaction,
                         }}
                       />
                     </div>
@@ -72,22 +84,47 @@ const CostomerTransationSubmit = (props) => {
   );
 };
 
-const ReviewDetail = ({ data }) => {
+interface ReviewDetailData {
+  policy?: { policyName?: string; value?: string };
+  firstName?: string;
+  sureName?: string;
+  telNo?: string;
+  gender?: string;
+  nation?: { nationality?: string };
+  identifyNumber?: string;
+  nicPassport?: string;
+  project?: { label?: string };
+  dateOfBirth?: string;
+  inputCompany?: string;
+  inputBranch?: string;
+  inputter?: string;
+  productName?: string;
+  openingDate?: string;
+  parentId?: string;
+  childrenId?: string;
+  status?: string;
+  inputDateTime?: string;
+  transactionNumber?: string;
+  deleted?: boolean;
+}
+
+const ReviewDetail = ({ data }: { data?: ReviewDetailData }) => {
   return (
     <TransactionDetail
-      {...data}
-      policyName={data?.policy.policyName}
+      status={data?.status}
+      inputDateTime={data?.inputDateTime}
+      transactionNumber={data?.transactionNumber}
+      deleted={data?.deleted}
+      policyName={data?.policy?.policyName}
       remark=""
       firstName={data?.firstName}
       sureName={data?.sureName}
       telNo={data?.telNo}
       gender={data?.gender}
-      position={data?.position}
       nation={data?.nation?.nationality}
       nicPassport={data?.identifyNumber || data?.nicPassport}
       projectName={data?.project?.label}
       dateOfBirth={data?.dateOfBirth}
-      policies={data?.policy.value}
       inputCompany={data?.inputCompany}
       inputBranch={data?.inputBranch}
       inputter={data?.inputter}

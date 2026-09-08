@@ -1,4 +1,15 @@
-const Number = (props) => {
+import type { ChangeEventHandler, ReactNode } from 'react';
+
+interface NumberProps {
+  label?: ReactNode;
+  placeholder?: string;
+  required?: boolean;
+  readOnly?: boolean;
+  value?: string | number;
+  onChange?: ChangeEventHandler<HTMLInputElement>;
+}
+
+const Number = (props: NumberProps) => {
   const { label, placeholder, required, readOnly, value, onChange } = props;
   return (
     <>

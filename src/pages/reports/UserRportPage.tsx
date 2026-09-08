@@ -10,7 +10,7 @@ import type {
   UserReportListResponse,
 } from '../../@type/report';
 import Button from '../../components/common/Button';
-import ComponentStatus from '../../components/customer/ComponentStatus.jsx';
+import ComponentStatus from '../../components/customer/ComponentStatus';
 import DateRangeSelector from '../../components/form/DateRangeSelector';
 import { selectCustomStyles } from '../../components/transaction/TransactionTabList';
 import { useAuth } from '../../context/AuthContext';

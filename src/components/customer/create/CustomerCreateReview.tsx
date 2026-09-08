@@ -1,3 +1,4 @@
+import axios from 'axios';
 import { useFormContext } from 'react-hook-form';
 import { useParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
@@ -5,13 +6,23 @@ import { useAuth } from '../../../context/AuthContext';
 import { fetchDataAsync } from '../../../services/$service';
 import { delay } from '../../../utils/delay';
 import { handleApiError } from '../../../utils/handleApiError';
+import { ROUTE_API } from '../../../utils/route-util';
 import { STATUS } from '../../../utils/status';
 import ActionSaveDraftConfirmationModal from '../../common/ActionSaveDraftConfirmationModal';
 import { useModal } from '../../common/modal';
 import Spinner, { useSpinner } from '../../common/Spinner';
 import TransactionDetail from '../../transaction/TransactionDetail';
 
-const CustomerCreateReview = (props) => {
+interface CustomerCreateReviewProps {
+  handleBackStep?: () => void;
+  handleSubmitted: (
+    responseData: unknown,
+    submitData: { status?: string }
+  ) => void;
+  productName?: string;
+}
+
+const CustomerCreateReview = (props: CustomerCreateReviewProps) => {
   const { user, selectedBranch, selectedCompany } = useAuth();
   const { handleBackStep, handleSubmitted, productName } = props;
   const { handleSubmit, getValues } = useFormContext();
@@ -21,7 +32,10 @@ const CustomerCreateReview = (props) => {
   const { openModal, closeModal, modalRef } = useModal();
   const { spinnerState, openSpinner, closeSpinner } = useSpinner();
 
-  const onSubmit = async (data, { suppressSuccessToast = false } = {}) => {
+  const onSubmit = async (
+    data: Record<string, any>,
+    { suppressSuccessToast = false } = {}
+  ) => {
     try {
       openSpinner();
       const summaryData = {
@@ -41,7 +55,7 @@ const CustomerCreateReview = (props) => {
         parentId: data?.parentId,
         openingDate: data?.openingDate,
       };
-      const response = await fetchDataAsync('/operation-customer', {
+      const response = await fetchDataAsync(ROUTE_API.operationCustomer, {
         method: 'POST',
         data: summaryData,
       });
@@ -55,7 +69,7 @@ const CustomerCreateReview = (props) => {
                 : 'Record created successfully';
             toast.success(msg);
           }
-          handleSubmitted(response.data, summaryData);
+          handleSubmitted(response?.data, summaryData);
           closeModal();
         },
       ]);
@@ -68,14 +82,14 @@ const CustomerCreateReview = (props) => {
             ? 'Failed to save draft'
             : 'Failed to create record';
 
-        const status = error?.response?.status;
-
-        if (status === 400) {
+        if (axios.isAxiosError(error) && error.response?.status === 400) {
           toast.error(`${baseMsg}. The record already exists.`);
           return;
         }
 
-        handleApiError(error, baseMsg);
+        if (axios.isAxiosError(error)) {
+          handleApiError(error, baseMsg);
+        }
       });
     }
   };
@@ -137,27 +151,46 @@ const CustomerCreateReview = (props) => {
             data.status = 'Draft';
             onSubmit(data, { suppressSuccessToast: true });
           })}
-          onConfirm={handleSubmit(onSubmit)}
+          onConfirm={handleSubmit((data) => onSubmit(data))}
         />
       </div>
     </div>
   );
 };
 
-const ReviewDetail = ({ data }) => {
+interface ReviewDetailData {
+  physicalCard?: boolean | string;
+  firstName?: string;
+  sureName?: string;
+  telNo?: string;
+  gender?: string;
+  nation?: { nationality?: string };
+  identifyNumber?: string;
+  project?: { label?: string };
+  dateOfBirth?: string;
+  policy?: { value?: string; policyName?: string };
+  inputCompany?: string;
+  inputBranch?: string;
+  inputter?: string;
+  productName?: string;
+  childrenId?: string;
+  parentId?: string;
+  openingDate?: string;
+}
+
+const ReviewDetail = ({ data }: { data?: ReviewDetailData }) => {
   return (
     <TransactionDetail
       physicalCard={data?.physicalCard}
-      firstName={data?.firstName.toUpperCase()}
-      sureName={data?.sureName.toUpperCase()}
+      firstName={data?.firstName?.toUpperCase()}
+      sureName={data?.sureName?.toUpperCase()}
       telNo={data?.telNo}
       gender={data?.gender}
       nation={data?.nation?.nationality}
       nicPassport={data?.identifyNumber}
       projectName={data?.project?.label}
       dateOfBirth={data?.dateOfBirth}
-      policies={data?.policy.value}
-      policyName={data?.policy.policyName}
+      policyName={data?.policy?.policyName}
       inputCompany={data?.inputCompany}
       inputBranch={data?.inputBranch}
       inputter={data?.inputter}

@@ -1,3 +1,4 @@
+import axios from 'axios';
 import { useFormContext } from 'react-hook-form';
 import { useParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
@@ -5,13 +6,23 @@ import { useAuth } from '../../../context/AuthContext';
 import { fetchDataAsync } from '../../../services/$service';
 import { delay } from '../../../utils/delay';
 import { handleApiError } from '../../../utils/handleApiError';
+import { ROUTE_API } from '../../../utils/route-util';
 import { STATUS } from '../../../utils/status';
 import ActionSaveDraftConfirmationModal from '../../common/ActionSaveDraftConfirmationModal';
 import { useModal } from '../../common/modal';
 import Spinner, { useSpinner } from '../../common/Spinner';
 import TransactionDetail from '../../transaction/TransactionDetail';
 
-const CustomerEditReview = (props) => {
+interface CustomerEditReviewProps {
+  handleBackStep?: () => void;
+  handleSubmitted: (
+    responseData: unknown,
+    submitData: { status?: string }
+  ) => void;
+  productName?: string;
+}
+
+const CustomerEditReview = (props: CustomerEditReviewProps) => {
   const { user, selectedBranch, selectedCompany } = useAuth();
   const { handleBackStep, handleSubmitted, productName } = props;
   const { handleSubmit, getValues } = useFormContext();
@@ -21,7 +32,7 @@ const CustomerEditReview = (props) => {
   const { hasPermissionProccessTransaction } = useAuth();
   const params = useParams();
 
-  const onSubmit = async (data) => {
+  const onSubmit = async (data: Record<string, any>) => {
     const isDraft = data.saveDraft === true;
     const status = isDraft ? STATUS.Draft : STATUS.Submitted;
 
@@ -49,7 +60,7 @@ const CustomerEditReview = (props) => {
         openingDate: data.openingDate,
       };
 
-      const response = await fetchDataAsync('/operation-customer', {
+      const response = await fetchDataAsync(ROUTE_API.operationCustomer, {
         method: 'PUT',
         data: summaryData,
       });
@@ -61,7 +72,7 @@ const CustomerEditReview = (props) => {
             ? 'Draft saved successfully'
             : 'Record created successfully';
           toast.success(msg);
-          handleSubmitted(response.data, summaryData);
+          handleSubmitted(response?.data, summaryData);
           closeModal();
         },
       ]);
@@ -73,7 +84,9 @@ const CustomerEditReview = (props) => {
           ? 'Failed to save draft'
           : 'Failed to create record';
 
-        handleApiError(error, baseMsg);
+        if (axios.isAxiosError(error)) {
+          handleApiError(error, baseMsg);
+        }
       });
     }
   };
@@ -147,7 +160,27 @@ const CustomerEditReview = (props) => {
   );
 };
 
-const ReviewDetail = ({ data }) => {
+interface ReviewDetailData {
+  physicalCard?: boolean | string;
+  firstName?: string;
+  sureName?: string;
+  telNo?: string;
+  gender?: string;
+  nation?: { nationality?: string };
+  nicPassport?: string;
+  project?: { label?: string };
+  dateOfBirth?: string;
+  policy?: { value?: string; policyName?: string };
+  inputCompany?: string;
+  inputBranch?: string;
+  inputter?: string;
+  productName?: string;
+  customerId?: string;
+  parentId?: string;
+  openingDate?: string;
+}
+
+const ReviewDetail = ({ data }: { data?: ReviewDetailData }) => {
   return (
     <TransactionDetail
       physicalCard={data?.physicalCard}
@@ -155,13 +188,11 @@ const ReviewDetail = ({ data }) => {
       sureName={data?.sureName}
       telNo={data?.telNo}
       gender={data?.gender}
-      position={data?.position}
       nation={data?.nation?.nationality}
       nicPassport={data?.nicPassport}
       projectName={data?.project?.label}
       dateOfBirth={data?.dateOfBirth}
-      policies={data?.policy.value}
-      policyName={data?.policy.policyName}
+      policyName={data?.policy?.policyName}
       inputCompany={data?.inputCompany}
       inputBranch={data?.inputBranch}
       inputter={data?.inputter}

@@ -1,5 +1,11 @@
+import type { ChangeEventHandler } from 'react';
 import SearchIcon from '../Icons/SearchIcon';
-const SearchBox = (props) => {
+
+interface SearchBoxProps {
+  onChange?: ChangeEventHandler<HTMLInputElement>;
+}
+
+const SearchBox = (props: SearchBoxProps) => {
   const { onChange } = props;
   return (
     <div className="ms-auto text-secondary">
@@ -8,7 +14,6 @@ const SearchBox = (props) => {
           <SearchIcon />
         </span>
         <input
-          cursor="pointer"
           type="text"
           className="form-control"
           placeholder="Search …"

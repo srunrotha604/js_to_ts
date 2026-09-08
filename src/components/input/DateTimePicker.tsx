@@ -1,6 +1,14 @@
+import type { ReactNode } from 'react';
 import ReactDatePicker from 'react-datepicker';
 
-const DateTimePicker = (props) => {
+interface DateTimePickerProps {
+  label?: ReactNode;
+  required?: boolean;
+  onChange?: (dates: [Date | null, Date | null]) => void;
+  maxDate?: Date;
+}
+
+const DateTimePicker = (props: DateTimePickerProps) => {
   const { label, required, onChange, maxDate } = props;
   return (
     <>
@@ -11,7 +19,9 @@ const DateTimePicker = (props) => {
         <div>
           <ReactDatePicker
             maxDate={maxDate}
-            onChange={onChange}
+            onChange={(date) =>
+              onChange?.(date as unknown as [Date | null, Date | null])
+            }
             selectsRange
             popperPlacement="top"
             className="form-control"
