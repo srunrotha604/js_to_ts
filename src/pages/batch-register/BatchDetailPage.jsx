@@ -24,7 +24,7 @@ import { delay } from '../../utils/delay.js';
 import { formatDay } from '../../utils/format-day';
 import { getConfirmedMessageText } from '../../utils/get-confirm-message-text';
 import { pluralize } from '../../utils/pluralize';
-import { ROUTE_API } from '../../utils/route-util.js';
+import { ROUTE_API } from '../../utils/route-util';
 import { STATUS } from '../../utils/status';
 
 const BatchDetailPage = () => {

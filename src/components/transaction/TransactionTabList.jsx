@@ -1,54 +1,54 @@
+import axios from 'axios';
+import clsx from 'clsx';
 import {
   forwardRef,
   useEffect,
   useImperativeHandle,
   useRef,
   useState,
-} from "react";
-import { useDebouncedCallback } from "use-debounce";
+} from 'react';
+import ReactPaginate from 'react-paginate';
 import {
   createSearchParams,
   useNavigate,
   useSearchParams,
-} from "react-router-dom";
-import Select from "react-select";
-import ComponentStatus from "../../components/customer/ComponentStatus";
-import { fetchData, fetchDataAsync } from "../../services/$service";
-import clsx from "clsx";
-import { useAuth } from "../../context/AuthContext";
-import TransactionDetailModal from "../../components/transaction/TransactionDetailModal";
-import ReactPaginate from "react-paginate";
-import { formatDay } from "../../utils/format-day";
-import Modal, { useModal } from "../common/modal/index.jsx";
-import useMessage from "../../hooks/useMessage.jsx";
-import Checkbox from "../common/Checkbox.jsx";
-import Spinner, { useSpinner } from "../common/Spinner.jsx";
-import axios from "axios";
-import TransactionNumberTableItem from "./TransactionNumberTableItem.jsx";
-import Button from "../common/Button";
-import { toast } from "react-toastify";
-import { delay } from "../../utils/delay";
-import IssueDateModal from "../../components/IssueDateModal";
-import IssueDateDetailModal from "../../components/IssueDateDetailModal";
-import "../../assets/style/custom_style.css";
-import { ROUTE_PATH } from "../../utils/route-util";
+} from 'react-router-dom';
+import Select from 'react-select';
+import { toast } from 'react-toastify';
+import { useDebouncedCallback } from 'use-debounce';
+import '../../assets/style/custom_style.css';
+import ComponentStatus from '../../components/customer/ComponentStatus';
+import IssueDateDetailModal from '../../components/IssueDateDetailModal';
+import IssueDateModal from '../../components/IssueDateModal';
+import TransactionDetailModal from '../../components/transaction/TransactionDetailModal';
+import { useAuth } from '../../context/AuthContext';
+import useMessage from '../../hooks/useMessage.jsx';
+import { fetchData, fetchDataAsync } from '../../services/$service';
+import { delay } from '../../utils/delay';
+import { formatDay } from '../../utils/format-day';
+import { ROUTE_PATH } from '../../utils/route-util';
+import Button from '../common/Button';
+import Checkbox from '../common/Checkbox.jsx';
+import Modal, { useModal } from '../common/modal/index.jsx';
+import Spinner, { useSpinner } from '../common/Spinner.jsx';
+import TransactionNumberTableItem from './TransactionNumberTableItem.jsx';
 
 const STATUS = {
-  All: "All",
-  Draft: "Draft",
-  Approved: "Approved",
-  BM_Rejected: "BM-Rejected",
-  DRI_Rejected: "DRI-Rejected",
-  Confirmed: "Confirmed",
-  Submitted: "Submitted",
-  BM_Rejected_Draft: "BM-Rejected-Draft",
+  All: 'All',
+  Draft: 'Draft',
+  Approved: 'Approved',
+  BM_Rejected: 'BM-Rejected',
+  DRI_Rejected: 'DRI-Rejected',
+  Confirmed: 'Confirmed',
+  Submitted: 'Submitted',
+  BM_Rejected_Draft: 'BM-Rejected-Draft',
 };
 
 const TYPE = {
-  All: "All",
-  Batch: "Batch",
-  Single: "Single",
-  Delete: "Delete",
+  All: 'All',
+  Batch: 'Batch',
+  Single: 'Single',
+  Delete: 'Delete',
 };
 
 export const typeOptions = [
@@ -72,8 +72,8 @@ const TransactionTabList = forwardRef(
       renderTableHead,
       renderTableBody,
       path = ROUTE_PATH.dashboard,
-      url = "/operation-customer",
-      extraParams = "",
+      url = '/operation-customer',
+      extraParams = '',
       renderExtraFilter,
       onTabChange,
       defaultTab = STATUS.All,
@@ -89,7 +89,7 @@ const TransactionTabList = forwardRef(
       enableCheckbox = false,
       enableItemCheckbox = true,
     },
-    ref,
+    ref
   ) => {
     const [searchParams] = useSearchParams();
     const [loading, setLoading] = useState(true);
@@ -102,10 +102,10 @@ const TransactionTabList = forwardRef(
     const [branch, setBranch] = useState([]);
     const { openModal, modalRef } = useModal();
     const [selectedBranch, setSelectedBranch] = useState({
-      label: "All",
-      value: "All",
+      label: 'All',
+      value: 'All',
     });
-    const [type, setType] = useState({ value: "All", label: "All" });
+    const [type, setType] = useState({ value: 'All', label: 'All' });
     const [tabStatus, setTabStatus] = useState(defaultTab);
     // const [query, setQuery] = useState('');
     const navigate = useNavigate();
@@ -129,21 +129,21 @@ const TransactionTabList = forwardRef(
       pageNum,
       search,
       type,
-      { signal } = { signal: null },
+      { signal } = { signal: null }
     ) => {
       setLoading(true);
       const listStatus =
-        status === "All" || status.length === -1 ? "" : `${status}`;
+        status === 'All' || status.length === -1 ? '' : `${status}`;
       const listBranch =
-        branch === "All" || branch.length === -1 ? "" : `${branch}`;
-      const listType = type === "All" || branch.length === -1 ? "" : `${type}`;
+        branch === 'All' || branch.length === -1 ? '' : `${branch}`;
+      const listType = type === 'All' || branch.length === -1 ? '' : `${type}`;
 
       try {
         const res = await fetchDataAsync(
           `${url}?${extraParams}&status=${listStatus}&branchName=${listBranch}&pageSize=${rowPerPage}&pageNumber=${pageNum}&search=${search}&${
-            typeFilter ? `type=${listType}` : ""
+            typeFilter ? `type=${listType}` : ''
           }`,
-          { signal },
+          { signal }
         );
 
         setArrCustomer(res?.data?.list);
@@ -172,9 +172,9 @@ const TransactionTabList = forwardRef(
 
     const getListDetails = (transactionCode) => {
       return fetchData(
-        "/operation-customer?transactionCode=" + transactionCode,
+        '/operation-customer?transactionCode=' + transactionCode,
         {},
-        "GET",
+        'GET'
       ).then((res) => {
         switch (res.status) {
           case 200:
@@ -220,25 +220,25 @@ const TransactionTabList = forwardRef(
     const handleRecordClick = async (item) => {
       switch (item.status) {
         case STATUS.Submitted:
-          processTransaction(["approved", "bmRejected"], item);
+          processTransaction(['approved', 'bmRejected'], item);
           break;
         case STATUS.Draft:
-          if (hasPermissionProccessTransaction(["draft", "submitted"])) {
+          if (hasPermissionProccessTransaction(['draft', 'submitted'])) {
             navigate(
               ROUTE_PATH.customerEdit(
                 item.transactionCode,
-                item.coreProductCode,
-              ),
+                item.coreProductCode
+              )
             );
           } else {
             handleShowTransactionDetail(item);
           }
           break;
         case STATUS.Approved:
-          processTransaction(["confirmed", "driRejected"], item);
+          processTransaction(['confirmed', 'driRejected'], item);
           break;
         case STATUS.BM_Rejected:
-          processTransaction("draft", item);
+          processTransaction('draft', item);
           break;
         case STATUS.Confirmed:
         case STATUS.DRI_Rejected:
@@ -272,14 +272,14 @@ const TransactionTabList = forwardRef(
             ...params,
           }).toString(),
         },
-        { replace: true },
+        { replace: true }
       );
     };
 
     const { spinnerState, openSpinner, closeSpinner } = useSpinner();
 
     const tabHandleClick = (value, type) => {
-      navigateList({ status: value, pageNum: 1, type: type ? type : "" });
+      navigateList({ status: value, pageNum: 1, type: type ? type : '' });
       setTotalDocs(0);
       onTabChange && onTabChange(value);
     };
@@ -305,18 +305,18 @@ const TransactionTabList = forwardRef(
 
     useEffect(() => {
       if (company) {
-        const e_chanel_storage = localStorage.getItem("e_chanel_storage");
+        const e_chanel_storage = localStorage.getItem('e_chanel_storage');
         const token_text = JSON.parse(e_chanel_storage);
         const companyDetails = company?.find(
-          (item) => item?.value === token_text?.company,
+          (item) => item?.value === token_text?.company
         );
         const tempBranch = [
           { value: STATUS.All, label: STATUS.All },
           ...(companyDetails?.branch || []),
         ];
         setBranch(tempBranch);
-        if (searchParams.get("branch")) {
-          const branch = searchParams.get("branch");
+        if (searchParams.get('branch')) {
+          const branch = searchParams.get('branch');
           setSelectedBranch(tempBranch.find((item) => item.value === branch));
         }
       }
@@ -333,7 +333,7 @@ const TransactionTabList = forwardRef(
               rowPerPage,
               pageNum,
               searchRef.current.value,
-              type,
+              type
               // date.startDate,
               // date.endDate
             );
@@ -347,16 +347,16 @@ const TransactionTabList = forwardRef(
         pageNum,
         type,
         // date
-      ],
+      ]
     );
 
     useEffect(() => {
-      let tempStatus = searchParams.get("status") ?? defaultTab;
-      let tempBranch = searchParams.get("branch") ?? "All";
-      let tempPageNum = searchParams.get("pageNum") ?? 1;
-      let tempRowPerPage = searchParams.get("rowPerPage") ?? 25;
-      let tempSearch = searchParams.get("search") ?? "";
-      let tempType = searchParams.get("type") || "All";
+      let tempStatus = searchParams.get('status') ?? defaultTab;
+      let tempBranch = searchParams.get('branch') ?? 'All';
+      let tempPageNum = searchParams.get('pageNum') ?? 1;
+      let tempRowPerPage = searchParams.get('rowPerPage') ?? 25;
+      let tempSearch = searchParams.get('search') ?? '';
+      let tempType = searchParams.get('type') || 'All';
       // let tempStartDate = searchParams.get('startDate')
       //   ? new Date(searchParams.get('startDate'))
       //   : new Date();
@@ -375,13 +375,13 @@ const TransactionTabList = forwardRef(
           searchRef.current.value = tempSearch;
         }
         getList(
-          tempStatus.replace("_Deleted", ""),
+          tempStatus.replace('_Deleted', ''),
           tempBranch,
           tempRowPerPage,
           tempPageNum,
           tempSearch,
           tempType,
-          { signal: abortController.signal },
+          { signal: abortController.signal }
 
           // tempStartDate,
           // tempEndDate
@@ -428,7 +428,7 @@ const TransactionTabList = forwardRef(
         navigateList({ pageNum: 1, search: value });
       },
       // delay in ms
-      400,
+      400
     );
 
     const {
@@ -443,12 +443,12 @@ const TransactionTabList = forwardRef(
     // };
 
     const isEnableCheckbox =
-      typeof enableCheckbox === "function"
+      typeof enableCheckbox === 'function'
         ? enableCheckbox({ tabStatus })
         : enableCheckbox;
 
     const isEnableTypeFilter =
-      typeof typeFilter === "function" ? typeFilter({ tabStatus }) : typeFilter;
+      typeof typeFilter === 'function' ? typeFilter({ tabStatus }) : typeFilter;
 
     const handleIssueDateClick = async (e, item) => {
       e.preventDefault();
@@ -464,13 +464,13 @@ const TransactionTabList = forwardRef(
 
         const status = item?.customerCardConfirmation?.status;
 
-        if (status === "green") {
+        if (status === 'green') {
           openIssueDateDetailModal(item);
         } else {
           openIssueDateModal(item);
         }
       } catch (error) {
-        console.error("Error fetching issue date data:", error);
+        console.error('Error fetching issue date data:', error);
       }
     };
 
@@ -492,15 +492,15 @@ const TransactionTabList = forwardRef(
             ...item,
             customerIssueDate: {
               ...(item.customerIssueDate || {}),
-              status: "green",
+              status: 'green',
               issueDate: nextIssueDate,
             },
             customerCardConfirmation: {
               ...(item.customerCardConfirmation || {}),
-              status: "green",
+              status: 'green',
             },
           };
-        }),
+        })
       );
     };
 
@@ -522,7 +522,7 @@ const TransactionTabList = forwardRef(
                           href={`#${item.status}`}
                           onClick={() => tabHandleClick(item.status, item.type)}
                           className={`nav-link text-${item.label} ${
-                            tabStatus === item.status ? "active" : ""
+                            tabStatus === item.status ? 'active' : ''
                           }`}
                           data-bs-toggle="tab"
                         >
@@ -530,7 +530,7 @@ const TransactionTabList = forwardRef(
                           <span
                             className={`badge bg-${item.label} badge-light ml-5`}
                           >
-                            {item.getTotal(total) ?? "0"}
+                            {item.getTotal(total) ?? '0'}
                           </span>
                         </a>
                       </li>
@@ -543,10 +543,10 @@ const TransactionTabList = forwardRef(
             </div>
             <div className="overflow-auto d-flex flex-grow-1">
               <div className="d-flex flex-column" style={{ flex: 1 }}>
-                <div className={"d-flex mb-3 px-2 pt-3"}>
+                <div className={'d-flex mb-3 px-2 pt-3'}>
                   <div
-                    className={clsx("btn-list w-100", {
-                      "justify-content-end": !renderExtraFilter,
+                    className={clsx('btn-list w-100', {
+                      'justify-content-end': !renderExtraFilter,
                     })}
                   >
                     {renderExtraFilter &&
@@ -555,9 +555,9 @@ const TransactionTabList = forwardRef(
                       <label
                         className="d-flex align-items-center mx-1 cursor-pointer"
                         style={{
-                          minWidth: "200px",
-                          maxWidth: "400px",
-                          overflow: "hidden",
+                          minWidth: '200px',
+                          maxWidth: '400px',
+                          overflow: 'hidden',
                         }}
                       >
                         <b className="mx-2">Type:</b>
@@ -574,9 +574,9 @@ const TransactionTabList = forwardRef(
                       <label
                         className="d-flex align-items-center mx-1 cursor-pointer"
                         style={{
-                          minWidth: "200px",
-                          maxWidth: "400px",
-                          overflow: "hidden",
+                          minWidth: '200px',
+                          maxWidth: '400px',
+                          overflow: 'hidden',
                         }}
                       >
                         <b className="mx-2">Branch:</b>
@@ -636,7 +636,7 @@ const TransactionTabList = forwardRef(
                             {isEnableCheckbox && (
                               <th className="p-0">
                                 <label
-                                  style={{ padding: "12px 12px 12px 24px" }}
+                                  style={{ padding: '12px 12px 12px 24px' }}
                                   className="w-100 cursor-pointer"
                                 >
                                   <Checkbox
@@ -649,7 +649,7 @@ const TransactionTabList = forwardRef(
                                       handleSelectAllInCurrentList &&
                                         handleSelectAllInCurrentList(
                                           checked,
-                                          arrCustomer,
+                                          arrCustomer
                                         );
                                     }}
                                   />
@@ -665,7 +665,7 @@ const TransactionTabList = forwardRef(
                             <th>USER</th>
                             <th>BRANCH</th>
                             <th>DATE OF ISSUE CARD</th>
-                            <th style={{ width: "10%" }}>STATUS</th>
+                            <th style={{ width: '10%' }}>STATUS</th>
                           </>
                         )}
                       </tr>
@@ -680,7 +680,7 @@ const TransactionTabList = forwardRef(
                       ) : null}
                       {loading ? (
                         <tr>
-                          <td colSpan={11} style={{ background: "#f8fafc" }}>
+                          <td colSpan={11} style={{ background: '#f8fafc' }}>
                             <div className="d-flex justify-content-center">
                               <span
                                 className="spinner-border spinner-border-sm d-block mx-2"
@@ -694,20 +694,20 @@ const TransactionTabList = forwardRef(
                       ) : (
                         arrCustomer?.map((item, index) => {
                           const isCompleted =
-                            item?.customerCardConfirmation?.status === "green";
+                            item?.customerCardConfirmation?.status === 'green';
                           const hasIssueDate =
                             !!item?.customerIssueDate?.issueDate;
                           const isDisabled = !isCompleted && !hasIssueDate;
                           const isEnableItemCheckbox =
-                            typeof enableItemCheckbox === "function"
+                            typeof enableItemCheckbox === 'function'
                               ? enableItemCheckbox(item)
                               : enableItemCheckbox;
                           return (
                             <tr
                               style={{
                                 background: item.deleted
-                                  ? "rgb(247 219 219 / 45%)"
-                                  : "",
+                                  ? 'rgb(247 219 219 / 45%)'
+                                  : '',
                               }}
                               key={index}
                               onClick={() => {
@@ -736,7 +736,7 @@ const TransactionTabList = forwardRef(
                                     >
                                       <label
                                         style={{
-                                          padding: "12px 12px 12px 24px",
+                                          padding: '12px 12px 12px 24px',
                                         }}
                                         className="w-100 cursor-pointer"
                                       >
@@ -757,7 +757,7 @@ const TransactionTabList = forwardRef(
                                   )}
                                   <td
                                     className="text-primary"
-                                    title={"Click to view transaction detail"}
+                                    title={'Click to view transaction detail'}
                                     onClick={(e) => {
                                       e.stopPropagation();
                                       handleShowTransactionDetail(item);
@@ -769,12 +769,12 @@ const TransactionTabList = forwardRef(
                                   </td>
                                   <td
                                     className={clsx({
-                                      "text-underline": item.batchNumber,
-                                      "text-secondary": item.batchNumber,
+                                      'text-underline': item.batchNumber,
+                                      'text-secondary': item.batchNumber,
                                     })}
                                     title={
                                       item.batchNumber &&
-                                      "Click to process batch transaction"
+                                      'Click to process batch transaction'
                                     }
                                     onClick={(e) => {
                                       e.stopPropagation();
@@ -782,15 +782,15 @@ const TransactionTabList = forwardRef(
                                         return handleRecordClick(item);
                                       navigate(
                                         ROUTE_PATH.customerBatch(
-                                          item.batchNumber,
-                                        ),
+                                          item.batchNumber
+                                        )
                                       );
                                     }}
                                   >
-                                    {item?.batchNumber || "N/A"}
+                                    {item?.batchNumber || 'N/A'}
                                   </td>
                                   <td className="text-muted">
-                                    {item.sureName + " " + item.firstName}
+                                    {item.sureName + ' ' + item.firstName}
                                   </td>
                                   <td className="text-muted">
                                     {item.projectCode}
@@ -817,28 +817,28 @@ const TransactionTabList = forwardRef(
                                       disabled={isDisabled}
                                       className={`issue_btn_status btn ${
                                         isCompleted
-                                          ? "btn-outline-success"
+                                          ? 'btn-outline-success'
                                           : hasIssueDate
-                                          ? "btn-outline-info"
-                                          : "btn-outline-warning"
+                                          ? 'btn-outline-info'
+                                          : 'btn-outline-warning'
                                       }`}
                                       title={
-                                        isDisabled ? "Not Yet Issue" : "Open"
+                                        isDisabled ? 'Not Yet Issue' : 'Open'
                                       }
                                     >
                                       {isCompleted
-                                        ? "Completed"
+                                        ? 'Completed'
                                         : hasIssueDate
                                         ? new Date(
-                                            item.customerIssueDate.issueDate,
-                                          ).toLocaleDateString("en-GB")
-                                        : "Not Yet Issue"}
+                                            item.customerIssueDate.issueDate
+                                          ).toLocaleDateString('en-GB')
+                                        : 'Not Yet Issue'}
                                     </button>
                                   </td>
                                   <td
                                     className={clsx(
-                                      "text-bold",
-                                      "text-underline",
+                                      'text-bold',
+                                      'text-underline'
                                     )}
                                   >
                                     <ComponentStatus
@@ -872,10 +872,10 @@ const TransactionTabList = forwardRef(
                   <div className="mx-4">
                     {totalDocs > 0 && (
                       <span className="text-muted">
-                        {(Number(pageNum) - 1) * rowPerPage + 1} -{" "}
+                        {(Number(pageNum) - 1) * rowPerPage + 1} -{' '}
                         {Number(pageNum) * rowPerPage > totalDocs
                           ? totalDocs
-                          : Number(pageNum) * rowPerPage}{" "}
+                          : Number(pageNum) * rowPerPage}{' '}
                         of {totalDocs}
                       </span>
                     )}
@@ -933,16 +933,16 @@ const TransactionTabList = forwardRef(
                         marginPagesDisplayed={3}
                         pageRangeDisplayed={3}
                         onPageChange={handleChangePageNum}
-                        containerClassName={"pagination m-0 ml-auto"}
-                        pageClassName={"page-item"}
-                        pageLinkClassName={"page-link"}
-                        previousClassName={"page-item"}
-                        previousLinkClassName={"page-link"}
-                        nextClassName={"page-item"}
-                        nextLinkClassName={"page-link"}
-                        breakClassName={"page-item"}
-                        breakLinkClassName={"page-link"}
-                        activeClassName={"active"}
+                        containerClassName={'pagination m-0 ml-auto'}
+                        pageClassName={'page-item'}
+                        pageLinkClassName={'page-link'}
+                        previousClassName={'page-item'}
+                        previousLinkClassName={'page-link'}
+                        nextClassName={'page-item'}
+                        nextLinkClassName={'page-link'}
+                        breakClassName={'page-item'}
+                        breakLinkClassName={'page-link'}
+                        activeClassName={'active'}
                       />
                     )}
                   </div>
@@ -987,12 +987,12 @@ const TransactionTabList = forwardRef(
         />
       </>
     );
-  },
+  }
 );
 
 export const ShowLogsButton = ({ onClick, variant }) => {
   return (
-    <Button onClick={onClick} variant={variant} size={"sm"}>
+    <Button onClick={onClick} variant={variant} size={'sm'}>
       Show Logs
     </Button>
   );
@@ -1017,7 +1017,7 @@ export const TransactionLogsModal = forwardRef(
       try {
         openSpinner();
         const response = await fetchDataAsync(
-          `/operation-customer/log?transaction=${transactionNo}`,
+          `/operation-customer/log?transaction=${transactionNo}`
         );
         setDetail(response?.data?.list);
       } catch (error) {
@@ -1033,7 +1033,7 @@ export const TransactionLogsModal = forwardRef(
       <>
         <Modal
           size="lg"
-          title={"Logs"}
+          title={'Logs'}
           bodyClassName="p-0"
           content={
             <table className="table">
@@ -1061,33 +1061,33 @@ export const TransactionLogsModal = forwardRef(
         ></Modal>
       </>
     );
-  },
+  }
 );
 
 export const selectCustomStyles = {
   control: (provided, state) => ({
     ...provided,
-    background: "#fff",
+    background: '#fff',
     boxShadow: state.isFocused ? null : null,
-    cursor: "pointer",
+    cursor: 'pointer',
   }),
   container: (provided) => ({
     ...provided,
-    width: "100%",
+    width: '100%',
   }),
   valueContainer: (provided) => ({
     ...provided,
     // maxWidth: '300px',
-    whiteSpace: "nowrap",
+    whiteSpace: 'nowrap',
     // minWidth: '50px',
-    flexWrap: "nowrap",
+    flexWrap: 'nowrap',
     // textOverflow: 'ellipsis',
-    maxWidth: "90%",
+    maxWidth: '90%',
     // whiteSpace: "nowrap",
-    overflow: "hidden",
+    overflow: 'hidden',
   }),
   // eslint-disable-next-line no-unused-vars
-  menu: ({ width, ...css }) => ({ ...css, minWidth: "300px" }),
+  menu: ({ width, ...css }) => ({ ...css, minWidth: '300px' }),
 };
 
 export default TransactionTabList;

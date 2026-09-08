@@ -12,7 +12,7 @@ import useLoading from '../../hooks/useLoading';
 import useMessage from '../../hooks/useMessage.jsx';
 import { fetchDataAsync } from '../../services/$service';
 import { formatDay } from '../../utils/format-day';
-import { ROUTE_API } from '../../utils/route-util.js';
+import { ROUTE_API } from '../../utils/route-util';
 import { RECORDSTATUS } from '../../utils/status';
 
 const UserReportPage = () => {

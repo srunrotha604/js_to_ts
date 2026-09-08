@@ -16,7 +16,7 @@ import useLoading from '../../../hooks/useLoading';
 import useMessage from '../../../hooks/useMessage.jsx';
 import { fetchDataAsync } from '../../../services/$service';
 import { formatDay, getStartOfMonthDate } from '../../../utils/format-day';
-import { ROUTE_API } from '../../../utils/route-util.js';
+import { ROUTE_API } from '../../../utils/route-util';
 import { STATUS } from '../../../utils/status';
 
 const CustomerReportPage = () => {
@@ -33,7 +33,6 @@ const CustomerReportPage = () => {
   const [branch, setBranch] = useState([]);
   const [selectedBranch, setSelectedBranch] = useState([]);
   const [expirePolicy, setExpirePolicy] = useState(false);
-  const [projectList, setProjectList] = useState([]);
   const [selectedProject, setSelectedProject] = useState([]);
   const [issueDateRange, setIssueDateRange] = useState({
     startIssueDate: getStartOfMonthDate().toDate(),

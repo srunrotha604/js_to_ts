@@ -50,33 +50,29 @@ export const refreshToken = async () => {
     refreshToken: token_text.refreshToken,
   };
 
-  try {
-    const res = await axios({
-      url: import.meta.env.VITE_API_URL + ROUTE_API.loginRefreshToken,
-      method: 'POST',
-      data: data,
-      headers: {
-        application_id: import.meta.env.VITE_APP_ID,
-        'Content-Type': 'application/json',
-        accept: '*/*',
-      },
-    });
+  const res = await axios({
+    url: import.meta.env.VITE_API_URL + ROUTE_API.loginRefreshToken,
+    method: 'POST',
+    data: data,
+    headers: {
+      application_id: import.meta.env.VITE_APP_ID,
+      'Content-Type': 'application/json',
+      accept: '*/*',
+    },
+  });
 
-    const alt_fa_token = {
-      token: res.data.token,
-      refreshToken: res.data.refreshToken,
-      company: token_text.company || '',
-      branch: token_text.branch || '',
-      hostName: window.location.origin,
-      login_return_url: token_text.login_return_url || '',
-    };
+  const alt_fa_token = {
+    token: res.data.token,
+    refreshToken: res.data.refreshToken,
+    company: token_text.company || '',
+    branch: token_text.branch || '',
+    hostName: window.location.origin,
+    login_return_url: token_text.login_return_url || '',
+  };
 
-    localStorage.setItem('e_chanel_storage', JSON.stringify(alt_fa_token));
+  localStorage.setItem('e_chanel_storage', JSON.stringify(alt_fa_token));
 
-    return alt_fa_token;
-  } catch (err) {
-    throw err;
-  }
+  return alt_fa_token;
 };
 
 export const fetchData = async (url, data, method = 'GET') => {
