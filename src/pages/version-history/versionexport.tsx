@@ -2,6 +2,7 @@ import type {
   CreateVersionArgs,
   DeleteVersionArgs,
   UpdateVersionArgs,
+  UpdateVersionResponse,
   VersionListResponse,
 } from '../../@type/version';
 import { fetchDataAsync } from '../../services/$service';
@@ -45,7 +46,7 @@ export const updateVersion = async (args: UpdateVersionArgs) => {
     uuid: args.uuid,
   };
 
-  const response = await fetchDataAsync<VersionListResponse>(
+  const response = await fetchDataAsync<UpdateVersionResponse>(
     ROUTE_API.applicationVersion,
     {
       method: 'PUT',

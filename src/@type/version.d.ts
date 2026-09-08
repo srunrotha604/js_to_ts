@@ -27,3 +27,8 @@ export interface UpdateVersionArgs extends CreateVersionArgs {
 export interface DeleteVersionArgs {
   uuid: string;
 }
+
+export interface UpdateVersionResponse {
+  message?: string;
+  data?: Partial<VersionItem>;
+}

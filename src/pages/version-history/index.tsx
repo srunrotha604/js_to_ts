@@ -65,16 +65,8 @@ const VersionHistoryPage = () => {
     setEditItem(null);
   };
 
-  const handleNewVersionAdded = (newVersion: VersionItem) => {
-    if (!newVersion || !newVersion.uuid) {
-      setRefreshFlag((prev) => !prev);
-      return;
-    }
-
-    setVersionList((prev) => {
-      if (prev.some((v) => v.uuid === newVersion.uuid)) return prev;
-      return [newVersion, ...prev];
-    });
+  const handleNewVersionAdded = (newVersion: Omit<VersionItem, 'uuid'>) => {
+    setRefreshFlag((prev) => !prev);
   };
 
   const handleVersionDeleted = (deletedUuid: string) => {

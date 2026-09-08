@@ -1,41 +1,59 @@
-import 'react-datepicker/dist/react-datepicker.css';
 import { useEffect, useState } from 'react';
-import { toast } from 'react-toastify';
+import 'react-datepicker/dist/react-datepicker.css';
 import { useForm } from 'react-hook-form';
+import { toast } from 'react-toastify';
+import type { VersionItem } from '../../@type/version';
 import Modal, { useModal } from '../../components/common/modal';
 import CustomDatePicker from '../../components/form/CustomDatePicker';
-import { useAuth } from '../../context/AuthContext';
 import { createNewVersion } from '../../pages/version-history/versionexport';
 
-const VersionHistoryForm = ({ onCreated }) => {
+interface VersionFormValues {
+  version: string;
+  description: string;
+}
+
+interface VersionHistoryFormProps {
+  onCreated?: (version: Omit<VersionItem, 'uuid'>) => void;
+}
+
+const VersionHistoryForm = ({ onCreated }: VersionHistoryFormProps) => {
   const { modalRef, openModal, closeModal } = useModal();
-  const [selectedDate, setSelectedDate] = useState(null);
+  const [selectedDate, setSelectedDate] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
-  const { register, handleSubmit, reset, formState: { errors } } = useForm();
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = useForm<VersionFormValues>();
 
   document.title = 'Alt-Fa APIs Admin System | System user-company';
 
   useEffect(() => {
-    const handleFocusIn = (e) => {
-      if (e.target.closest('[data-tabler-disable-focus]')) e.stopPropagation();
+    const handleFocusIn = (e: FocusEvent) => {
+      if ((e.target as HTMLElement).closest('[data-tabler-disable-focus]')) {
+        e.stopPropagation();
+      }
     };
     document.addEventListener('focusin', handleFocusIn, true);
     return () => document.removeEventListener('focusin', handleFocusIn, true);
   }, []);
 
-  const onSubmit = async (formData) => {
+  const onSubmit = async (formData: VersionFormValues) => {
     if (!selectedDate) {
       toast.error('Release Date is required');
       return;
     }
 
-    const dateObj = selectedDate instanceof Date ? selectedDate : new Date(selectedDate);
-    const pad = (n) => n.toString().padStart(2, '0');
-    const releaseDateStr = `${dateObj.getFullYear()}-${pad(dateObj.getMonth() + 1)}-${pad(dateObj.getDate())}`;
+    const dateObj = new Date(selectedDate);
+    const pad = (n: number) => n.toString().padStart(2, '0');
+    const releaseDateStr = `${dateObj.getFullYear()}-${pad(
+      dateObj.getMonth() + 1
+    )}-${pad(dateObj.getDate())}`;
 
     try {
       setSubmitting(true);
-      const data = await createNewVersion({
+      await createNewVersion({
         releaseDate: releaseDateStr,
         version: formData.version,
         description: formData.description,
@@ -48,13 +66,11 @@ const VersionHistoryForm = ({ onCreated }) => {
 
       window.dispatchEvent(new Event('versionUpdated'));
 
-      if (onCreated) {
-        onCreated({
-          version: formData.version,
-          description: formData.description,
-          releaseDate: releaseDateStr,
-        });
-      }
+      onCreated?.({
+        version: formData.version,
+        description: formData.description,
+        releaseDate: releaseDateStr,
+      });
     } catch (error) {
       toast.error('Failed to create version');
       console.error(error);
@@ -99,12 +115,16 @@ const VersionHistoryForm = ({ onCreated }) => {
                 {...register('description')}
                 className="form-control"
                 placeholder="Description"
-                rows="11"
+                rows={11}
               />
             </div>
 
             <div className="text-end">
-              <button type="submit" className="btn btn-primary me-2" disabled={submitting}>
+              <button
+                type="submit"
+                className="btn btn-primary me-2"
+                disabled={submitting}
+              >
                 {submitting ? 'Saving...' : 'Create'}
               </button>
               <button

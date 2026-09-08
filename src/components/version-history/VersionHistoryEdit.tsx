@@ -1,21 +1,42 @@
-import React, { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import ReactDatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { useForm } from 'react-hook-form';
 import { toast } from 'react-toastify';
+import type { VersionItem } from '../../@type/version';
+import {
+  deleteVersion,
+  updateVersion,
+} from '../../pages/version-history/versionexport';
 import Modal, { useModal } from '../common/modal';
-import { updateVersion, deleteVersion } from '../../pages/version-history/versionexport';
 
-const VersionHistoryEdit = ({ version, onClose, onDeleted, onUpdated }) => {
+interface VersionFormValues {
+  version: string;
+  description: string;
+}
+
+interface VersionHistoryEditProps {
+  version?: VersionItem | null;
+  onClose: () => void;
+  onDeleted?: (uuid: string) => void;
+  onUpdated?: (version: VersionItem) => void;
+}
+
+const VersionHistoryEdit = ({
+  version,
+  onClose,
+  onDeleted,
+  onUpdated,
+}: VersionHistoryEditProps) => {
   const { modalRef, openModal, closeModal } = useModal();
-  const [selectedDate, setSelectedDate] = useState(null);
+  const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const {
     register,
     handleSubmit,
     reset,
     formState: { errors },
-  } = useForm({
+  } = useForm<VersionFormValues>({
     defaultValues: {
       version: '',
       description: '',
@@ -39,15 +60,20 @@ const VersionHistoryEdit = ({ version, onClose, onDeleted, onUpdated }) => {
     }
   }, [version, reset]);
 
-  const onSubmit = async (formData) => {
+  const onSubmit = async (formData: VersionFormValues) => {
+    if (!version?.uuid) return;
+
     try {
       setSubmitting(true);
-      const dateObj =
-        selectedDate instanceof Date ? selectedDate : new Date(selectedDate);
+      const dateObj = selectedDate ?? new Date();
+      const pad = (n: number) => n.toString().padStart(2, '0');
+      const releaseDateStr = `${dateObj.getFullYear()}-${pad(
+        dateObj.getMonth() + 1
+      )}-${pad(dateObj.getDate())}`;
 
       const payload = {
         uuid: version.uuid,
-        releaseDate: dateObj,
+        releaseDate: releaseDateStr,
         version: formData.version,
         description: formData.description,
       };
@@ -55,7 +81,7 @@ const VersionHistoryEdit = ({ version, onClose, onDeleted, onUpdated }) => {
       const res = await updateVersion(payload);
       toast.success(res?.message || 'Version updated successfully!');
 
-      const updatedData = {
+      const updatedData: VersionItem = {
         ...version,
         ...payload,
         ...(res?.data || {}),
@@ -74,14 +100,16 @@ const VersionHistoryEdit = ({ version, onClose, onDeleted, onUpdated }) => {
   };
 
   const onDelete = async () => {
+    if (!version?.uuid) return;
     try {
       setSubmitting(true);
-      const res = await deleteVersion({ uuid: version.uuid });
+      await deleteVersion({ uuid: version.uuid });
       toast.success('Version deleted successfully!');
       onDeleted?.(version.uuid);
       closeModal();
       onClose();
     } catch (error) {
+      console.error(error);
       toast.error('Error deleting version.');
     } finally {
       setSubmitting(false);
@@ -130,7 +158,7 @@ const VersionHistoryEdit = ({ version, onClose, onDeleted, onUpdated }) => {
               {...register('description')}
               className="form-control"
               placeholder="Description"
-              rows="12"
+              rows={12}
               readOnly
             />
           </div>
