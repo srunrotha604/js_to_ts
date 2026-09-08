@@ -1,7 +1,7 @@
 import { pluralize } from './pluralize';
 
 interface GetConfirmedMessageTextParams {
-  status: string;
+  status: string | null;
   selectedCustomerList?: unknown[];
 }
 
@@ -19,7 +19,7 @@ export const getConfirmedMessageText = ({
     Confirmed: 'confirm',
     'DRI-Rejected': 'dri-reject',
   };
-  const proccessStatus = tempStatus[status] ?? 'approve';
+  const proccessStatus = (status && tempStatus[status]) ?? 'approve';
 
   return (
     <p className="fs-4">

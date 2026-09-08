@@ -5,6 +5,7 @@ import { toast } from 'react-toastify';
 import ComponentExcelUpload from '../../components/batch_register/ComponentExcelUpload';
 import ComponentReview from '../../components/batch_register/ComponentReview';
 import ComponentSelectedProduct from '../../components/batch_register/ComponentSelectedProduct';
+import type { CustomerTransaction } from '../../@type/batch';
 import { fetchData } from '../../services/$service';
 import { ROUTE_API, ROUTE_PATH } from '../../utils/route-util';
 
@@ -22,7 +23,7 @@ const BatchRegister = () => {
   const [step, setStep] = useState(STEP.SELECTE_PRODUCT);
   const [arrProduct, setArrProduct] = useState([]);
   const [arrProject, setArrProject] = useState([]);
-  const [customerList, setCustomerList] = useState([]);
+  const [customerList, setCustomerList] = useState<CustomerTransaction[]>([]);
   const [productCode, setProductCode] = useState('');
 
   const getList = () => {
@@ -43,7 +44,7 @@ const BatchRegister = () => {
     });
   };
 
-  const policyList = (value) => {
+  const policyList = (value: string) => {
     fetchData(ROUTE_API.operationCustomerProduct + '/' + value, {}, 'GET').then(
       (res) => {
         switch (res.status) {
@@ -103,7 +104,7 @@ const BatchRegister = () => {
     }
   };
 
-  const handleProductClick = (value) => {
+  const handleProductClick = (value: string) => {
     policyList(value);
     setProductCode(value);
     setStep(STEP.SUBMITTED);
@@ -113,7 +114,7 @@ const BatchRegister = () => {
     setStep(STEP.SELECTE_PRODUCT);
   };
 
-  const handleReviewStep = (value) => {
+  const handleReviewStep = (value: CustomerTransaction[]) => {
     setStep(STEP.REVIEW);
     setCustomerList(value);
   };

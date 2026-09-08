@@ -6,8 +6,8 @@ import ModuleContextProvider from './module/ModuleContext';
 
 const AuthContext = createContext({
   loading: true,
-  hasPermissionProccessTransaction: () => {},
-  hasPermissionAccessTransaction: () => {},
+  hasPermissionProccessTransaction: (execution, condition) => false,
+  hasPermissionAccessTransaction: (execution, condition) => false,
   clearUser: () => {},
   fetchUser: () => {},
   user: null,

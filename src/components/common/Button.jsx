@@ -2,11 +2,11 @@ import clsx from 'clsx';
 
 const Button = ({
   variant = 'primary',
-  size,
+  size = undefined,
   children,
-  loading,
+  loading = false,
   loadingText = 'Loading...',
-  className,
+  className = '',
   ...otherProps
 }) => {
   return (

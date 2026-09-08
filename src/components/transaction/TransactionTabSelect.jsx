@@ -11,9 +11,9 @@ const TransactionTabSelect = ({
   isSelectedAll,
   onSelectAll,
   onClearSelect,
-  disableSelectAll,
+  disableSelectAll = false,
   onClick,
-  title,
+  title = undefined,
 }) => {
   return totalSelected > 0 ? (
     <div className="btn-list align-items-center">

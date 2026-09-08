@@ -1,4 +1,12 @@
-export const actions = {
+export interface ActionItem {
+  action: string;
+  status: string;
+  label: string;
+  confirm?: boolean;
+  reject?: boolean;
+}
+
+export const actions: Record<string, ActionItem[]> = {
   Draft: [
     {
       action: 'submitted',

@@ -1,6 +1,6 @@
 import clsx from 'clsx';
 
-const Checkbox = ({ checked, onChange, disableGutter, disabled }) => {
+const Checkbox = ({ checked, onChange, disableGutter, disabled = false }) => {
   return (
     <input
       checked={checked}

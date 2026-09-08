@@ -1,6 +1,6 @@
 import { LabelValueItem } from './LabelValueItem';
 
-const LabelValueList = ({ list, valueColorClassName, columnClassName }) => {
+const LabelValueList = ({ list, valueColorClassName = '', columnClassName }) => {
   return (
     <div className="row">
       {list?.map((item, index) => (

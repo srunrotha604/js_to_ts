@@ -1,22 +1,30 @@
+import type { Dispatch, ForwardRefExoticComponent, SetStateAction } from 'react';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useLocation, useNavigate, useParams } from 'react-router';
 import { useSearchParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import ApproveRejectConfirmationModal from '../../components/common/ActionConfirmationModal';
-import Button from '../../components/common/Button';
-import Checkbox from '../../components/common/Checkbox';
-import LabelValueList from '../../components/common/LabelValueList';
-import { useModal } from '../../components/common/modal';
+import axios from 'axios';
+import type {
+  BatchDetail,
+  CustomerListResponse,
+  CustomerTransaction,
+  TransactionTotalCounts,
+} from '../../@type/batch';
+import ApproveRejectConfirmationModal from '../../components/common/ActionConfirmationModal.jsx';
+import Button from '../../components/common/Button.jsx';
+import Checkbox from '../../components/common/Checkbox.jsx';
+import LabelValueList from '../../components/common/LabelValueList.jsx';
+import { useModal } from '../../components/common/modal/index.jsx';
 import Spinner, { useSpinner } from '../../components/common/Spinner.jsx';
-import TransactionNumber from '../../components/common/TransactionNumber';
-import TransactionBatchProccessModal from '../../components/transaction/TransactionBatchProccessModal';
+import TransactionNumber from '../../components/common/TransactionNumber.jsx';
+import TransactionBatchProccessModalRaw from '../../components/transaction/TransactionBatchProccessModal.jsx';
 import TransactionNumberTableItem from '../../components/transaction/TransactionNumberTableItem.jsx';
-import TransactionTabList from '../../components/transaction/TransactionTabList';
+import TransactionTabListRaw from '../../components/transaction/TransactionTabList.jsx';
 import TransactionTabSelect, {
   useTransactionTabSelect,
-} from '../../components/transaction/TransactionTabSelect';
-import { useAuth } from '../../context/AuthContext';
-import useLoading from '../../hooks/useLoading';
+} from '../../components/transaction/TransactionTabSelect.jsx';
+import { useAuth } from '../../context/AuthContext.jsx';
+import useLoading from '../../hooks/useLoading.jsx';
 import useMessage from '../../hooks/useMessage.jsx';
 import { fetchDataAsync } from '../../services/$service';
 import { actions } from '../../utils/actions';
@@ -27,6 +35,14 @@ import { pluralize } from '../../utils/pluralize';
 import { ROUTE_API } from '../../utils/route-util';
 import { STATUS } from '../../utils/status';
 
+// TransactionTabList / TransactionBatchProccessModal are large, widely-shared
+// forwardRef components still in plain JS; cast locally so their prop types
+// don't collapse to an empty object here without touching their shared source.
+const TransactionTabList =
+  TransactionTabListRaw as ForwardRefExoticComponent<any>;
+const TransactionBatchProccessModal =
+  TransactionBatchProccessModalRaw as ForwardRefExoticComponent<any>;
+
 const BatchDetailPage = () => {
   const location = useLocation();
   const [searchParams] = useSearchParams();
@@ -34,7 +50,7 @@ const BatchDetailPage = () => {
   const { hasPermissionAccessTransaction, hasPermissionProccessTransaction } =
     useAuth();
   const navigate = useNavigate();
-  const tabListRef = useRef(null);
+  const tabListRef = useRef<{ getList: () => void } | null>(null);
 
   const {
     handleSelectTransaction,
@@ -49,7 +65,25 @@ const BatchDetailPage = () => {
     setSelectedAll,
     selectedCustomerList,
     setSelectedCustomerList,
-  } = useTransactionTabSelect();
+  } = useTransactionTabSelect() as unknown as {
+    handleSelectTransaction: (transaction: CustomerTransaction) => void;
+    handleRemoveCustomerFromList: (customer: CustomerTransaction) => void;
+    handleSelectAllInCurrentList: (
+      checked: boolean,
+      transactionList: CustomerTransaction[]
+    ) => void;
+    resetSelectedTransaction: () => void;
+    isSelectedAllInCurrentList: (
+      transactionList: CustomerTransaction[]
+    ) => boolean;
+    isSelectedItem: (transaction: CustomerTransaction) => boolean;
+    selectedTransaction: string[];
+    resetSelected: () => void;
+    selectedAll: boolean;
+    setSelectedAll: Dispatch<SetStateAction<boolean>>;
+    selectedCustomerList: CustomerTransaction[];
+    setSelectedCustomerList: Dispatch<SetStateAction<CustomerTransaction[]>>;
+  };
 
   const { closeModal, openModal, modalRef, open } = useModal();
   const {
@@ -57,10 +91,12 @@ const BatchDetailPage = () => {
     openModal: openActionModal,
     modalRef: actionModalRef,
   } = useModal();
-  const [isApprove, setIsApprove] = useState(null);
-  const [processStatus, setProccessStatus] = useState(null);
-  const [batchDetail, setBatchDetail] = useState(null);
-  const [currentTabStatus, setCurrentTabStatus] = useState(null);
+  const [isApprove, setIsApprove] = useState<boolean | null>(null);
+  const [processStatus, setProccessStatus] = useState<string | null>(null);
+  const [batchDetail, setBatchDetail] = useState<BatchDetail | null>(null);
+  const [currentTabStatus, setCurrentTabStatus] = useState<string | null>(
+    null
+  );
 
   const { openSpinner, closeSpinner, spinnerState } = useSpinner();
 
@@ -69,37 +105,37 @@ const BatchDetailPage = () => {
       {
         label: STATUS.Draft,
         status: STATUS.Draft,
-        getTotal: (total) => total?.draft,
+        getTotal: (total: TransactionTotalCounts) => total?.draft,
         hidden: !hasPermissionAccessTransaction('draft'),
       },
       {
         label: STATUS.Submitted,
         status: STATUS.Submitted,
-        getTotal: (total) => total?.submitted,
+        getTotal: (total: TransactionTotalCounts) => total?.submitted,
         hidden: !hasPermissionAccessTransaction('submitted'),
       },
       {
         label: STATUS.Approved,
         status: STATUS.Approved,
-        getTotal: (total) => total?.approved,
+        getTotal: (total: TransactionTotalCounts) => total?.approved,
         hidden: !hasPermissionAccessTransaction('approved'),
       },
       {
         label: STATUS.BM_Rejected,
         status: STATUS.BM_Rejected,
-        getTotal: (total) => total?.bmReject,
+        getTotal: (total: TransactionTotalCounts) => total?.bmReject,
         hidden: !hasPermissionAccessTransaction('bmRejected'),
       },
       {
         label: STATUS.Confirmed,
         status: STATUS.Confirmed,
-        getTotal: (total) => total?.confirmed,
+        getTotal: (total: TransactionTotalCounts) => total?.confirmed,
         hidden: !hasPermissionAccessTransaction('confirmed'),
       },
       {
         label: STATUS.DRI_Rejected,
         status: STATUS.DRI_Rejected,
-        getTotal: (total) => total?.driReject,
+        getTotal: (total: TransactionTotalCounts) => total?.driReject,
         hidden: !hasPermissionAccessTransaction('driRejected'),
       },
     ].filter((item) => !item.hidden);
@@ -109,7 +145,7 @@ const BatchDetailPage = () => {
     try {
       let response;
       if (selectedAll) {
-        response = await fetchDataAsync(
+        response = await fetchDataAsync<CustomerListResponse>(
           `${ROUTE_API.operationCustomerBatch}?batchNumber=${key}`,
           {
             params: {
@@ -119,14 +155,17 @@ const BatchDetailPage = () => {
           }
         );
       } else {
-        response = await fetchDataAsync('/operation-customer', {
-          params: {
-            transaction: selectedTransaction.join(','),
-            pageSize: selectedTransaction.length,
-          },
-        });
+        response = await fetchDataAsync<CustomerListResponse>(
+          '/operation-customer',
+          {
+            params: {
+              transaction: selectedTransaction.join(','),
+              pageSize: selectedTransaction.length,
+            },
+          }
+        );
       }
-      setSelectedCustomerList(response?.data?.list);
+      setSelectedCustomerList(response?.data?.list ?? []);
       return response?.data?.list;
     } catch (error) {
       console.log(error);
@@ -167,10 +206,15 @@ const BatchDetailPage = () => {
     navigate(-1);
   };
 
-  const handleProcess = async (rejectRemark) => {
+  const handleProcess = async (rejectRemark?: string) => {
     try {
       openSpinner();
-      const summaryDate = {
+      const summaryDate: {
+        status: string | null;
+        batchNumber?: string;
+        transaction?: string[];
+        remark?: string;
+      } = {
         status: processStatus,
       };
 
@@ -197,10 +241,12 @@ const BatchDetailPage = () => {
       );
       closeActionModal();
       closeModal();
-      tabListRef.current.getList();
+      tabListRef.current?.getList();
       resetSelected();
     } catch (error) {
-      toast.error(error?.response?.data?.message);
+      toast.error(
+        axios.isAxiosError(error) ? error.response?.data?.message : undefined
+      );
     } finally {
       delay(closeSpinner);
     }
@@ -219,7 +265,7 @@ const BatchDetailPage = () => {
   }, []);
 
   const [processLoading, startProcessLoading, stopProcessLoading] =
-    useLoading();
+    useLoading() as [boolean, () => void, () => void, unknown];
 
   const { showErrorResponseMessage } = useMessage();
   const handleProcessSelected = async () => {
@@ -227,7 +273,7 @@ const BatchDetailPage = () => {
       openSpinner();
       startProcessLoading();
       const customer = await getSelectedCustomerList();
-      if (customer?.length <= 0) return;
+      if ((customer?.length ?? 0) <= 0) return;
       delay([closeSpinner, openModal]);
     } catch (error) {
       showErrorResponseMessage(error);
@@ -237,11 +283,12 @@ const BatchDetailPage = () => {
     }
   };
 
-  const hasAction = !actions[currentTabStatus]
-    ? false
-    : actions[currentTabStatus].some((action) =>
-        hasPermissionProccessTransaction(action.action)
-      );
+  const hasAction =
+    currentTabStatus && actions[currentTabStatus]
+      ? actions[currentTabStatus].some((action) =>
+          hasPermissionProccessTransaction(action.action)
+        )
+      : false;
 
   return (
     <div className="page-wrapper container-xl batch-detail-container">
@@ -288,7 +335,13 @@ const BatchDetailPage = () => {
             ref={tabListRef}
             url={`${ROUTE_API.operationCustomerBatch}/`}
             extraParams={`batchNumber=${key}`}
-            onFetchSuccess={({ data, tabStatus }) => {
+            onFetchSuccess={({
+              data,
+              tabStatus,
+            }: {
+              data: BatchDetail;
+              tabStatus: string;
+            }) => {
               setBatchDetail(data);
               setCurrentTabStatus(tabStatus);
               delay(closeSpinner);
@@ -319,7 +372,7 @@ const BatchDetailPage = () => {
                 </div>
               );
             }}
-            renderTableHead={(transactionList) => {
+            renderTableHead={(transactionList: CustomerTransaction[]) => {
               return (
                 <>
                   {hasAction && (
@@ -331,7 +384,7 @@ const BatchDetailPage = () => {
                         <Checkbox
                           disableGutter
                           checked={isSelectedAllInCurrentList(transactionList)}
-                          onChange={(checked) => {
+                          onChange={(checked: boolean) => {
                             handleSelectAllInCurrentList(
                               checked,
                               transactionList
@@ -351,7 +404,13 @@ const BatchDetailPage = () => {
                 </>
               );
             }}
-            renderTableBody={({ item, handleShowTransactionDetail }) => {
+            renderTableBody={({
+              item,
+              handleShowTransactionDetail,
+            }: {
+              item: CustomerTransaction;
+              handleShowTransactionDetail: (item: CustomerTransaction) => void;
+            }) => {
               return (
                 <>
                   {hasAction && (
@@ -444,7 +503,7 @@ const BatchDetailPage = () => {
                       variant={action.reject ? 'danger' : 'primary'}
                       key={action.status}
                       onClick={() => {
-                        setIsApprove(action.confirm);
+                        setIsApprove(action.confirm ?? false);
                         setProccessStatus(action.status);
                         openActionModal();
                       }}
