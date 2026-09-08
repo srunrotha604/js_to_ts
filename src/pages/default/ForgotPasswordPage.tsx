@@ -3,16 +3,16 @@ import { AiOutlineCheckCircle } from 'react-icons/ai';
 import { PatternFormat } from 'react-number-format';
 import { Link, redirect } from 'react-router-dom';
 import { toast } from 'react-toastify';
+import type { ForgotPasswordResponse } from '../../@type/auth';
 import { fetchData } from '../../services/$service';
 import { ROUTE_API, ROUTE_PATH } from '../../utils/route-util';
 
 const ForgotPasswordPage = () => {
   document.title = 'E-CHANNEL PORTAL | Login';
-
   const [showSendEmail, setShowSendEmail] = useState(true);
   const [showSMSResend, setShowSMSResend] = useState(false);
   const [email, setEmail] = useState('');
-  const [addressMessage, setAddressMessage] = useState();
+  const [addressMessage, setAddressMessage] = useState('');
   const [success, setSuccess] = useState(false);
   const [confirmCode, setConfirmCode] = useState('');
   const [confirmKey, setConfirmKey] = useState('');
@@ -28,7 +28,9 @@ const ForgotPasswordPage = () => {
   const [phoneNumber, setPhoneNumber] = useState('');
   const [viaSMSCode, setViaSMSCode] = useState('');
 
-  const funcButtonHandleClickExecute = (e) => {
+  const funcButtonHandleClickExecute = (
+    e: React.MouseEvent<HTMLButtonElement>
+  ) => {
     let messages = [];
     if (email === '') {
       messages.push(true);
@@ -38,29 +40,33 @@ const ForgotPasswordPage = () => {
       let data = {
         email: email,
       };
-      fetchData(ROUTE_API.loginForgotPassword, data, 'POST').then((res) => {
-        switch (res.status) {
+      fetchData<ForgotPasswordResponse>(
+        ROUTE_API.loginForgotPassword,
+        data,
+        'POST'
+      ).then((res) => {
+        switch (res?.status) {
           case 200:
             setShowSendEmail(false);
             setSuccess(false);
             setConfirmCode('');
-            setConfirmKey(res?.data?.keyCode);
+            setConfirmKey(res?.data?.keyCode ?? '');
             setConfirmCodeMessage(
               'Enter the code we sent to your email address at'
             );
             setAddressMessage(email);
-            setPhoneNumber(res?.data?.phoneNumber);
-            setViaSMSCode(res?.data?.viaSMSCode);
+            setPhoneNumber(res?.data?.phoneNumber ?? '');
+            setViaSMSCode(res?.data?.viaSMSCode ?? '');
             setShowSMSResend(false);
             setInvalidFeedBack('');
             break;
           case 400:
             setShowSendEmail(true);
             setSuccess(false);
-            setInvalidFeedBack(res?.data?.message);
+            setInvalidFeedBack(res?.data?.message ?? '');
             break;
           case 403:
-            toast.error(res?.data);
+            toast.error(String(res?.data));
             break;
           default:
             redirect('/404');
@@ -70,7 +76,9 @@ const ForgotPasswordPage = () => {
     e.preventDefault();
   };
 
-  const funcConfirmCodeHandleClickExecute = (e) => {
+  const funcConfirmCodeHandleClickExecute = (
+    e: React.MouseEvent<HTMLButtonElement>
+  ) => {
     let messages = [];
     if (confirmCode === '' || confirmCode === null) {
       messages.push(true);
@@ -81,18 +89,22 @@ const ForgotPasswordPage = () => {
         keyCode: confirmKey,
         otpCode: confirmCode,
       };
-      fetchData(ROUTE_API.loginConfirmCode, data, 'POST').then((res) => {
-        switch (res.status) {
+      fetchData<ForgotPasswordResponse>(
+        ROUTE_API.loginConfirmCode,
+        data,
+        'POST'
+      ).then((res) => {
+        switch (res?.status) {
           case 200:
             setSuccess(true);
-            setConfirmChangeKey(res?.data?.keyCode);
+            setConfirmChangeKey(res?.data?.keyCode ?? '');
             break;
           case 400:
             setSuccess(false);
-            setInvalidFeedBack(res?.data?.message);
+            setInvalidFeedBack(res?.data?.message ?? '');
             break;
           case 403:
-            toast.error(res?.data);
+            toast.error(String(res?.data));
             break;
           default:
             redirect('/404');
@@ -110,30 +122,36 @@ const ForgotPasswordPage = () => {
       viaSMSCode: viaSMSCode,
     };
     console.log(data);
-    fetchData(ROUTE_API.loginViaSms, data, 'POST').then((res) => {
-      switch (res.status) {
-        case 200:
-          setConfirmCodeMessage('Enter the code we sent to your phone number');
-          setAddressMessage(phoneNumber);
-          setShowSMSResend(true);
-          {
-            res?.data?.attempt == 3 ? setPhoneNumber('') : '';
-          }
-          break;
-        case 400:
-          setSuccess(false);
-          setInvalidFeedBack(res?.data?.message);
-          break;
-        case 403:
-          toast.error(res?.data);
-          break;
-        default:
-          redirect('/404');
+    fetchData<ForgotPasswordResponse>(ROUTE_API.loginViaSms, data, 'POST').then(
+      (res) => {
+        switch (res?.status) {
+          case 200:
+            setConfirmCodeMessage(
+              'Enter the code we sent to your phone number'
+            );
+            setAddressMessage(phoneNumber);
+            setShowSMSResend(true);
+            {
+              res?.data?.attempt == 3 ? setPhoneNumber('') : '';
+            }
+            break;
+          case 400:
+            setSuccess(false);
+            setInvalidFeedBack(res?.data?.message ?? '');
+            break;
+          case 403:
+            toast.error(String(res?.data));
+            break;
+          default:
+            redirect('/404');
+        }
       }
-    });
+    );
   };
 
-  const funcChangePasswordHandleClickExecute = (e) => {
+  const funcChangePasswordHandleClickExecute = (
+    e: React.MouseEvent<HTMLButtonElement>
+  ) => {
     let messages = [];
     if (email === '' || email === null) {
       messages.push(true);
@@ -168,43 +186,51 @@ const ForgotPasswordPage = () => {
         newPassword: newPassword,
         confirmPassword: confirmPassword,
       };
-      fetchData(ROUTE_API.loginConfirmChangePassword, data, 'POST').then(
-        (res) => {
-          switch (res.status) {
-            case 200:
-              setResetSuccess(true);
-              break;
-            case 400:
-              // setInvalidFeedBack(res?.data?.message);
-              toast.error(res?.data?.message);
-              break;
-            case 403:
-              toast.error(res?.data);
-              break;
-            default:
-              redirect('/404');
-          }
+      fetchData<ForgotPasswordResponse>(
+        ROUTE_API.loginConfirmChangePassword,
+        data,
+        'POST'
+      ).then((res) => {
+        switch (res?.status) {
+          case 200:
+            setResetSuccess(true);
+            break;
+          case 400:
+            // setInvalidFeedBack(res?.data?.message);
+            toast.error(res?.data?.message ?? '');
+            break;
+          case 403:
+            toast.error(String(res?.data));
+            break;
+          default:
+            redirect('/404');
         }
-      );
+      });
     }
     e.preventDefault();
   };
 
-  const emailHandleChange = (event) => {
+  const emailHandleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setEmail(event.target.value);
     setInvalidFeedBack('');
   };
 
-  const confirmCodeHandleChange = (event) => {
+  const confirmCodeHandleChange = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
     setConfirmCode(event.target.value);
     setInvalidFeedBack('');
   };
 
-  const newPasswordHandleChange = (event) => {
+  const newPasswordHandleChange = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
     setNewPassword(event.target.value);
     setInvalidFeedBack('');
   };
-  const ConfirmPasswordHandleChange = (event) => {
+  const ConfirmPasswordHandleChange = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
     setConfirmPassword(event.target.value);
     setInvalidFeedBack('');
   };
@@ -467,7 +493,6 @@ const ForgotPasswordPage = () => {
                         <div className="mb-2 mt-2">
                           <label className="form-label">Confirm code</label>
                           <PatternFormat
-                            cursor="pointer"
                             type="text"
                             className="form-control text-center"
                             placeholder="## ## ##"
