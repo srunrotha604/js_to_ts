@@ -2,6 +2,12 @@ import { useEffect, useState } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import { useNavigate, useParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
+import type {
+  ProductListResponse,
+  ProductOption,
+  ProjectCategoryResponse,
+  ProjectPolicyOption,
+} from '../../@type/batch';
 import CustomerCreate from '../../components/customer/create/CustomerCreate';
 import CustomerCreateReview from '../../components/customer/create/CustomerCreateReview';
 import CostomerTransationSubmit from '../../components/customer/create/CustomerTransationSubmit';
@@ -19,32 +25,34 @@ const CustomerCreatePage = () => {
   const params = useParams();
   const navigate = useNavigate();
 
-  const [arrProduct, setArrProduct] = useState([]);
-  const [arrProject, setArrProject] = useState([]);
-  const [transactionSubmitted, setTransationSubmitted] = useState({});
+  const [arrProduct, setArrProduct] = useState<ProductOption | undefined>(
+    undefined
+  );
+  const [arrProject, setArrProject] = useState<ProjectPolicyOption[]>([]);
+  const [transactionSubmitted, setTransationSubmitted] = useState<unknown>({});
   const [step, setStep] = useState(STEP.Create);
   const methods = useForm();
 
   const getList = () => {
-    fetchData(
+    fetchData<ProductListResponse & ProjectCategoryResponse>(
       ROUTE_API.operationCustomerProduct + '/' + params.key,
       {},
       'GET'
     ).then((res) => {
-      switch (res.status) {
+      switch (res?.status) {
         case 200:
           setArrProduct(
             res?.data?.list?.find(
               (item) => item?.productsequenceCode === params.key
             )
           );
-          setArrProject(res?.data?.category);
+          setArrProject(res?.data?.category ?? []);
           break;
         case 400:
-          toast.error(res?.data?.message);
+          toast.error(res?.data?.message ?? '');
           break;
         case 403:
-          toast.error(res?.data);
+          toast.error(String(res?.data));
           break;
         default:
           navigate(ROUTE_PATH.notFound);
@@ -90,7 +98,10 @@ const CustomerCreatePage = () => {
     setStep(STEP.Review);
   };
 
-  const handleSubmitted = (responseData, submitData) => {
+  const handleSubmitted = (
+    responseData: unknown,
+    submitData: { status?: string }
+  ) => {
     if (submitData?.status === 'Draft') {
       toast.success('Save draft successfully');
       navigate(ROUTE_PATH.dashboard);

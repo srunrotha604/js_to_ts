@@ -1,26 +1,48 @@
+import type {
+  ComponentType,
+  Dispatch,
+  ForwardRefExoticComponent,
+  SetStateAction,
+} from 'react';
 import { useEffect, useRef, useState } from 'react';
 import { useLocation, useNavigate, useParams } from 'react-router';
 import { useSearchParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
+import axios from 'axios';
+import type {
+  CustomerListResponse,
+  CustomerTransaction,
+} from '../../@type/batch';
 import ApproveRejectConfirmationModal from '../../components/common/ActionConfirmationModal';
 import Button from '../../components/common/Button';
 import Checkbox from '../../components/common/Checkbox';
 import { useModal } from '../../components/common/modal';
 import Spinner, { useSpinner } from '../../components/common/Spinner.jsx';
-import TransactionBatchProccessModal from '../../components/transaction/TransactionBatchProccessModal';
+import TransactionBatchProccessModalRaw from '../../components/transaction/TransactionBatchProccessModal';
 import TransactionNumberTableItem from '../../components/transaction/TransactionNumberTableItem.jsx';
-import TransactionTabList from '../../components/transaction/TransactionTabList';
-import TransactionTabSelect, {
+import TransactionTabListRaw from '../../components/transaction/TransactionTabList';
+import TransactionTabSelectRaw, {
   useTransactionTabSelect,
 } from '../../components/transaction/TransactionTabSelect';
 import { useAuth } from '../../context/AuthContext';
 import useLoading from '../../hooks/useLoading';
 import useMessage from '../../hooks/useMessage.jsx';
 import { fetchDataAsync } from '../../services/$service';
+import type { ActionItem } from '../../utils/actions';
 import { delay } from '../../utils/delay';
 import { pluralize } from '../../utils/pluralize';
 import { ROUTE_PATH } from '../../utils/route-util';
 import { STATUS } from '../../utils/status';
+
+// TransactionTabList / TransactionBatchProccessModal / TransactionTabSelect are
+// large, widely-shared components still in plain JS; cast locally so their
+// prop types don't collapse to an empty object here without touching their
+// shared source (same pattern used in BatchDetailPage.tsx / HomePage.tsx).
+const TransactionTabList =
+  TransactionTabListRaw as ForwardRefExoticComponent<any>;
+const TransactionBatchProccessModal =
+  TransactionBatchProccessModalRaw as ForwardRefExoticComponent<any>;
+const TransactionTabSelect = TransactionTabSelectRaw as ComponentType<any>;
 
 const CustomerDeletePage = () => {
   const location = useLocation();
@@ -28,7 +50,7 @@ const CustomerDeletePage = () => {
   const { key } = useParams();
   const { hasPermissionProccessTransaction } = useAuth();
   const navigate = useNavigate();
-  const tabListRef = useRef(null);
+  const tabListRef = useRef<{ getList: () => void } | null>(null);
 
   const {
     handleSelectTransaction,
@@ -43,7 +65,25 @@ const CustomerDeletePage = () => {
     setSelectedAll,
     selectedCustomerList,
     setSelectedCustomerList,
-  } = useTransactionTabSelect();
+  } = useTransactionTabSelect() as unknown as {
+    handleSelectTransaction: (transaction: CustomerTransaction) => void;
+    handleRemoveCustomerFromList: (customer: CustomerTransaction) => void;
+    handleSelectAllInCurrentList: (
+      checked: boolean,
+      transactionList: CustomerTransaction[]
+    ) => void;
+    resetSelectedTransaction: () => void;
+    isSelectedAllInCurrentList: (
+      transactionList: CustomerTransaction[]
+    ) => boolean;
+    isSelectedItem: (transaction: CustomerTransaction) => boolean;
+    selectedTransaction: string[];
+    resetSelected: () => void;
+    selectedAll: boolean;
+    setSelectedAll: Dispatch<SetStateAction<boolean>>;
+    selectedCustomerList: CustomerTransaction[];
+    setSelectedCustomerList: Dispatch<SetStateAction<CustomerTransaction[]>>;
+  };
 
   const { closeModal, openModal, modalRef, open } = useModal();
   const {
@@ -51,30 +91,38 @@ const CustomerDeletePage = () => {
     openModal: openActionModal,
     modalRef: actionModalRef,
   } = useModal();
-  const [isApprove, setIsApprove] = useState(null);
-  const [processStatus, setProccessStatus] = useState(null);
-  const [totalDocs, setTotalDocs] = useState(null);
-  const [currentTabStatus, setCurrentTabStatus] = useState(null);
+  const [isApprove, setIsApprove] = useState<boolean | null>(null);
+  const [processStatus, setProccessStatus] = useState<string | null>(null);
+  const [totalDocs, setTotalDocs] = useState<number | null>(null);
+  const [currentTabStatus, setCurrentTabStatus] = useState<string | null>(
+    null
+  );
 
   const getSelectedCustomerList = async () => {
     try {
       let response;
       if (selectedAll) {
-        response = await fetchDataAsync(`/operation-customer`, {
-          params: {
-            status: currentTabStatus,
-            pageSize: totalDocs,
-          },
-        });
+        response = await fetchDataAsync<CustomerListResponse>(
+          `/operation-customer`,
+          {
+            params: {
+              status: currentTabStatus,
+              pageSize: totalDocs,
+            },
+          }
+        );
       } else {
-        response = await fetchDataAsync('/operation-customer', {
-          params: {
-            transaction: selectedTransaction.join(','),
-            pageSize: selectedTransaction.length,
-          },
-        });
+        response = await fetchDataAsync<CustomerListResponse>(
+          '/operation-customer',
+          {
+            params: {
+              transaction: selectedTransaction.join(','),
+              pageSize: selectedTransaction.length,
+            },
+          }
+        );
       }
-      setSelectedCustomerList(response?.data?.list);
+      setSelectedCustomerList(response?.data?.list ?? []);
     } catch (error) {
       console.log(error);
     }
@@ -84,11 +132,16 @@ const CustomerDeletePage = () => {
     navigate(ROUTE_PATH.dashboard);
   };
 
-  const handleProcess = async (rejectRemark) => {
+  const handleProcess = async (rejectRemark?: string) => {
     try {
       closeActionModal();
       openSpinner({ title: 'Processing...' });
-      const summaryDate = {
+      const summaryDate: {
+        status: string | null;
+        batchNumber?: string;
+        transaction?: string[];
+        remark?: string;
+      } = {
         status: processStatus,
       };
 
@@ -114,10 +167,12 @@ const CustomerDeletePage = () => {
         )} has been ${processStatus}!`
       );
       closeModal();
-      tabListRef.current.getList();
+      tabListRef.current?.getList();
       resetSelected();
     } catch (error) {
-      toast.error(error?.response?.data?.message);
+      toast.error(
+        axios.isAxiosError(error) ? error.response?.data?.message : undefined
+      );
     } finally {
       delay(closeSpinner);
     }
@@ -165,8 +220,14 @@ const CustomerDeletePage = () => {
             title={<h2 className="mb-0">Customer List</h2>}
             onRowClick={handleSelectTransaction}
             ref={tabListRef}
-            onFetchSuccess={({ data, tabStatus }) => {
-              setTotalDocs(data?.totalDocs);
+            onFetchSuccess={({
+              data,
+              tabStatus,
+            }: {
+              data?: { totalDocs?: number };
+              tabStatus: string;
+            }) => {
+              setTotalDocs(data?.totalDocs ?? null);
               setCurrentTabStatus(tabStatus);
             }}
             extraParams="type=Single,Batch"
@@ -191,7 +252,7 @@ const CustomerDeletePage = () => {
                 </div>
               );
             }}
-            renderTableHead={(transactionList) => {
+            renderTableHead={(transactionList: CustomerTransaction[]) => {
               return (
                 <>
                   <th className="p-0">
@@ -202,7 +263,7 @@ const CustomerDeletePage = () => {
                       <Checkbox
                         disableGutter
                         checked={isSelectedAllInCurrentList(transactionList)}
-                        onChange={(checked) => {
+                        onChange={(checked: boolean) => {
                           handleSelectAllInCurrentList(
                             checked,
                             transactionList
@@ -220,7 +281,13 @@ const CustomerDeletePage = () => {
                 </>
               );
             }}
-            renderTableBody={({ item, handleShowTransactionDetail }) => {
+            renderTableBody={({
+              item,
+              handleShowTransactionDetail,
+            }: {
+              item: CustomerTransaction;
+              handleShowTransactionDetail: (item: CustomerTransaction) => void;
+            }) => {
               return (
                 <>
                   <td
@@ -310,7 +377,7 @@ const CustomerDeletePage = () => {
                       variant={action.reject ? 'danger' : 'primary'}
                       key={action.status}
                       onClick={() => {
-                        setIsApprove(action.confirm);
+                        setIsApprove(action.confirm ?? false);
                         setProccessStatus(action.status);
                         openActionModal();
                       }}
@@ -328,18 +395,24 @@ const CustomerDeletePage = () => {
   );
 };
 
-const actions = {
+const actions: Record<string, ActionItem[]> = {
   Confirmed: [
     { action: 'submitted', status: 'Submitted', label: 'Delete', reject: true },
   ],
 };
 
-const getConfirmedMessageText = ({ status, selectedCustomerList }) => {
-  const tempStatus = {
+const getConfirmedMessageText = ({
+  status,
+  selectedCustomerList,
+}: {
+  status: string | null;
+  selectedCustomerList: CustomerTransaction[];
+}) => {
+  const tempStatus: Record<string, string> = {
     Submitted: 'delete',
   };
 
-  const proccessStatus = tempStatus?.[status] ?? 'delete';
+  const proccessStatus = (status && tempStatus[status]) ?? 'delete';
 
   return (
     <p className="fs-4">

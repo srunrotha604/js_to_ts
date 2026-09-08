@@ -1,6 +1,9 @@
+import type { ForwardRefExoticComponent } from 'react';
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
+import axios from 'axios';
+import type { CustomerListResponse, CustomerTransaction } from '../../@type/batch';
 import { useModal } from '../../components/common/modal';
 import { useAuth } from '../../context/AuthContext';
 import { fetchDataAsync } from '../../services/$service';
@@ -13,20 +16,27 @@ import TransactionDetailCard, {
 } from '../../components/transaction/TransactionDetailCard';
 import {
   ShowLogsButton,
-  TransactionLogsModal,
+  TransactionLogsModal as TransactionLogsModalRaw,
 } from '../../components/transaction/TransactionTabList';
 import { actions } from '../../utils/actions';
 import { delay } from '../../utils/delay';
 import { getConfirmedMessageText } from '../../utils/get-confirm-message-text';
 import { handleApiError } from '../../utils/handleApiError';
 
+// TransactionLogsModal is a large, widely-shared forwardRef component still in
+// plain JS; cast locally so its prop types don't collapse to an empty object
+// here without touching its shared source (same pattern used in
+// BatchDetailPage.tsx / HomePage.tsx).
+const TransactionLogsModal =
+  TransactionLogsModalRaw as ForwardRefExoticComponent<any>;
+
 const CustomerTransationDetailPage = () => {
   const params = useParams();
   const navigate = useNavigate();
   const { hasPermissionProccessTransaction } = useAuth();
 
-  const [detail, setDetail] = useState(null);
-  const [processStatus, setProccessStatus] = useState(null);
+  const [detail, setDetail] = useState<CustomerTransaction | null>(null);
+  const [processStatus, setProccessStatus] = useState<string | null>(null);
   const status = detail?.status;
 
   document.title = `E-CHANNEL PORTAL | Transaction ${status} Detail`;
@@ -35,12 +45,14 @@ const CustomerTransationDetailPage = () => {
   const getDetails = async () => {
     try {
       openSpinner();
-      const response = await fetchDataAsync(
+      const response = await fetchDataAsync<CustomerListResponse>(
         `/operation-customer?transactionCode=${params.key}`
       );
-      setDetail(response?.data?.list[0]);
+      setDetail(response?.data?.list?.[0] ?? null);
     } catch (error) {
-      toast.error(error?.response?.data?.message);
+      toast.error(
+        axios.isAxiosError(error) ? error.response?.data?.message : undefined
+      );
     } finally {
       delay(() => {
         closeSpinner();
@@ -52,10 +64,15 @@ const CustomerTransationDetailPage = () => {
     navigate(-1);
   };
 
-  const handleProcess = async (rejectRemark) => {
+  const handleProcess = async (rejectRemark?: string) => {
+    if (!detail) return;
     try {
       openSpinner({ title: 'Processing...' });
-      const summaryDate = {
+      const summaryDate: {
+        transaction: (string | undefined)[];
+        status: string | null;
+        remark?: string;
+      } = {
         transaction: [detail.transactionNumber],
         status: processStatus,
       };
@@ -82,7 +99,9 @@ const CustomerTransationDetailPage = () => {
     } catch (error) {
       delay(() => {
         closeSpinner();
-        handleApiError(error, processStatus);
+        if (axios.isAxiosError(error)) {
+          handleApiError(error, processStatus ?? undefined);
+        }
       });
     }
   };
@@ -92,7 +111,7 @@ const CustomerTransationDetailPage = () => {
   }, []);
 
   const { openModal, closeModal, modalRef } = useModal();
-  const [isApprove, setIsApprove] = useState(null);
+  const [isApprove, setIsApprove] = useState<boolean | null>(null);
   const {
     modalRef: transactionLogModalRef,
     open: transactionLogModalOpen,
@@ -124,7 +143,7 @@ const CustomerTransationDetailPage = () => {
                       variant={action.reject ? 'danger' : 'primary'}
                       key={action.status}
                       onClick={() => {
-                        setIsApprove(action.confirm);
+                        setIsApprove(action.confirm ?? false);
                         setProccessStatus(action.status);
                         openModal();
                       }}

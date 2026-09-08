@@ -39,11 +39,17 @@ export interface CustomerTransaction {
   nation?: string;
   nicPassport?: string;
   deleted?: boolean;
+  status?: string;
+  projectCode?: string;
+  productCode?: string;
+  inputter?: string;
+  inputBranch?: string;
 }
 
 export interface ProductOption {
   productsequenceCode?: string;
   productCode?: string;
+  productName?: string;
 }
 
 export interface ProductListResponse {

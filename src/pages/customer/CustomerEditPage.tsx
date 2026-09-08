@@ -2,6 +2,10 @@ import { useEffect, useState } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import { useNavigate, useParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
+import type {
+  ProjectCategoryResponse,
+  ProjectPolicyOption,
+} from '../../@type/batch';
 import Spinner, { useSpinner } from '../../components/common/Spinner.jsx';
 import CostomerTransationSubmit from '../../components/customer/create/CustomerTransationSubmit';
 import CustomerEdit from '../../components/customer/edit/CustomerEdit';
@@ -19,10 +23,10 @@ const CustomerEditPage = () => {
   document.title = 'E-CHANNEL PORTAL | customer edit';
   const params = useParams();
 
-  const [product, setProduct] = useState([]);
-  const [arrProject, setArrProject] = useState([]);
-  const [transactionSubmitted, setTransationSubmitted] = useState({});
-  const [step, setStep] = useState(STEP.Create);
+  const [product, setProduct] = useState('');
+  const [arrProject, setArrProject] = useState<ProjectPolicyOption[]>([]);
+  const [transactionSubmitted, setTransationSubmitted] = useState<unknown>({});
+  const [step, setStep] = useState(STEP.Edited);
   const methods = useForm();
   const navigate = useNavigate();
 
@@ -31,20 +35,20 @@ const CustomerEditPage = () => {
   // );
 
   const getList = () => {
-    fetchData(
+    fetchData<ProjectCategoryResponse>(
       ROUTE_API.operationCustomerProduct + '/' + params.productCode,
       {},
       'GET'
     ).then((res) => {
-      switch (res.status) {
+      switch (res?.status) {
         case 200:
-          setArrProject(res?.data?.category);
+          setArrProject(res?.data?.category ?? []);
           break;
         case 400:
-          toast.error(res?.data?.message);
+          toast.error(res?.data?.message ?? '');
           break;
         case 403:
-          toast.error(res?.data);
+          toast.error(String(res?.data));
           break;
         default:
           navigate(ROUTE_PATH.notFound);
@@ -92,7 +96,10 @@ const CustomerEditPage = () => {
     setStep(STEP.Review);
   };
 
-  const handleSubmitted = (responseData, submitData) => {
+  const handleSubmitted = (
+    responseData: unknown,
+    submitData: { status?: string }
+  ) => {
     if (submitData.status === 'Draft') {
       // toast.success('Save draft successfully');
       navigate(-1);
@@ -103,7 +110,7 @@ const CustomerEditPage = () => {
   };
 
   const handleBackStep = () => {
-    setStep(STEP.Create);
+    setStep(STEP.Edited);
   };
 
   return (
