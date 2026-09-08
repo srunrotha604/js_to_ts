@@ -1,4 +1,11 @@
-const TableCellStatus = (props) => {
+import type { MouseEventHandler } from 'react';
+
+interface TableCellStatusProps {
+  active?: boolean;
+  onClick?: MouseEventHandler<HTMLTableCellElement>;
+}
+
+const TableCellStatus = (props: TableCellStatusProps) => {
   const { active, onClick } = props;
   return (
     <td

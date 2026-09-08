@@ -10,8 +10,8 @@ import type {
 import TableCellAction from '../../../../components/form/TableCellAction';
 import TableCellStatusCodeHandle from '../../../../components/form/TableCellStatusCodeHandle';
 import Loading from '../../../../components/Loading';
-import TableBreakBar from '../../../../components/table/table_action/TableBreakBar.jsx';
-import TableCellTextDeleteConfirm from '../../../../components/table/table_action/TableCellTextDeleteConfirm.jsx';
+import TableBreakBar from '../../../../components/table/table_action/TableBreakBar';
+import TableCellTextDeleteConfirm from '../../../../components/table/table_action/TableCellTextDeleteConfirm';
 import { selectCustomStyles } from '../../../../components/transaction/TransactionTabList';
 import { useAuth } from '../../../../context/AuthContext';
 import { fetchData } from '../../../../services/$service';

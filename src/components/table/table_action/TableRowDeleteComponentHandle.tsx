@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react';
 import { toast } from 'react-toastify';
 import useMessage from '../../../hooks/useMessage';
 import { fetchDataAsync } from '../../../services/$service';
@@ -6,7 +7,15 @@ import CancelButton from '../../buttons/CancelButton';
 import SubmitButton from '../../buttons/SubmitButton';
 import Modal, { useModal } from '../../common/modal';
 
-const TableCellDeleteHandle = (props) => {
+interface TableRowDeleteComponentHandleProps {
+  success: () => void;
+  uuid?: string;
+  route: string;
+  title?: ReactNode;
+  message?: ReactNode;
+}
+
+const TableRowDeleteComponentHandle = (props: TableRowDeleteComponentHandleProps) => {
   const { success, uuid, route, title, message } = props;
   const { modalRef, openModal, closeModal } = useModal();
   const { showErrorResponseMessage } = useMessage();
@@ -21,8 +30,8 @@ const TableCellDeleteHandle = (props) => {
         method: 'delete',
       });
       toast.success('Success!');
-      closeModal();
       success();
+      closeModal();
     } catch (error) {
       showErrorResponseMessage(error);
       console.log(error);
@@ -32,10 +41,9 @@ const TableCellDeleteHandle = (props) => {
   return (
     <>
       <Modal ref={modalRef} title={title} size="sm">
-        <label className="mb-3">{message}</label>
+        <p className="text-start">{message}</p>
         <ButtonGroup>
           <SubmitButton tooltip="Submit" onClick={() => onSubmit()} />
-
           <CancelButton tooltip="Cancel" onClick={() => closeModal()} />
         </ButtonGroup>
       </Modal>
@@ -64,4 +72,4 @@ const TableCellDeleteHandle = (props) => {
   );
 };
 
-export default TableCellDeleteHandle;
+export default TableRowDeleteComponentHandle;

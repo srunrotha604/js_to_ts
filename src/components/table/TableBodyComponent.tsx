@@ -1,6 +1,20 @@
+import type { ReactNode } from 'react';
 import Loading from '../Loading';
 
-const TableBodyComponent = (props) => {
+interface TableHeaderItem {
+  name?: ReactNode;
+  width?: number;
+}
+
+interface TableBodyComponentProps {
+  children?: ReactNode;
+  headerItems?: TableHeaderItem[];
+  pagination?: ReactNode;
+  loading?: boolean;
+  search?: ReactNode;
+}
+
+const TableBodyComponent = (props: TableBodyComponentProps) => {
   const { children, headerItems, pagination, loading, search } = props;
   return (
     <div className="col-12">
@@ -14,7 +28,7 @@ const TableBodyComponent = (props) => {
         )}
 
         <div className="table-responsive">
-          <Loading loading={loading} />
+          <Loading value={loading} />
           {!loading ? (
             <>
               <table className="table table-hover card-table table-vcenter text-nowrap datatable">
@@ -23,7 +37,7 @@ const TableBodyComponent = (props) => {
                     {headerItems?.map((item, index) => (
                       <th
                         key={index}
-                        className={item?.width > 0 ? `tb-w-${item?.width}` : ''}
+                        className={item?.width && item.width > 0 ? `tb-w-${item?.width}` : ''}
                       >
                         {item?.name}
                       </th>

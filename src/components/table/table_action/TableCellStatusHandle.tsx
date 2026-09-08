@@ -2,7 +2,14 @@ import { toast } from 'react-toastify';
 import useMessage from '../../../hooks/useMessage';
 import { fetchDataAsync } from '../../../services/$service';
 
-const TableRowStatusComponentHandle = (props) => {
+interface TableCellStatusHandleProps {
+  active?: boolean;
+  success: () => void;
+  uuid?: string;
+  route: string;
+}
+
+const TableCellStatusHandle = (props: TableCellStatusHandleProps) => {
   const { active, success, uuid, route } = props;
   const { showErrorResponseMessage } = useMessage();
 
@@ -24,15 +31,13 @@ const TableRowStatusComponentHandle = (props) => {
   };
 
   return (
-    <span
-      className={`${
-        !active ? 'text-danger' : 'text-primary'
-      } text-underline mr-5`}
+    <td
+      className={`${!active ? 'text-danger' : 'text-primary'} text-underline`}
       onClick={onSubmit}
     >
       {!active ? 'Disable' : 'Active'}
-    </span>
+    </td>
   );
 };
 
-export default TableRowStatusComponentHandle;
+export default TableCellStatusHandle;

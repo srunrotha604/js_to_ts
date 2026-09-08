@@ -1,7 +1,13 @@
 import { useState } from 'react';
 import CopyClipboard from '../../components/CopyClipboard';
 
-const TableCell = (props) => {
+interface TableCellProps {
+  value?: string;
+  className?: string;
+  copy?: boolean;
+}
+
+const TableCell = (props: TableCellProps) => {
   const { value, className, copy } = props;
   const [isShown, setIsShown] = useState(false);
   return (
@@ -11,7 +17,7 @@ const TableCell = (props) => {
       onMouseLeave={() => setIsShown(false)}
     >
       {value}
-      {copy & isShown ? <CopyClipboard data={value} /> : ''}
+      {copy && isShown ? <CopyClipboard data={value} /> : ''}
     </td>
   );
 };

@@ -1,4 +1,11 @@
-const TableBodyBorderedComponent = (props) => {
+import type { ReactNode } from 'react';
+
+interface TableBodyBorderedComponentProps {
+  children?: ReactNode;
+  pagination?: ReactNode;
+}
+
+const TableBodyBorderedComponent = (props: TableBodyBorderedComponentProps) => {
   const { children, pagination } = props;
   return (
     <div className="table-responsive mb-0">

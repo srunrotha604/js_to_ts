@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react';
 import { toast } from 'react-toastify';
 import useMessage from '../../../hooks/useMessage';
 import { fetchDataAsync } from '../../../services/$service';
@@ -6,7 +7,16 @@ import CancelButton from '../../buttons/CancelButton';
 import SubmitButton from '../../buttons/SubmitButton';
 import Modal, { useModal } from '../../common/modal';
 
-const TableCellTextDeleteConfirm = (props) => {
+interface TableCellTextDeleteConfirmProps {
+  success: () => void;
+  uuid?: string;
+  route: string;
+  title?: ReactNode;
+  message?: ReactNode;
+  data?: unknown;
+}
+
+const TableCellTextDeleteConfirm = (props: TableCellTextDeleteConfirmProps) => {
   const { success, route, title, message, data } = props;
   const { modalRef, openModal, closeModal } = useModal();
   const { showErrorResponseMessage } = useMessage();

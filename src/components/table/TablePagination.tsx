@@ -1,10 +1,21 @@
 import ReactPaginate from 'react-paginate';
 import PreviousIcon from '../Icons/PreviousIcon';
 import NextIcon from '../Icons/NextIcon';
-const TablePagination = (props) => {
+
+interface TablePaginationProps {
+  totalDocs?: number;
+  pageNum?: number;
+  perPage: number;
+  onPageChange?: (selectedItem: { selected: number }) => void;
+  currentPage: number;
+  label?: boolean;
+}
+
+const TablePagination = (props: TablePaginationProps) => {
   const { totalDocs, pageNum, perPage, onPageChange, currentPage, label } =
     props;
-  let pageCount = Math.ceil(totalDocs / perPage);
+  const totalDocsValue = totalDocs ?? 0;
+  let pageCount = Math.ceil(totalDocsValue / perPage);
   return (
     <>
       <div className="card-footer d-flex align-items-center py-3">
@@ -12,15 +23,15 @@ const TablePagination = (props) => {
           <p className="m-0 text-secondary">
             Showing{' '}
             <span>
-              {totalDocs > 0 ? (Number(pageNum) - 1) * perPage + 1 : 0}
+              {totalDocsValue > 0 ? (Number(pageNum) - 1) * perPage + 1 : 0}
             </span>{' '}
             to{' '}
             <span>
-              {Number(pageNum) * perPage > totalDocs
-                ? totalDocs
+              {Number(pageNum) * perPage > totalDocsValue
+                ? totalDocsValue
                 : Number(pageNum) * perPage}
             </span>{' '}
-            of <span>{totalDocs}</span> entries
+            of <span>{totalDocsValue}</span> entries
           </p>
         </>
         <ReactPaginate

@@ -1,9 +1,20 @@
+import type { ReactNode } from 'react';
 import { Tooltip } from 'react-tooltip';
 import ArrowBackIcon from '../../Icons/ArrowBackIcon';
 import PlusIcon from '../../Icons/PlusIcon';
 import RefreshIcon from '../../Icons/RefreshIcon';
 
-const HeaderTableComponent = (props) => {
+interface HeaderTableComponentProps {
+  title?: ReactNode;
+  refreshOnClick?: () => void;
+  createOnClick?: () => void;
+  refresh?: boolean;
+  create?: boolean;
+  back?: () => void;
+  multiRef?: ReactNode;
+}
+
+const HeaderTableComponent = (props: HeaderTableComponentProps) => {
   const {
     title,
     refreshOnClick,
