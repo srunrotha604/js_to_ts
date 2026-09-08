@@ -1,5 +1,7 @@
+import 'react-datepicker/dist/react-datepicker.css';
 import ReactDOM from 'react-dom/client';
-import App from './App';
+import 'react-toastify/dist/ReactToastify.css';
+import App from './App.tsx';
 import './index.css';
 import './thems/css/collapse-tree-view.css';
 import './thems/css/demo.min.css';
@@ -7,11 +9,10 @@ import './thems/css/tabler-flags.min.css';
 import './thems/css/tabler-payments.min.css';
 import './thems/css/tabler-vendors.min.css';
 import './thems/css/tabler.min.css';
-
-import 'react-toastify/dist/ReactToastify.css';
-
-import 'react-datepicker/dist/react-datepicker.css';
 import './thems/js/demo.min.js';
-import './thems/js/tabler.min.js';
-
-ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+import './thems/js/tabler.js';
+// ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+const root = ReactDOM.createRoot(
+  document.getElementById('root') as HTMLElement
+);
+root.render(<App />);
