@@ -1,12 +1,20 @@
+import type {
+  CreateVersionArgs,
+  DeleteVersionArgs,
+  UpdateVersionArgs,
+  VersionListResponse,
+} from '../../@type/version';
 import { fetchDataAsync } from '../../services/$service';
 import { ROUTE_API } from '../../utils/route-util';
 
 export const getVersionList = async () => {
-  const response = await fetchDataAsync(ROUTE_API.applicationVersion);
-  return response.data;
+  const response = await fetchDataAsync<VersionListResponse>(
+    ROUTE_API.applicationVersion
+  );
+  return response?.data;
 };
 
-export const createNewVersion = async (args) => {
+export const createNewVersion = async (args: CreateVersionArgs) => {
   const payload = {
     releaseDate: args.releaseDate,
     version: args.version,
@@ -14,19 +22,22 @@ export const createNewVersion = async (args) => {
   };
 
   try {
-    const response = await fetchDataAsync(ROUTE_API.applicationVersion, {
-      method: 'POST',
-      data: payload,
-    });
+    const response = await fetchDataAsync<VersionListResponse>(
+      ROUTE_API.applicationVersion,
+      {
+        method: 'POST',
+        data: payload,
+      }
+    );
 
-    return response.data;
+    return response?.data;
   } catch (error) {
     console.error('Error creating new version:', error);
     throw error;
   }
 };
 
-export const updateVersion = async (args) => {
+export const updateVersion = async (args: UpdateVersionArgs) => {
   const payload = {
     releaseDate: args.releaseDate,
     version: args.version,
@@ -34,23 +45,31 @@ export const updateVersion = async (args) => {
     uuid: args.uuid,
   };
 
-  const response = await fetchDataAsync(ROUTE_API.applicationVersion, {
-    method: 'PUT',
-    data: payload,
-  });
-  return response.data;
+  const response = await fetchDataAsync<VersionListResponse>(
+    ROUTE_API.applicationVersion,
+    {
+      method: 'PUT',
+      data: payload,
+    }
+  );
+  return response?.data;
 };
 
 export const getCurrentVersion = async () => {
-  const response = await fetchDataAsync(ROUTE_API.applicationVersionActive);
+  const response = await fetchDataAsync<VersionListResponse>(
+    ROUTE_API.applicationVersionActive
+  );
   return response;
 };
 
-export const deleteVersion = async (args) => {
+export const deleteVersion = async (args: DeleteVersionArgs) => {
   const payload = { uuid: args.uuid };
-  const response = await fetchDataAsync(ROUTE_API.applicationVersion, {
-    method: 'DELETE',
-    data: payload,
-  });
-  return response.data;
+  const response = await fetchDataAsync<VersionListResponse>(
+    ROUTE_API.applicationVersion,
+    {
+      method: 'DELETE',
+      data: payload,
+    }
+  );
+  return response?.data;
 };

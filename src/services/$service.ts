@@ -112,10 +112,10 @@ interface FetchDataAsyncOptions {
   [key: string]: unknown;
 }
 
-export const fetchDataAsync = async (
+export const fetchDataAsync = async <T = unknown>(
   url: string,
   { method, data, ...other }: FetchDataAsyncOptions = {}
-) => {
+): Promise<import('axios').AxiosResponse<T> | undefined> => {
   valid_token_data();
 
   let alt_fa_storage = localStorage.getItem('e_chanel_storage') || '';

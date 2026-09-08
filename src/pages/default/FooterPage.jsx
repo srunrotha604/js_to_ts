@@ -81,16 +81,11 @@ const FooterPage = () => {
                 </span>
                 All rights reserved
               </li>
-              {version && (
-                <div
-                  className="list-inline-item pointer"
-                  onClick={VersionButton}
-                >
-                  <span style={{ fontSize: '14px', cursor: 'pointer' }}>
-                    Version {version}
-                  </span>
-                </div>
-              )}
+              <div className="list-inline-item pointer" onClick={VersionButton}>
+                <span style={{ fontSize: '14px', cursor: 'pointer' }}>
+                  {version ? `Version ${version}` : 'Version'}
+                </span>
+              </div>
             </ul>
           </div>
           <div className="col-12 col-md-6 d-flex justify-content-md-end">

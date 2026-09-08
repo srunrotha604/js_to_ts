@@ -1,17 +1,19 @@
+import axios from 'axios';
 import { useEffect, useState } from 'react';
 import 'react-datepicker/dist/react-datepicker.css';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
+import type { VersionItem } from '../../@type/version';
 import VersionHistoryEdit from '../../components/version-history/VersionHistoryEdit';
 import VersionHistoryForm from '../../components/version-history/VersionHistoryFrom';
-import { getVersionList } from '../../pages/version-history/versionexport';
 import { ROUTE_PATH } from '../../utils/route-util';
+import { getVersionList } from './versionexport';
 
 const VersionHistoryPage = () => {
-  const [editItem, setEditItem] = useState(null);
+  const [editItem, setEditItem] = useState<VersionItem | null>(null);
   const [showModal, setShowModal] = useState(false);
-  const [versionList, setVersionList] = useState([]);
-  const [arrProject, setArrProject] = useState([]);
+  const [versionList, setVersionList] = useState<VersionItem[]>([]);
+  const [arrProject, setArrProject] = useState<VersionItem[]>([]);
   const [refreshFlag, setRefreshFlag] = useState(false);
   const navigate = useNavigate();
   const getList = async () => {
@@ -30,12 +32,16 @@ const VersionHistoryPage = () => {
     } catch (error) {
       console.error('Error fetching configuration:', error);
 
-      if (error.response?.status === 400) {
-        toast.error(error.response.data?.message || 'Bad Request');
-      } else if (error.response?.status === 403) {
-        toast.error(error.response.data || 'Forbidden');
-      } else if (error.response?.status === 404) {
-        navigate(ROUTE_PATH.notFound);
+      if (axios.isAxiosError(error)) {
+        if (error.response?.status === 400) {
+          toast.error(error.response.data?.message || 'Bad Request');
+        } else if (error.response?.status === 403) {
+          toast.error(error.response.data || 'Forbidden');
+        } else if (error.response?.status === 404) {
+          navigate(ROUTE_PATH.notFound);
+        } else {
+          toast.error('Failed to load configuration.');
+        }
       } else {
         toast.error('Failed to load configuration.');
       }
@@ -46,7 +52,7 @@ const VersionHistoryPage = () => {
     getList();
   }, [refreshFlag]);
 
-  const handleOpenEdit = (version) => {
+  const handleOpenEdit = (version: VersionItem) => {
     setShowModal(false);
     setTimeout(() => {
       setEditItem(version);
@@ -59,7 +65,7 @@ const VersionHistoryPage = () => {
     setEditItem(null);
   };
 
-  const handleNewVersionAdded = (newVersion) => {
+  const handleNewVersionAdded = (newVersion: VersionItem) => {
     if (!newVersion || !newVersion.uuid) {
       setRefreshFlag((prev) => !prev);
       return;
@@ -71,11 +77,11 @@ const VersionHistoryPage = () => {
     });
   };
 
-  const handleVersionDeleted = (deletedUuid) => {
+  const handleVersionDeleted = (deletedUuid: string) => {
     setVersionList((prev) => prev.filter((v) => v.uuid !== deletedUuid));
   };
 
-  const handleVersionUpdated = (updatedVersion) => {
+  const handleVersionUpdated = (updatedVersion: VersionItem) => {
     setVersionList((prev) =>
       prev.map((v) =>
         v.uuid === updatedVersion.uuid ? { ...v, ...updatedVersion } : v
