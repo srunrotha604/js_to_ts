@@ -7,6 +7,8 @@ export interface UserProfile {
   profileImage?: string;
   displayName?: string;
   policyName?: string;
+  logo?: string;
+  companyName?: string;
   email?: string;
   email1?: string;
   email2?: string;

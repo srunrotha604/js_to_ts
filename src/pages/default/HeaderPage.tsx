@@ -2,11 +2,16 @@ import { Link, useLocation } from 'react-router-dom';
 import companyLogo from '../../assets/DaraInsurancePlc.png';
 import userIcon from '../../assets/default-user.png';
 import companyLogoFull from '../../assets/logo-full.jpg';
+import type { UserProfile } from '../../@type/profile';
 import { useAuth } from '../../context/AuthContext';
 import { ROUTE_PATH } from '../../utils/route-util';
 
 const HeaderPage = () => {
-  const { user, clearUser, mode } = useAuth();
+  const { user, clearUser, mode } = useAuth() as unknown as {
+    user: UserProfile | null;
+    clearUser: () => void;
+    mode: string;
+  };
   const signOut = () => {
     localStorage.removeItem('e_chanel_storage');
     clearUser();
@@ -158,8 +163,8 @@ const HeaderPage = () => {
                 >
                   <img
                     src={user?.profileImage ?? userIcon}
-                    onError={(e) => {
-                      e.target.src = userIcon;
+                    onError={(e: React.SyntheticEvent<HTMLImageElement>) => {
+                      e.currentTarget.src = userIcon;
                     }}
                     alt="Profile User"
                     className="profile-image w-4"

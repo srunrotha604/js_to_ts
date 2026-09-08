@@ -1,14 +1,26 @@
+import type {
+  ComponentType,
+  Dispatch,
+  ForwardRefExoticComponent,
+  SetStateAction,
+} from 'react';
 import { forwardRef, useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
+import axios from 'axios';
+import type {
+  CustomerListResponse,
+  CustomerTransaction,
+  TransactionTotalCounts,
+} from '../../@type/batch';
 import ApproveRejectConfirmationModal from '../../components/common/ActionConfirmationModal.jsx';
 import Button from '../../components/common/Button.jsx';
-import Modal, { useModal } from '../../components/common/modal/index.jsx';
+import ModalRaw, { useModal } from '../../components/common/modal/index.jsx';
 import Spinner, { useSpinner } from '../../components/common/Spinner.jsx';
 import ComponentStatus from '../../components/customer/ComponentStatus';
-import TransactionBatchProccessModal from '../../components/transaction/TransactionBatchProccessModal.jsx';
-import TransactionTabList from '../../components/transaction/TransactionTabList';
-import TransactionTabSelect, {
+import TransactionBatchProccessModalRaw from '../../components/transaction/TransactionBatchProccessModal.jsx';
+import TransactionTabListRaw from '../../components/transaction/TransactionTabList';
+import TransactionTabSelectRaw, {
   useTransactionTabSelect,
 } from '../../components/transaction/TransactionTabSelect.jsx';
 import { useAuth } from '../../context/AuthContext';
@@ -20,6 +32,29 @@ import { pluralize } from '../../utils/pluralize';
 import { ROUTE_PATH } from '../../utils/route-util';
 import { STATUS, isTransactionStatusCountChanged } from '../../utils/status';
 
+// TransactionTabList / TransactionBatchProccessModal / TransactionTabSelect / Modal
+// are large, widely-shared components still in plain JS; cast locally so their
+// prop types don't collapse to an empty object here without touching their
+// shared source (same pattern used in BatchDetailPage.tsx).
+const TransactionTabList =
+  TransactionTabListRaw as ForwardRefExoticComponent<any>;
+const TransactionBatchProccessModal =
+  TransactionBatchProccessModalRaw as ForwardRefExoticComponent<any>;
+const TransactionTabSelect = TransactionTabSelectRaw as ComponentType<any>;
+const TypedModal = ModalRaw as unknown as ForwardRefExoticComponent<
+  React.RefAttributes<HTMLDivElement> & {
+    title?: React.ReactNode;
+    content?: React.ReactNode;
+    children?: React.ReactNode;
+    actions?: React.ReactNode;
+    size?: 'sm' | 'lg' | 'xl';
+    bodyClassName?: string;
+    headerClassName?: string;
+    closeButton?: boolean;
+    noTransition?: boolean;
+  }
+>;
+
 const HomePage = () => {
   document.title = 'E-CHANNEL PORTAL | Home';
 
@@ -29,50 +64,50 @@ const HomePage = () => {
       {
         label: STATUS.All,
         status: STATUS.All,
-        getTotal: (total) => total?.total,
+        getTotal: (total: TransactionTotalCounts) => total?.total,
       },
       {
         label: STATUS.Draft,
         status: STATUS.Draft,
-        getTotal: (total) => total?.draft,
+        getTotal: (total: TransactionTotalCounts) => total?.draft,
         hidden: !hasPermissionAccessTransaction('draft'),
       },
       {
         label: STATUS.Submitted,
         status: STATUS.Submitted,
-        getTotal: (total) => total?.submitted,
+        getTotal: (total: TransactionTotalCounts) => total?.submitted,
         hidden: !hasPermissionAccessTransaction('submitted'),
       },
       {
         label: STATUS.Approved,
         status: STATUS.Approved,
-        getTotal: (total) => total?.approved,
+        getTotal: (total: TransactionTotalCounts) => total?.approved,
         hidden: !hasPermissionAccessTransaction('approved'),
       },
       {
         label: STATUS.BM_Rejected,
         status: STATUS.BM_Rejected,
-        getTotal: (total) => total?.bmReject,
+        getTotal: (total: TransactionTotalCounts) => total?.bmReject,
         hidden: !hasPermissionAccessTransaction('bmRejected'),
       },
       {
         label: STATUS.Confirmed,
         status: STATUS.Confirmed,
         type: 'Single,Batch',
-        getTotal: (total) => total?.confirmed,
+        getTotal: (total: TransactionTotalCounts) => total?.confirmed,
         hidden: !hasPermissionAccessTransaction('confirmed'),
       },
       {
         label: STATUS.DRI_Rejected,
         status: STATUS.DRI_Rejected,
-        getTotal: (total) => total?.driReject,
+        getTotal: (total: TransactionTotalCounts) => total?.driReject,
         hidden: !hasPermissionAccessTransaction('driRejected'),
       },
       {
         label: 'Deleted-END',
         status: STATUS.Confirmed_Deleted,
         type: 'Delete',
-        getTotal: (total) => total?.confirmedDeleted,
+        getTotal: (total: TransactionTotalCounts) => total?.confirmedDeleted,
         hidden: !hasPermissionAccessTransaction('confirmed'),
       },
     ],
@@ -93,18 +128,40 @@ const HomePage = () => {
     selectedCustomerList,
     setSelectedCustomerList,
     selectDeletedTransaction,
-  } = useTransactionTabSelect();
+  } = useTransactionTabSelect() as unknown as {
+    handleSelectTransaction: (transaction: CustomerTransaction) => void;
+    handleRemoveCustomerFromList: (customer: CustomerTransaction) => void;
+    handleSelectAllInCurrentList: (
+      checked: boolean,
+      transactionList: CustomerTransaction[]
+    ) => void;
+    resetSelectedTransaction: () => void;
+    isSelectedAllInCurrentList: (
+      transactionList: CustomerTransaction[]
+    ) => boolean;
+    isSelectedItem: (transaction: CustomerTransaction) => boolean;
+    selectedTransaction: string[];
+    resetSelected: () => void;
+    selectedAll: boolean;
+    setSelectedAll: Dispatch<SetStateAction<boolean>>;
+    selectedCustomerList: CustomerTransaction[];
+    setSelectedCustomerList: Dispatch<SetStateAction<CustomerTransaction[]>>;
+    selectDeletedTransaction: boolean;
+  };
 
   const getSelectedCustomerList = async () => {
     try {
       let response;
-      response = await fetchDataAsync('/operation-customer', {
-        params: {
-          transaction: selectedTransaction.join(','),
-          pageSize: selectedTransaction.length,
-        },
-      });
-      setSelectedCustomerList(response?.data?.list);
+      response = await fetchDataAsync<CustomerListResponse>(
+        '/operation-customer',
+        {
+          params: {
+            transaction: selectedTransaction.join(','),
+            pageSize: selectedTransaction.length,
+          },
+        }
+      );
+      setSelectedCustomerList(response?.data?.list ?? []);
     } catch (error) {
       console.log(error);
     }
@@ -114,8 +171,8 @@ const HomePage = () => {
   const { hasPermissionProccessTransaction } = useAuth();
   const { closeModal, openModal, modalRef, open } = useModal();
 
-  const [isApprove, setIsApprove] = useState(null);
-  const [processStatus, setProcessStatus] = useState(null);
+  const [isApprove, setIsApprove] = useState<boolean | null>(null);
+  const [processStatus, setProcessStatus] = useState<string | null>(null);
   const {
     closeModal: closeActionModal,
     openModal: openActionModal,
@@ -129,12 +186,16 @@ const HomePage = () => {
     delay([closeSpinner, openModal]);
   };
 
-  const tabListRef = useRef(null);
-  const handleProcess = async (rejectRemark) => {
+  const tabListRef = useRef<{ getList: () => void } | null>(null);
+  const handleProcess = async (rejectRemark?: string) => {
     try {
       closeActionModal();
       openSpinner({ title: 'Processing...' });
-      const summaryData = {
+      const summaryData: {
+        transaction: string[];
+        status: string | null;
+        remark?: string;
+      } = {
         transaction: selectedTransaction,
         status: processStatus,
       };
@@ -156,11 +217,13 @@ const HomePage = () => {
           selectedCustomerList.length
         )} has been ${processStatus}!`
       );
-      tabListRef.current.getList();
+      tabListRef.current?.getList();
       resetSelected();
       delay([closeSpinner, closeModal]);
     } catch (error) {
-      toast.error(error?.response?.data?.message);
+      toast.error(
+        axios.isAxiosError(error) ? error.response?.data?.message : undefined
+      );
       delay(closeSpinner);
     }
   };
@@ -178,7 +241,12 @@ const HomePage = () => {
     openModal: openPopupInfoModal,
     closeModal: closePopupInfoModal,
     data: popupInfoData,
-  } = useModal();
+  } = useModal() as unknown as {
+    modalRef: React.RefObject<HTMLDivElement>;
+    openModal: (data?: TransactionTotalCounts) => void;
+    closeModal: () => void;
+    data: TransactionTotalCounts | null;
+  };
 
   return (
     <div
@@ -187,12 +255,12 @@ const HomePage = () => {
     >
       <TransactionTabList
         tab={navTab}
-        onFetchSuccess={(data) => {
+        onFetchSuccess={(data: { data?: { total?: TransactionTotalCounts[] } }) => {
           const transactionTotal = data?.data?.total?.[0] ?? {};
           if (!isUserDRIAdmin) {
             const isChanged = isTransactionStatusCountChanged(
               'driReject',
-              transactionTotal
+              transactionTotal as Record<string, number>
             );
 
             if (isChanged) {
@@ -201,13 +269,13 @@ const HomePage = () => {
           }
         }}
         ref={tabListRef}
-        typeFilter={({ tabStatus }) => {
+        typeFilter={({ tabStatus }: { tabStatus: string }) => {
           return (
             [STATUS.Confirmed, STATUS.Confirmed_Deleted].includes(tabStatus) ===
             false
           );
         }}
-        renderExtraFilter={({ tabStatus }) => {
+        renderExtraFilter={({ tabStatus }: { tabStatus: string }) => {
           return (
             <div
               style={{ flex: 1 }}
@@ -227,7 +295,7 @@ const HomePage = () => {
             </div>
           );
         }}
-        enableCheckbox={({ tabStatus }) => {
+        enableCheckbox={({ tabStatus }: { tabStatus: string }) => {
           if (!actions[tabStatus]) return false;
 
           return actions[tabStatus].some((action) =>
@@ -274,7 +342,7 @@ const HomePage = () => {
                   variant={action.reject ? 'danger' : 'primary'}
                   key={action.status}
                   onClick={() => {
-                    setIsApprove(action.confirm);
+                    setIsApprove(action.confirm ?? false);
                     setProcessStatus(action.status);
                     openActionModal();
                   }}
@@ -295,11 +363,17 @@ const HomePage = () => {
   );
 };
 
+interface PopupInfoProps {
+  data: TransactionTotalCounts | null;
+  onClose: () => void;
+}
+
 // eslint-disable-next-line react/display-name
-const PopupInfo = forwardRef(({ data, onClose }, ref) => {
-  const navigate = useNavigate();
-  return (
-    <Modal
+const PopupInfo = forwardRef<HTMLDivElement, PopupInfoProps>(
+  ({ data, onClose }, ref) => {
+    const navigate = useNavigate();
+    return (
+    <TypedModal
       size="sm"
       title={'Task Reminder'}
       bodyClassName="d-flex flex-column pt-3 pb-3"
@@ -334,8 +408,9 @@ const PopupInfo = forwardRef(({ data, onClose }, ref) => {
         </>
       }
       ref={ref}
-    ></Modal>
+    ></TypedModal>
   );
-});
+  }
+);
 
 export default HomePage;

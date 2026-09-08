@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
+import type { LoginResponse } from '../../@type/auth';
 import { useAuth } from '../../context/AuthContext';
 import { fetchData } from '../../services/$service';
 import { ROUTE_PATH } from '../../utils/route-util';
@@ -12,9 +13,13 @@ const LoginPage = () => {
   const [password, setPassword] = useState('');
   const [invalidFeedBack, setInvalidFeedBack] = useState('');
   const [passwordShown, setPasswordShown] = useState(false);
-  const { fetchUser } = useAuth();
+  const { fetchUser } = useAuth() as unknown as {
+    fetchUser: () => Promise<void>;
+  };
 
-  const funcButtonHandleClickExecute = (e) => {
+  const funcButtonHandleClickExecute = (
+    e: React.MouseEvent<HTMLButtonElement>
+  ) => {
     let messages = [];
     if (userName === '') {
       messages.push(true);
@@ -27,7 +32,7 @@ const LoginPage = () => {
         userName: userName,
         Password: password,
       };
-      fetchData('/login', data, 'POST').then(async (res) => {
+      fetchData<LoginResponse>('/login', data, 'POST').then(async (res) => {
         switch (res?.status) {
           case 200: {
             const alt_fa_token = {
@@ -49,10 +54,10 @@ const LoginPage = () => {
             break;
           }
           case 400:
-            setInvalidFeedBack(res?.data?.message);
+            setInvalidFeedBack(res?.data?.message ?? '');
             break;
           case 403:
-            setInvalidFeedBack(res?.data);
+            setInvalidFeedBack(String(res?.data));
             break;
           default:
           // navigate("/404");
@@ -66,12 +71,12 @@ const LoginPage = () => {
     setPasswordShown(!passwordShown);
   };
 
-  const userNameHandleChange = (event) => {
+  const userNameHandleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setUserName(event.target.value);
     setInvalidFeedBack('');
   };
 
-  const PasswordHandleChange = (event) => {
+  const PasswordHandleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setPassword(event.target.value);
     setInvalidFeedBack('');
   };

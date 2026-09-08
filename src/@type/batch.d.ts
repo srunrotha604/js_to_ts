@@ -1,10 +1,12 @@
 export interface TransactionTotalCounts {
+  total?: number;
   draft?: number;
   submitted?: number;
   approved?: number;
   bmReject?: number;
   confirmed?: number;
   driReject?: number;
+  confirmedDeleted?: number;
 }
 
 export interface BatchDetailInfo {
