@@ -29,7 +29,7 @@ export function getStartOfMonthDate(format?: string) {
   return day.format(format);
 }
 
-export const convertAge = (date: string) => {
+export const convertAge = (date: dayjs.ConfigType) => {
   const birthDate = dayjs(date);
   const today = dayjs();
 

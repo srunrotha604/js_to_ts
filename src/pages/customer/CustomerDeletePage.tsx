@@ -19,7 +19,7 @@ import Checkbox from '../../components/common/Checkbox';
 import { useModal } from '../../components/common/modal';
 import Spinner, { useSpinner } from '../../components/common/Spinner';
 import TransactionBatchProccessModalRaw from '../../components/transaction/TransactionBatchProccessModal';
-import TransactionNumberTableItem from '../../components/transaction/TransactionNumberTableItem.jsx';
+import TransactionNumberTableItem from '../../components/transaction/TransactionNumberTableItem';
 import TransactionTabListRaw from '../../components/transaction/TransactionTabList';
 import TransactionTabSelectRaw, {
   useTransactionTabSelect,

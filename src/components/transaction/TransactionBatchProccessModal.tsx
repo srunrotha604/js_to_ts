@@ -1,13 +1,27 @@
+import type { ReactNode } from 'react';
 import { forwardRef } from 'react';
-import Modal from '../common/modal';
 import { IoRemove } from 'react-icons/io5';
+import type { CustomerTransaction } from '../../@type/batch';
+import Modal from '../common/modal';
+
+interface TransactionBatchProccessModalData {
+  selectedCustomerList?: CustomerTransaction[];
+  tabStatus?: string | null;
+}
+
+interface TransactionBatchProccessModalProps {
+  data?: TransactionBatchProccessModalData;
+  actions?: ReactNode;
+  handleRemoveCustomer: (item: CustomerTransaction) => void;
+  loading?: boolean;
+  closeModal?: () => void;
+}
 
 // eslint-disable-next-line react/display-name
-const TransactionBatchProccessModal = forwardRef(
-  ({ data, actions, handleRemoveCustomer, loading }, ref) => {
+const TransactionBatchProccessModal = forwardRef<HTMLDivElement, TransactionBatchProccessModalProps>(
+  ({ data, actions, handleRemoveCustomer }, ref) => {
     return (
       <Modal
-        loading={loading}
         size="xl"
         title={`Transaction Selected ${data?.selectedCustomerList?.length}`}
         ref={ref}

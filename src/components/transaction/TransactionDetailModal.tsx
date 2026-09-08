@@ -1,9 +1,16 @@
-import { forwardRef } from "react";
-import Modal from "../common/modal";
-import TransactionDetail from "./TransactionDetail";
+import type { ReactNode } from 'react';
+import { forwardRef } from 'react';
+import Modal from '../common/modal';
+import TransactionDetail, { type TransactionDetailData } from './TransactionDetail';
+
+interface TransactionDetailModalProps {
+  data?: TransactionDetailData | null;
+  actions?: ReactNode;
+  children?: ReactNode;
+}
 
 // eslint-disable-next-line react/display-name
-const TransactionDetailModal = forwardRef(
+const TransactionDetailModal = forwardRef<HTMLDivElement, TransactionDetailModalProps>(
   ({ data, actions, children }, ref) => {
     const {
       status,
@@ -11,13 +18,10 @@ const TransactionDetailModal = forwardRef(
       firstName,
       sureName,
       telNo,
-      position,
       dateOfBirth,
       nation,
       nicPassport,
       physicalCard,
-      productCode,
-      policies,
       inputCompany,
       inputBranch,
       inputter,
@@ -36,7 +40,7 @@ const TransactionDetailModal = forwardRef(
     return (
       <Modal
         size="lg"
-        title={"Transaction Detail"}
+        title={'Transaction Detail'}
         ref={ref}
         bodyClassName="px-3 py-2 pb-3"
         headerClassName="px-4"
@@ -49,14 +53,11 @@ const TransactionDetailModal = forwardRef(
           firstName={firstName}
           sureName={sureName}
           telNo={telNo}
-          position={position}
           dateOfBirth={dateOfBirth}
           nation={nation}
           nicPassport={nicPassport}
           physicalCard={physicalCard}
           remark={remark}
-          productCode={productCode}
-          policies={policies}
           inputCompany={inputCompany}
           inputBranch={inputBranch}
           inputter={inputter}

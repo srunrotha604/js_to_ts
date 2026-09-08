@@ -18,11 +18,11 @@ import Button from '../../components/common/Button';
 import ModalRaw, { useModal } from '../../components/common/modal/index';
 import Spinner, { useSpinner } from '../../components/common/Spinner';
 import ComponentStatus from '../../components/customer/ComponentStatus';
-import TransactionBatchProccessModalRaw from '../../components/transaction/TransactionBatchProccessModal.jsx';
+import TransactionBatchProccessModalRaw from '../../components/transaction/TransactionBatchProccessModal';
 import TransactionTabListRaw from '../../components/transaction/TransactionTabList';
 import TransactionTabSelectRaw, {
   useTransactionTabSelect,
-} from '../../components/transaction/TransactionTabSelect.jsx';
+} from '../../components/transaction/TransactionTabSelect';
 import { useAuth } from '../../context/AuthContext';
 import { fetchDataAsync } from '../../services/$service';
 import { actions } from '../../utils/actions';

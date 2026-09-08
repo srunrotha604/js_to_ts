@@ -12,7 +12,7 @@ import type {
 import Button from '../../components/common/Button';
 import ComponentStatus from '../../components/customer/ComponentStatus.jsx';
 import DateRangeSelector from '../../components/form/DateRangeSelector';
-import { selectCustomStyles } from '../../components/transaction/TransactionTabList.jsx';
+import { selectCustomStyles } from '../../components/transaction/TransactionTabList';
 import { useAuth } from '../../context/AuthContext';
 import useLoading from '../../hooks/useLoading';
 import useMessage from '../../hooks/useMessage';

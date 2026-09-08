@@ -1,7 +1,38 @@
-import { formatDay, convertAge } from "../../utils/format-day";
-import LabelValueList from "../common/LabelValueList";
-import TransactionNumber from "../common/TransactionNumber";
-import ComponentStatus from "../customer/ComponentStatus";
+import type { ReactNode } from 'react';
+import { formatDay, convertAge } from '../../utils/format-day';
+import LabelValueList from '../common/LabelValueList';
+import TransactionNumber from '../common/TransactionNumber';
+import ComponentStatus from '../customer/ComponentStatus';
+
+export interface TransactionDetailData {
+  status?: string;
+  inputDateTime?: string;
+  firstName?: string;
+  sureName?: string;
+  telNo?: string;
+  dateOfBirth?: string;
+  nation?: string;
+  nicPassport?: string;
+  physicalCard?: boolean | string;
+  inputCompany?: string;
+  inputBranch?: string;
+  policyName?: string;
+  inputter?: string;
+  transactionNumber?: string;
+  gender?: string;
+  remark?: string;
+  productName?: string;
+  projectName?: string;
+  deleted?: boolean;
+  customerId?: string;
+  parentId?: string;
+  openingDate?: string;
+}
+
+interface TransactionDetailProps extends TransactionDetailData {
+  children?: ReactNode;
+}
+
 const TransactionDetail = ({
   status,
   inputDateTime,
@@ -26,92 +57,92 @@ const TransactionDetail = ({
   parentId,
   openingDate,
   children,
-}) => {
+}: TransactionDetailProps) => {
   const topSection = [
     {
-      label: "Status",
+      label: 'Status',
       value: <ComponentStatus deleted={deleted} status={status} />,
     },
     {
-      label: "Transaction Date/Time",
+      label: 'Transaction Date/Time',
       value: formatDay(inputDateTime),
     },
   ];
 
   const personalInfoSection = [
     {
-      label: "Name",
+      label: 'Name',
       value: `${sureName} ${firstName}`,
     },
     {
-      label: "Gender",
+      label: 'Gender',
       value: gender,
     },
     {
-      label: "Tel No.",
+      label: 'Tel No.',
       value: telNo,
     },
     {
-      label: "Date of Birth",
-      value: formatDay(dateOfBirth, "DD/MMM/YYYY"),
+      label: 'Date of Birth',
+      value: formatDay(dateOfBirth, 'DD/MMM/YYYY'),
     },
     {
-      label: "Nationality",
+      label: 'Nationality',
       value: nation,
     },
     {
-      label: "NIC/Passport",
+      label: 'NIC/Passport',
       value: nicPassport,
     },
     {
-      label: "Parent ID",
+      label: 'Parent ID',
       value: parentId,
     },
     {
-      label: "Children ID",
+      label: 'Children ID',
       value: customerId,
     },
     {
-      label: "Physical Card",
+      label: 'Physical Card',
       value:
-        (typeof physicalCard === "boolean" && physicalCard) ||
-        physicalCard === "true"
-          ? "Yes"
-          : "No",
+        (typeof physicalCard === 'boolean' && physicalCard) ||
+        physicalCard === 'true'
+          ? 'Yes'
+          : 'No',
     },
     {
-      label: "Project",
+      label: 'Project',
       value: projectName,
     },
     {
-      label: "Opening Date",
-      value: formatDay(openingDate, "DD/MMM/YYYY"),
+      label: 'Opening Date',
+      value: formatDay(openingDate, 'DD/MMM/YYYY'),
     },
     {
-      label: "Age",
+      label: 'Age',
       value: convertAge(dateOfBirth),
     },
   ];
 
   const bottomSectionInfo = [
     {
-      label: "Product",
+      label: 'Product',
       value: productName,
     },
     {
-      label: "Company Name",
+      label: 'Company Name',
       value: inputCompany,
     },
     {
-      label: "Policy Name",
+      label: 'Policy Name',
       value: policyName,
     },
     {
-      label: "Branch",
+      label: 'Branch',
       value: inputBranch,
     },
     {
-      label: "Data Inputed",
+      label: 'Data Inputed',
       value: inputter,
     },
   ];
@@ -132,7 +163,7 @@ const TransactionDetail = ({
       {remark && (
         <div className="alert alert-danger" role="alert">
           <h5 className="alert-heading">
-            {deleted ? "Endorsement to Deleted" : "Rejected"} Remark
+            {deleted ? 'Endorsement to Deleted' : 'Rejected'} Remark
           </h5>
           <p>{remark}</p>
         </div>

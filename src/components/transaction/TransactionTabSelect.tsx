@@ -1,10 +1,21 @@
+import clsx from 'clsx';
 import { useState } from 'react';
+import { MdClear } from 'react-icons/md';
+import { toast } from 'react-toastify';
+import type { CustomerTransaction } from '../../@type/batch';
 import { pluralize } from '../../utils/pluralize';
 import Button from '../common/Button';
 import Checkbox from '../common/Checkbox';
-import { MdClear } from 'react-icons/md';
-import clsx from 'clsx';
-import { toast } from 'react-toastify';
+
+interface TransactionTabSelectProps {
+  totalSelected?: number;
+  isSelectedAll?: boolean;
+  onSelectAll?: (checked: boolean) => void;
+  onClearSelect?: () => void;
+  disableSelectAll?: boolean;
+  onClick?: () => void;
+  title?: string;
+}
 
 const TransactionTabSelect = ({
   totalSelected,
@@ -14,8 +25,8 @@ const TransactionTabSelect = ({
   disableSelectAll = false,
   onClick,
   title = undefined,
-}) => {
-  return totalSelected > 0 ? (
+}: TransactionTabSelectProps) => {
+  return totalSelected && totalSelected > 0 ? (
     <div className="btn-list align-items-center">
       <h3
         title={title}
@@ -39,7 +50,10 @@ const TransactionTabSelect = ({
   ) : (
     !disableSelectAll && (
       <label className="cursor-pointer d-flex align-items-center">
-        <Checkbox checked={isSelectedAll} onChange={onSelectAll} />
+        <Checkbox
+          checked={isSelectedAll}
+          onChange={onSelectAll ?? (() => {})}
+        />
         <h3 className="mb-0 d-inline-block">Select All</h3>
       </label>
     )
@@ -47,13 +61,17 @@ const TransactionTabSelect = ({
 };
 
 export const useTransactionTabSelect = () => {
-  const [selectedCustomerList, setSelectedCustomerList] = useState([]);
-  const [selectedTransaction, setSelectedTransaction] = useState([]);
+  const [selectedCustomerList, setSelectedCustomerList] = useState<
+    CustomerTransaction[]
+  >([]);
+  const [selectedTransaction, setSelectedTransaction] = useState<string[]>([]);
   const [selectedAll, setSelectedAll] = useState(false);
   const [selectDeletedTransaction, setSelectDeletedTransaction] =
     useState(false);
 
-  const handleSelectTransaction = (transaction) => {
+  const handleSelectTransaction = (
+    transaction?: CustomerTransaction | null
+  ) => {
     if (!transaction) return;
     setSelectedAll(false);
     const isTransactionDeleted = transaction.deleted;
@@ -74,14 +92,14 @@ export const useTransactionTabSelect = () => {
       }
     }
 
-    if (selectedTransaction.includes(transaction?.transactionNumber)) {
+    if (selectedTransaction.includes(transaction?.transactionNumber ?? '')) {
       setSelectedTransaction(
         selectedTransaction.filter((t) => t !== transaction?.transactionNumber)
       );
     } else {
       setSelectedTransaction([
         ...selectedTransaction,
-        transaction?.transactionNumber,
+        transaction?.transactionNumber ?? '',
       ]);
     }
   };
@@ -104,7 +122,10 @@ export const useTransactionTabSelect = () => {
     setSelectedAll(false);
   };
 
-  const handleSelectAllInCurrentList = (checked, transactionList) => {
+  const handleSelectAllInCurrentList = (
+    checked: boolean,
+    transactionList: CustomerTransaction[]
+  ) => {
     setSelectedAll(false);
     if (transactionList.length === 0) return;
 
@@ -123,7 +144,7 @@ export const useTransactionTabSelect = () => {
       setSelectedTransaction((prev) => {
         const selectTransaction = transactionList
           ?.filter((t) => t.deleted === isTransactionDeleted)
-          .map((t) => t.transactionNumber);
+          .map((t) => t.transactionNumber ?? '');
 
         return Array.from(new Set([...prev, ...selectTransaction]));
       });
@@ -138,7 +159,7 @@ export const useTransactionTabSelect = () => {
     }
   };
 
-  const handleRemoveCustomerFromList = (customer) => {
+  const handleRemoveCustomerFromList = (customer: CustomerTransaction) => {
     const tempSelectedCustomerList = selectedCustomerList.filter(
       (c) => c.transactionNumber !== customer.transactionNumber
     );
@@ -150,7 +171,7 @@ export const useTransactionTabSelect = () => {
     } else {
       setSelectedAll(false);
       setSelectedTransaction(
-        tempSelectedCustomerList.map((c) => c.transactionNumber)
+        tempSelectedCustomerList.map((c) => c.transactionNumber ?? '')
       );
     }
   };
@@ -166,18 +187,19 @@ export const useTransactionTabSelect = () => {
     resetSelectedCustomerList,
     resetSelectedTransaction,
     resetSelectedAll,
-    isSelectedAllInCurrentList: (transactionList) => {
-      return (
-        transactionList?.length > 0 &&
-        transactionList?.every((t) =>
-          selectedTransaction.includes(t?.transactionNumber)
+    isSelectedAllInCurrentList: (transactionList?: CustomerTransaction[]) => {
+      return !!(
+        transactionList &&
+        transactionList.length > 0 &&
+        transactionList.every((t) =>
+          selectedTransaction.includes(t?.transactionNumber ?? '')
         )
       );
     },
-    isSelectedItem: (transaction) => {
-      return selectedTransaction.includes(transaction?.transactionNumber);
+    isSelectedItem: (transaction?: CustomerTransaction | null) => {
+      return selectedTransaction.includes(transaction?.transactionNumber ?? '');
     },
-    isEnableItem: (transaction) => {
+    isEnableItem: (transaction?: CustomerTransaction | null) => {
       if (selectedTransaction.length === 0) return true;
       return (
         (transaction?.deleted && selectDeletedTransaction) ||

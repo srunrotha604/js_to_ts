@@ -1,5 +1,6 @@
 import axios from 'axios';
 import clsx from 'clsx';
+import type { ChangeEvent, MouseEvent, ReactNode } from 'react';
 import {
   forwardRef,
   useEffect,
@@ -14,9 +15,16 @@ import {
   useSearchParams,
 } from 'react-router-dom';
 import Select from 'react-select';
+import type { StylesConfig } from 'react-select';
 import { toast } from 'react-toastify';
 import { useDebouncedCallback } from 'use-debounce';
 import '../../assets/style/custom_style.css';
+import type {
+  CustomerListResponse,
+  CustomerTransaction,
+  TransactionTotalCounts,
+} from '../../@type/batch';
+import type { SelectOption } from '../../@type/report';
 import ComponentStatus from '../../components/customer/ComponentStatus';
 import IssueDateDetailModal from '../../components/IssueDateDetailModal';
 import IssueDateModal from '../../components/IssueDateModal';
@@ -31,7 +39,7 @@ import Button from '../common/Button';
 import Checkbox from '../common/Checkbox';
 import Modal, { useModal } from '../common/modal/index';
 import Spinner, { useSpinner } from '../common/Spinner';
-import TransactionNumberTableItem from './TransactionNumberTableItem.jsx';
+import TransactionNumberTableItem from './TransactionNumberTableItem';
 
 const STATUS = {
   All: 'All',
@@ -58,12 +66,73 @@ export const typeOptions = [
   { value: TYPE.Delete, label: TYPE.Delete },
 ];
 
-export const recordOptions = [
-  { value: TYPE.Active, label: TYPE.Active },
-  { value: TYPE.Disable, label: TYPE.Disable },
-];
+interface FetchResultPayload {
+  data?: CustomerListResponse;
+  tabStatus: string;
+}
+
+interface NavigateListParams {
+  status?: string;
+  branch?: string;
+  pageNum?: number;
+  rowPerPage?: number;
+  search?: string;
+  type?: string;
+}
+
+export interface TransactionTabItem {
+  status?: string;
+  type?: string;
+  label: string;
+  hidden?: boolean;
+  getTotal: (total?: TransactionTotalCounts) => number | string | undefined;
+}
+
+export interface TransactionTabListHandle {
+  getList: () => void;
+}
+
+interface TransactionTabListProps {
+  title?: ReactNode;
+  tab?: TransactionTabItem[];
+  branchFilter?: boolean;
+  renderTableHead?: (list: CustomerTransaction[]) => ReactNode;
+  renderTableBody?: (args: {
+    index: number;
+    item: CustomerTransaction;
+    handleShowTransactionDetail: (item: CustomerTransaction) => void;
+  }) => ReactNode;
+  path?: string;
+  url?: string;
+  extraParams?: string;
+  renderExtraFilter?: (args: {
+    tabStatus: string;
+    total?: TransactionTotalCounts;
+    totalDocs?: number | null;
+  }) => ReactNode;
+  onTabChange?: (status: string) => void;
+  defaultTab?: string;
+  onFetchSuccess?: (payload: FetchResultPayload) => void;
+  onFetchFail?: (payload: FetchResultPayload) => void;
+  disableRowClick?: boolean;
+  onRowClick?: (item: CustomerTransaction) => void;
+  typeFilter?: boolean | ((args: { tabStatus: string }) => boolean);
+  isSelectedAllInCurrentList?: (list: CustomerTransaction[]) => boolean;
+  handleSelectAllInCurrentList?: (
+    checked: boolean,
+    list: CustomerTransaction[]
+  ) => void;
+  handleSelectItem?: (item: CustomerTransaction) => void;
+  isSelectedItem?: (item: CustomerTransaction) => boolean;
+  enableCheckbox?: boolean | ((args: { tabStatus: string }) => boolean);
+  enableItemCheckbox?: boolean | ((item: CustomerTransaction) => boolean);
+}
+
 //eslint-disable-next-line react/display-name
-const TransactionTabList = forwardRef(
+const TransactionTabList = forwardRef<
+  TransactionTabListHandle,
+  TransactionTabListProps
+>(
   (
     {
       title,
@@ -94,18 +163,25 @@ const TransactionTabList = forwardRef(
     const [searchParams] = useSearchParams();
     const [loading, setLoading] = useState(true);
     const { hasPermissionProccessTransaction, company } = useAuth();
-    const [arrCustomer, setArrCustomer] = useState([]);
-    const [, setStatusMap] = useState({});
-    const [arrDetails, setArrDetails] = useState({});
-    const [total, setTotal] = useState([]);
-    const [totalDocs, setTotalDocs] = useState(null);
-    const [branch, setBranch] = useState([]);
+    const [arrCustomer, setArrCustomer] = useState<CustomerTransaction[]>([]);
+    const [, setStatusMap] = useState<Record<string, string | undefined>>({});
+    const [arrDetails, setArrDetails] = useState<CustomerTransaction>({});
+    const [total, setTotal] = useState<TransactionTotalCounts | undefined>(
+      undefined
+    );
+    const [totalDocs, setTotalDocs] = useState<number | null>(null);
+    const [branch, setBranch] = useState<SelectOption[]>([]);
     const { openModal, modalRef } = useModal();
-    const [selectedBranch, setSelectedBranch] = useState({
+    const [selectedBranch, setSelectedBranch] = useState<
+      SelectOption | undefined
+    >({
       label: 'All',
       value: 'All',
     });
-    const [type, setType] = useState({ value: 'All', label: 'All' });
+    const [type, setType] = useState<SelectOption | undefined>({
+      value: 'All',
+      label: 'All',
+    });
     const [tabStatus, setTabStatus] = useState(defaultTab);
     // const [query, setQuery] = useState('');
     const navigate = useNavigate();
@@ -113,8 +189,8 @@ const TransactionTabList = forwardRef(
     const [rowPerPage, setRowPerPage] = useState(25);
     const [pageNum, setPageNum] = useState(1);
     const { showErrorResponseMessage } = useMessage();
-    const tableRef = useRef(null);
-    const searchRef = useRef(null);
+    const tableRef = useRef<HTMLDivElement>(null);
+    const searchRef = useRef<HTMLInputElement>(null);
 
     const resetTableScroll = (position = 0) => {
       if (tableRef.current) {
@@ -122,14 +198,31 @@ const TransactionTabList = forwardRef(
       }
     };
 
+    const navigateList = (params: NavigateListParams = {}) => {
+      navigate(
+        {
+          pathname: path,
+          search: createSearchParams({
+            status: params.status ?? tabStatus ?? '',
+            branch: params.branch ?? selectedBranch?.value ?? '',
+            pageNum: String(params.pageNum ?? pageNum),
+            rowPerPage: String(params.rowPerPage ?? rowPerPage),
+            search: params.search ?? searchRef.current?.value ?? '',
+            type: params.type ?? type?.value ?? '',
+          }).toString(),
+        },
+        { replace: true }
+      );
+    };
+
     const getList = async (
-      status,
-      branch,
-      rowPerPage,
-      pageNum,
-      search,
-      type,
-      { signal } = { signal: null }
+      status: string,
+      branch: string,
+      rowPerPage: number,
+      pageNum: number,
+      search: string,
+      type: string,
+      { signal }: { signal?: AbortSignal | null } = { signal: null }
     ) => {
       setLoading(true);
       const listStatus =
@@ -139,47 +232,48 @@ const TransactionTabList = forwardRef(
       const listType = type === 'All' || branch.length === -1 ? '' : `${type}`;
 
       try {
-        const res = await fetchDataAsync(
+        const res = await fetchDataAsync<CustomerListResponse>(
           `${url}?${extraParams}&status=${listStatus}&branchName=${listBranch}&pageSize=${rowPerPage}&pageNumber=${pageNum}&search=${search}&${
             typeFilter ? `type=${listType}` : ''
           }`,
-          { signal }
+          { signal: signal ?? undefined }
         );
 
-        setArrCustomer(res?.data?.list);
-        setTotal(res?.data?.total[0]);
+        setArrCustomer(res?.data?.list ?? []);
+        setTotal(res?.data?.total?.[0]);
         const tempTotalDocs = res?.data?.totalDocs;
-        setTotalDocs(tempTotalDocs);
-        const totalPage = Math.ceil(tempTotalDocs / rowPerPage);
+        setTotalDocs(tempTotalDocs ?? null);
+        const totalPage = Math.ceil((tempTotalDocs ?? 0) / rowPerPage);
 
         if (totalPage > 0 && totalPage < pageNum) {
           navigateList({ pageNum: totalPage });
         }
 
-        onFetchSuccess &&
-          onFetchSuccess({ data: res?.data, tabStatus: listStatus });
+        onFetchSuccess?.({ data: res?.data, tabStatus: listStatus });
       } catch (error) {
         if (axios.isCancel(error)) {
           return;
         }
-        onFetchFail &&
-          onFetchFail({ data: error?.data, tabStatus: listStatus });
+        onFetchFail?.({
+          data: (error as { data?: CustomerListResponse })?.data,
+          tabStatus: listStatus,
+        });
         showErrorResponseMessage(error);
       } finally {
         setLoading(false);
       }
     };
 
-    const getListDetails = (transactionCode) => {
-      return fetchData(
+    const getListDetails = (transactionCode?: string) => {
+      return fetchData<CustomerListResponse>(
         '/operation-customer?transactionCode=' + transactionCode,
         {},
         'GET'
       ).then((res) => {
-        switch (res.status) {
+        switch (res?.status) {
           case 200:
-            setArrDetails(res?.data?.list[0]);
-            return res?.data?.list[0];
+            setArrDetails(res?.data?.list?.[0] ?? {});
+            return res?.data?.list?.[0];
           case 400:
             showErrorResponseMessage(res);
             break;
@@ -189,11 +283,14 @@ const TransactionTabList = forwardRef(
       });
     };
 
-    const navigateToDetailPage = (transactionCode) => {
-      navigate(ROUTE_PATH.customerTransaction(transactionCode));
+    const navigateToDetailPage = (transactionCode?: string) => {
+      navigate(ROUTE_PATH.customerTransaction(transactionCode ?? ''));
     };
 
-    const processTransaction = (status, item) => {
+    const processTransaction = (
+      status: string | string[],
+      item: CustomerTransaction
+    ) => {
       if (hasPermissionProccessTransaction(status)) {
         navigateToDetailPage(item.transactionCode);
       } else {
@@ -207,7 +304,7 @@ const TransactionTabList = forwardRef(
       openModal: openIssueDateModal,
       closeModal: closeIssueDateModal,
       data: issueDateItem,
-    } = useModal();
+    } = useModal<CustomerTransaction>();
 
     const {
       modalRef: issueDateDetailModalRef,
@@ -215,9 +312,9 @@ const TransactionTabList = forwardRef(
       openModal: openIssueDateDetailModal,
       closeModal: closeIssueDateDetailModal,
       data: issueDateDetailItem,
-    } = useModal();
+    } = useModal<CustomerTransaction>();
 
-    const handleRecordClick = async (item) => {
+    const handleRecordClick = async (item: CustomerTransaction) => {
       switch (item.status) {
         case STATUS.Submitted:
           processTransaction(['approved', 'bmRejected'], item);
@@ -226,8 +323,8 @@ const TransactionTabList = forwardRef(
           if (hasPermissionProccessTransaction(['draft', 'submitted'])) {
             navigate(
               ROUTE_PATH.customerEdit(
-                item.transactionCode,
-                item.coreProductCode
+                item.transactionCode ?? '',
+                item.coreProductCode ?? ''
               )
             );
           } else {
@@ -249,68 +346,48 @@ const TransactionTabList = forwardRef(
       }
     };
 
-    const handleShowTransactionDetail = async (item) => {
-      const result = await getListDetails(item.transactionCode, item.status);
+    const handleShowTransactionDetail = async (item: CustomerTransaction) => {
+      const result = await getListDetails(item.transactionCode);
       if (result) {
         openModal();
       }
     };
 
-    const navigateList = (params) => {
-      navigate(
-        {
-          pathname: path,
-          search: createSearchParams({
-            status: tabStatus,
-            branch: selectedBranch.value,
-            pageNum,
-            rowPerPage,
-            search: searchRef.current.value,
-            type: type?.value,
-            // startDate: formatDay(date?.startDate, 'YYYY-MM-DD'),
-            // endDate: formatDay(date?.endDate, 'YYYY-MM-DD'),
-            ...params,
-          }).toString(),
-        },
-        { replace: true }
-      );
-    };
-
     const { spinnerState, openSpinner, closeSpinner } = useSpinner();
 
-    const tabHandleClick = (value, type) => {
+    const tabHandleClick = (value: string, type?: string) => {
       navigateList({ status: value, pageNum: 1, type: type ? type : '' });
       setTotalDocs(0);
       onTabChange && onTabChange(value);
     };
 
-    const branchSelectedHandleChange = (data) => {
-      navigateList({ branch: data.value });
+    const branchSelectedHandleChange = (data: SelectOption | null) => {
+      navigateList({ branch: data?.value });
     };
 
-    const handleChangeRowPerPage = (e) => {
-      const tempRowPerPage = e.target.value;
+    const handleChangeRowPerPage = (e: ChangeEvent<HTMLSelectElement>) => {
+      const tempRowPerPage = Number(e.target.value);
       setRowPerPage(tempRowPerPage);
       navigateList({ rowPerPage: tempRowPerPage, pageNum: 1 });
     };
 
-    const handleChangePageNum = (e) => {
+    const handleChangePageNum = (e: { selected: number }) => {
       setPageNum(Number(e.selected) + 1);
       navigateList({ pageNum: Number(e.selected) + 1 });
     };
 
-    const handleTypeChange = (data) => {
-      navigateList({ type: data.value });
+    const handleTypeChange = (data: SelectOption | null) => {
+      navigateList({ type: data?.value });
     };
 
     useEffect(() => {
       if (company) {
         const e_chanel_storage = localStorage.getItem('e_chanel_storage');
-        const token_text = JSON.parse(e_chanel_storage);
+        const token_text = e_chanel_storage ? JSON.parse(e_chanel_storage) : null;
         const companyDetails = company?.find(
           (item) => item?.value === token_text?.company
         );
-        const tempBranch = [
+        const tempBranch: SelectOption[] = [
           { value: STATUS.All, label: STATUS.All },
           ...(companyDetails?.branch || []),
         ];
@@ -329,11 +406,11 @@ const TransactionTabList = forwardRef(
           getList: () => {
             getList(
               tabStatus,
-              selectedBranch.value,
+              selectedBranch?.value ?? 'All',
               rowPerPage,
               pageNum,
-              searchRef.current.value,
-              type
+              searchRef.current?.value ?? '',
+              type?.value ?? 'All'
               // date.startDate,
               // date.endDate
             );
@@ -353,16 +430,10 @@ const TransactionTabList = forwardRef(
     useEffect(() => {
       let tempStatus = searchParams.get('status') ?? defaultTab;
       let tempBranch = searchParams.get('branch') ?? 'All';
-      let tempPageNum = searchParams.get('pageNum') ?? 1;
-      let tempRowPerPage = searchParams.get('rowPerPage') ?? 25;
+      let tempPageNum = Number(searchParams.get('pageNum') ?? 1);
+      let tempRowPerPage = Number(searchParams.get('rowPerPage') ?? 25);
       let tempSearch = searchParams.get('search') ?? '';
       let tempType = searchParams.get('type') || 'All';
-      // let tempStartDate = searchParams.get('startDate')
-      //   ? new Date(searchParams.get('startDate'))
-      //   : new Date();
-      // let tempEndDate = searchParams.get('endDate')
-      //   ? new Date(searchParams.get('endDate'))
-      //   : new Date();
       const abortController = new AbortController();
       if (branch.length > 0) {
         setTabStatus(tempStatus);
@@ -370,7 +441,6 @@ const TransactionTabList = forwardRef(
         setType(typeOptions.find((item) => item.value === tempType));
         setPageNum(tempPageNum);
         setRowPerPage(tempRowPerPage);
-        // setDate({ startDate: tempStartDate, endDate: tempEndDate });
         if (searchRef.current) {
           searchRef.current.value = tempSearch;
         }
@@ -382,9 +452,6 @@ const TransactionTabList = forwardRef(
           tempSearch,
           tempType,
           { signal: abortController.signal }
-
-          // tempStartDate,
-          // tempEndDate
         );
         resetTableScroll();
       }
@@ -393,38 +460,9 @@ const TransactionTabList = forwardRef(
       // };
     }, [searchParams, branch]);
 
-    // useEffect(() => {
-    //   const id = setInterval(
-    //     () => {
-    //       getList(
-    //         tabStatus,
-    //         selectedBranch.value,
-    //         rowPerPage,
-    //         pageNum,
-    //         searchRef.current.value,
-    //         type.value
-    //         // date.startDate,
-    //         // date.endDate
-    //       );
-    //     },
-    //     300000 // 5 minutes
-    //   );
-
-    //   return () => {
-    //     clearInterval(id);
-    //   };
-    // }, [
-    //   tabStatus,
-    //   selectedBranch,
-    //   rowPerPage,
-    //   pageNum,
-    //   type,
-    //   // date
-    // ]);
-
     const debounceSearch = useDebouncedCallback(
       // function
-      (value) => {
+      (value: string) => {
         navigateList({ pageNum: 1, search: value });
       },
       // delay in ms
@@ -438,10 +476,6 @@ const TransactionTabList = forwardRef(
       closeModal: closeTransactionLogModal,
     } = useModal();
 
-    // const handleStatusChange = (newStatus) => {
-    //   console.log("Status changed to:", newStatus);
-    // };
-
     const isEnableCheckbox =
       typeof enableCheckbox === 'function'
         ? enableCheckbox({ tabStatus })
@@ -450,19 +484,22 @@ const TransactionTabList = forwardRef(
     const isEnableTypeFilter =
       typeof typeFilter === 'function' ? typeFilter({ tabStatus }) : typeFilter;
 
-    const handleIssueDateClick = async (e, item) => {
+    const handleIssueDateClick = async (
+      e: MouseEvent,
+      item?: CustomerTransaction
+    ) => {
       e.preventDefault();
       e.stopPropagation();
 
       if (!item) return;
 
       try {
+        const status = item?.customerCardConfirmation?.status;
+
         setStatusMap((prev) => ({
           ...prev,
-          [item.uuid]: status,
+          [item.uuid ?? '']: status,
         }));
-
-        const status = item?.customerCardConfirmation?.status;
 
         if (status === 'green') {
           openIssueDateDetailModal(item);
@@ -474,7 +511,7 @@ const TransactionTabList = forwardRef(
       }
     };
 
-    const refreshCardStatus = (cardNumber) => {
+    const refreshCardStatus = (cardNumber?: string) => {
       if (!cardNumber) return;
 
       setArrCustomer((prev) =>
@@ -509,7 +546,7 @@ const TransactionTabList = forwardRef(
         <div className="page-wrapper">
           <div className="card overflow-hidden mt-3 mb-1" style={{ flex: 1 }}>
             <div className="card-header">
-              {tab?.length > 0 ? (
+              {tab && tab.length > 0 ? (
                 <ul
                   className="nav nav-tabs card-header-tabs"
                   data-bs-toggle="tabs"
@@ -520,7 +557,7 @@ const TransactionTabList = forwardRef(
                       <li className="nav-item" key={index}>
                         <a
                           href={`#${item.status}`}
-                          onClick={() => tabHandleClick(item.status, item.type)}
+                          onClick={() => tabHandleClick(item.status ?? '', item.type)}
                           className={`nav-link text-${item.label} ${
                             tabStatus === item.status ? 'active' : ''
                           }`}
@@ -642,7 +679,7 @@ const TransactionTabList = forwardRef(
                                   <Checkbox
                                     disableGutter
                                     checked={
-                                      isSelectedAllInCurrentList &&
+                                      !!isSelectedAllInCurrentList &&
                                       isSelectedAllInCurrentList(arrCustomer)
                                     }
                                     onChange={(checked) => {
@@ -743,7 +780,7 @@ const TransactionTabList = forwardRef(
                                         <Checkbox
                                           disableGutter
                                           checked={
-                                            isSelectedItem &&
+                                            !!isSelectedItem &&
                                             isSelectedItem(item)
                                           }
                                           onChange={() => {
@@ -773,8 +810,9 @@ const TransactionTabList = forwardRef(
                                       'text-secondary': item.batchNumber,
                                     })}
                                     title={
-                                      item.batchNumber &&
-                                      'Click to process batch transaction'
+                                      item.batchNumber
+                                        ? 'Click to process batch transaction'
+                                        : undefined
                                     }
                                     onClick={(e) => {
                                       e.stopPropagation();
@@ -828,7 +866,7 @@ const TransactionTabList = forwardRef(
                                     >
                                       {isCompleted
                                         ? 'Completed'
-                                        : hasIssueDate
+                                        : item.customerIssueDate?.issueDate
                                         ? new Date(
                                             item.customerIssueDate.issueDate
                                           ).toLocaleDateString('en-GB')
@@ -870,7 +908,7 @@ const TransactionTabList = forwardRef(
                     </select>
                   </div>
                   <div className="mx-4">
-                    {totalDocs > 0 && (
+                    {!!totalDocs && totalDocs > 0 && (
                       <span className="text-muted">
                         {(Number(pageNum) - 1) * rowPerPage + 1} -{' '}
                         {Number(pageNum) * rowPerPage > totalDocs
@@ -881,7 +919,7 @@ const TransactionTabList = forwardRef(
                     )}
                   </div>
                   <div className="mx-2">
-                    {totalDocs > 0 && (
+                    {!!totalDocs && totalDocs > 0 && (
                       <ReactPaginate
                         forcePage={pageNum - 1 ? pageNum - 1 : 0}
                         previousLabel={
@@ -981,16 +1019,18 @@ const TransactionTabList = forwardRef(
           onClose={closeIssueDateDetailModal}
           modalRef={issueDateDetailModalRef}
           item={issueDateDetailItem}
-          arrCustomer={arrCustomer}
-          // onStatusChange={handleStatusChange}
-          onUpdate={refreshCardStatus}
         />
       </>
     );
   }
 );
 
-export const ShowLogsButton = ({ onClick, variant }) => {
+interface ShowLogsButtonProps {
+  onClick?: () => void;
+  variant?: string;
+}
+
+export const ShowLogsButton = ({ onClick, variant }: ShowLogsButtonProps) => {
   return (
     <Button onClick={onClick} variant={variant} size={'sm'}>
       Show Logs
@@ -998,77 +1038,94 @@ export const ShowLogsButton = ({ onClick, variant }) => {
   );
 };
 
+interface TransactionLogItem {
+  createdDate?: string;
+  createdBy?: string;
+  action?: string;
+}
+
+interface TransactionLogsModalProps {
+  transactionNo?: string;
+  open?: boolean;
+  onClose: () => void;
+  openSpinner: (arg?: { title?: string }) => void;
+  closeSpinner: () => void;
+}
+
 // eslint-disable-next-line react/display-name
-export const TransactionLogsModal = forwardRef(
-  ({ transactionNo, open, onClose, openSpinner, closeSpinner }, ref) => {
-    // const { modalRef, openModal, open, closeModal } = useModal();
-    const [detail, setDetail] = useState([]);
+export const TransactionLogsModal = forwardRef<
+  HTMLDivElement,
+  TransactionLogsModalProps
+>(({ transactionNo, open, onClose, openSpinner, closeSpinner }, ref) => {
+  // const { modalRef, openModal, open, closeModal } = useModal();
+  const [detail, setDetail] = useState<TransactionLogItem[]>([]);
 
-    useEffect(() => {
-      if (open) {
-        getDetails();
-      }
-      return () => {
-        onClose();
-      };
-    }, [open]);
+  const getDetails = async () => {
+    try {
+      openSpinner();
+      const response = await fetchDataAsync<{ list?: TransactionLogItem[] }>(
+        `/operation-customer/log?transaction=${transactionNo}`
+      );
+      setDetail(response?.data?.list ?? []);
+    } catch (error) {
+      toast.error(
+        axios.isAxiosError(error) ? error.response?.data?.message : undefined
+      );
+    } finally {
+      delay(() => {
+        closeSpinner();
+      });
+    }
+  };
 
-    const getDetails = async () => {
-      try {
-        openSpinner();
-        const response = await fetchDataAsync(
-          `/operation-customer/log?transaction=${transactionNo}`
-        );
-        setDetail(response?.data?.list);
-      } catch (error) {
-        toast.error(error?.response?.data?.message);
-      } finally {
-        delay(() => {
-          closeSpinner();
-        });
-      }
+  useEffect(() => {
+    if (open) {
+      getDetails();
+    }
+    return () => {
+      onClose();
     };
+  }, [open]);
 
-    return (
-      <>
-        <Modal
-          size="lg"
-          title={'Logs'}
-          bodyClassName="p-0"
-          content={
-            <table className="table">
-              <thead className="position-sticky top-0 ">
-                <tr>
-                  <th>Date</th>
-                  <th>User</th>
-                  <th>Action</th>
+  return (
+    <>
+      <Modal
+        size="lg"
+        title={'Logs'}
+        bodyClassName="p-0"
+        content={
+          <table className="table">
+            <thead className="position-sticky top-0 ">
+              <tr>
+                <th>Date</th>
+                <th>User</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              {detail?.map((item, index) => (
+                <tr key={index}>
+                  <td>{item?.createdDate}</td>
+                  <td>{item?.createdBy}</td>
+                  <td>
+                    <ComponentStatus status={item.action} />
+                  </td>
                 </tr>
-              </thead>
-              <tbody>
-                {detail?.map((item, index) => (
-                  <tr key={index}>
-                    <td>{item?.createdDate}</td>
-                    <td>{item?.createdBy}</td>
-                    <td>
-                      <ComponentStatus status={item.action} />
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          }
-          ref={ref}
-        ></Modal>
-      </>
-    );
-  }
-);
+              ))}
+            </tbody>
+          </table>
+        }
+        ref={ref}
+      ></Modal>
+    </>
+  );
+});
 
-export const selectCustomStyles = {
+export const selectCustomStyles: StylesConfig<any, boolean> = {
   control: (provided, state) => ({
     ...provided,
     background: '#fff',
-    boxShadow: state.isFocused ? null : null,
+    boxShadow: undefined,
     cursor: 'pointer',
   }),
   container: (provided) => ({

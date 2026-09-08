@@ -1,7 +1,14 @@
+import type { ReactNode } from 'react';
 import { useNavigate } from 'react-router';
-import TransactionDetail from './TransactionDetail';
+import TransactionDetail, { type TransactionDetailData } from './TransactionDetail';
 
-const TransactionDetailCard = ({ data, actions, children }) => {
+interface TransactionDetailCardProps {
+  data?: TransactionDetailData | null;
+  actions?: ReactNode;
+  children?: ReactNode;
+}
+
+const TransactionDetailCard = ({ data, actions, children }: TransactionDetailCardProps) => {
   const navigate = useNavigate();
 
   const handleGoBack = () => {
@@ -33,7 +40,7 @@ const TransactionDetailCard = ({ data, actions, children }) => {
   );
 };
 
-const getStatusColor = (status) => {
+const getStatusColor = (status?: string) => {
   switch (status) {
     case 'submitted':
       return 'transaction-submitted';
@@ -47,19 +54,24 @@ const getStatusColor = (status) => {
   }
 };
 
-const TransactionHeader = ({ status, deleted }) => {
+interface TransactionHeaderProps {
+  status?: string;
+  deleted?: boolean;
+}
+
+const TransactionHeader = ({ status, deleted }: TransactionHeaderProps) => {
   return (
     <h2 className="card-transaction-title text-center mb-3">
       TRANSACTION{' '}
       <span className={getStatusColor(status?.toLowerCase())}>
         {' '}
-        {`${deleted ? 'DEL_' : ''}${status.toUpperCase()}`}
+        {`${deleted ? 'DEL_' : ''}${status?.toUpperCase()}`}
       </span>
     </h2>
   );
 };
 
-export const TransactionDetailCardContainer = ({ children }) => {
+export const TransactionDetailCardContainer = ({ children }: { children?: ReactNode }) => {
   return (
     <div className="page-wrapper full-height-dashboard-container justify-content-center">
       <div className="container-xl py-4">

@@ -17,12 +17,12 @@ import LabelValueList from '../../components/common/LabelValueList';
 import { useModal } from '../../components/common/modal/index';
 import Spinner, { useSpinner } from '../../components/common/Spinner';
 import TransactionNumber from '../../components/common/TransactionNumber';
-import TransactionBatchProccessModalRaw from '../../components/transaction/TransactionBatchProccessModal.jsx';
-import TransactionNumberTableItem from '../../components/transaction/TransactionNumberTableItem.jsx';
-import TransactionTabListRaw from '../../components/transaction/TransactionTabList.jsx';
+import TransactionBatchProccessModalRaw from '../../components/transaction/TransactionBatchProccessModal';
+import TransactionNumberTableItem from '../../components/transaction/TransactionNumberTableItem';
+import TransactionTabListRaw from '../../components/transaction/TransactionTabList';
 import TransactionTabSelect, {
   useTransactionTabSelect,
-} from '../../components/transaction/TransactionTabSelect.jsx';
+} from '../../components/transaction/TransactionTabSelect';
 import { useAuth } from '../../context/AuthContext';
 import useLoading from '../../hooks/useLoading';
 import useMessage from '../../hooks/useMessage';

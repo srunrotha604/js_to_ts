@@ -1,7 +1,7 @@
-import RefreshIcon from '../../Icons/RefreshIcon';
-import PlusIcon from '../../Icons/PlusIcon';
 import { Tooltip } from 'react-tooltip';
 import ArrowBackIcon from '../../Icons/ArrowBackIcon';
+import PlusIcon from '../../Icons/PlusIcon';
+import RefreshIcon from '../../Icons/RefreshIcon';
 
 const HeaderTableComponent = (props) => {
   const {

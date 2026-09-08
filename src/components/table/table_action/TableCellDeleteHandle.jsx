@@ -1,10 +1,10 @@
 import { toast } from 'react-toastify';
-import { fetchDataAsync } from '../../../services/$service';
 import useMessage from '../../../hooks/useMessage';
-import Modal, { useModal } from '../../common/modal';
+import { fetchDataAsync } from '../../../services/$service';
 import ButtonGroup from '../../buttons/ButtonGroup';
-import SubmitButton from '../../buttons/SubmitButton';
 import CancelButton from '../../buttons/CancelButton';
+import SubmitButton from '../../buttons/SubmitButton';
+import Modal, { useModal } from '../../common/modal';
 
 const TableCellDeleteHandle = (props) => {
   const { success, uuid, route, title, message } = props;

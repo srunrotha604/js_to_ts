@@ -16,7 +16,7 @@ import ProjectSelect from '../../../components/form/ProjectSelect';
 import {
   selectCustomStyles,
   typeOptions,
-} from '../../../components/transaction/TransactionTabList.jsx';
+} from '../../../components/transaction/TransactionTabList';
 import { useAuth } from '../../../context/AuthContext';
 import useLoading from '../../../hooks/useLoading';
 import useMessage from '../../../hooks/useMessage';
