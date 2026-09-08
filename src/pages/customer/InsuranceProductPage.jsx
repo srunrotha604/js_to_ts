@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { redirect, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { fetchData } from '../../services/$service';
-import { ROUTE_PATH } from '../../utils/route-util';
+import { ROUTE_API, ROUTE_PATH } from '../../utils/route-util';
 
 const InsuranceProductPage = () => {
   document.title = 'E-CHANNEL PORTAL | insurance product';
@@ -14,7 +14,7 @@ const InsuranceProductPage = () => {
   // );
 
   const getList = () => {
-    fetchData('/operation-customer/product', {}, 'GET').then((res) => {
+    fetchData(ROUTE_API.operationCustomerProduct, {}, 'GET').then((res) => {
       switch (res.status) {
         case 200:
           setArrProduct(res?.data?.list);

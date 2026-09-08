@@ -4,7 +4,7 @@ import { PatternFormat } from 'react-number-format';
 import { Link, redirect } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { fetchData } from '../../services/$service';
-import { ROUTE_PATH } from '../../utils/route-util';
+import { ROUTE_API, ROUTE_PATH } from '../../utils/route-util';
 
 const ForgotPasswordPage = () => {
   document.title = 'E-CHANNEL PORTAL | Login';
@@ -38,7 +38,7 @@ const ForgotPasswordPage = () => {
       let data = {
         email: email,
       };
-      fetchData('/login/forgot-password', data, 'POST').then((res) => {
+      fetchData(ROUTE_API.loginForgotPassword, data, 'POST').then((res) => {
         switch (res.status) {
           case 200:
             setShowSendEmail(false);
@@ -81,7 +81,7 @@ const ForgotPasswordPage = () => {
         keyCode: confirmKey,
         otpCode: confirmCode,
       };
-      fetchData('/login/confirm-code', data, 'POST').then((res) => {
+      fetchData(ROUTE_API.loginConfirmCode, data, 'POST').then((res) => {
         switch (res.status) {
           case 200:
             setSuccess(true);
@@ -109,9 +109,8 @@ const ForgotPasswordPage = () => {
       phoneNumber: phoneNumber,
       viaSMSCode: viaSMSCode,
     };
-
     console.log(data);
-    fetchData('/Login/via-sms', data, 'POST').then((res) => {
+    fetchData(ROUTE_API.loginViaSms, data, 'POST').then((res) => {
       switch (res.status) {
         case 200:
           setConfirmCodeMessage('Enter the code we sent to your phone number');
@@ -169,22 +168,24 @@ const ForgotPasswordPage = () => {
         newPassword: newPassword,
         confirmPassword: confirmPassword,
       };
-      fetchData('/login/confirm-change-password', data, 'POST').then((res) => {
-        switch (res.status) {
-          case 200:
-            setResetSuccess(true);
-            break;
-          case 400:
-            // setInvalidFeedBack(res?.data?.message);
-            toast.error(res?.data?.message);
-            break;
-          case 403:
-            toast.error(res?.data);
-            break;
-          default:
-            redirect('/404');
+      fetchData(ROUTE_API.loginConfirmChangePassword, data, 'POST').then(
+        (res) => {
+          switch (res.status) {
+            case 200:
+              setResetSuccess(true);
+              break;
+            case 400:
+              // setInvalidFeedBack(res?.data?.message);
+              toast.error(res?.data?.message);
+              break;
+            case 403:
+              toast.error(res?.data);
+              break;
+            default:
+              redirect('/404');
+          }
         }
-      });
+      );
     }
     e.preventDefault();
   };

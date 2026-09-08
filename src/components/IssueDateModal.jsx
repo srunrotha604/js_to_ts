@@ -1,9 +1,18 @@
-import React, { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import Modal from '../components/common/modal';
-import IssueDateDetailModal from './IssueDateDetailModal';
 import { fetchDataAsync } from '../services/$service';
+import { ROUTE_API } from '../utils/route-util';
+import IssueDateDetailModal from './IssueDateDetailModal';
 
-const IssueDateModal = ({ open, closeModal, modalRef, item, onStatusChange, arrCustomer, onUpdate }) => {
+const IssueDateModal = ({
+  open,
+  closeModal,
+  modalRef,
+  item,
+  onStatusChange,
+  arrCustomer,
+  onUpdate,
+}) => {
   const [issueStatus, setIssueStatus] = useState(null);
   const [showDetailIssueModal, setShowDetailIssueModal] = useState(false);
   const [remark, setRemark] = useState(''); // 🆕 Add dynamic remark state
@@ -23,18 +32,21 @@ const IssueDateModal = ({ open, closeModal, modalRef, item, onStatusChange, arrC
 
   const updateCardConfirmation = async (status) => {
     const secureCode = item?.customerIssueDate?.secureCode;
-    
+
     if (!secureCode) return;
 
     try {
-      const response = await fetchDataAsync('/operation-customer/card-confirmation', {
-        method: 'PUT',
-        data: {
-          secureCode,
-          remark: remark || '',
-          status,
-        },
-      });
+      const response = await fetchDataAsync(
+        ROUTE_API.operationCustomerCardConfirmation,
+        {
+          method: 'PUT',
+          data: {
+            secureCode,
+            remark: remark || '',
+            status,
+          },
+        }
+      );
 
       if (response?.status === 200) {
         onStatusChange?.(status);
@@ -46,7 +58,10 @@ const IssueDateModal = ({ open, closeModal, modalRef, item, onStatusChange, arrC
           }
         }
       } else {
-        console.error('Update failed:', response?.data?.message || 'Unknown error');
+        console.error(
+          'Update failed:',
+          response?.data?.message || 'Unknown error'
+        );
       }
     } catch (err) {
       console.error('Error during update:', err.message);
@@ -69,7 +84,12 @@ const IssueDateModal = ({ open, closeModal, modalRef, item, onStatusChange, arrC
   return (
     <>
       {open && (
-        <Modal ref={modalRef} title="Date of Issue Card" closeButton onClose={closeModal}>
+        <Modal
+          ref={modalRef}
+          title="Date of Issue Card"
+          closeButton
+          onClose={closeModal}
+        >
           <div>
             {hasIssueDate ? (
               <>
@@ -86,8 +106,12 @@ const IssueDateModal = ({ open, closeModal, modalRef, item, onStatusChange, arrC
                 </div>
 
                 <div className="d-flex justify-content-between">
-                  <button className="btn btn-danger" onClick={handleNo}>No</button>
-                  <button className="btn btn-primary" onClick={handleYes}>Yes</button>
+                  <button className="btn btn-danger" onClick={handleNo}>
+                    No
+                  </button>
+                  <button className="btn btn-primary" onClick={handleYes}>
+                    Yes
+                  </button>
                 </div>
               </>
             ) : (
@@ -96,7 +120,9 @@ const IssueDateModal = ({ open, closeModal, modalRef, item, onStatusChange, arrC
                   <p>No issue date is available for this card.</p>
                 </div>
                 <div className="d-flex justify-content-end">
-                  <button className="btn btn-secondary" onClick={closeModal}>Close</button>
+                  <button className="btn btn-secondary" onClick={closeModal}>
+                    Close
+                  </button>
                 </div>
               </>
             )}

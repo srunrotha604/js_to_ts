@@ -7,7 +7,6 @@ const ROUTE_PATH = {
   error404: '/error404',
   error500: '/error500',
   notFound: '/404',
-
   profile: '/dashboard/profile',
   changePassword: '/dashboard/change-password',
   switchBranch: '/dashboard/switch-branch',
@@ -18,14 +17,12 @@ const ROUTE_PATH = {
   userReport: '/dashboard/user-report',
   batchRegister: '/dashboard/batch-register',
   roleAccess: '/dashboard/role-access',
-
   project: '/dashboard/project',
   projectCreate: '/dashboard/project/create',
   projectEdit: (key: string | number) => `/dashboard/project/edit/${key}`,
   projectPolicy: (key: string | number) => `/dashboard/project/policy/${key}`,
   projectPolicyCreate: (key: string | number) =>
     `/dashboard/project/policy/create/${key}`,
-
   branch: '/dashboard/branch',
   branchCreate: '/dashboard/branch/create',
   branchProject: (key: string | number) => `/dashboard/branch/project/${key}`,
@@ -33,7 +30,6 @@ const ROUTE_PATH = {
     `/dashboard/branch/project/create/${key}`,
   branchProjectEdit: (key: string | number) =>
     `/dashboard/branch/project/edit/${key}`,
-
   user: '/dashboard/user',
   userCreate: '/dashboard/user/create',
   userEdit: (key: string | number) => `/dashboard/user/edit/${key}`,
@@ -78,6 +74,68 @@ const ROUTE_PATH = {
 /*--- api routes  ---*/
 const ROUTE_API = {
   root: import.meta.env.VITE_API_URL,
+  login: '/login',
+  loginRefreshToken: '/login/refresh-token',
+  loginChangePassword: '/login/change-password',
+  loginForgotPassword: '/login/forgot-password',
+  loginConfirmCode: '/login/confirm-code',
+  loginConfirmChangePassword: '/login/confirm-change-password',
+  loginViaSms: '/Login/via-sms',
+  operationCustomerAccess: '/operation-customer/access',
+  operationCustomerProduct: '/operation-customer/product',
+  operationCustomerProductByCode: (code: string | number) =>
+    `/operation-customer/product/${code}`,
+  operationCustomer: '/operation-customer',
+  operationCustomerDelete: '/operation-customer/delete',
+  operationCustomerDuplicate: '/operation-customer/duplicate',
+  operationCustomerCardConfirmation: '/operation-customer/card-confirmation',
+  operationCustomerBatch: '/operation-customer/batch',
+  operationCustomerBatchUpload: '/operation-customer/batch/upload',
+  exportOperationCustomer: '/export/operation-customer',
+  operationProject: '/operation-project',
+  operationProjectByKey: (key: string | number) => `/operation-project/${key}`,
+  operationProjectPolicy: '/operation-project/policy',
+  operationProjectPolicyByKey: (key: string | number) =>
+    `/operation-project/policy/${key}`,
+  coreSystemOperationPolicy: '/core-system-operation-policy/PG00',
+  opertionBranch: '/opertion-branch',
+  opertionBranchAdmin: '/opertion-branch/admin',
+  opertionBranchProject: '/opertion-branch/project',
+  opertionBranchProjectByKey: (key: string | number) =>
+    `/opertion-branch/project/${key}`,
+  operationProduct: '/operation-product',
+  operationProductByKey: (key: string | number) => `/operation-product/${key}`,
+  operationProductProduct: '/operation-product/product',
+  applicationRoleAccess: '/application-role/access',
+  eChanelUserAccess: '/e-chanel-user/access',
+  eChanelUserAccessByCode: (userCode: string | number) =>
+    `/e-chanel-user/access/${userCode}`,
+  eChanelUser: '/e-chanel-user',
+  eChanelUserRole: '/e-chanel-user/role',
+  eChanelUserRoleByKey: (key: string | number) => `/e-chanel-user/role/${key}`,
+  eChanelUserBranch: '/e-chanel-user/branch',
+  eChanelUserBranchCategory: '/e-chanel-user/branch/category',
+  eChanelUserAddPhoneNumber: '/e-chanel-user/add-phone-number',
+  eChanelUserCompany: '/e-chanel-user/company',
+  systemUser: '/system-user',
+  systemUserInfo: '/system-user/info',
+  systemUserRoleBranchStatus: '/system-user-role/branch/status',
+  systemUserRoleBranch: '/system-user-role/branch',
+  systemUserRoleCompanyStatus: '/system-user-role/company/status',
+  dataOptionApplication: (key: string | number) =>
+    `/DataOption/application/${key}`,
+  dataOptionSystemUserRole: (value: string | number) =>
+    `/DataOption/system-user-role/${value}`,
+  eChanelDataEntryAccess: '/e-chanel-data-entry/access',
+  eChanelDataEntry: '/e-chanel-data-entry',
+  eChanelDataEntryStatus: '/e-chanel-data-entry/status',
+  eChanelDataEntryImport: '/e-chanel-data-entry/import',
+  eChanelDataEntryAddPhoneNumber: '/e-chanel-data-entry/add-phone-number',
+  exportOperationUser: '/export/operation-user',
+  applicationVersion: '/application-version',
+  applicationVersionActive: '/application-version/active',
+  log: '/log',
+  logContactUs: '/log/contact-us',
 };
 
 export { ROUTE_API, ROUTE_PATH };

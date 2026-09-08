@@ -7,7 +7,7 @@ import CostomerTransationSubmit from '../../components/customer/create/CustomerT
 import CustomerEdit from '../../components/customer/edit/CustomerEdit';
 import CustomerEditReview from '../../components/customer/edit/CustomerEditReview';
 import { fetchData } from '../../services/$service';
-import { ROUTE_PATH } from '../../utils/route-util';
+import { ROUTE_API, ROUTE_PATH } from '../../utils/route-util';
 
 const STEP = {
   Edited: 'Edited',
@@ -32,7 +32,7 @@ const CustomerEditPage = () => {
 
   const getList = () => {
     fetchData(
-      '/operation-customer/product/' + params.productCode,
+      ROUTE_API.operationCustomerProduct + '/' + params.productCode,
       {},
       'GET'
     ).then((res) => {

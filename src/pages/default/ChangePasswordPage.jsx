@@ -4,7 +4,7 @@ import { toast } from 'react-toastify';
 import EyeIcon from '../../components/Icons/EyeIcon';
 import EyeOffIcon from '../../components/Icons/EyeOffIcon';
 import { fetchData } from '../../services/$service';
-import { ROUTE_PATH } from '../../utils/route-util';
+import { ROUTE_API, ROUTE_PATH } from '../../utils/route-util';
 
 const ChangePasswordPage = () => {
   const navigate = useNavigate();
@@ -65,7 +65,7 @@ const ChangePasswordPage = () => {
         newPassword: newPassword,
         confirmPassword: confirmPassword,
       };
-      fetchData('/login/change-password', data, 'POST').then((res) => {
+      fetchData(ROUTE_API.loginChangePassword, data, 'POST').then((res) => {
         switch (res.status) {
           case 200: {
             toast.success(

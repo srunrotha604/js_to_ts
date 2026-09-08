@@ -6,7 +6,7 @@ import CustomerCreate from '../../components/customer/create/CustomerCreate';
 import CustomerCreateReview from '../../components/customer/create/CustomerCreateReview';
 import CostomerTransationSubmit from '../../components/customer/create/CustomerTransationSubmit';
 import { fetchData } from '../../services/$service';
-import { ROUTE_PATH } from '../../utils/route-util';
+import { ROUTE_API, ROUTE_PATH } from '../../utils/route-util';
 
 const STEP = {
   Create: 'create',
@@ -26,28 +26,30 @@ const CustomerCreatePage = () => {
   const methods = useForm();
 
   const getList = () => {
-    fetchData('/operation-customer/product/' + params.key, {}, 'GET').then(
-      (res) => {
-        switch (res.status) {
-          case 200:
-            setArrProduct(
-              res?.data?.list?.find(
-                (item) => item?.productsequenceCode === params.key
-              )
-            );
-            setArrProject(res?.data?.category);
-            break;
-          case 400:
-            toast.error(res?.data?.message);
-            break;
-          case 403:
-            toast.error(res?.data);
-            break;
-          default:
-            navigate(ROUTE_PATH.notFound);
-        }
+    fetchData(
+      ROUTE_API.operationCustomerProduct + '/' + params.key,
+      {},
+      'GET'
+    ).then((res) => {
+      switch (res.status) {
+        case 200:
+          setArrProduct(
+            res?.data?.list?.find(
+              (item) => item?.productsequenceCode === params.key
+            )
+          );
+          setArrProject(res?.data?.category);
+          break;
+        case 400:
+          toast.error(res?.data?.message);
+          break;
+        case 403:
+          toast.error(res?.data);
+          break;
+        default:
+          navigate(ROUTE_PATH.notFound);
       }
-    );
+    });
   };
 
   useEffect(() => {

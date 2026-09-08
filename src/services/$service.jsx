@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { ROUTE_API } from '../utils/route-util';
 
 export const valid_token_data = () => {
   const storage = localStorage.getItem('e_chanel_storage');
@@ -51,7 +52,7 @@ export const refreshToken = async () => {
 
   try {
     const res = await axios({
-      url: import.meta.env.VITE_API_URL + '/login/refresh-token',
+      url: import.meta.env.VITE_API_URL + ROUTE_API.loginRefreshToken,
       method: 'POST',
       data: data,
       headers: {

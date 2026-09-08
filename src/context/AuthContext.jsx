@@ -1,5 +1,6 @@
 import { createContext, useContext, useEffect, useState } from 'react';
 import { fetchDataAsync } from '../services/$service';
+import { ROUTE_API } from '../utils/route-util';
 import { clearTransactionStatusCount } from '../utils/status';
 import ModuleContextProvider from './module/ModuleContext';
 
@@ -22,12 +23,12 @@ const AuthContext = createContext({
 });
 
 const fetchPermissionAccess = async () => {
-  const URL = '/operation-customer/access';
+  const URL = ROUTE_API.operationCustomerAccess;
   return fetchDataAsync(URL);
 };
 
 const fetchUserInfo = async () => {
-  const URL = '/login';
+  const URL = ROUTE_API.login;
   return fetchDataAsync(URL);
 };
 

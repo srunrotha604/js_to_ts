@@ -6,7 +6,7 @@ import ComponentExcelUpload from '../../components/batch_register/ComponentExcel
 import ComponentReview from '../../components/batch_register/ComponentReview';
 import ComponentSelectedProduct from '../../components/batch_register/ComponentSelectedProduct';
 import { fetchData } from '../../services/$service';
-import { ROUTE_PATH } from '../../utils/route-util';
+import { ROUTE_API, ROUTE_PATH } from '../../utils/route-util';
 
 const STEP = {
   SELECTE_PRODUCT: 'SELECTE_PRODUCT',
@@ -26,7 +26,7 @@ const BatchRegister = () => {
   const [productCode, setProductCode] = useState('');
 
   const getList = () => {
-    fetchData('/operation-customer/product', {}, 'GET').then((res) => {
+    fetchData(ROUTE_API.operationCustomerProduct, {}, 'GET').then((res) => {
       switch (res.status) {
         case 200:
           setArrProduct(res?.data?.list);
@@ -44,21 +44,23 @@ const BatchRegister = () => {
   };
 
   const policyList = (value) => {
-    fetchData('/operation-customer/product/' + value, {}, 'GET').then((res) => {
-      switch (res.status) {
-        case 200:
-          setArrProject(res?.data?.category);
-          break;
-        case 400:
-          toast.error(res?.data?.message);
-          break;
-        case 403:
-          toast.error(res?.data);
-          break;
-        default:
-          redirect('/404');
+    fetchData(ROUTE_API.operationCustomerProduct + value, {}, 'GET').then(
+      (res) => {
+        switch (res.status) {
+          case 200:
+            setArrProject(res?.data?.category);
+            break;
+          case 400:
+            toast.error(res?.data?.message);
+            break;
+          case 403:
+            toast.error(res?.data);
+            break;
+          default:
+            redirect('/404');
+        }
       }
-    });
+    );
   };
 
   useEffect(() => {
