@@ -7,8 +7,8 @@ import type {
   ProductItem,
   ProductListResponse,
 } from '../../../../@type/project_configuration';
-import ActionConfirmationModal from '../../../../components/common/ActionConfirmationModal.jsx';
-import { useModal } from '../../../../components/common/modal/index.jsx';
+import ActionConfirmationModal from '../../../../components/common/ActionConfirmationModal';
+import { useModal } from '../../../../components/common/modal/index';
 import Loading from '../../../../components/Loading';
 import { fetchData } from '../../../../services/$service';
 import { ROUTE_API, ROUTE_PATH } from '../../../../utils/route-util';

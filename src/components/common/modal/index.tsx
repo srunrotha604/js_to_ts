@@ -1,7 +1,6 @@
 import clsx from 'clsx';
-import { useState } from 'react';
-import { forwardRef } from 'react';
-import { useRef } from 'react';
+import type { ReactNode } from 'react';
+import { forwardRef, useRef, useState } from 'react';
 
 const modalSize = {
   sm: 'modal-sm',
@@ -9,8 +8,20 @@ const modalSize = {
   xl: 'modal-xl',
 };
 
+export interface ModalProps {
+  title?: ReactNode;
+  content?: ReactNode;
+  children?: ReactNode;
+  actions?: ReactNode;
+  size?: keyof typeof modalSize;
+  closeButton?: boolean;
+  bodyClassName?: string;
+  headerClassName?: string;
+  noTransition?: boolean;
+}
+
 // eslint-disable-next-line react/display-name
-const Modal = forwardRef(
+const Modal = forwardRef<HTMLDivElement, ModalProps>(
   (
     {
       title,
@@ -29,7 +40,7 @@ const Modal = forwardRef(
       <div
         className={clsx('modal', { fade: !noTransition })}
         ref={ref}
-        tabIndex="-1"
+        tabIndex={-1}
         aria-hidden="true"
       >
         <div
@@ -38,7 +49,7 @@ const Modal = forwardRef(
             'modal-dialog-centered',
             'modal-dialog-scrollable',
             {
-              [modalSize?.[size]]: size,
+              [size ? modalSize[size] : '']: size,
             }
           )}
         >
@@ -65,38 +76,13 @@ const Modal = forwardRef(
   }
 );
 
-// export const useModal = () => {
-//   const modalRef = useRef(null);
-//   const [open, setOpen] = useState(false);
-//   const [data, setData] = useState(null);
-
-//   const openModal = (data) => {
-//     setData(data);
-//     setOpen(true);
-//     // eslint-disable-next-line no-undef
-//     const myModal = new bootstrap.Modal(modalRef.current);
-//     myModal.show();
-//   };
-
-//   const closeModal = () => {
-//     setOpen(false);
-//     // eslint-disable-next-line no-undef
-//     const myModal = bootstrap.Modal.getInstance(modalRef.current);
-//     if (myModal) {
-//       myModal.hide();
-//     }
-//   };
-
-//   return { openModal, closeModal, modalRef, open, data };
-// };
-
-export const useModal = () => {
-  const modalRef = useRef(null);
+export const useModal = <T = unknown,>() => {
+  const modalRef = useRef<HTMLDivElement>(null);
   const [open, setOpen] = useState(false);
-  const [data, setData] = useState(null);
+  const [data, setData] = useState<T | null>(null);
 
-  const openModal = (data) => {
-    setData(data);
+  const openModal = (data?: T) => {
+    setData(data ?? null);
     setOpen(true);
 
     setTimeout(() => {
@@ -117,12 +103,11 @@ export const useModal = () => {
     if (backdrop) {
       backdrop.remove();
       document.body.classList.remove('modal-open');
-      document.body.style = '';
+      document.body.style.cssText = '';
     }
   };
 
   return { openModal, closeModal, modalRef, open, data };
 };
-
 
 export default Modal;

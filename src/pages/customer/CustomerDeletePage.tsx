@@ -17,7 +17,7 @@ import ApproveRejectConfirmationModal from '../../components/common/ActionConfir
 import Button from '../../components/common/Button';
 import Checkbox from '../../components/common/Checkbox';
 import { useModal } from '../../components/common/modal';
-import Spinner, { useSpinner } from '../../components/common/Spinner.jsx';
+import Spinner, { useSpinner } from '../../components/common/Spinner';
 import TransactionBatchProccessModalRaw from '../../components/transaction/TransactionBatchProccessModal';
 import TransactionNumberTableItem from '../../components/transaction/TransactionNumberTableItem.jsx';
 import TransactionTabListRaw from '../../components/transaction/TransactionTabList';

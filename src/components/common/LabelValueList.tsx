@@ -1,6 +1,22 @@
+import type { ReactNode } from 'react';
 import { LabelValueItem } from './LabelValueItem';
 
-const LabelValueList = ({ list, valueColorClassName = '', columnClassName }) => {
+interface LabelValueListItem {
+  label?: ReactNode;
+  value?: ReactNode;
+}
+
+interface LabelValueListProps {
+  list?: LabelValueListItem[];
+  valueColorClassName?: string;
+  columnClassName?: string;
+}
+
+const LabelValueList = ({
+  list,
+  valueColorClassName = '',
+  columnClassName,
+}: LabelValueListProps) => {
   return (
     <div className="row">
       {list?.map((item, index) => (

@@ -13,10 +13,10 @@ import type {
   CustomerTransaction,
   TransactionTotalCounts,
 } from '../../@type/batch';
-import ApproveRejectConfirmationModal from '../../components/common/ActionConfirmationModal.jsx';
-import Button from '../../components/common/Button.jsx';
-import ModalRaw, { useModal } from '../../components/common/modal/index.jsx';
-import Spinner, { useSpinner } from '../../components/common/Spinner.jsx';
+import ApproveRejectConfirmationModal from '../../components/common/ActionConfirmationModal';
+import Button from '../../components/common/Button';
+import ModalRaw, { useModal } from '../../components/common/modal/index';
+import Spinner, { useSpinner } from '../../components/common/Spinner';
 import ComponentStatus from '../../components/customer/ComponentStatus';
 import TransactionBatchProccessModalRaw from '../../components/transaction/TransactionBatchProccessModal.jsx';
 import TransactionTabListRaw from '../../components/transaction/TransactionTabList';

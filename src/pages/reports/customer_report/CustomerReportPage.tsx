@@ -9,7 +9,7 @@ import type {
   CustomerReportListResponse,
   SelectOption,
 } from '../../../@type/report';
-import Button from '../../../components/common/Button.jsx';
+import Button from '../../../components/common/Button';
 import ComponentStatus from '../../../components/customer/ComponentStatus.jsx';
 import DateRangeSelector from '../../../components/form/DateRangeSelector.jsx';
 import ProjectSelect from '../../../components/form/ProjectSelect.jsx';

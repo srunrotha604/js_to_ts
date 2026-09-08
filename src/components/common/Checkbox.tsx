@@ -1,6 +1,18 @@
 import clsx from 'clsx';
 
-const Checkbox = ({ checked, onChange, disableGutter, disabled = false }) => {
+interface CheckboxProps {
+  checked?: boolean;
+  onChange: (checked: boolean) => void;
+  disableGutter?: boolean;
+  disabled?: boolean;
+}
+
+const Checkbox = ({
+  checked,
+  onChange,
+  disableGutter,
+  disabled = false,
+}: CheckboxProps) => {
   return (
     <input
       checked={checked}

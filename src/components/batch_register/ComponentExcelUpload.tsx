@@ -1,31 +1,48 @@
 import clsx from 'clsx';
 import { useCallback, useEffect, useState } from 'react';
+import type { FileWithPath } from 'react-dropzone';
 import { useDropzone } from 'react-dropzone';
 import { Controller, useFormContext, useWatch } from 'react-hook-form';
 import { MdDownload } from 'react-icons/md';
 import { redirect } from 'react-router-dom';
 import Select from 'react-select';
 import { toast } from 'react-toastify';
+import type {
+  BatchCustomerListResult,
+  ProjectPolicyOption,
+} from '../../@type/batch';
 import ExcelIcon from '../../assets/Excel.svg';
 import useLoading from '../../hooks/useLoading';
 import { fileUpload } from '../../services/$service';
 import { ROUTE_API, ROUTE_PATH } from '../../utils/route-util';
-import ActionConfirmationModal from '../common/ActionConfirmationModal.jsx';
+import ActionConfirmationModal from '../common/ActionConfirmationModal';
 import Button from '../common/Button';
-import { useModal } from '../common/modal/index.jsx';
+import { useModal } from '../common/modal/index';
 import Image from '../Image';
 
 const downloadUrl =
   import.meta.env.VITE_API_URL + '/operation-customer/batch/download';
-const ComponentExcelUpload = (props) => {
+
+type PolicyOption = NonNullable<ProjectPolicyOption['policies']>[number];
+
+interface ComponentExcelUploadProps {
+  project: ProjectPolicyOption[];
+  handleReviewStep: (value: BatchCustomerListResult, product?: string) => void;
+  handleGoBack: () => void;
+  product: string;
+}
+
+const ComponentExcelUpload = (props: ComponentExcelUploadProps) => {
   const { project, handleReviewStep, handleGoBack, product } = props;
-  const [policy, setPolicy] = useState([]);
+  const [policy, setPolicy] = useState<
+    NonNullable<ProjectPolicyOption['policies']>
+  >([]);
   const { control, handleSubmit, reset, getValues, setValue } =
     useFormContext();
-  const [myFiles, setMyFiles] = useState([]);
+  const [myFiles, setMyFiles] = useState<FileWithPath[]>([]);
   const [loading, startLoading, stopLoading] = useLoading();
   const onDrop = useCallback(
-    (acceptedFiles) => {
+    (acceptedFiles: FileWithPath[]) => {
       setMyFiles([...acceptedFiles]);
     },
     [myFiles]
@@ -36,13 +53,12 @@ const ComponentExcelUpload = (props) => {
     accept: {
       'application/vnd.ms-excel': ['.xlsx', '.xls'],
     },
-    excludeAcceptAllOption: true,
     multiple: false,
   });
 
   const { modalRef, closeModal, openModal } = useModal();
 
-  const removeFile = (file) => () => {
+  const removeFile = (file: FileWithPath) => () => {
     const newFiles = [...myFiles];
     newFiles.splice(newFiles.indexOf(file), 1);
     setMyFiles(newFiles);
@@ -89,7 +105,10 @@ const ComponentExcelUpload = (props) => {
     setPolicy([]);
   };
 
-  const onSubmit = (data) => {
+  const onSubmit = (data: {
+    project?: { value?: string };
+    policy?: { value?: string };
+  }) => {
     const formData = new FormData();
     myFiles.forEach((item) => {
       formData.append('files', item);
@@ -97,33 +116,35 @@ const ComponentExcelUpload = (props) => {
     formData.append(
       'data',
       JSON.stringify({
-        ProjectCode: data.project.value,
-        Policies: data.policy.value,
+        ProjectCode: data.project?.value,
+        Policies: data.policy?.value,
         ProductCode: product,
       })
     );
     startLoading();
-    fileUpload(ROUTE_API.operationCustomerBatchUpload, formData, 'POST').then(
-      (res) => {
-        switch (res?.status) {
-          case 200:
-            stopLoading();
-            handleReviewStep(res?.data, product);
-            break;
-          case 400:
-            stopLoading();
-            toast.error(res?.data?.message);
-            break;
-          case 403:
-            stopLoading();
-            toast.error(res?.data);
-            break;
-          default:
-            stopLoading();
-            redirect(ROUTE_PATH.error404);
-        }
+    fileUpload<BatchCustomerListResult>(
+      ROUTE_API.operationCustomerBatchUpload,
+      formData,
+      'POST'
+    ).then((res) => {
+      switch (res?.status) {
+        case 200:
+          stopLoading();
+          handleReviewStep(res?.data ?? {}, product);
+          break;
+        case 400:
+          stopLoading();
+          toast.error(res?.data?.message ?? '');
+          break;
+        case 403:
+          stopLoading();
+          toast.error(String(res?.data));
+          break;
+        default:
+          stopLoading();
+          redirect(ROUTE_PATH.error404);
       }
-    );
+    });
   };
 
   const projectWatch = useWatch({ control, name: 'project' });
@@ -140,7 +161,9 @@ const ComponentExcelUpload = (props) => {
     const currentPolicy = getValues('policy');
     const stillValid =
       currentPolicy &&
-      policies.some((p) => String(p.value) === String(currentPolicy.value));
+      policies.some(
+        (p: { value?: string }) => String(p.value) === String(currentPolicy.value)
+      );
 
     const nextPolicy = stillValid ? currentPolicy : policies[0] ?? null;
     setValue('policy', nextPolicy, { shouldValidate: true, shouldDirty: true });
@@ -148,7 +171,7 @@ const ComponentExcelUpload = (props) => {
 
   const downloadExcelTemplate = () => {
     closeModal();
-    document.querySelector('#excel-template').click();
+    document.querySelector<HTMLAnchorElement>('#excel-template')?.click();
   };
 
   return (
@@ -182,8 +205,12 @@ const ComponentExcelUpload = (props) => {
                             ref={ref}
                             value={value}
                             options={project}
-                            getOptionLabel={(o) => o.label}
-                            getOptionValue={(o) => String(o.value)}
+                            getOptionLabel={(o: ProjectPolicyOption) =>
+                              o.label ?? ''
+                            }
+                            getOptionValue={(o: ProjectPolicyOption) =>
+                              String(o.value)
+                            }
                             onChange={(val) => {
                               onChange(val);
                             }}
@@ -205,8 +232,10 @@ const ComponentExcelUpload = (props) => {
                             ref={ref}
                             value={value}
                             options={policy}
-                            getOptionLabel={(o) => o.label}
-                            getOptionValue={(o) => String(o.value)}
+                            getOptionLabel={(o: PolicyOption) => o.label ?? ''}
+                            getOptionValue={(o: PolicyOption) =>
+                              String(o.value)
+                            }
                             isDisabled={!policy?.length}
                             onChange={(val) => {
                               onChange(val || null);
@@ -305,6 +334,7 @@ const ComponentExcelUpload = (props) => {
         isApprove
         confirmMessageText="Are you sure you want to download the excel template?"
         onApprove={downloadExcelTemplate}
+        onReject={() => {}}
       />
     </div>
   );

@@ -10,13 +10,13 @@ import type {
   CustomerTransaction,
   TransactionTotalCounts,
 } from '../../@type/batch';
-import ApproveRejectConfirmationModal from '../../components/common/ActionConfirmationModal.jsx';
-import Button from '../../components/common/Button.jsx';
-import Checkbox from '../../components/common/Checkbox.jsx';
-import LabelValueList from '../../components/common/LabelValueList.jsx';
-import { useModal } from '../../components/common/modal/index.jsx';
-import Spinner, { useSpinner } from '../../components/common/Spinner.jsx';
-import TransactionNumber from '../../components/common/TransactionNumber.jsx';
+import ApproveRejectConfirmationModal from '../../components/common/ActionConfirmationModal';
+import Button from '../../components/common/Button';
+import Checkbox from '../../components/common/Checkbox';
+import LabelValueList from '../../components/common/LabelValueList';
+import { useModal } from '../../components/common/modal/index';
+import Spinner, { useSpinner } from '../../components/common/Spinner';
+import TransactionNumber from '../../components/common/TransactionNumber';
 import TransactionBatchProccessModalRaw from '../../components/transaction/TransactionBatchProccessModal.jsx';
 import TransactionNumberTableItem from '../../components/transaction/TransactionNumberTableItem.jsx';
 import TransactionTabListRaw from '../../components/transaction/TransactionTabList.jsx';

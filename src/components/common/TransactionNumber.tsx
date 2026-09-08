@@ -2,12 +2,19 @@ import clsx from 'clsx';
 import { toast } from 'react-toastify';
 import { copyTextToClipboard } from '../../utils/copy-text-to-clipboard';
 
+interface TransactionNumberProps {
+  transactionNumber?: string;
+  label?: string;
+  disableLabel?: boolean;
+  disableGutter?: boolean;
+}
+
 const TransactionNumber = ({
   transactionNumber,
   label = 'Transaction No.',
   disableLabel = false,
   disableGutter = false,
-}) => {
+}: TransactionNumberProps) => {
   return (
     <div className={clsx('fs-5 text-dark', { ['mb-2']: !disableGutter })}>
       {!disableLabel ? label : ''}{' '}
@@ -16,7 +23,7 @@ const TransactionNumber = ({
           className="fs-4 text-primary-blue d-inline-block text-underline"
           onClick={() => {
             toast.success(`${label} ${transactionNumber} Copied to Clipboard`);
-            copyTextToClipboard(transactionNumber);
+            copyTextToClipboard(transactionNumber ?? '');
           }}
         >
           {transactionNumber}

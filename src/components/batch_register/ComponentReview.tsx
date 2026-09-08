@@ -3,6 +3,7 @@ import { useFormContext } from 'react-hook-form';
 import ReactPaginate from 'react-paginate';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
+import type { BatchCustomerListResult, BatchCustomerRow } from '../../@type/batch';
 import { useAuth } from '../../context/AuthContext';
 import useMessage from '../../hooks/useMessage';
 import { fetchDataAsync } from '../../services/$service';
@@ -11,7 +12,7 @@ import { ROUTE_API, ROUTE_PATH } from '../../utils/route-util';
 import { STATUS } from '../../utils/status';
 import ActionSaveDraftConfirmationModal from '../common/ActionSaveDraftConfirmationModal';
 import { useModal } from '../common/modal';
-import Spinner, { useSpinner } from '../common/Spinner.jsx';
+import Spinner, { useSpinner } from '../common/Spinner';
 
 const TAB = {
   New: 'New',
@@ -20,7 +21,13 @@ const TAB = {
   Existing: 'Existing',
 };
 
-const ComponentReview = (props) => {
+interface ComponentReviewProps {
+  customerList: BatchCustomerListResult;
+  handleReviewBackStep: () => void;
+  product: string;
+}
+
+const ComponentReview = (props: ComponentReviewProps) => {
   const { customerList, handleReviewBackStep, product } = props;
   const { getValues } = useFormContext();
   const { hasPermissionProccessTransaction } = useAuth();
@@ -29,7 +36,7 @@ const ComponentReview = (props) => {
   const { spinnerState, openSpinner, closeSpinner } = useSpinner();
   const { showErrorResponseMessage } = useMessage();
 
-  const handleSubmit = async ({ isDraft }) => {
+  const handleSubmit = async ({ isDraft }: { isDraft: boolean }) => {
     try {
       openSpinner();
       const data = {
@@ -59,7 +66,9 @@ const ComponentReview = (props) => {
     }
   };
 
-  const [arrList, setArrList] = useState(customerList.list);
+  const [arrList, setArrList] = useState<BatchCustomerRow[]>(
+    customerList.list ?? []
+  );
 
   const [tabStatus, setTabStatus] = useState(TAB.New);
 
@@ -82,21 +91,21 @@ const ComponentReview = (props) => {
     },
   ];
 
-  const tabHandleClick = (value) => {
+  const tabHandleClick = (value: string) => {
     setTabStatus(value);
     setCurrentPage(0);
     switch (value) {
       case TAB.New:
-        setArrList(customerList.list);
+        setArrList(customerList.list ?? []);
         break;
       case TAB.Existing:
-        setArrList(customerList.existingList);
+        setArrList(customerList.existingList ?? []);
         break;
       case TAB.Duplicate:
-        setArrList(customerList.duplicateList);
+        setArrList(customerList.duplicateList ?? []);
         break;
       case TAB.Invalid:
-        setArrList(customerList.errorList);
+        setArrList(customerList.errorList ?? []);
         break;
     }
   };
@@ -104,7 +113,7 @@ const ComponentReview = (props) => {
   const PER_PAGE = 10;
   const [currentPage, setCurrentPage] = useState(0);
 
-  function handlePageClick({ selected: selectedPage }) {
+  function handlePageClick({ selected: selectedPage }: { selected: number }) {
     setCurrentPage(selectedPage);
   }
 
@@ -114,7 +123,12 @@ const ComponentReview = (props) => {
   const { modalRef, openModal, closeModal } = useModal();
 
   const customerDataList = arrList?.slice(offset, offset + PER_PAGE);
-  let duplicated = {};
+  let duplicated: DuplicateColorMap = {
+    nic: new Map(),
+    customerId: new Map(),
+    nicColor: 1,
+    customerIdColor: 0,
+  };
   if (tabStatus === TAB.Duplicate) {
     duplicated = generateColorForDuplicateItem(arrList);
   }
@@ -360,7 +374,7 @@ const ComponentReview = (props) => {
                                   <button
                                     className="btn btn-primary"
                                     type="button"
-                                    disabled={customerList?.totalRecord <= 0}
+                                    disabled={(customerList?.totalRecord ?? 0) <= 0}
                                     onClick={openModal}
                                   >
                                     Submit
@@ -378,7 +392,9 @@ const ComponentReview = (props) => {
                                     onSaveDraft={() => {
                                       handleSubmit({ isDraft: true });
                                     }}
-                                    onConfirm={handleSubmit}
+                                    onConfirm={() =>
+                                      handleSubmit({ isDraft: false })
+                                    }
                                   />
                                 </div>
                               </div>
@@ -421,8 +437,17 @@ const duplicatedColorCode = [
   '#D3B5B5',
 ];
 
-const generateColorForDuplicateItem = (data) => {
-  return data.reduce(
+interface DuplicateColorMap {
+  nic: Map<string | undefined, string | null>;
+  customerId: Map<string | undefined, string | null>;
+  nicColor: number;
+  customerIdColor: number;
+}
+
+const generateColorForDuplicateItem = (
+  data: BatchCustomerRow[]
+): DuplicateColorMap => {
+  return data.reduce<DuplicateColorMap>(
     (acc, item) => {
       if (!acc.nic.has(item.nicPassport)) {
         acc.nic.set(item.nicPassport, null);

@@ -1,7 +1,13 @@
 import { Tooltip } from 'react-tooltip';
-import PlusIcon from '../Icons/PlusIcon';
+import CheckIcon from '../Icons/CheckIcon';
 
-const NewButton = (props) => {
+interface SubmitButtonProps {
+  onClick: () => void;
+  tooltip?: string;
+  disabled?: boolean;
+}
+
+const SubmitButton = (props: SubmitButtonProps) => {
   const { onClick, tooltip, disabled } = props;
   return (
     <div>
@@ -12,8 +18,8 @@ const NewButton = (props) => {
         onClick={onClick}
         disabled={disabled}
       >
-        <PlusIcon />
-        New
+        <CheckIcon />
+        Submit
       </button>
       <button
         className="btn btn-primary d-sm-none btn-icon"
@@ -22,11 +28,11 @@ const NewButton = (props) => {
         onClick={onClick}
         disabled={disabled}
       >
-        <PlusIcon />
+        <CheckIcon />
       </button>
       <Tooltip id="submit-tooltip" />
     </div>
   );
 };
 
-export default NewButton;
+export default SubmitButton;

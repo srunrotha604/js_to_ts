@@ -1,5 +1,17 @@
+import type { ReactNode, RefObject } from 'react';
 import { useState } from 'react';
 import Modal from './modal';
+
+interface ActionConfirmationModalProps {
+  modalRef: RefObject<HTMLDivElement>;
+  isApprove: boolean | null;
+  closeModal: () => void;
+  onApprove?: () => void;
+  onReject?: (remark: string) => void;
+  rejectPlaceHolder?: string;
+  confirmText?: string;
+  confirmMessageText?: ReactNode;
+}
 
 const ApproveRejectConfirmationModal = ({
   modalRef,
@@ -10,7 +22,7 @@ const ApproveRejectConfirmationModal = ({
   rejectPlaceHolder = 'Reason...',
   confirmText = 'approve',
   confirmMessageText,
-}) => {
+}: ActionConfirmationModalProps) => {
   const [rejectRemark, setRejectRemark] = useState('');
 
   return (

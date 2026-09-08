@@ -28,9 +28,9 @@ import { delay } from '../../utils/delay';
 import { formatDay } from '../../utils/format-day';
 import { ROUTE_PATH } from '../../utils/route-util';
 import Button from '../common/Button';
-import Checkbox from '../common/Checkbox.jsx';
-import Modal, { useModal } from '../common/modal/index.jsx';
-import Spinner, { useSpinner } from '../common/Spinner.jsx';
+import Checkbox from '../common/Checkbox';
+import Modal, { useModal } from '../common/modal/index';
+import Spinner, { useSpinner } from '../common/Spinner';
 import TransactionNumberTableItem from './TransactionNumberTableItem.jsx';
 
 const STATUS = {

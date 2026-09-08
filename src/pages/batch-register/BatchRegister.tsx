@@ -6,7 +6,7 @@ import ComponentExcelUpload from '../../components/batch_register/ComponentExcel
 import ComponentReview from '../../components/batch_register/ComponentReview';
 import ComponentSelectedProduct from '../../components/batch_register/ComponentSelectedProduct';
 import type {
-  CustomerTransaction,
+  BatchCustomerListResult,
   ProductListResponse,
   ProductOption,
   ProjectCategoryResponse,
@@ -29,7 +29,9 @@ const BatchRegister = () => {
   const [step, setStep] = useState(STEP.SELECTE_PRODUCT);
   const [arrProduct, setArrProduct] = useState<ProductOption[]>([]);
   const [arrProject, setArrProject] = useState<ProjectPolicyOption[]>([]);
-  const [customerList, setCustomerList] = useState<CustomerTransaction[]>([]);
+  const [customerList, setCustomerList] = useState<BatchCustomerListResult>(
+    {}
+  );
   const [productCode, setProductCode] = useState('');
 
   const getList = () => {
@@ -126,7 +128,7 @@ const BatchRegister = () => {
     setStep(STEP.SELECTE_PRODUCT);
   };
 
-  const handleReviewStep = (value: CustomerTransaction[]) => {
+  const handleReviewStep = (value: BatchCustomerListResult) => {
     setStep(STEP.REVIEW);
     setCustomerList(value);
   };

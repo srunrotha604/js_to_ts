@@ -6,7 +6,7 @@ import type {
   ProjectCategoryResponse,
   ProjectPolicyOption,
 } from '../../@type/batch';
-import Spinner, { useSpinner } from '../../components/common/Spinner.jsx';
+import Spinner, { useSpinner } from '../../components/common/Spinner';
 import CostomerTransationSubmit from '../../components/customer/create/CustomerTransationSubmit';
 import CustomerEdit from '../../components/customer/edit/CustomerEdit';
 import CustomerEditReview from '../../components/customer/edit/CustomerEditReview';

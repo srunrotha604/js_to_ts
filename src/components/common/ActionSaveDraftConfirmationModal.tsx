@@ -1,4 +1,14 @@
+import type { MouseEventHandler, RefObject } from 'react';
 import Modal from './modal';
+
+interface ActionSaveDraftConfirmationModalProps {
+  closeModal: () => void;
+  modalRef: RefObject<HTMLDivElement>;
+  saveDraft?: boolean;
+  onSaveDraft?: MouseEventHandler<HTMLButtonElement>;
+  confirm?: boolean;
+  onConfirm?: MouseEventHandler<HTMLButtonElement>;
+}
 
 const ActionSaveDraftConfirmationModal = ({
   closeModal,
@@ -7,7 +17,7 @@ const ActionSaveDraftConfirmationModal = ({
   onSaveDraft,
   confirm,
   onConfirm,
-}) => {
+}: ActionSaveDraftConfirmationModalProps) => {
   return (
     <Modal
       title={'Action Confirmation'}

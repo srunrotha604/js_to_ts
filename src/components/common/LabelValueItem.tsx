@@ -1,6 +1,17 @@
 import clsx from 'clsx';
+import type { ReactNode } from 'react';
 
-export const LabelValueItem = ({ title, value, valueColorClassName }) => {
+interface LabelValueItemProps {
+  title?: ReactNode;
+  value?: ReactNode;
+  valueColorClassName?: string;
+}
+
+export const LabelValueItem = ({
+  title,
+  value,
+  valueColorClassName,
+}: LabelValueItemProps) => {
   return (
     <div className="form-group">
       <label htmlFor="name" className="control-label fs-5">

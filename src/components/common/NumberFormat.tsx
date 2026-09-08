@@ -6,15 +6,21 @@ const formatType = {
   },
 };
 
-const NumberFormat = ({ value, type }) => {
-  const selectedFormatType = formatType?.[type] ?? formatType.price;
+interface NumberFormatProps {
+  value?: string | number;
+  type?: keyof typeof formatType;
+}
+
+const NumberFormat = ({ value, type }: NumberFormatProps) => {
+  const selectedFormatType = (type && formatType[type]) ?? formatType.price;
 
   return (
     <NumericFormat
       value={value}
       displayType="text"
       thousandSeparator
-      fixedDecimalScale={2}
+      decimalScale={2}
+      fixedDecimalScale
       {...selectedFormatType}
     />
   );

@@ -1,4 +1,11 @@
-const ComponentSelectedProduct = (props) => {
+import type { ProductOption } from '../../@type/batch';
+
+interface ComponentSelectedProductProps {
+  product: ProductOption[];
+  handleProductClick: (productCode: string) => void;
+}
+
+const ComponentSelectedProduct = (props: ComponentSelectedProductProps) => {
   const { product, handleProductClick } = props;
   return (
     <div className="page-wrapper full-height-dashboard-container justify-content-center">
@@ -25,6 +32,7 @@ const ComponentSelectedProduct = (props) => {
                           className="btn btn-primary d-sm-inline-block"
                           key={index}
                           onClick={() =>
+                            item.productsequenceCode &&
                             handleProductClick(item.productsequenceCode)
                           }
                           type="button"

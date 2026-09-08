@@ -8,7 +8,7 @@ import { handleApiError } from '../../../utils/handleApiError';
 import { STATUS } from '../../../utils/status';
 import ActionSaveDraftConfirmationModal from '../../common/ActionSaveDraftConfirmationModal';
 import { useModal } from '../../common/modal';
-import Spinner, { useSpinner } from '../../common/Spinner.jsx';
+import Spinner, { useSpinner } from '../../common/Spinner';
 import TransactionDetail from '../../transaction/TransactionDetail';
 
 const CustomerCreateReview = (props) => {

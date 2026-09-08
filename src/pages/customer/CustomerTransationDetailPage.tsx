@@ -10,7 +10,7 @@ import { fetchDataAsync } from '../../services/$service';
 
 import ApproveRejectConfirmationModal from '../../components/common/ActionConfirmationModal';
 import Button from '../../components/common/Button';
-import Spinner, { useSpinner } from '../../components/common/Spinner.jsx';
+import Spinner, { useSpinner } from '../../components/common/Spinner';
 import TransactionDetailCard, {
   TransactionDetailCardContainer,
 } from '../../components/transaction/TransactionDetailCard';

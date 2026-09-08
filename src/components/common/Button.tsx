@@ -1,4 +1,12 @@
 import clsx from 'clsx';
+import type { ButtonHTMLAttributes, ReactNode } from 'react';
+
+interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
+  variant?: string;
+  size?: string;
+  loading?: boolean;
+  loadingText?: ReactNode;
+}
 
 const Button = ({
   variant = 'primary',
@@ -8,7 +16,7 @@ const Button = ({
   loadingText = 'Loading...',
   className = '',
   ...otherProps
-}) => {
+}: ButtonProps) => {
   return (
     <button
       disabled={loading}
