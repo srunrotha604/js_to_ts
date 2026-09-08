@@ -20,7 +20,7 @@ import useLoading from '../../hooks/useLoading';
 import useMessage from '../../hooks/useMessage.jsx';
 import { fetchDataAsync } from '../../services/$service';
 import { actions } from '../../utils/actions';
-import { delay } from '../../utils/delay.js';
+import { delay } from '../../utils/delay';
 import { formatDay } from '../../utils/format-day';
 import { getConfirmedMessageText } from '../../utils/get-confirm-message-text';
 import { pluralize } from '../../utils/pluralize';

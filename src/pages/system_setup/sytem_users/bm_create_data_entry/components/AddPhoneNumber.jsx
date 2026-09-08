@@ -3,7 +3,7 @@ import { PatternFormat } from 'react-number-format';
 import { toast } from 'react-toastify';
 import ButtonGroup from '../../../../../components/buttons/ButtonGroup';
 import CancelButton from '../../../../../components/buttons/CancelButton';
-import SubmitButton from '../../../../../components/Buttons/SubmitButton';
+import SubmitButton from '../../../../../components/buttons/SubmitButton';
 import Modal, { useModal } from '../../../../../components/common/modal';
 import { fetchDataAsync } from '../../../../../services/$service';
 import { ROUTE_API } from '../../../../../utils/route-util';

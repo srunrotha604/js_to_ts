@@ -14,9 +14,9 @@ import TransactionTabSelect, {
 import { useAuth } from '../../context/AuthContext';
 import { fetchDataAsync } from '../../services/$service.jsx';
 import { actions } from '../../utils/actions';
-import { delay } from '../../utils/delay.js';
+import { delay } from '../../utils/delay';
 import { getConfirmedMessageText } from '../../utils/get-confirm-message-text';
-import { pluralize } from '../../utils/pluralize.js';
+import { pluralize } from '../../utils/pluralize';
 import { ROUTE_PATH } from '../../utils/route-util';
 import { STATUS, isTransactionStatusCountChanged } from '../../utils/status';
 

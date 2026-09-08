@@ -16,7 +16,10 @@ export const RECORDSTATUS = {
 };
 
 const lsTransactionStatusReminderKey = 'lsTransactionStatusReminder';
-export const isTransactionStatusCountChanged = (status, transactionTotal) => {
+export const isTransactionStatusCountChanged = (
+  status: string,
+  transactionTotal: Record<string, number>
+) => {
   const lsTransactionStatus = localStorage.getItem(
     lsTransactionStatusReminderKey
   );

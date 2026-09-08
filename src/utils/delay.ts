@@ -1,4 +1,6 @@
-export const delay = (callback, timeout = 200) => {
+type DelayCallback = (() => void) | (() => void)[];
+
+export const delay = (callback: DelayCallback, timeout: number = 200): void => {
   if (Array.isArray(callback)) {
     if (callback.length === 0) {
       return;
@@ -8,6 +10,7 @@ export const delay = (callback, timeout = 200) => {
       first();
       delay(rest, timeout);
     }, timeout);
+    return;
   }
   setTimeout(callback, timeout);
 };

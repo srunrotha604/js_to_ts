@@ -8,7 +8,7 @@ import useMessage from '../../hooks/useMessage.jsx';
 import { fetchDataAsync } from '../../services/$service';
 import { formatDay } from '../../utils/format-day';
 import { ROUTE_API, ROUTE_PATH } from '../../utils/route-util';
-import { STATUS } from '../../utils/status.js';
+import { STATUS } from '../../utils/status';
 import ActionSaveDraftConfirmationModal from '../common/ActionSaveDraftConfirmationModal';
 import { useModal } from '../common/modal';
 import Spinner, { useSpinner } from '../common/Spinner.jsx';

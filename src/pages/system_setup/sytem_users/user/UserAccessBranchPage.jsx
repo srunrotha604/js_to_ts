@@ -182,17 +182,17 @@ const UserAccessBranchPage = () => {
         color: '#333333',
       };
     },
-    valueContainer: (provided, state) => ({
+    valueContainer: (provided) => ({
       ...provided,
     }),
 
-    input: (provided, state) => ({
+    input: (provided) => ({
       ...provided,
     }),
-    indicatorSeparator: (state) => ({
+    indicatorSeparator: () => ({
       display: 'none',
     }),
-    indicatorsContainer: (provided, state) => ({
+    indicatorsContainer: (provided) => ({
       ...provided,
       height: '33px',
     }),

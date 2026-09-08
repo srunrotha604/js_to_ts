@@ -2,7 +2,7 @@ import { useFormContext } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../../context/AuthContext';
 import { ROUTE_PATH } from '../../../utils/route-util';
-import { STATUS } from '../../../utils/status.js';
+import { STATUS } from '../../../utils/status';
 import TransactionDetail from '../../transaction/TransactionDetail';
 
 const CostomerTransationSubmit = (props) => {

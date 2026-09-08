@@ -17,7 +17,7 @@ import { useAuth } from '../../context/AuthContext';
 import useLoading from '../../hooks/useLoading';
 import useMessage from '../../hooks/useMessage.jsx';
 import { fetchDataAsync } from '../../services/$service';
-import { delay } from '../../utils/delay.js';
+import { delay } from '../../utils/delay';
 import { pluralize } from '../../utils/pluralize';
 import { ROUTE_PATH } from '../../utils/route-util';
 import { STATUS } from '../../utils/status';

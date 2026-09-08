@@ -1,10 +1,13 @@
 import dayjs from 'dayjs';
 
-export const formatDay = (date, format = 'DD/MM/YYYY hh:mm A') => {
+export const formatDay = (
+  date: dayjs.ConfigType,
+  format = 'DD/MM/YYYY hh:mm A'
+) => {
   return dayjs(date).format(format);
 };
 
-export const getPastDate = (dayCount, format = 'YYYY-MM-DD') => {
+export const getPastDate = (dayCount: number, format = 'YYYY-MM-DD') => {
   const day = dayjs().subtract(dayCount, 'day');
 
   if (!format) return day;
@@ -12,11 +15,11 @@ export const getPastDate = (dayCount, format = 'YYYY-MM-DD') => {
   return day.format(format);
 };
 
-export const getFutureDate = (dayCount, format = 'YYYY-MM-DD') => {
+export const getFutureDate = (dayCount: number, format = 'YYYY-MM-DD') => {
   return dayjs().add(dayCount, 'day').format(format);
 };
 
-export const getStartOfMonthDate = (format) => {
+export const getStartOfMonthDate = (format: string) => {
   const day = dayjs().startOf('month');
 
   if (!format) return day;
@@ -24,7 +27,7 @@ export const getStartOfMonthDate = (format) => {
   return day.format(format);
 };
 
-export const convertAge = (date) => {
+export const convertAge = (date: string) => {
   const birthDate = dayjs(date);
   const today = dayjs();
 

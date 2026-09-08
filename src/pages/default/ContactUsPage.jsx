@@ -8,7 +8,7 @@ import Spinner, { useSpinner } from '../../components/common/Spinner';
 import useMessage from '../../hooks/useMessage.jsx';
 import { fetchDataAsync } from '../../services/$service';
 import { contactUs } from '../../utils/contact';
-import { delay } from '../../utils/delay.js';
+import { delay } from '../../utils/delay';
 import { ROUTE_API, ROUTE_PATH } from '../../utils/route-util';
 
 const ContactUsPage = () => {

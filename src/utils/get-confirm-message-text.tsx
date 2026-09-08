@@ -1,10 +1,15 @@
 import { pluralize } from './pluralize';
 
+interface GetConfirmedMessageTextParams {
+  status: string;
+  selectedCustomerList?: unknown[];
+}
+
 export const getConfirmedMessageText = ({
   status,
   selectedCustomerList = [],
-}) => {
-  const tempStatus = {
+}: GetConfirmedMessageTextParams) => {
+  const tempStatus: Record<string, string> = {
     'BM-Rejected-Draft': 'draft',
     'DRI-Rejected-Draft': 'draft',
     Submitted: 'submit',
@@ -14,7 +19,7 @@ export const getConfirmedMessageText = ({
     Confirmed: 'confirm',
     'DRI-Rejected': 'dri-reject',
   };
-  const proccessStatus = tempStatus?.[status] ?? 'approve';
+  const proccessStatus = tempStatus[status] ?? 'approve';
 
   return (
     <p className="fs-4">

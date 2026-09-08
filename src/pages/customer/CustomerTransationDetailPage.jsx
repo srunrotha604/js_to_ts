@@ -16,7 +16,7 @@ import {
   TransactionLogsModal,
 } from '../../components/transaction/TransactionTabList';
 import { actions } from '../../utils/actions';
-import { delay } from '../../utils/delay.js';
+import { delay } from '../../utils/delay';
 import { getConfirmedMessageText } from '../../utils/get-confirm-message-text';
 import { handleApiError } from '../../utils/handleApiError';
 
