@@ -6,6 +6,7 @@ export interface SelectOption {
 
 export interface CompanyBranchOption extends SelectOption {
   branch?: SelectOption[];
+  logo?: string;
 }
 
 export interface UserReportItem {

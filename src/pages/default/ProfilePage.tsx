@@ -1,15 +1,19 @@
 import React, { useEffect, useState } from 'react';
 import { redirect, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
+import type {
+  MessageResponse,
+  UserProfile,
+  UserProfileResponse,
+} from '../../@type/profile';
 import { fetchData, fileUpload } from '../../services/$service';
 import { ROUTE_API, ROUTE_PATH } from '../../utils/route-util';
 
 const ProfilePage = () => {
   const navigate = useNavigate();
   document.title = 'Alt-Fa APIs Admin System | Profile';
-
-  const [arrProfile, setArrProfile] = useState([]);
-  const [selectedFile, setSelectedFile] = useState('');
+  const [arrProfile, setArrProfile] = useState<UserProfile>({});
+  const [selectedFile, setSelectedFile] = useState<File | ''>('');
   const [email1, setEmail1] = useState('');
   const [email2, setEmail2] = useState('');
   const [phone1, setPhone1] = useState('');
@@ -22,29 +26,29 @@ const ProfilePage = () => {
   const [userCode, setUserCode] = useState('');
 
   const getList = () => {
-    fetchData('/login', {}, 'GET').then((res) => {
-      switch (res.status) {
+    fetchData<UserProfileResponse>(ROUTE_API.login, {}, 'GET').then((res) => {
+      switch (res?.status) {
         case 200:
           {
-            const profile = res?.data?.userProfile[0];
+            const profile = res?.data?.userProfile?.[0] ?? {};
             setArrProfile(profile);
-            setEmail1(profile.email1);
-            setEmail2(profile.email2);
-            setPhone2(profile.phone1);
-            setWebsite1(profile.website1);
-            setWebsite2(profile.website2);
-            setPhone1(profile.phone2);
-            setOtherContact(profile.otherContact);
-            setAddress1(profile.address1);
-            setAddress2(profile.address2);
-            setUserCode(profile.userCode);
+            setEmail1(profile.email1 ?? '');
+            setEmail2(profile.email2 ?? '');
+            setPhone1(profile.phone1 ?? '');
+            setPhone2(profile.phone2 ?? '');
+            setWebsite1(profile.website1 ?? '');
+            setWebsite2(profile.website2 ?? '');
+            setOtherContact(profile.otherContact ?? '');
+            setAddress1(profile.address1 ?? '');
+            setAddress2(profile.address2 ?? '');
+            setUserCode(profile.userCode ?? '');
           }
           break;
         case 400:
-          toast.error(res?.data?.message);
+          toast.error(res?.data?.message ?? '');
           break;
         case 403:
-          toast.error(res?.data);
+          toast.error(String(res?.data));
           break;
         default:
           redirect('/404');
@@ -60,22 +64,24 @@ const ProfilePage = () => {
     if (messages.length < 1) {
       const formData = new FormData();
       formData.append('selectedFile', selectedFile);
-      fileUpload(ROUTE_API.systemUser, formData, 'PATCH').then((res) => {
-        switch (res.status) {
-          case 200:
-            toast.success(res.data.message);
-            window.location.reload();
-            break;
-          case 400:
-            toast.error(res?.data?.message);
-            break;
-          case 403:
-            toast.error(res?.data);
-            break;
-          default:
-            redirect('/404');
+      fileUpload<MessageResponse>(ROUTE_API.systemUser, formData, 'PATCH').then(
+        (res) => {
+          switch (res?.status) {
+            case 200:
+              toast.success(res?.data?.message ?? '');
+              window.location.reload();
+              break;
+            case 400:
+              toast.error(res?.data?.message ?? '');
+              break;
+            case 403:
+              toast.error(String(res?.data));
+              break;
+            default:
+              redirect('/404');
+          }
         }
-      });
+      );
     }
   };
 
@@ -92,30 +98,34 @@ const ProfilePage = () => {
       address2: address2,
       otherContact: otherContact,
     };
-    fetchData(ROUTE_API.systemUserInfo, data, 'POST').then((res) => {
-      switch (res.status) {
-        case 200:
-          toast.success(res.data.message);
-          window.location.reload();
-          break;
-        case 400:
-          toast.error(res?.data?.message);
-          break;
-        case 403:
-          toast.error(res?.data);
-          break;
-        default:
-          redirect('/404');
+    fetchData<MessageResponse>(ROUTE_API.systemUserInfo, data, 'POST').then(
+      (res) => {
+        switch (res?.status) {
+          case 200:
+            toast.success(res?.data?.message ?? '');
+            window.location.reload();
+            break;
+          case 400:
+            toast.error(res?.data?.message ?? '');
+            break;
+          case 403:
+            toast.error(String(res?.data));
+            break;
+          default:
+            redirect('/404');
+        }
       }
-    });
+    );
   };
 
   const goBackHandleClick = () => {
     navigate(ROUTE_PATH.dashboard);
   };
 
-  const handleFileSelect = (event) => {
-    setSelectedFile(event.target.files[0]);
+  const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (event.target.files?.[0]) {
+      setSelectedFile(event.target.files[0]);
+    }
   };
 
   useEffect(() => {
@@ -577,7 +587,7 @@ const ProfilePage = () => {
                         <textarea
                           className="form-control"
                           placeholder="Other Contact"
-                          rows="3"
+                          rows={3}
                           onChange={(e) => setOtherContact(e.target.value)}
                           value={otherContact}
                         />
@@ -589,7 +599,7 @@ const ProfilePage = () => {
                         <textarea
                           className="form-control"
                           placeholder="Address 1"
-                          rows="5"
+                          rows={5}
                           onChange={(e) => setAddress1(e.target.value)}
                           value={address1}
                         />
@@ -601,7 +611,7 @@ const ProfilePage = () => {
                         <textarea
                           className="form-control"
                           placeholder="Address 2"
-                          rows="5"
+                          rows={5}
                           onChange={(e) => setAddress2(e.target.value)}
                           value={address2}
                         />

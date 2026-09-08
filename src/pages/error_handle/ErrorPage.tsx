@@ -1,13 +1,19 @@
 import { useEffect } from 'react';
 import { HiOutlineFaceFrown } from 'react-icons/hi2';
 import { Link } from 'react-router-dom';
+import type { FallbackProps } from 'react-error-boundary';
 import { useAuth } from '../../context/AuthContext.jsx';
 import { fetchDataAsync } from '../../services/$service';
 import { ROUTE_API, ROUTE_PATH } from '../../utils/route-util';
 
-const ErrorPage = ({ error }) => {
+const ErrorPage = ({ error }: FallbackProps) => {
   document.title = 'Something wen wrong';
-  const { user, selectedCompany, selectedBranch, permission } = useAuth();
+  const { user, selectedCompany, selectedBranch, permission } = useAuth() as {
+    user: { email?: string } | null;
+    selectedCompany: { label?: string } | null;
+    selectedBranch: { label?: string } | null;
+    permission: unknown;
+  };
 
   useEffect(() => {
     const sendErrorLog = async () => {

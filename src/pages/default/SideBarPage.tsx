@@ -1,11 +1,21 @@
 import clsx from 'clsx';
 import React, { useEffect, useState } from 'react';
 import { Link, NavLink, useLocation } from 'react-router-dom';
+import type { NavLinkProps } from 'react-router-dom';
 import Select from 'react-select';
+import type { CompanyBranchOption, SelectOption } from '../../@type/report';
 import Modal, { useModal } from '../../components/common/modal';
 import { useAuth } from '../../context/AuthContext';
 import { useModulePermission } from '../../context/module/ModuleContext';
 import { ROUTE_PATH } from '../../utils/route-util';
+
+const TypedModal = Modal as unknown as React.ForwardRefExoticComponent<
+  React.RefAttributes<HTMLDivElement> & {
+    title?: React.ReactNode;
+    size?: 'sm' | 'lg' | 'xl';
+    children?: React.ReactNode;
+  }
+>;
 
 const SideBarPage = () => {
   const {
@@ -13,20 +23,31 @@ const SideBarPage = () => {
     selectedCompany: selectedCompanyContext,
     user,
     fetchUser,
-  } = useAuth();
+  } = useAuth() as unknown as {
+    company: CompanyBranchOption[] | null;
+    selectedCompany?: CompanyBranchOption;
+    user: unknown;
+    fetchUser: () => Promise<void>;
+  };
 
-  const { hasMainMenuPermission, hasMenuPermission } = useModulePermission();
+  const { hasMainMenuPermission, hasMenuPermission } =
+    useModulePermission() as unknown as {
+      hasMainMenuPermission: (code: string) => boolean;
+      hasMenuPermission: (code: string) => boolean;
+    };
 
   const location = useLocation();
   const pathName = location.pathname?.split('/dashboard/')[1];
 
   const [selectedCompany, setSelectdCompany] = useState('');
-  const [optionBranch, setOptionBranch] = useState([]);
+  const [optionBranch, setOptionBranch] = useState<SelectOption[]>([]);
   const [selectedBranch, setSelectdBranch] = useState('');
 
-  const funcButtonHandleClickExecute = async (e) => {
+  const funcButtonHandleClickExecute = async (
+    e: React.MouseEvent<HTMLButtonElement>
+  ) => {
     if (selectedCompany && selectedBranch) {
-      let alt_fa_storage = localStorage.getItem('e_chanel_storage');
+      let alt_fa_storage = localStorage.getItem('e_chanel_storage') || '';
       let token_text = JSON.parse(alt_fa_storage);
       const alt_fa_token = {
         token: token_text.token,
@@ -42,20 +63,20 @@ const SideBarPage = () => {
     e.preventDefault();
   };
 
-  const companyHandleChange = (data) => {
-    setSelectdCompany(data.value);
-    const companyItem = company?.find((item) => item.value === data.value);
-    setOptionBranch(companyItem.branch);
+  const companyHandleChange = (data: CompanyBranchOption | null) => {
+    setSelectdCompany(data?.value ?? '');
+    const companyItem = company?.find((item) => item.value === data?.value);
+    setOptionBranch(companyItem?.branch ?? []);
   };
 
-  const branchHandleChange = (data) => {
-    setSelectdBranch(data.value);
+  const branchHandleChange = (data: SelectOption | null) => {
+    setSelectdBranch(data?.value ?? '');
   };
 
   const { modalRef, openModal, closeModal } = useModal();
 
   const operationShow = () => {
-    let alt_fa_storage = localStorage.getItem('e_chanel_storage');
+    let alt_fa_storage = localStorage.getItem('e_chanel_storage') || '';
     let token_text = JSON.parse(alt_fa_storage);
 
     let companyDetails = company?.find(
@@ -201,6 +222,7 @@ const SideBarPage = () => {
                 }
               >
                 <Link
+                  to={ROUTE_PATH.dashboard}
                   className="nav-link dropdown-toggle"
                   data-bs-toggle="dropdown"
                   aria-label="Open user menu"
@@ -357,9 +379,9 @@ const SideBarPage = () => {
             <div className="collapse navbar-collapse" id="navbar-menu">
               <div className="navbar navbar-light">
                 <div className="container-xl">
-                  {userMenu('')}
+                  {userMenu()}
                   <div className="my-2 my-md-0 my-0 flex-grow-1 flex-grow-0 flex-md-grow-0 ">
-                    {operationShow('')}
+                    {operationShow()}
                   </div>
                 </div>
               </div>
@@ -367,7 +389,7 @@ const SideBarPage = () => {
           </div>
         </div>
       </div>
-      <Modal ref={modalRef} title={'Switch branch'}>
+      <TypedModal ref={modalRef} title={'Switch branch'}>
         <div className="mb-3">
           <label className="form-label required">Company</label>
           <Select
@@ -377,7 +399,7 @@ const SideBarPage = () => {
               return option.value === selectedCompany;
             })}
             onChange={companyHandleChange}
-            options={company}
+            options={company ?? []}
             required
           />
         </div>
@@ -403,10 +425,19 @@ const SideBarPage = () => {
             Switch branch
           </button>
         </div>
-      </Modal>
+      </TypedModal>
     </React.Fragment>
   );
 };
+
+interface CustomNavItemLinkProps
+  extends Omit<NavLinkProps, 'children' | 'to' | 'className'> {
+  children?: React.ReactNode;
+  icon: React.ReactNode;
+  label: string;
+  to: string;
+  dropdown?: boolean;
+}
 
 const CustomNavItemLink = ({
   children,
@@ -415,7 +446,7 @@ const CustomNavItemLink = ({
   to,
   dropdown,
   ...props
-}) => {
+}: CustomNavItemLinkProps) => {
   return (
     <NavLink
       to={to}

@@ -1,15 +1,18 @@
 import { useEffect, useState } from 'react';
 import Select from 'react-select';
+import type { CompanyBranchOption, SelectOption } from '../../@type/report';
 import { useAuth } from '../../context/AuthContext';
 
 const SwitchBranchPage = () => {
   document.title = 'E-CHANNEL PORTAL | Switch Branch';
-  const { company } = useAuth();
+  const { company } = useAuth() as { company: CompanyBranchOption[] | null };
   const [selectedCompany, setSelectdCompany] = useState('');
-  const [optionBranch, setOptionBranch] = useState([]);
+  const [optionBranch, setOptionBranch] = useState<SelectOption[]>([]);
   const [selectedBranch, setSelectdBranch] = useState('');
 
-  const funcButtonHandleClickExecute = (e) => {
+  const funcButtonHandleClickExecute = (
+    e: React.MouseEvent<HTMLButtonElement>
+  ) => {
     let messages = [];
     if (selectedCompany === '') {
       messages.push(true);
@@ -18,7 +21,7 @@ const SwitchBranchPage = () => {
       messages.push(true);
     }
     if (messages.length < 1) {
-      let alt_fa_storage = localStorage.getItem('e_chanel_storage');
+      let alt_fa_storage = localStorage.getItem('e_chanel_storage') || '';
       let token_text = JSON.parse(alt_fa_storage);
       const alt_fa_token = {
         token: token_text.token,
@@ -34,19 +37,19 @@ const SwitchBranchPage = () => {
   };
 
   useEffect(() => {
-    const alt_fa_storage = localStorage.getItem('e_chanel_storage');
+    const alt_fa_storage = localStorage.getItem('e_chanel_storage') || '';
     const token_text = JSON.parse(alt_fa_storage);
     setSelectdCompany(token_text.company);
   }, []);
 
-  const companyHandleChange = (e) => {
-    setSelectdCompany(e.value);
-    let companyItem = company.find((item) => item.value === e.value);
-    setOptionBranch(companyItem.branch);
+  const companyHandleChange = (option: CompanyBranchOption | null) => {
+    setSelectdCompany(option?.value ?? '');
+    const companyItem = company?.find((item) => item.value === option?.value);
+    setOptionBranch(companyItem?.branch ?? []);
   };
 
-  const branchHandleChange = (e) => {
-    setSelectdBranch(e.value);
+  const branchHandleChange = (option: SelectOption | null) => {
+    setSelectdBranch(option?.value ?? '');
   };
 
   return (
@@ -63,11 +66,11 @@ const SwitchBranchPage = () => {
             <div className="mb-3">
               <label className="form-label required">Company</label>
               <Select
-                value={company.filter(function (option) {
+                value={company?.filter(function (option) {
                   return option.value === selectedCompany;
                 })}
-                onChange={companyHandleChange}
-                options={company}
+                onChange={(e) => companyHandleChange(e)}
+                options={company ?? []}
                 required
               />
             </div>
@@ -77,7 +80,7 @@ const SwitchBranchPage = () => {
                 value={optionBranch.filter(function (option) {
                   return option.value === selectedBranch;
                 })}
-                onChange={branchHandleChange}
+                onChange={(e) => branchHandleChange(e)}
                 options={optionBranch}
                 required
               />
@@ -86,7 +89,9 @@ const SwitchBranchPage = () => {
               <button
                 type="submit"
                 className="btn btn-primary w-100"
-                onClick={funcButtonHandleClickExecute}
+                onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
+                  funcButtonHandleClickExecute(e);
+                }}
               >
                 Switch branch
               </button>
