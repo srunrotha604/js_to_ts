@@ -3,17 +3,17 @@ import fileDownload from 'js-file-download';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import ReactPaginate from 'react-paginate';
 import Select from 'react-select';
-import Button from '../../components/common/Button';
-import ComponentStatus from '../../components/customer/ComponentStatus';
-import DateRangeSelector from '../../components/form/DateRangeSelector';
-import { selectCustomStyles } from '../../components/transaction/TransactionTabList';
-import { useAuth } from '../../context/AuthContext';
-import useLoading from '../../hooks/useLoading';
+import Button from '../../components/common/Button.jsx';
+import ComponentStatus from '../../components/customer/ComponentStatus.jsx';
+import DateRangeSelector from '../../components/form/DateRangeSelector.jsx';
+import { selectCustomStyles } from '../../components/transaction/TransactionTabList.jsx';
+import { useAuth } from '../../context/AuthContext.jsx';
+import useLoading from '../../hooks/useLoading.jsx';
 import useMessage from '../../hooks/useMessage.jsx';
-import { fetchDataAsync } from '../../services/$service';
-import { formatDay } from '../../utils/format-day';
-import { ROUTE_API } from '../../utils/route-util';
-import { RECORDSTATUS } from '../../utils/status';
+import { fetchDataAsync } from '../../services/$service.js';
+import { formatDay } from '../../utils/format-day.js';
+import { ROUTE_API } from '../../utils/route-util.js';
+import { RECORDSTATUS } from '../../utils/status.js';
 
 const UserReportPage = () => {
   document.title = 'Report | User report';
