@@ -44,7 +44,7 @@ const BatchRegister = () => {
   };
 
   const policyList = (value) => {
-    fetchData(ROUTE_API.operationCustomerProduct + value, {}, 'GET').then(
+    fetchData(ROUTE_API.operationCustomerProduct + '/' + value, {}, 'GET').then(
       (res) => {
         switch (res.status) {
           case 200:

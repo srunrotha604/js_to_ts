@@ -222,7 +222,7 @@ const ComponentExcelUpload = (props) => {
                     </div>
                   </div>
                 </div>
-                <div className="mt-30">
+                <div className="pt-4">
                   <div className="row">
                     <div className="col-md-12">
                       <div className="card">
