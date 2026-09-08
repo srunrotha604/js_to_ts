@@ -2,7 +2,7 @@ import { ToastContainer } from 'react-toastify';
 // import './App.css';
 import { BrowserRouter as Router } from 'react-router-dom';
 import AxiosInterceptor from './components/AxiosInterceptor.jsx';
-import AuthContextProvider from './context/AuthContext.jsx';
+import AuthContextProvider from './context/AuthContext';
 import AllRoutes from './router/index.tsx';
 
 function App() {

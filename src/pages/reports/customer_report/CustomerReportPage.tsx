@@ -17,9 +17,9 @@ import {
   selectCustomStyles,
   typeOptions,
 } from '../../../components/transaction/TransactionTabList.jsx';
-import { useAuth } from '../../../context/AuthContext.jsx';
+import { useAuth } from '../../../context/AuthContext';
 import useLoading from '../../../hooks/useLoading';
-import useMessage from '../../../hooks/useMessage.jsx';
+import useMessage from '../../../hooks/useMessage';
 import { fetchDataAsync } from '../../../services/$service';
 import { formatDay, getStartOfMonthDate } from '../../../utils/format-day';
 import { ROUTE_API } from '../../../utils/route-util';

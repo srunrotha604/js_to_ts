@@ -1,15 +1,24 @@
+import type { ReactNode } from 'react';
 import { createContext, useContext, useEffect, useState } from 'react';
+import type {
+  AuthContextValue,
+  AuthToken,
+  PermissionSet,
+} from '../@type/auth';
+import type { AuthModuleState } from '../@type/module';
+import type { CompanyBranchOption } from '../@type/report';
+import type { UserProfile } from '../@type/profile';
 import { fetchDataAsync } from '../services/$service';
 import { ROUTE_API } from '../utils/route-util';
 import { clearTransactionStatusCount } from '../utils/status';
 import ModuleContextProvider from './module/ModuleContext';
 
-const AuthContext = createContext({
+const AuthContext = createContext<AuthContextValue>({
   loading: true,
-  hasPermissionProccessTransaction: (execution, condition) => false,
-  hasPermissionAccessTransaction: (execution, condition) => false,
+  hasPermissionProccessTransaction: () => false,
+  hasPermissionAccessTransaction: () => false,
   clearUser: () => {},
-  fetchUser: () => {},
+  fetchUser: async () => {},
   user: null,
   isUserDRIAdmin: false,
   appName: '',
@@ -18,32 +27,49 @@ const AuthContext = createContext({
   selectedBranch: null,
   selectedCompany: null,
   permission: null,
-  module: [],
+  module: null,
   token: null,
+  mode: '',
 });
+
+interface UserInfoResponse {
+  company?: CompanyBranchOption[];
+  userProfile?: UserProfile[];
+  mainMenu?: AuthModuleState['mainMenu'];
+  menu?: AuthModuleState['menu'];
+  module?: AuthModuleState['module'];
+  mode?: string;
+}
+
+interface PermissionAccessResponse extends PermissionSet {
+  driAdmin?: boolean;
+}
 
 const fetchPermissionAccess = async () => {
   const URL = ROUTE_API.operationCustomerAccess;
-  return fetchDataAsync(URL);
+  return fetchDataAsync<PermissionAccessResponse>(URL);
 };
 
 const fetchUserInfo = async () => {
   const URL = ROUTE_API.login;
-  return fetchDataAsync(URL);
+  return fetchDataAsync<UserInfoResponse>(URL);
 };
 
-const AuthContextProvider = ({ children }) => {
+const AuthContextProvider = ({ children }: { children?: ReactNode }) => {
   const [loading, setLoading] = useState(true);
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState<UserProfile | null>(null);
   const [isUserDRIAdmin, setIsUserDRIAdmin] = useState(false);
-  const [menu, setMenu] = useState([]);
-  const [company, setCompany] = useState(null);
-  const [permission, setPermission] = useState(null);
-  const [token, setToken] = useState(null);
+  const [menu, setMenu] = useState<unknown[]>([]);
+  const [company, setCompany] = useState<CompanyBranchOption[] | null>(null);
+  const [permission, setPermission] = useState<PermissionSet | null>(null);
+  const [token, setToken] = useState<AuthToken | null>(null);
   const [mode, setMode] = useState('');
-  const [module, setModule] = useState(null);
+  const [module, setModule] = useState<AuthModuleState | null>(null);
 
-  const hasPermissionProccessTransaction = (execution, condition = 'and') => {
+  const hasPermissionProccessTransaction = (
+    execution: string | string[],
+    condition: 'and' | 'or' = 'and'
+  ): boolean => {
     if (Array.isArray(execution)) {
       if (condition === 'or') {
         return execution.some((item) => !!permission?.process?.[item]);
@@ -53,7 +79,10 @@ const AuthContextProvider = ({ children }) => {
     return !!permission?.process?.[execution];
   };
 
-  const hasPermissionAccessTransaction = (execution, condition = 'and') => {
+  const hasPermissionAccessTransaction = (
+    execution: string | string[],
+    condition: 'and' | 'or' = 'and'
+  ): boolean => {
     if (Array.isArray(execution)) {
       if (condition === 'or') {
         return execution.some((item) => !!permission?.access?.[item]);
@@ -73,7 +102,7 @@ const AuthContextProvider = ({ children }) => {
       const responseUser = await fetchUserInfo();
       const responsePermission = await fetchPermissionAccess();
       const e_chanel_storage = localStorage.getItem('e_chanel_storage');
-      setToken(JSON.parse(e_chanel_storage));
+      setToken(e_chanel_storage ? JSON.parse(e_chanel_storage) : null);
       const tempCompany = responseUser?.data?.company;
       const tempUser = responseUser?.data?.userProfile?.[0];
       const tempMenu = responseUser?.data?.mainMenu;
@@ -82,12 +111,12 @@ const AuthContextProvider = ({ children }) => {
         menu: responseUser?.data?.menu,
         module: responseUser?.data?.module,
       });
-      setIsUserDRIAdmin(responsePermission?.data?.driAdmin);
-      setCompany(tempCompany);
-      setUser(tempUser);
-      setMenu(tempMenu);
-      setPermission(responsePermission?.data);
-      setMode(responseUser?.data?.mode);
+      setIsUserDRIAdmin(responsePermission?.data?.driAdmin ?? false);
+      setCompany(tempCompany ?? null);
+      setUser(tempUser ?? null);
+      setMenu(tempMenu ?? []);
+      setPermission(responsePermission?.data ?? null);
+      setMode(responseUser?.data?.mode ?? '');
     } catch (error) {
       console.log(error);
     } finally {

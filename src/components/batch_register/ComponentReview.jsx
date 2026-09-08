@@ -4,7 +4,7 @@ import ReactPaginate from 'react-paginate';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { useAuth } from '../../context/AuthContext';
-import useMessage from '../../hooks/useMessage.jsx';
+import useMessage from '../../hooks/useMessage';
 import { fetchDataAsync } from '../../services/$service';
 import { formatDay } from '../../utils/format-day';
 import { ROUTE_API, ROUTE_PATH } from '../../utils/route-util';

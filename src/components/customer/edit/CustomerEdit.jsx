@@ -8,7 +8,7 @@ import Select from 'react-select';
 import { useDebouncedCallback } from 'use-debounce';
 import CustomDatePicker from '../../../components/form/CustomDatePicker';
 import nation from '../../../data/nationlity.json';
-import useMessage from '../../../hooks/useMessage.jsx';
+import useMessage from '../../../hooks/useMessage';
 import { fetchDataAsync } from '../../../services/$service';
 import { pluralize } from '../../../utils/pluralize';
 import { useModal } from '../../common/modal';

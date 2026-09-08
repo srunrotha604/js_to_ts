@@ -11,7 +11,7 @@ import TableCellAction from '../../../../components/form/TableCellAction';
 import TableCellDelete from '../../../../components/form/TableCellDelete';
 import TableCellStatus from '../../../../components/form/TableCellStatus';
 import Loading from '../../../../components/Loading';
-import { useAuth } from '../../../../context/AuthContext.jsx';
+import { useAuth } from '../../../../context/AuthContext';
 import { fetchData } from '../../../../services/$service';
 import { ROUTE_API, ROUTE_PATH } from '../../../../utils/route-util';
 import AddPhoneNumber from './components/AddPhoneNumber.tsx';

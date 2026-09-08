@@ -13,7 +13,7 @@ import Loading from '../../../../components/Loading';
 import TableBreakBar from '../../../../components/table/table_action/TableBreakBar.jsx';
 import TableCellTextDeleteConfirm from '../../../../components/table/table_action/TableCellTextDeleteConfirm.jsx';
 import { selectCustomStyles } from '../../../../components/transaction/TransactionTabList';
-import { useAuth } from '../../../../context/AuthContext.jsx';
+import { useAuth } from '../../../../context/AuthContext';
 import { fetchData } from '../../../../services/$service';
 import { ROUTE_API, ROUTE_PATH } from '../../../../utils/route-util';
 import AddPhoneNumber from './components/AddPhoneNumber.tsx';

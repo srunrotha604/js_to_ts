@@ -5,7 +5,7 @@ import { AiOutlineCheckCircle } from 'react-icons/ai';
 import { NumericFormat } from 'react-number-format';
 import { Link } from 'react-router-dom';
 import Spinner, { useSpinner } from '../../components/common/Spinner';
-import useMessage from '../../hooks/useMessage.jsx';
+import useMessage from '../../hooks/useMessage';
 import { fetchDataAsync } from '../../services/$service';
 import { contactUs } from '../../utils/contact';
 import { delay } from '../../utils/delay';

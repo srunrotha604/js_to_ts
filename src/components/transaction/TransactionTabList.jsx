@@ -22,7 +22,7 @@ import IssueDateDetailModal from '../../components/IssueDateDetailModal';
 import IssueDateModal from '../../components/IssueDateModal';
 import TransactionDetailModal from '../../components/transaction/TransactionDetailModal';
 import { useAuth } from '../../context/AuthContext';
-import useMessage from '../../hooks/useMessage.jsx';
+import useMessage from '../../hooks/useMessage';
 import { fetchData, fetchDataAsync } from '../../services/$service';
 import { delay } from '../../utils/delay';
 import { formatDay } from '../../utils/format-day';

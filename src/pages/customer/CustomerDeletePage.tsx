@@ -26,7 +26,7 @@ import TransactionTabSelectRaw, {
 } from '../../components/transaction/TransactionTabSelect';
 import { useAuth } from '../../context/AuthContext';
 import useLoading from '../../hooks/useLoading';
-import useMessage from '../../hooks/useMessage.jsx';
+import useMessage from '../../hooks/useMessage';
 import { fetchDataAsync } from '../../services/$service';
 import type { ActionItem } from '../../utils/actions';
 import { delay } from '../../utils/delay';

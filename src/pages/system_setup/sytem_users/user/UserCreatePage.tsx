@@ -8,7 +8,7 @@ import type {
   MessageResponse,
   RoleOptionsResponse,
 } from '../../../../@type/system_users';
-import { useAuth } from '../../../../context/AuthContext.jsx';
+import { useAuth } from '../../../../context/AuthContext';
 import { fetchData } from '../../../../services/$service';
 import { ROUTE_API, ROUTE_PATH } from '../../../../utils/route-util';
 
