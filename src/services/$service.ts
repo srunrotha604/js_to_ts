@@ -75,9 +75,13 @@ export const refreshToken = async () => {
   return alt_fa_token;
 };
 
-export const fetchData = async (url, data, method = 'GET') => {
+export const fetchData = async (
+  url: string,
+  data: unknown,
+  method = 'GET'
+) => {
   valid_token_data();
-  let alt_fa_storage = localStorage.getItem('e_chanel_storage');
+  let alt_fa_storage = localStorage.getItem('e_chanel_storage') || '';
   let token_text = JSON.parse(alt_fa_storage);
   const respond = await axios({
     url: import.meta.env.VITE_API_URL + url,
@@ -102,10 +106,19 @@ export const fetchData = async (url, data, method = 'GET') => {
   return respond;
 };
 
-export const fetchDataAsync = async (url, { method, data, ...other } = {}) => {
+interface FetchDataAsyncOptions {
+  method?: string;
+  data?: unknown;
+  [key: string]: unknown;
+}
+
+export const fetchDataAsync = async (
+  url: string,
+  { method, data, ...other }: FetchDataAsyncOptions = {}
+) => {
   valid_token_data();
 
-  let alt_fa_storage = localStorage.getItem('e_chanel_storage');
+  let alt_fa_storage = localStorage.getItem('e_chanel_storage') || '';
 
   let token_text = JSON.parse(alt_fa_storage);
 
@@ -128,9 +141,13 @@ export const fetchDataAsync = async (url, { method, data, ...other } = {}) => {
   });
 };
 
-export const fileUpload = async (url, data, method = 'GET') => {
+export const fileUpload = async (
+  url: string,
+  data: unknown,
+  method = 'GET'
+) => {
   valid_token_data();
-  let alt_fa_storage = localStorage.getItem('e_chanel_storage');
+  let alt_fa_storage = localStorage.getItem('e_chanel_storage') || '';
   let token_text = JSON.parse(alt_fa_storage);
   const respond = await axios({
     url: import.meta.env.VITE_API_URL + url,
@@ -155,9 +172,13 @@ export const fileUpload = async (url, data, method = 'GET') => {
   return respond;
 };
 
-export const fileDownload = async (url, data, method = 'GET') => {
+export const fileDownload = async (
+  url: string,
+  data: unknown,
+  method = 'GET'
+) => {
   valid_token_data();
-  let alt_fa_storage = localStorage.getItem('e_chanel_storage');
+  let alt_fa_storage = localStorage.getItem('e_chanel_storage') || '';
   let token_text = JSON.parse(alt_fa_storage);
   const respond = await axios({
     url: import.meta.env.VITE_API_URL + url,

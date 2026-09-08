@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 import { HiOutlineFaceFrown } from 'react-icons/hi2';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext.jsx';
-import { fetchDataAsync } from '../../services/$service.jsx';
+import { fetchDataAsync } from '../../services/$service';
 import { ROUTE_API, ROUTE_PATH } from '../../utils/route-util';
 
 const ErrorPage = ({ error }) => {

@@ -12,7 +12,7 @@ import TransactionTabSelect, {
   useTransactionTabSelect,
 } from '../../components/transaction/TransactionTabSelect.jsx';
 import { useAuth } from '../../context/AuthContext';
-import { fetchDataAsync } from '../../services/$service.jsx';
+import { fetchDataAsync } from '../../services/$service';
 import { actions } from '../../utils/actions';
 import { delay } from '../../utils/delay';
 import { getConfirmedMessageText } from '../../utils/get-confirm-message-text';
