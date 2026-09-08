@@ -167,7 +167,12 @@ const SwitchBranchPage = lazy(
 );
 const ContactUsPage = lazy(() => import('../pages/default/ContactUsPage'));
 export default function AllRoutes() {
-  const { user } = useAuth();
+  const { user, loading } = useAuth();
+
+  if (loading) {
+    return <div className="full-height-container"></div>;
+  }
+
   return (
     <Routes>
       <Route
