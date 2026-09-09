@@ -280,15 +280,17 @@ const HomePage = () => {
               className="btn-list mx-2 align-items-center"
             >
               {tabStatus !== STATUS.All && (
-                <TransactionTabSelect
-                  title="Click to Process Selected"
-                  disableSelectAll
-                  onClick={handleProcessSelected}
-                  isSelectedAll={selectedAll}
-                  onClearSelect={resetSelectedTransaction}
-                  onSelectAll={setSelectedAll}
-                  totalSelected={selectedTransaction?.length}
-                />
+                <>
+                  <TransactionTabSelect
+                    title="Click to Process Selected"
+                    disableSelectAll
+                    onClick={handleProcessSelected}
+                    isSelectedAll={selectedAll}
+                    onClearSelect={resetSelectedTransaction}
+                    onSelectAll={setSelectedAll}
+                    totalSelected={selectedTransaction?.length}
+                  />
+                </>
               )}
             </div>
           );

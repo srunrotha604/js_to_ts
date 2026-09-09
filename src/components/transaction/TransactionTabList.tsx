@@ -561,7 +561,7 @@ const TransactionTabList = forwardRef<
                 title
               )}
             </div>
-            <div className="overflow-auto d-flex flex-grow-1">
+            <div className="overflow-y-auto d-flex flex-grow-1">
               <div className="d-flex flex-column" style={{ flex: 1 }}>
                 <div className={'d-flex mb-3 px-2 pt-3'}>
                   <div
