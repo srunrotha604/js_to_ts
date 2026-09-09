@@ -1,14 +1,27 @@
 import React, { useState } from 'react';
 import { AiOutlineCheckCircle } from 'react-icons/ai';
 import { PatternFormat } from 'react-number-format';
-import { Link, redirect } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import type { ForgotPasswordResponse } from '../../@type/auth';
-import { fetchData } from '../../services/$service';
-import { ROUTE_API, ROUTE_PATH } from '../../utils/route-util';
+import { ROUTE_PATH } from '../../../../utils/route-util';
+import {
+  confirmForgotPasswordChange,
+  confirmForgotPasswordCode,
+  requestForgotPassword,
+  requestForgotPasswordViaSms,
+} from '../../interface-adapters';
+import {
+  buildConfirmChangePasswordDto,
+  buildConfirmCodeDto,
+  buildForgotPasswordRequestDto,
+  buildViaSmsDto,
+  validatePasswordStrength,
+  validateRequiredFields,
+} from '../../use-cases';
 
 const ForgotPasswordPage = () => {
-  document.title = 'E-CHANNEL PORTAL | Login';
+  document.title = 'E-CHANNEL PORTAL | Forgot Password';
+  const navigate = useNavigate();
   const [showSendEmail, setShowSendEmail] = useState(true);
   const [showSMSResend, setShowSMSResend] = useState(false);
   const [email, setEmail] = useState('');
@@ -31,47 +44,37 @@ const ForgotPasswordPage = () => {
   const funcButtonHandleClickExecute = (
     e: React.MouseEvent<HTMLButtonElement>
   ) => {
-    let messages = [];
-    if (email === '') {
-      messages.push(true);
-    }
-
-    if (messages.length < 1) {
-      let data = {
-        email: email,
-      };
-      fetchData<ForgotPasswordResponse>(
-        ROUTE_API.loginForgotPassword,
-        data,
-        'POST'
-      ).then((res) => {
-        switch (res?.status) {
-          case 200:
-            setShowSendEmail(false);
-            setSuccess(false);
-            setConfirmCode('');
-            setConfirmKey(res?.data?.keyCode ?? '');
-            setConfirmCodeMessage(
-              'Enter the code we sent to your email address at'
-            );
-            setAddressMessage(email);
-            setPhoneNumber(res?.data?.phoneNumber ?? '');
-            setViaSMSCode(res?.data?.viaSMSCode ?? '');
-            setShowSMSResend(false);
-            setInvalidFeedBack('');
-            break;
-          case 400:
-            setShowSendEmail(true);
-            setSuccess(false);
-            setInvalidFeedBack(res?.data?.message ?? '');
-            break;
-          case 403:
-            toast.error(String(res?.data));
-            break;
-          default:
-            redirect('/404');
+    if (validateRequiredFields([email])) {
+      requestForgotPassword(buildForgotPasswordRequestDto(email)).then(
+        (res) => {
+          switch (res?.status) {
+            case 200:
+              setShowSendEmail(false);
+              setSuccess(false);
+              setConfirmCode('');
+              setConfirmKey(res?.data?.keyCode ?? '');
+              setConfirmCodeMessage(
+                'Enter the code we sent to your email address at'
+              );
+              setAddressMessage(email);
+              setPhoneNumber(res?.data?.phoneNumber ?? '');
+              setViaSMSCode(res?.data?.viaSMSCode ?? '');
+              setShowSMSResend(false);
+              setInvalidFeedBack('');
+              break;
+            case 400:
+              setShowSendEmail(true);
+              setSuccess(false);
+              setInvalidFeedBack(res?.data?.message ?? '');
+              break;
+            case 403:
+              toast.error(String(res?.data));
+              break;
+            default:
+              navigate(ROUTE_PATH.notFound);
+          }
         }
-      });
+      );
     }
     e.preventDefault();
   };
@@ -79,20 +82,9 @@ const ForgotPasswordPage = () => {
   const funcConfirmCodeHandleClickExecute = (
     e: React.MouseEvent<HTMLButtonElement>
   ) => {
-    let messages = [];
-    if (confirmCode === '' || confirmCode === null) {
-      messages.push(true);
-    }
-    if (messages.length < 1) {
-      let data = {
-        email: email,
-        keyCode: confirmKey,
-        otpCode: confirmCode,
-      };
-      fetchData<ForgotPasswordResponse>(
-        ROUTE_API.loginConfirmCode,
-        data,
-        'POST'
+    if (validateRequiredFields([confirmCode])) {
+      confirmForgotPasswordCode(
+        buildConfirmCodeDto(email, confirmKey, confirmCode)
       ).then((res) => {
         switch (res?.status) {
           case 200:
@@ -107,7 +99,7 @@ const ForgotPasswordPage = () => {
             toast.error(String(res?.data));
             break;
           default:
-            redirect('/404');
+            navigate(ROUTE_PATH.notFound);
         }
       });
     }
@@ -115,81 +107,59 @@ const ForgotPasswordPage = () => {
   };
 
   const resqustViaSMSSubmit = () => {
-    const data = {
-      email: email,
-      keyCode: confirmKey,
-      phoneNumber: phoneNumber,
-      viaSMSCode: viaSMSCode,
-    };
-    console.log(data);
-    fetchData<ForgotPasswordResponse>(ROUTE_API.loginViaSms, data, 'POST').then(
-      (res) => {
-        switch (res?.status) {
-          case 200:
-            setConfirmCodeMessage(
-              'Enter the code we sent to your phone number'
-            );
-            setAddressMessage(phoneNumber);
-            setShowSMSResend(true);
-            {
-              res?.data?.attempt == 3 ? setPhoneNumber('') : '';
-            }
-            break;
-          case 400:
-            setSuccess(false);
-            setInvalidFeedBack(res?.data?.message ?? '');
-            break;
-          case 403:
-            toast.error(String(res?.data));
-            break;
-          default:
-            redirect('/404');
-        }
+    requestForgotPasswordViaSms(
+      buildViaSmsDto(email, confirmKey, phoneNumber, viaSMSCode)
+    ).then((res) => {
+      switch (res?.status) {
+        case 200:
+          setConfirmCodeMessage('Enter the code we sent to your phone number');
+          setAddressMessage(phoneNumber);
+          setShowSMSResend(true);
+          {
+            res?.data?.attempt == 3 ? setPhoneNumber('') : '';
+          }
+          break;
+        case 400:
+          setSuccess(false);
+          setInvalidFeedBack(res?.data?.message ?? '');
+          break;
+        case 403:
+          toast.error(String(res?.data));
+          break;
+        default:
+          navigate(ROUTE_PATH.notFound);
       }
-    );
+    });
   };
 
   const funcChangePasswordHandleClickExecute = (
     e: React.MouseEvent<HTMLButtonElement>
   ) => {
-    let messages = [];
-    if (email === '' || email === null) {
-      messages.push(true);
-    }
-    if (confirmChangeKey === '' || confirmChangeKey === null) {
-      messages.push(true);
-    }
-    if (newPassword === '' || newPassword === null) {
-      messages.push(true);
-    }
-    if (confirmPassword === '' || confirmPassword === null) {
-      messages.push(true);
-    }
     if (newPassword !== confirmPassword) {
       toast.error('New password and confirm password not match');
       return;
     }
 
-    if (
-      /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$/.test(
-        newPassword
-      ) === false
-    ) {
+    if (!validatePasswordStrength(newPassword)) {
       toast.error('Invalid password requirement');
       return;
     }
 
-    if (messages.length < 1) {
-      let data = {
-        keyCode: confirmChangeKey,
-        email: email,
-        newPassword: newPassword,
-        confirmPassword: confirmPassword,
-      };
-      fetchData<ForgotPasswordResponse>(
-        ROUTE_API.loginConfirmChangePassword,
-        data,
-        'POST'
+    if (
+      validateRequiredFields([
+        email,
+        confirmChangeKey,
+        newPassword,
+        confirmPassword,
+      ])
+    ) {
+      confirmForgotPasswordChange(
+        buildConfirmChangePasswordDto(
+          confirmChangeKey,
+          email,
+          newPassword,
+          confirmPassword
+        )
       ).then((res) => {
         switch (res?.status) {
           case 200:
@@ -202,7 +172,7 @@ const ForgotPasswordPage = () => {
             toast.error(String(res?.data));
             break;
           default:
-            redirect('/404');
+            navigate(ROUTE_PATH.notFound);
         }
       });
     }

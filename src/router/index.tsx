@@ -4,9 +4,11 @@ import PrivateRoute from '../components/common/PrivateRoute';
 import { useAuth } from '../context/AuthContext';
 import Layout from '../layouts';
 import { ROUTE_PATH } from '../utils/route-util';
-const Login = lazy(() => import('../pages/default/LoginPage'));
-const HomePage = lazy(() => import('../pages/default/HomePage'));
-const LogoutPage = lazy(() => import('../pages/default/LogoutPage'));
+const Login = lazy(() => import('../domains/default/ui/pages/LoginPage'));
+const HomePage = lazy(() => import('../domains/default/ui/pages/HomePage'));
+const LogoutPage = lazy(
+  () => import('../domains/default/ui/pages/LogoutPage')
+);
 const Error404Page = lazy(() => import('../pages/error_handle/Error404Page'));
 const Error500Page = lazy(() => import('../pages/error_handle/Error500Page'));
 const ProjectPage = lazy(
@@ -28,7 +30,7 @@ const DataEntryPage = lazy(
   () => import('../domains/system-users/ui/pages/DataEntryPage')
 );
 const ForgotPasswordPage = lazy(
-  () => import('../pages/default/ForgotPasswordPage')
+  () => import('../domains/default/ui/pages/ForgotPasswordPage')
 );
 const ProjectCreatePage = lazy(
   () => import('../domains/project-configuration/ui/pages/ProjectCreatePage')
@@ -128,14 +130,18 @@ const CustomerReportPage = lazy(
 const UserReportPage = lazy(
   () => import('../domains/reports/ui/pages/UserReportPage')
 );
-const ProfilePage = lazy(() => import('../pages/default/ProfilePage'));
+const ProfilePage = lazy(
+  () => import('../domains/default/ui/pages/ProfilePage')
+);
 const ChangePasswordPage = lazy(
-  () => import('../pages/default/ChangePasswordPage')
+  () => import('../domains/default/ui/pages/ChangePasswordPage')
 );
 const SwitchBranchPage = lazy(
-  () => import('../pages/default/SwitchBranchPage')
+  () => import('../domains/default/ui/pages/SwitchBranchPage')
 );
-const ContactUsPage = lazy(() => import('../pages/default/ContactUsPage'));
+const ContactUsPage = lazy(
+  () => import('../domains/default/ui/pages/ContactUsPage')
+);
 export default function AllRoutes() {
   const { user, loading } = useAuth();
 

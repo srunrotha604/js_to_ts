@@ -1,15 +1,14 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import type { UserProfile } from '../../@type/profile';
-import { useAuth } from '../../context/AuthContext';
-import { getCurrentVersion } from '../../pages/version-history/versionexport';
-import { contactUs } from '../../utils/contact';
-import { ROUTE_PATH } from '../../utils/route-util';
+import { useAuth } from '../../../../context/AuthContext';
+import { getCurrentVersion } from '../../../../pages/version-history/versionexport';
+import { contactUs } from '../../../../utils/contact';
+import { ROUTE_PATH } from '../../../../utils/route-util';
 
 const FooterPage = () => {
   const navigate = useNavigate();
   const [version, setVersion] = useState('');
-  const { user } = useAuth() as unknown as { user: UserProfile | null };
+  const { user } = useAuth();
   const VersionButton = () => {
     navigate(ROUTE_PATH.version);
   };

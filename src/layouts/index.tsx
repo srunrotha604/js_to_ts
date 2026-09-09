@@ -1,9 +1,9 @@
 import { Box } from '@mui/system';
 import { ErrorBoundary } from 'react-error-boundary';
 import { Outlet } from 'react-router-dom';
-import FooterPage from '../pages/default/FooterPage';
-import HeaderPage from '../pages/default/HeaderPage';
-import SideBarPage from '../pages/default/SideBarPage';
+import FooterPage from '../domains/default/ui/components/FooterPage';
+import HeaderPage from '../domains/default/ui/components/HeaderPage';
+import SideBarPage from '../domains/default/ui/components/SideBarPage';
 import ErrorPage from '../pages/error_handle/ErrorPage';
 
 export default function Layout() {

@@ -4,12 +4,12 @@ import { Controller, useForm } from 'react-hook-form';
 import { AiOutlineCheckCircle } from 'react-icons/ai';
 import { NumericFormat } from 'react-number-format';
 import { Link } from 'react-router-dom';
-import Spinner, { useSpinner } from '../../components/common/Spinner';
-import useMessage from '../../hooks/useMessage';
-import { fetchDataAsync } from '../../services/$service';
-import { contactUs } from '../../utils/contact';
-import { delay } from '../../utils/delay';
-import { ROUTE_API, ROUTE_PATH } from '../../utils/route-util';
+import Spinner, { useSpinner } from '../../../../components/common/Spinner';
+import useMessage from '../../../../hooks/useMessage';
+import { contactUs } from '../../../../utils/contact';
+import { delay } from '../../../../utils/delay';
+import { ROUTE_PATH } from '../../../../utils/route-util';
+import { submitContactUs } from '../../interface-adapters';
 
 interface ContactUsFormValues {
   phone: string;
@@ -17,6 +17,7 @@ interface ContactUsFormValues {
 }
 
 const ContactUsPage = () => {
+  document.title = 'E-CHANNEL PORTAL | Contact Us';
   const { control, handleSubmit, watch } = useForm<ContactUsFormValues>();
   const data = watch();
   const [success, setSuccess] = useState(false);
@@ -27,10 +28,7 @@ const ContactUsPage = () => {
   const onSubmit = async (data: ContactUsFormValues) => {
     try {
       openSpinner();
-      await fetchDataAsync(ROUTE_API.logContactUs, {
-        method: 'POST',
-        data,
-      });
+      await submitContactUs(data);
       setSuccess(true);
     } catch (error) {
       showErrorResponseMessage(error);

@@ -1,45 +1,30 @@
 import axios from 'axios';
-import type { Dispatch, ForwardRefExoticComponent, SetStateAction } from 'react';
 import { forwardRef, useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import ApproveRejectConfirmationModal from '../../components/common/ActionConfirmationModal';
-import Button from '../../components/common/Button';
-import ModalRaw, { useModal } from '../../components/common/modal/index';
-import Spinner, { useSpinner } from '../../components/common/Spinner';
-import type { TransactionTabListHandle } from '../../components/transaction/TransactionTable';
-import { useAuth } from '../../context/AuthContext';
-import type {
-  CustomerListResponse,
-  CustomerTransaction,
-  TransactionTotalCounts,
-} from '../../domains/customer/entities';
-import { STATUS } from '../../domains/customer/entities';
-import { useTransactionTabSelect } from '../../domains/customer/interface-adapters';
-import ComponentStatus from '../../domains/customer/ui/components/ComponentStatus';
-import CustomerBatchProcessModal from '../../domains/customer/ui/components/transaction-table/CustomerBatchProcessModal';
-import CustomerTransactionSelect from '../../domains/customer/ui/components/transaction-table/CustomerTransactionSelect';
-import CustomerTransactionTable from '../../domains/customer/ui/components/transaction-table/CustomerTransactionTable';
-import { actions } from '../../domains/customer/use-cases/workflow-actions';
-import { getConfirmedMessageText } from '../../domains/customer/use-cases/get-confirm-message-text';
-import { isTransactionStatusCountChanged } from '../../domains/customer/use-cases/transaction-status-tracking';
-import { fetchDataAsync } from '../../services/$service';
-import { delay } from '../../utils/delay';
-import { pluralize } from '../../utils/pluralize';
-import { ROUTE_API, ROUTE_PATH } from '../../utils/route-util';
-const TypedModal = ModalRaw as unknown as ForwardRefExoticComponent<
-  React.RefAttributes<HTMLDivElement> & {
-    title?: React.ReactNode;
-    content?: React.ReactNode;
-    children?: React.ReactNode;
-    actions?: React.ReactNode;
-    size?: 'sm' | 'lg' | 'xl';
-    bodyClassName?: string;
-    headerClassName?: string;
-    closeButton?: boolean;
-    noTransition?: boolean;
-  }
->;
+import ApproveRejectConfirmationModal from '../../../../components/common/ActionConfirmationModal';
+import Button from '../../../../components/common/Button';
+import Modal, { useModal } from '../../../../components/common/modal/index';
+import Spinner, { useSpinner } from '../../../../components/common/Spinner';
+import type { TransactionTabListHandle } from '../../../../components/transaction/TransactionTable';
+import { useAuth } from '../../../../context/AuthContext';
+import type { TransactionTotalCounts } from '../../../customer/entities';
+import { STATUS } from '../../../customer/entities';
+import {
+  fetchCustomerTransactionList,
+  useTransactionTabSelect,
+} from '../../../customer/interface-adapters';
+import ComponentStatus from '../../../customer/ui/components/ComponentStatus';
+import CustomerBatchProcessModal from '../../../customer/ui/components/transaction-table/CustomerBatchProcessModal';
+import CustomerTransactionSelect from '../../../customer/ui/components/transaction-table/CustomerTransactionSelect';
+import CustomerTransactionTable from '../../../customer/ui/components/transaction-table/CustomerTransactionTable';
+import { actions } from '../../../customer/use-cases/workflow-actions';
+import { getConfirmedMessageText } from '../../../customer/use-cases/get-confirm-message-text';
+import { isTransactionStatusCountChanged } from '../../../customer/use-cases/transaction-status-tracking';
+import { delay } from '../../../../utils/delay';
+import { pluralize } from '../../../../utils/pluralize';
+import { ROUTE_PATH } from '../../../../utils/route-util';
+import { processCustomerTransactions } from '../../interface-adapters';
 
 const HomePage = () => {
   document.title = 'E-CHANNEL PORTAL | Home';
@@ -114,40 +99,15 @@ const HomePage = () => {
     selectedCustomerList,
     setSelectedCustomerList,
     selectDeletedTransaction,
-  } = useTransactionTabSelect() as unknown as {
-    handleSelectTransaction: (transaction: CustomerTransaction) => void;
-    handleRemoveCustomerFromList: (customer: CustomerTransaction) => void;
-    handleSelectAllInCurrentList: (
-      checked: boolean,
-      transactionList: CustomerTransaction[]
-    ) => void;
-    resetSelectedTransaction: () => void;
-    isSelectedAllInCurrentList: (
-      transactionList: CustomerTransaction[]
-    ) => boolean;
-    isSelectedItem: (transaction: CustomerTransaction) => boolean;
-    selectedTransaction: string[];
-    resetSelected: () => void;
-    selectedAll: boolean;
-    setSelectedAll: Dispatch<SetStateAction<boolean>>;
-    selectedCustomerList: CustomerTransaction[];
-    setSelectedCustomerList: Dispatch<SetStateAction<CustomerTransaction[]>>;
-    selectDeletedTransaction: boolean;
-  };
+  } = useTransactionTabSelect();
 
   const getSelectedCustomerList = async () => {
     try {
-      let response;
-      response = await fetchDataAsync<CustomerListResponse>(
-        ROUTE_API.operationCustomer,
-        {
-          params: {
-            transaction: selectedTransaction.join(','),
-            pageSize: selectedTransaction.length,
-          },
-        }
-      );
-      setSelectedCustomerList(response?.data?.list ?? []);
+      const data = await fetchCustomerTransactionList({
+        transaction: selectedTransaction.join(','),
+        pageSize: selectedTransaction.length,
+      });
+      setSelectedCustomerList(data?.list ?? []);
     } catch (error) {
       console.log(error);
     }
@@ -192,13 +152,7 @@ const HomePage = () => {
         summaryData.remark = rejectRemark;
       }
 
-      await fetchDataAsync(
-        ` ${ROUTE_API.operationCustomer}${isDeleted ? '/delete' : ''}`,
-        {
-          data: summaryData,
-          method: 'POST',
-        }
-      );
+      await processCustomerTransactions(summaryData, isDeleted);
 
       toast.success(
         `${selectedCustomerList.length} ${pluralize(
@@ -228,12 +182,7 @@ const HomePage = () => {
     openModal: openPopupInfoModal,
     closeModal: closePopupInfoModal,
     data: popupInfoData,
-  } = useModal() as unknown as {
-    modalRef: React.RefObject<HTMLDivElement>;
-    openModal: (data?: TransactionTotalCounts) => void;
-    closeModal: () => void;
-    data: TransactionTotalCounts | null;
-  };
+  } = useModal<TransactionTotalCounts>();
 
   return (
     <div
@@ -362,7 +311,7 @@ const PopupInfo = forwardRef<HTMLDivElement, PopupInfoProps>(
   ({ data, onClose }, ref) => {
     const navigate = useNavigate();
     return (
-      <TypedModal
+      <Modal
         size="sm"
         title={'Task Reminder'}
         bodyClassName="d-flex flex-column pt-3 pb-3"
@@ -396,7 +345,7 @@ const PopupInfo = forwardRef<HTMLDivElement, PopupInfoProps>(
           </>
         }
         ref={ref}
-      ></TypedModal>
+      ></Modal>
     );
   }
 );

@@ -3,19 +3,16 @@ import React, { useEffect, useState } from 'react';
 import type { NavLinkProps } from 'react-router-dom';
 import { Link, NavLink, useLocation } from 'react-router-dom';
 import Select from 'react-select';
-import type { CompanyBranchOption, SelectOption } from '../../@type/report';
-import Modal, { useModal } from '../../components/common/modal';
-import { useAuth } from '../../context/AuthContext';
-import { useModulePermission } from '../../context/module/ModuleContext';
-import { ROUTE_PATH } from '../../utils/route-util';
-
-const TypedModal = Modal as unknown as React.ForwardRefExoticComponent<
-  React.RefAttributes<HTMLDivElement> & {
-    title?: React.ReactNode;
-    size?: 'sm' | 'lg' | 'xl';
-    children?: React.ReactNode;
-  }
->;
+import type { CompanyBranchOption, SelectOption } from '../../../../@type/report';
+import Modal, { useModal } from '../../../../components/common/modal';
+import { useAuth } from '../../../../context/AuthContext';
+import { useModulePermission } from '../../../../context/module/ModuleContext';
+import { ROUTE_PATH } from '../../../../utils/route-util';
+import {
+  applyBranchSwitch,
+  filterBranchesByCompany,
+  validateRequiredFields,
+} from '../../use-cases';
 
 const SideBarPage = () => {
   const {
@@ -23,18 +20,9 @@ const SideBarPage = () => {
     selectedCompany: selectedCompanyContext,
     user,
     fetchUser,
-  } = useAuth() as unknown as {
-    company: CompanyBranchOption[] | null;
-    selectedCompany?: CompanyBranchOption;
-    user: unknown;
-    fetchUser: () => Promise<void>;
-  };
+  } = useAuth();
 
-  const { hasMainMenuPermission, hasMenuPermission } =
-    useModulePermission() as unknown as {
-      hasMainMenuPermission: (code: string) => boolean;
-      hasMenuPermission: (code: string) => boolean;
-    };
+  const { hasMainMenuPermission, hasMenuPermission } = useModulePermission();
 
   const location = useLocation();
   const pathName = location.pathname?.split('/dashboard/')[1];
@@ -46,17 +34,8 @@ const SideBarPage = () => {
   const funcButtonHandleClickExecute = async (
     e: React.MouseEvent<HTMLButtonElement>
   ) => {
-    if (selectedCompany && selectedBranch) {
-      let alt_fa_storage = localStorage.getItem('e_chanel_storage') || '';
-      let token_text = JSON.parse(alt_fa_storage);
-      const alt_fa_token = {
-        token: token_text.token,
-        refreshToken: token_text.refreshToken,
-        company: selectedCompany,
-        branch: selectedBranch,
-      };
-      localStorage.removeItem('e_chanel_storage');
-      localStorage.setItem('e_chanel_storage', JSON.stringify(alt_fa_token));
+    if (validateRequiredFields([selectedCompany, selectedBranch])) {
+      applyBranchSwitch(selectedCompany, selectedBranch);
       await fetchUser();
       closeModal();
     }
@@ -65,8 +44,7 @@ const SideBarPage = () => {
 
   const companyHandleChange = (data: CompanyBranchOption | null) => {
     setSelectdCompany(data?.value ?? '');
-    const companyItem = company?.find((item) => item.value === data?.value);
-    setOptionBranch(companyItem?.branch ?? []);
+    setOptionBranch(filterBranchesByCompany(company, data?.value ?? ''));
   };
 
   const branchHandleChange = (data: SelectOption | null) => {
@@ -390,7 +368,7 @@ const SideBarPage = () => {
           </div>
         </div>
       </div>
-      <TypedModal ref={modalRef} title={'Switch branch'}>
+      <Modal ref={modalRef} title={'Switch branch'}>
         <div className="mb-3">
           <label className="form-label required">Company</label>
           <Select
@@ -426,7 +404,7 @@ const SideBarPage = () => {
             Switch branch
           </button>
         </div>
-      </TypedModal>
+      </Modal>
     </React.Fragment>
   );
 };

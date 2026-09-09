@@ -1,7 +1,12 @@
 import { useEffect, useState } from 'react';
 import Select from 'react-select';
-import type { CompanyBranchOption, SelectOption } from '../../@type/report';
-import { useAuth } from '../../context/AuthContext';
+import type { CompanyBranchOption, SelectOption } from '../../../../@type/report';
+import { useAuth } from '../../../../context/AuthContext';
+import {
+  applyBranchSwitch,
+  filterBranchesByCompany,
+  validateRequiredFields,
+} from '../../use-cases';
 
 const SwitchBranchPage = () => {
   document.title = 'E-CHANNEL PORTAL | Switch Branch';
@@ -13,24 +18,8 @@ const SwitchBranchPage = () => {
   const funcButtonHandleClickExecute = (
     e: React.MouseEvent<HTMLButtonElement>
   ) => {
-    let messages = [];
-    if (selectedCompany === '') {
-      messages.push(true);
-    }
-    if (selectedBranch === '') {
-      messages.push(true);
-    }
-    if (messages.length < 1) {
-      let alt_fa_storage = localStorage.getItem('e_chanel_storage') || '';
-      let token_text = JSON.parse(alt_fa_storage);
-      const alt_fa_token = {
-        token: token_text.token,
-        refreshToken: token_text.refreshToken,
-        company: selectedCompany,
-        branch: selectedBranch,
-      };
-      localStorage.removeItem('e_chanel_storage');
-      localStorage.setItem('e_chanel_storage', JSON.stringify(alt_fa_token));
+    if (validateRequiredFields([selectedCompany, selectedBranch])) {
+      applyBranchSwitch(selectedCompany, selectedBranch);
       window.location.href = '/';
     }
     e.preventDefault();
@@ -44,8 +33,7 @@ const SwitchBranchPage = () => {
 
   const companyHandleChange = (option: CompanyBranchOption | null) => {
     setSelectdCompany(option?.value ?? '');
-    const companyItem = company?.find((item) => item.value === option?.value);
-    setOptionBranch(companyItem?.branch ?? []);
+    setOptionBranch(filterBranchesByCompany(company, option?.value ?? ''));
   };
 
   const branchHandleChange = (option: SelectOption | null) => {

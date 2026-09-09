@@ -1,9 +1,9 @@
 import { useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import type { LoginResponse } from '../../@type/auth';
-import { useAuth } from '../../context/AuthContext';
-import { fetchData } from '../../services/$service';
-import { ROUTE_PATH } from '../../utils/route-util';
+import { useAuth } from '../../../../context/AuthContext';
+import { ROUTE_PATH } from '../../../../utils/route-util';
+import { login } from '../../interface-adapters';
+import { buildLoginDto, validateRequiredFields } from '../../use-cases';
 
 const LoginPage = () => {
   document.title = 'E-CHANNEL PORTAL | Login';
@@ -13,26 +13,13 @@ const LoginPage = () => {
   const [password, setPassword] = useState('');
   const [invalidFeedBack, setInvalidFeedBack] = useState('');
   const [passwordShown, setPasswordShown] = useState(false);
-  const { fetchUser } = useAuth() as unknown as {
-    fetchUser: () => Promise<void>;
-  };
+  const { fetchUser } = useAuth();
 
   const funcButtonHandleClickExecute = (
     e: React.MouseEvent<HTMLButtonElement>
   ) => {
-    let messages = [];
-    if (userName === '') {
-      messages.push(true);
-    }
-    if (userName === '') {
-      messages.push(true);
-    }
-    if (messages.length < 1) {
-      let data = {
-        userName: userName,
-        Password: password,
-      };
-      fetchData<LoginResponse>('/login', data, 'POST').then(async (res) => {
+    if (validateRequiredFields([userName, password])) {
+      login(buildLoginDto(userName, password)).then(async (res) => {
         switch (res?.status) {
           case 200: {
             const alt_fa_token = {
@@ -60,6 +47,7 @@ const LoginPage = () => {
             setInvalidFeedBack(String(res?.data));
             break;
           default:
+            navigate(ROUTE_PATH.error404);
         }
       });
     }

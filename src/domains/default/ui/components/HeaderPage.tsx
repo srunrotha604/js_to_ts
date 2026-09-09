@@ -1,20 +1,15 @@
 import { Link, useLocation } from 'react-router-dom';
-import type { UserProfile } from '../../@type/profile';
-import companyLogo from '../../assets/DaraInsurancePlc.png';
-import userIcon from '../../assets/default-user.png';
-import companyLogoFull from '../../assets/logo-full.jpg';
-import { useAuth } from '../../context/AuthContext';
-import { ROUTE_PATH } from '../../utils/route-util';
+import companyLogo from '../../../../assets/DaraInsurancePlc.png';
+import userIcon from '../../../../assets/default-user.png';
+import companyLogoFull from '../../../../assets/logo-full.jpg';
+import { useAuth } from '../../../../context/AuthContext';
+import { ROUTE_PATH } from '../../../../utils/route-util';
+import { performLogout } from '../../use-cases';
 
 const HeaderPage = () => {
-  const { user, clearUser, mode } = useAuth() as unknown as {
-    user: UserProfile | null;
-    clearUser: () => void;
-    mode: string;
-  };
+  const { user, clearUser, mode } = useAuth();
   const signOut = () => {
-    localStorage.removeItem('e_chanel_storage');
-    clearUser();
+    performLogout(clearUser);
   };
   const location = useLocation();
   const isAuthenticatePage = !location.pathname.includes(ROUTE_PATH.dashboard);

@@ -1,15 +1,15 @@
 import React, { useEffect, useState } from 'react';
-import { redirect, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import type { MessageResponse, UserProfileResponse } from '../../@type/profile';
-import EyeIcon from '../../components/Icons/EyeIcon';
-import EyeOffIcon from '../../components/Icons/EyeOffIcon';
-import { fetchData } from '../../services/$service';
-import { ROUTE_API, ROUTE_PATH } from '../../utils/route-util';
+import EyeIcon from '../../../../components/Icons/EyeIcon';
+import EyeOffIcon from '../../../../components/Icons/EyeOffIcon';
+import { ROUTE_PATH } from '../../../../utils/route-util';
+import { changePassword, fetchCurrentUserProfile } from '../../interface-adapters';
+import { buildChangePasswordDto, validateRequiredFields } from '../../use-cases';
 
 const ChangePasswordPage = () => {
   const navigate = useNavigate();
-  document.title = 'Alt-Fa APIs Admin System | Change Password';
+  document.title = 'E-CHANNEL PORTAL | Change Password';
   const [userUrl, setUserUrl] = useState('');
   const [userName, setUserName] = useState('');
   const [userCode, setUserCode] = useState('');
@@ -26,7 +26,7 @@ const ChangePasswordPage = () => {
     setShow((s) => ({ ...s, [key]: !s[key] }));
 
   const getList = () => {
-    fetchData<UserProfileResponse>('/login', {}, 'GET').then((res) => {
+    fetchCurrentUserProfile().then((res) => {
       switch (res?.status) {
         case 200:
           {
@@ -43,7 +43,7 @@ const ChangePasswordPage = () => {
           toast.error(String(res?.data));
           break;
         default:
-          redirect('/404');
+          navigate(ROUTE_PATH.notFound);
       }
     });
   };
@@ -51,29 +51,16 @@ const ChangePasswordPage = () => {
   const funcButtonHandleClickExecute = (
     e: React.FormEvent<HTMLFormElement>
   ) => {
-    let messages = [];
-    if (userName === '') {
-      messages.push(true);
-    }
-    if (password === '') {
-      messages.push(true);
-    }
-    if (newPassword === '') {
-      messages.push(true);
-    }
-    if (confirmPassword === '') {
-      messages.push(true);
-    }
-    if (messages.length < 1) {
-      let data = {
-        password: password,
-        newPassword: newPassword,
-        confirmPassword: confirmPassword,
-      };
-      fetchData<MessageResponse>(
-        ROUTE_API.loginChangePassword,
-        data,
-        'POST'
+    if (
+      validateRequiredFields([
+        userName,
+        password,
+        newPassword,
+        confirmPassword,
+      ])
+    ) {
+      changePassword(
+        buildChangePasswordDto(password, newPassword, confirmPassword)
       ).then((res) => {
         switch (res?.status) {
           case 200: {
@@ -94,7 +81,7 @@ const ChangePasswordPage = () => {
             toast.error(String(res?.data));
             break;
           default:
-            redirect('/404');
+            navigate(ROUTE_PATH.notFound);
         }
       });
     }

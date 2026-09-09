@@ -1,17 +1,18 @@
 import React, { useEffect, useState } from 'react';
-import { redirect, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import type {
-  MessageResponse,
-  UserProfile,
-  UserProfileResponse,
-} from '../../@type/profile';
-import { fetchData, fileUpload } from '../../services/$service';
-import { ROUTE_API, ROUTE_PATH } from '../../utils/route-util';
+import type { UserProfile } from '../../../../@type/profile';
+import { ROUTE_PATH } from '../../../../utils/route-util';
+import {
+  fetchCurrentUserProfile,
+  saveProfileInfo,
+  uploadProfileAvatar,
+} from '../../interface-adapters';
+import { buildProfileUpdateDto } from '../../use-cases';
 
 const ProfilePage = () => {
   const navigate = useNavigate();
-  document.title = 'Alt-Fa APIs Admin System | Profile';
+  document.title = 'E-CHANNEL PORTAL | Profile';
   const [arrProfile, setArrProfile] = useState<UserProfile>({});
   const [selectedFile, setSelectedFile] = useState<File | ''>('');
   const [email1, setEmail1] = useState('');
@@ -26,7 +27,7 @@ const ProfilePage = () => {
   const [userCode, setUserCode] = useState('');
 
   const getList = () => {
-    fetchData<UserProfileResponse>(ROUTE_API.login, {}, 'GET').then((res) => {
+    fetchCurrentUserProfile().then((res) => {
       switch (res?.status) {
         case 200:
           {
@@ -51,55 +52,16 @@ const ProfilePage = () => {
           toast.error(String(res?.data));
           break;
         default:
-          redirect('/404');
+          navigate(ROUTE_PATH.notFound);
       }
     });
   };
 
   const profileUploadHandleClickExecute = () => {
-    let messages = [];
-    if (selectedFile === '') {
-      messages.push(true);
-    }
-    if (messages.length < 1) {
+    if (selectedFile !== '') {
       const formData = new FormData();
       formData.append('selectedFile', selectedFile);
-      fileUpload<MessageResponse>(ROUTE_API.systemUser, formData, 'PATCH').then(
-        (res) => {
-          switch (res?.status) {
-            case 200:
-              toast.success(res?.data?.message ?? '');
-              window.location.reload();
-              break;
-            case 400:
-              toast.error(res?.data?.message ?? '');
-              break;
-            case 403:
-              toast.error(String(res?.data));
-              break;
-            default:
-              redirect('/404');
-          }
-        }
-      );
-    }
-  };
-
-  const saveChangeHandleExecute = () => {
-    const data = {
-      userCode: userCode,
-      email1: email1,
-      email2: email2,
-      phone1: phone1,
-      phone2: phone2,
-      website1: website1,
-      website2: website2,
-      address1: address1,
-      address2: address2,
-      otherContact: otherContact,
-    };
-    fetchData<MessageResponse>(ROUTE_API.systemUserInfo, data, 'POST').then(
-      (res) => {
+      uploadProfileAvatar(formData).then((res) => {
         switch (res?.status) {
           case 200:
             toast.success(res?.data?.message ?? '');
@@ -112,10 +74,42 @@ const ProfilePage = () => {
             toast.error(String(res?.data));
             break;
           default:
-            redirect('/404');
+            navigate(ROUTE_PATH.notFound);
         }
+      });
+    }
+  };
+
+  const saveChangeHandleExecute = () => {
+    saveProfileInfo(
+      buildProfileUpdateDto({
+        userCode,
+        email1,
+        email2,
+        phone1,
+        phone2,
+        website1,
+        website2,
+        address1,
+        address2,
+        otherContact,
+      })
+    ).then((res) => {
+      switch (res?.status) {
+        case 200:
+          toast.success(res?.data?.message ?? '');
+          window.location.reload();
+          break;
+        case 400:
+          toast.error(res?.data?.message ?? '');
+          break;
+        case 403:
+          toast.error(String(res?.data));
+          break;
+        default:
+          navigate(ROUTE_PATH.notFound);
       }
-    );
+    });
   };
 
   const goBackHandleClick = () => {

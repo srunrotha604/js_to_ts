@@ -20,8 +20,3 @@ export interface UserProfile {
   address1?: string;
   address2?: string;
 }
-
-export interface UserProfileResponse {
-  userProfile?: UserProfile[];
-  message?: string;
-}
