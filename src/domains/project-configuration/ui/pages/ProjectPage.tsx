@@ -2,13 +2,10 @@ import React, { useEffect, useState } from 'react';
 import ReactPaginate from 'react-paginate';
 import { Link, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import type {
-  ProjectItem,
-  ProjectListResponse,
-} from '../../../../@type/project_configuration';
 import Loading from '../../../../components/Loading';
-import { fetchData } from '../../../../services/$service';
-import { ROUTE_API, ROUTE_PATH } from '../../../../utils/route-util';
+import { ROUTE_PATH } from '../../../../utils/route-util';
+import type { ProjectItem } from '../../entities';
+import { fetchProjectList, useListPagination } from '../../interface-adapters';
 
 const ProjectPage = () => {
   document.title = 'E-CHANNEL PORTAL | project';
@@ -16,58 +13,34 @@ const ProjectPage = () => {
   const [loading, setLoading] = useState(false);
   const [arrList, setArrList] = useState<ProjectItem[]>([]);
   const [query, setQuery] = useState('');
-  const [getKey, setGetKey] = useState('');
   const [getApplicationName, setGetApplicationName] = useState('');
   const [getApplicationCode, setGetApplicationCode] = useState('');
   const [getStatus, setGetStatus] = useState('');
 
   const getList = () => {
-    fetchData<ProjectListResponse>(ROUTE_API.operationProject, {}, 'GET').then(
-      (res) => {
-        switch (res?.status) {
-          case 200:
-            setLoading(true);
-            setArrList(res?.data?.list ?? []);
-            setLoading(false);
-            break;
-          case 400:
-            toast.error(res?.data?.message);
-            break;
-          case 403:
-            toast.error(String(res?.data));
-            break;
-          default:
-            navigate(ROUTE_PATH.error404);
-        }
+    fetchProjectList().then((res) => {
+      switch (res?.status) {
+        case 200:
+          setLoading(true);
+          setArrList(res?.data?.list ?? []);
+          setLoading(false);
+          break;
+        case 400:
+          toast.error(res?.data?.message);
+          break;
+        case 403:
+          toast.error(String(res?.data));
+          break;
+        default:
+          navigate(ROUTE_PATH.error404);
       }
-    );
+    });
   };
 
-  const getRecordHandleClick = (option: string, item: ProjectItem) => {
-    switch (option) {
-      case 'delete':
-        setGetKey(item.key ?? '');
-        item.status === 'Active'
-          ? setGetStatus('#disable this application?')
-          : setGetStatus('#active this application?');
-        setGetApplicationName(item.applicationName ?? '');
-        setGetApplicationCode(item.applicationCode ?? '');
-        break;
-      case 'edit':
-        setGetKey(item.key ?? '');
-        setGetApplicationName(item.moduleName ?? '');
-        setGetApplicationCode(item.description ?? '');
-
-        break;
-      case 'view':
-        setGetKey(item.key ?? '');
-        setGetApplicationName(item.applicationName ?? '');
-        setGetApplicationCode(item.applicationCode ?? '');
-        setGetStatus(item.status ?? '');
-        break;
-      default:
-        navigate(ROUTE_PATH.error404);
-    }
+  const handleViewClick = (item: ProjectItem) => {
+    setGetApplicationName(item.applicationName ?? '');
+    setGetApplicationCode(item.applicationCode ?? '');
+    setGetStatus(item.status ?? '');
   };
 
   useEffect(() => {
@@ -78,16 +51,13 @@ const ProjectPage = () => {
     navigate(ROUTE_PATH.projectCreate);
   };
 
-  let nf = new Intl.NumberFormat();
-  const PER_PAGE = 10;
-  const [currentPage, setCurrentPage] = useState(0);
+  const search = query.toLowerCase();
+  const filteredList = arrList.filter((item) =>
+    search === '' ? true : item.projectName?.toLowerCase().includes(search)
+  );
 
-  function handlePageClick({ selected: selectedPage }: { selected: number }) {
-    setCurrentPage(selectedPage);
-  }
-
-  const offset = currentPage * PER_PAGE;
-  const pageCount = Math.ceil(arrList?.length / PER_PAGE);
+  const { pageCount, pagedItems, handlePageClick, nf } =
+    useListPagination(filteredList);
 
   return (
     <React.Fragment>
@@ -249,98 +219,89 @@ const ProjectPage = () => {
                       </tr>
                     </thead>
                     <tbody>
-                      {arrList
-                        ?.filter((item) => {
-                          return query.toLowerCase() === ''
-                            ? item
-                            : item.projectName?.toLowerCase().includes(query);
-                        })
-                        .slice(offset, offset + PER_PAGE)
-                        .map((item, index) => (
-                          <tr key={index}>
-                            <td>{index + 1}</td>
+                      {pagedItems.map((item, index) => (
+                        <tr key={index}>
+                          <td>{index + 1}</td>
 
-                            <td className="text-muted">{item.projectName}</td>
-                            <td className="text-underline">
-                              <Link
-                                to={ROUTE_PATH.projectPolicy(
-                                  item.transactionCode ?? ''
-                                )}
+                          <td className="text-muted">{item.projectName}</td>
+                          <td className="text-underline">
+                            <Link
+                              to={ROUTE_PATH.projectPolicy(
+                                item.transactionCode ?? ''
+                              )}
+                            >
+                              policies
+                            </Link>
+                          </td>
+                          {item.status === 'Active' ? (
+                            <td className="text-primary">{item.status}</td>
+                          ) : (
+                            <td className="text-danger">{item.status}</td>
+                          )}
+                          <td>
+                            <a
+                              className="cursor-pointer"
+                              data-bs-toggle="offcanvas"
+                              href="#offcanvasView"
+                              onClick={() => handleViewClick(item)}
+                            >
+                              <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                className="icon icon-tabler icon-tabler-eye"
+                                width={24}
+                                height={24}
+                                viewBox="0 0 24 24"
+                                strokeWidth="1.5"
+                                stroke="#00abfb"
+                                fill="none"
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
                               >
-                                policies
-                              </Link>
-                            </td>
-                            {item.status === 'Active' ? (
-                              <td className="text-primary">{item.status}</td>
-                            ) : (
-                              <td className="text-danger">{item.status}</td>
-                            )}
-                            <td>
-                              <a
-                                className="cursor-pointer"
-                                data-bs-toggle="offcanvas"
-                                href="#offcanvasView"
-                                onClick={() =>
-                                  getRecordHandleClick('view', item)
-                                }
-                              >
-                                <svg
-                                  xmlns="http://www.w3.org/2000/svg"
-                                  className="icon icon-tabler icon-tabler-eye"
-                                  width={24}
-                                  height={24}
-                                  viewBox="0 0 24 24"
-                                  strokeWidth="1.5"
-                                  stroke="#00abfb"
+                                <path
+                                  stroke="none"
+                                  d="M0 0h24v24H0z"
                                   fill="none"
-                                  strokeLinecap="round"
-                                  strokeLinejoin="round"
-                                >
-                                  <path
-                                    stroke="none"
-                                    d="M0 0h24v24H0z"
-                                    fill="none"
-                                  />
-                                  <circle cx={12} cy={12} r={2} />
-                                  <path d="M22 12c-2.667 4.667 -6 7 -10 7s-7.333 -2.333 -10 -7c2.667 -4.667 6 -7 10 -7s7.333 2.333 10 7" />
-                                </svg>
-                              </a>
-                              <Link
-                                to={ROUTE_PATH.projectEdit(
-                                  item.transactionCode ?? ''
-                                )}
+                                />
+                                <circle cx={12} cy={12} r={2} />
+                                <path d="M22 12c-2.667 4.667 -6 7 -10 7s-7.333 -2.333 -10 -7c2.667 -4.667 6 -7 10 -7s7.333 2.333 10 7" />
+                              </svg>
+                            </a>
+                            <Link
+                              to={ROUTE_PATH.projectEdit(
+                                item.transactionCode ?? ''
+                              )}
+                            >
+                              <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                className="icon icon-tabler icon-tabler-edit"
+                                width={24}
+                                height={24}
+                                viewBox="0 0 24 24"
+                                strokeWidth="1.5"
+                                stroke="#00b341"
+                                fill="none"
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
                               >
-                                <svg
-                                  xmlns="http://www.w3.org/2000/svg"
-                                  className="icon icon-tabler icon-tabler-edit"
-                                  width={24}
-                                  height={24}
-                                  viewBox="0 0 24 24"
-                                  strokeWidth="1.5"
-                                  stroke="#00b341"
+                                <path
+                                  stroke="none"
+                                  d="M0 0h24v24H0z"
                                   fill="none"
-                                  strokeLinecap="round"
-                                  strokeLinejoin="round"
-                                >
-                                  <path
-                                    stroke="none"
-                                    d="M0 0h24v24H0z"
-                                    fill="none"
-                                  />
-                                  <path d="M9 7h-3a2 2 0 0 0 -2 2v9a2 2 0 0 0 2 2h9a2 2 0 0 0 2 -2v-3" />
-                                  <path d="M9 15h3l8.5 -8.5a1.5 1.5 0 0 0 -3 -3l-8.5 8.5v3" />
-                                  <line x1={16} y1={5} x2={19} y2={8} />
-                                </svg>
-                              </Link>
-                            </td>
-                          </tr>
-                        ))}
+                                />
+                                <path d="M9 7h-3a2 2 0 0 0 -2 2v9a2 2 0 0 0 2 2h9a2 2 0 0 0 2 -2v-3" />
+                                <path d="M9 15h3l8.5 -8.5a1.5 1.5 0 0 0 -3 -3l-8.5 8.5v3" />
+                                <line x1={16} y1={5} x2={19} y2={8} />
+                              </svg>
+                            </Link>
+                          </td>
+                        </tr>
+                      ))}
                     </tbody>
                   </table>
                 </div>
                 <div className="d-flex align-items-center mt-3">
                   <p className="m-0 text-muted">
-                    Total <span>{nf.format(arrList?.length ?? 0)}</span> entries
+                    Total <span>{nf.format(filteredList.length)}</span> entries
                   </p>
                   <ReactPaginate
                     previousLabel={

@@ -2,14 +2,14 @@ import React, { useEffect, useState } from 'react';
 import ReactPaginate from 'react-paginate';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import type {
-  BranchProjectListItem,
-  BranchProjectListResponse,
-  MessageResponse,
-} from '../../../../@type/project_configuration';
 import Loading from '../../../../components/Loading';
-import { fetchData } from '../../../../services/$service';
-import { ROUTE_API, ROUTE_PATH } from '../../../../utils/route-util';
+import { ROUTE_PATH } from '../../../../utils/route-util';
+import type { BranchProjectListItem } from '../../entities';
+import {
+  deleteBranchProject,
+  fetchBranchProjectList,
+  useListPagination,
+} from '../../interface-adapters';
 
 const BranchProjectPage = () => {
   document.title = 'E-CHANNEL PORTAL | Branch';
@@ -21,11 +21,7 @@ const BranchProjectPage = () => {
   const [getKey, setGetKey] = useState('');
 
   const getList = () => {
-    fetchData<BranchProjectListResponse>(
-      `${ROUTE_API.opertionBranchProject}/` + params.key,
-      {},
-      'GET'
-    ).then((res) => {
+    fetchBranchProjectList(params.key ?? '').then((res) => {
       if (res?.status === 200) {
         setLoading(true);
         setArrList(res?.data?.list ?? []);
@@ -35,14 +31,7 @@ const BranchProjectPage = () => {
   };
 
   const deleteProjectHandleClickExecute = () => {
-    let data = {
-      transactionCode: getKey,
-    };
-    fetchData<MessageResponse>(
-      ROUTE_API.opertionBranchProject,
-      data,
-      'DELETE'
-    ).then((res) => {
+    deleteBranchProject({ transactionCode: getKey }).then((res) => {
       switch (res?.status) {
         case 200:
           setLoading(true);
@@ -62,24 +51,8 @@ const BranchProjectPage = () => {
     });
   };
 
-  const getRecordHandleClick = (
-    option: string,
-    item: BranchProjectListItem
-  ) => {
-    switch (option) {
-      case 'delete':
-        setGetKey(item.transactionCode ?? '');
-        break;
-      case 'edit':
-        setGetKey(item.transactionCode ?? '');
-
-        break;
-      case 'view':
-        setGetKey(item.transactionCode ?? '');
-        break;
-      default:
-        navigate(ROUTE_PATH.error404);
-    }
+  const handleDeleteClick = (item: BranchProjectListItem) => {
+    setGetKey(item.transactionCode ?? '');
   };
 
   useEffect(() => {
@@ -93,16 +66,17 @@ const BranchProjectPage = () => {
     navigate(ROUTE_PATH.branch);
   };
 
-  let nf = new Intl.NumberFormat();
-  const PER_PAGE = 10;
-  const [currentPage, setCurrentPage] = useState(0);
+  const search = query.toLowerCase();
+  const filteredList = arrList.filter((item) =>
+    search === ''
+      ? true
+      : item.branchCode?.toLowerCase()?.includes(search) ||
+        item.branchName?.toLowerCase()?.includes(search)
+  );
 
-  function handlePageClick({ selected: selectedPage }: { selected: number }) {
-    setCurrentPage(selectedPage);
-  }
+  const { pageCount, pagedItems, handlePageClick, nf } =
+    useListPagination(filteredList);
 
-  const offset = currentPage * PER_PAGE;
-  const pageCount = Math.ceil(arrList?.length / PER_PAGE);
   return (
     <React.Fragment>
       <Loading value={loading} />
@@ -305,40 +279,62 @@ const BranchProjectPage = () => {
                       </tr>
                     </thead>
                     <tbody>
-                      {arrList
-                        ?.filter((item) => {
-                          return query.toLowerCase() === ''
-                            ? item
-                            : item.branchCode?.toLowerCase()?.includes(query) ||
-                                item.branchName?.toLowerCase()?.includes(query);
-                        })
-                        .slice(offset, offset + PER_PAGE)
-                        .map((item, index) => (
-                          <tr key={index}>
-                            <td>{index + 1}</td>
-                            <td className="text-muted">{item?.projectLabel}</td>
-                            <td className="text-muted text-pre-line">
-                              {item.policies}
-                            </td>
-                            {item.status === 'Active' ? (
-                              <td className="text-primary">{item.status}</td>
-                            ) : (
-                              <td className="text-danger">{item.status}</td>
-                            )}
-                            <td>
-                              <Link
-                                to={ROUTE_PATH.branchProjectEdit(
-                                  item.transactionCode ?? ''
-                                )}
+                      {pagedItems.map((item, index) => (
+                        <tr key={index}>
+                          <td>{index + 1}</td>
+                          <td className="text-muted">{item?.projectLabel}</td>
+                          <td className="text-muted text-pre-line">
+                            {item.policies}
+                          </td>
+                          {item.status === 'Active' ? (
+                            <td className="text-primary">{item.status}</td>
+                          ) : (
+                            <td className="text-danger">{item.status}</td>
+                          )}
+                          <td>
+                            <Link
+                              to={ROUTE_PATH.branchProjectEdit(
+                                item.transactionCode ?? ''
+                              )}
+                            >
+                              <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                className="icon icon-tabler icon-tabler-edit"
+                                width={24}
+                                height={24}
+                                viewBox="0 0 24 24"
+                                strokeWidth="1.5"
+                                stroke="#00b341"
+                                fill="none"
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
                               >
+                                <path
+                                  stroke="none"
+                                  d="M0 0h24v24H0z"
+                                  fill="none"
+                                />
+                                <path d="M9 7h-3a2 2 0 0 0 -2 2v9a2 2 0 0 0 2 2h9a2 2 0 0 0 2 -2v-3" />
+                                <path d="M9 15h3l8.5 -8.5a1.5 1.5 0 0 0 -3 -3l-8.5 8.5v3" />
+                                <line x1={16} y1={5} x2={19} y2={8} />
+                              </svg>
+                            </Link>
+
+                            <span
+                              data-bs-toggle="modal"
+                              data-bs-target="#modal-remove"
+                              className="cursor-pointer text-red text-underline"
+                              onClick={() => handleDeleteClick(item)}
+                            >
+                              {item.status === 'Active' ? (
                                 <svg
                                   xmlns="http://www.w3.org/2000/svg"
-                                  className="icon icon-tabler icon-tabler-edit"
+                                  className="icon icon-tabler icon-tabler-trash"
                                   width={24}
                                   height={24}
                                   viewBox="0 0 24 24"
                                   strokeWidth="1.5"
-                                  stroke="#00b341"
+                                  stroke="#ff2825"
                                   fill="none"
                                   strokeLinecap="round"
                                   strokeLinejoin="round"
@@ -348,76 +344,44 @@ const BranchProjectPage = () => {
                                     d="M0 0h24v24H0z"
                                     fill="none"
                                   />
-                                  <path d="M9 7h-3a2 2 0 0 0 -2 2v9a2 2 0 0 0 2 2h9a2 2 0 0 0 2 -2v-3" />
-                                  <path d="M9 15h3l8.5 -8.5a1.5 1.5 0 0 0 -3 -3l-8.5 8.5v3" />
-                                  <line x1={16} y1={5} x2={19} y2={8} />
+                                  <line x1={4} y1={7} x2={20} y2={7} />
+                                  <line x1={10} y1={11} x2={10} y2={17} />
+                                  <line x1={14} y1={11} x2={14} y2={17} />
+                                  <path d="M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12" />
+                                  <path d="M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3" />
                                 </svg>
-                              </Link>
-
-                              <span
-                                data-bs-toggle="modal"
-                                data-bs-target="#modal-remove"
-                                className="cursor-pointer text-red text-underline"
-                                onClick={() =>
-                                  getRecordHandleClick('delete', item)
-                                }
-                              >
-                                {item.status === 'Active' ? (
-                                  <svg
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    className="icon icon-tabler icon-tabler-trash"
-                                    width={24}
-                                    height={24}
-                                    viewBox="0 0 24 24"
-                                    strokeWidth="1.5"
-                                    stroke="#ff2825"
+                              ) : (
+                                <svg
+                                  xmlns="http://www.w3.org/2000/svg"
+                                  className="icon icon-tabler icon-tabler-checkbox"
+                                  width={24}
+                                  height={24}
+                                  viewBox="0 0 24 24"
+                                  strokeWidth="1.5"
+                                  stroke="#6f32be"
+                                  fill="none"
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                >
+                                  <path
+                                    stroke="none"
+                                    d="M0 0h24v24H0z"
                                     fill="none"
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                  >
-                                    <path
-                                      stroke="none"
-                                      d="M0 0h24v24H0z"
-                                      fill="none"
-                                    />
-                                    <line x1={4} y1={7} x2={20} y2={7} />
-                                    <line x1={10} y1={11} x2={10} y2={17} />
-                                    <line x1={14} y1={11} x2={14} y2={17} />
-                                    <path d="M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12" />
-                                    <path d="M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3" />
-                                  </svg>
-                                ) : (
-                                  <svg
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    className="icon icon-tabler icon-tabler-checkbox"
-                                    width={24}
-                                    height={24}
-                                    viewBox="0 0 24 24"
-                                    strokeWidth="1.5"
-                                    stroke="#6f32be"
-                                    fill="none"
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                  >
-                                    <path
-                                      stroke="none"
-                                      d="M0 0h24v24H0z"
-                                      fill="none"
-                                    />
-                                    <polyline points="9 11 12 14 20 6" />
-                                    <path d="M20 12v6a2 2 0 0 1 -2 2h-12a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h9" />
-                                  </svg>
-                                )}
-                              </span>
-                            </td>
-                          </tr>
-                        ))}
+                                  />
+                                  <polyline points="9 11 12 14 20 6" />
+                                  <path d="M20 12v6a2 2 0 0 1 -2 2h-12a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h9" />
+                                </svg>
+                              )}
+                            </span>
+                          </td>
+                        </tr>
+                      ))}
                     </tbody>
                   </table>
                 </div>
                 <div className="d-flex align-items-center mt-3">
                   <p className="m-0 text-muted">
-                    Total <span>{nf.format(arrList?.length ?? 0)}</span> entries
+                    Total <span>{nf.format(filteredList.length)}</span> entries
                   </p>
                   <ReactPaginate
                     previousLabel={

@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
-import { redirect, useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import type { MessageResponse } from '../../../../@type/project_configuration';
-import { fetchData } from '../../../../services/$service';
-import { ROUTE_API, ROUTE_PATH } from '../../../../utils/route-util';
+import { ROUTE_PATH } from '../../../../utils/route-util';
+import { createBranch } from '../../interface-adapters';
+import { buildBranchCreateDto, validateRequiredFields } from '../../use-cases';
 
 const BranchCreatePage = () => {
   document.title = 'E-CHANNEL PORTAL | branch | create';
@@ -23,43 +23,34 @@ const BranchCreatePage = () => {
   const funcButtonHandleClickExecute = (
     e: React.MouseEvent<HTMLButtonElement>
   ) => {
-    let messages = [];
-    if (branchCode === '') {
-      messages.push(true);
-    }
-    if (branchName === '') {
-      messages.push(true);
-    }
-    if (messages.length < 1) {
-      let data = {
-        branchCode: branchCode,
-        branchName: branchName,
-        contacts: constacts,
-        phone: phone,
-        mobileOne: mobileOne,
-        mobileTwo: mobileTwo,
-        email: email,
-        website: website,
-        address: address,
-      };
-
-      fetchData<MessageResponse>(ROUTE_API.opertionBranch, data, 'POST').then(
-        (res) => {
-          switch (res?.status) {
-            case 200:
-              navigate(`${ROUTE_PATH.branch}/${params.key}`);
-              break;
-            case 400:
-              toast.error(res?.data?.message);
-              break;
-            case 403:
-              toast.error(String(res?.data));
-              break;
-            default:
-              redirect(ROUTE_PATH.notFound);
-          }
+    if (validateRequiredFields([branchCode, branchName])) {
+      createBranch(
+        buildBranchCreateDto({
+          branchCode,
+          branchName,
+          contacts: constacts,
+          phone,
+          mobileOne,
+          mobileTwo,
+          email,
+          website,
+          address,
+        })
+      ).then((res) => {
+        switch (res?.status) {
+          case 200:
+            navigate(`${ROUTE_PATH.branch}/${params.key}`);
+            break;
+          case 400:
+            toast.error(res?.data?.message);
+            break;
+          case 403:
+            toast.error(String(res?.data));
+            break;
+          default:
+            navigate(ROUTE_PATH.notFound);
         }
-      );
+      });
     }
     e.preventDefault();
   };

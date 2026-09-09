@@ -1,33 +1,19 @@
 import React, { useEffect, useState } from 'react';
 import ReactPaginate from 'react-paginate';
-import { Link, redirect, useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import Select, { MultiValue } from 'react-select';
 import { toast } from 'react-toastify';
-import type {
-  BranchItem,
-  BranchListResponse,
-  MessageResponse,
-} from '../../../../@type/project_configuration';
 import type { SelectOption } from '../../../../@type/report';
-import ModalUntyped, { useModal } from '../../../../components/common/modal';
+import Modal, { useModal } from '../../../../components/common/modal';
 import Loading from '../../../../components/Loading';
-import { fetchData } from '../../../../services/$service';
-import { ROUTE_API, ROUTE_PATH } from '../../../../utils/route-util';
-
-type ModalProps = {
-  title?: React.ReactNode;
-  content?: React.ReactNode;
-  children?: React.ReactNode;
-  actions?: React.ReactNode;
-  size?: string;
-  closeButton?: boolean;
-  bodyClassName?: string;
-  headerClassName?: string;
-  noTransition?: boolean;
-};
-const Modal = ModalUntyped as React.ForwardRefExoticComponent<
-  ModalProps & React.RefAttributes<HTMLDivElement>
->;
+import { ROUTE_PATH } from '../../../../utils/route-util';
+import type { BranchItem } from '../../entities';
+import {
+  assignBranchAdmin,
+  fetchBranchList,
+  useListPagination,
+} from '../../interface-adapters';
+import { buildBranchAdminAssignDto } from '../../use-cases';
 
 const BranchPage = () => {
   document.title = 'E-CHANNEL PORTAL | Branch';
@@ -42,26 +28,24 @@ const BranchPage = () => {
   const { modalRef, openModal, closeModal } = useModal();
 
   const getList = () => {
-    fetchData<BranchListResponse>(ROUTE_API.opertionBranch, {}, 'GET').then(
-      (res) => {
-        switch (res?.status) {
-          case 200:
-            setLoading(true);
-            setArrList(res?.data?.list ?? []);
-            setListUser(res?.data?.user ?? []);
-            setLoading(false);
-            break;
-          case 400:
-            toast.error(res?.data?.message);
-            break;
-          case 403:
-            toast.error(String(res?.data));
-            break;
-          default:
-            redirect(ROUTE_PATH.notFound);
-        }
+    fetchBranchList().then((res) => {
+      switch (res?.status) {
+        case 200:
+          setLoading(true);
+          setArrList(res?.data?.list ?? []);
+          setListUser(res?.data?.user ?? []);
+          setLoading(false);
+          break;
+        case 400:
+          toast.error(res?.data?.message);
+          break;
+        case 403:
+          toast.error(String(res?.data));
+          break;
+        default:
+          navigate(ROUTE_PATH.notFound);
       }
-    );
+    });
   };
 
   useEffect(() => {
@@ -75,29 +59,25 @@ const BranchPage = () => {
   const funcButtonHandleClickExecute = (
     e: React.MouseEvent<HTMLButtonElement>
   ) => {
-    const data = {
-      branchCode: selectedBranch,
-      value: selectedAdminValue.toString(),
-    };
-    fetchData<MessageResponse>(ROUTE_API.opertionBranchAdmin, data, 'PUT').then(
-      (res) => {
-        switch (res?.status) {
-          case 200:
-            toast.success(res?.data?.message);
-            closeModal();
-            getList();
-            break;
-          case 400:
-            toast.error(res?.data?.message);
-            break;
-          case 403:
-            toast.error(String(res?.data));
-            break;
-          default:
-            redirect(ROUTE_PATH.error404);
-        }
+    assignBranchAdmin(
+      buildBranchAdminAssignDto(selectedBranch, selectedAdminValue)
+    ).then((res) => {
+      switch (res?.status) {
+        case 200:
+          toast.success(res?.data?.message);
+          closeModal();
+          getList();
+          break;
+        case 400:
+          toast.error(res?.data?.message);
+          break;
+        case 403:
+          toast.error(String(res?.data));
+          break;
+        default:
+          navigate(ROUTE_PATH.error404);
       }
-    );
+    });
     e.preventDefault();
   };
 
@@ -107,14 +87,7 @@ const BranchPage = () => {
     );
   };
 
-  let nf = new Intl.NumberFormat();
-  const PER_PAGE = 10;
-  const [currentPage, setCurrentPage] = useState(0);
-  function handlePageClick({ selected: selectedPage }: { selected: number }) {
-    setCurrentPage(selectedPage);
-  }
-
-  const filteredList = arrList?.filter((item) => {
+  const filteredList = arrList.filter((item) => {
     const search = query.toLowerCase().trim();
 
     return search === ''
@@ -124,8 +97,9 @@ const BranchPage = () => {
           item.admin?.toLowerCase()?.includes(search);
   });
 
-  const offset = currentPage * PER_PAGE;
-  const pageCount = Math.ceil(filteredList?.length / PER_PAGE);
+  const { pageCount, pagedItems, handlePageClick, nf, setCurrentPage } =
+    useListPagination(filteredList);
+
   return (
     <React.Fragment>
       <Modal ref={modalRef} title={'Admin User'} size="xl">
@@ -321,74 +295,72 @@ const BranchPage = () => {
                       </tr>
                     </thead>
                     <tbody>
-                      {filteredList
-                        ?.slice(offset, offset + PER_PAGE)
-                        .map((item, index) => (
-                          <tr key={index}>
-                            <td>{index + 1}</td>
-                            <td className="text-muted">{item.branchCode}</td>
-                            <td className="text-muted">{item.branchName}</td>
-                            <td
-                              className="text-underline text-primary text-pre-line"
-                              onClick={() => {
-                                openModal();
-                                setSelectedBranch(item.transactionCode ?? '');
-                                setSelectedAdminValue(item.adminValue ?? []);
-                              }}
+                      {pagedItems.map((item, index) => (
+                        <tr key={index}>
+                          <td>{index + 1}</td>
+                          <td className="text-muted">{item.branchCode}</td>
+                          <td className="text-muted">{item.branchName}</td>
+                          <td
+                            className="text-underline text-primary text-pre-line"
+                            onClick={() => {
+                              openModal();
+                              setSelectedBranch(item.transactionCode ?? '');
+                              setSelectedAdminValue(item.adminValue ?? []);
+                            }}
+                          >
+                            {item.admin === '' ? 'N/A' : item.admin}
+                          </td>
+                          <td className="text-underline">
+                            <Link
+                              to={ROUTE_PATH.branchProject(
+                                item.transactionCode ?? ''
+                              )}
                             >
-                              {item.admin === '' ? 'N/A' : item.admin}
-                            </td>
-                            <td className="text-underline">
-                              <Link
-                                to={ROUTE_PATH.branchProject(
-                                  item.transactionCode ?? ''
-                                )}
+                              project
+                            </Link>
+                          </td>
+                          {item.status === 'Active' ? (
+                            <td className="text-primary">{item.status}</td>
+                          ) : (
+                            <td className="text-danger">{item.status}</td>
+                          )}
+                          <td>
+                            <Link
+                              to={ROUTE_PATH.projectEdit(
+                                item.transactionCode ?? ''
+                              )}
+                            >
+                              <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                className="icon icon-tabler icon-tabler-edit"
+                                width={24}
+                                height={24}
+                                viewBox="0 0 24 24"
+                                strokeWidth="1.5"
+                                stroke="#00b341"
+                                fill="none"
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
                               >
-                                project
-                              </Link>
-                            </td>
-                            {item.status === 'Active' ? (
-                              <td className="text-primary">{item.status}</td>
-                            ) : (
-                              <td className="text-danger">{item.status}</td>
-                            )}
-                            <td>
-                              <Link
-                                to={ROUTE_PATH.projectEdit(
-                                  item.transactionCode ?? ''
-                                )}
-                              >
-                                <svg
-                                  xmlns="http://www.w3.org/2000/svg"
-                                  className="icon icon-tabler icon-tabler-edit"
-                                  width={24}
-                                  height={24}
-                                  viewBox="0 0 24 24"
-                                  strokeWidth="1.5"
-                                  stroke="#00b341"
+                                <path
+                                  stroke="none"
+                                  d="M0 0h24v24H0z"
                                   fill="none"
-                                  strokeLinecap="round"
-                                  strokeLinejoin="round"
-                                >
-                                  <path
-                                    stroke="none"
-                                    d="M0 0h24v24H0z"
-                                    fill="none"
-                                  />
-                                  <path d="M9 7h-3a2 2 0 0 0 -2 2v9a2 2 0 0 0 2 2h9a2 2 0 0 0 2 -2v-3" />
-                                  <path d="M9 15h3l8.5 -8.5a1.5 1.5 0 0 0 -3 -3l-8.5 8.5v3" />
-                                  <line x1={16} y1={5} x2={19} y2={8} />
-                                </svg>
-                              </Link>
-                            </td>
-                          </tr>
-                        ))}
+                                />
+                                <path d="M9 7h-3a2 2 0 0 0 -2 2v9a2 2 0 0 0 2 2h9a2 2 0 0 0 2 -2v-3" />
+                                <path d="M9 15h3l8.5 -8.5a1.5 1.5 0 0 0 -3 -3l-8.5 8.5v3" />
+                                <line x1={16} y1={5} x2={19} y2={8} />
+                              </svg>
+                            </Link>
+                          </td>
+                        </tr>
+                      ))}
                     </tbody>
                   </table>
                 </div>
                 <div className="d-flex align-items-center mt-3">
                   <p className="m-0 text-muted">
-                    Total <span>{nf.format(arrList?.length ?? 0)}</span> entries
+                    Total <span>{nf.format(filteredList.length)}</span> entries
                   </p>
                   <ReactPaginate
                     previousLabel={

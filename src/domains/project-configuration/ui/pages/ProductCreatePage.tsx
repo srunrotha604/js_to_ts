@@ -1,76 +1,65 @@
 import React, { useEffect, useState } from 'react';
-import { redirect, useNavigate, useParams } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
+import Select, { SingleValue } from 'react-select';
 import { toast } from 'react-toastify';
-import type {
-  MessageResponse,
-  ProductListResponse,
-} from '../../../../@type/project_configuration';
-import { fetchData } from '../../../../services/$service';
-import { ROUTE_API, ROUTE_PATH } from '../../../../utils/route-util';
+import type { SelectOption } from '../../../../@type/report';
+import { ROUTE_PATH } from '../../../../utils/route-util';
+import { createProduct, fetchProductOptions } from '../../interface-adapters';
+import { buildProductCreateDto, validateRequiredFields } from '../../use-cases';
 
-const ProductEditPage = () => {
-  document.title = 'E-chanel | product | edit';
-  const params = useParams<{ key: string }>();
+const ProductCreatePage = () => {
+  document.title = 'E-CHANNEL PORTAL | product | create';
   const navigate = useNavigate();
 
   const [productCode, setProductCode] = useState('');
   const [productName, setProductName] = useState('');
+  const [productList, setProductList] = useState<SelectOption[]>([]);
+  const [selectedProduct, setSelectedProduct] = useState('');
   const getList = () => {
-    fetchData<ProductListResponse>(
-      `${ROUTE_API.operationProduct}/` + params.key,
-      {},
-      'GET'
-    ).then((res) => {
-      if (res?.status === 200) {
-        const data = res?.data?.list?.[0];
-        setProductCode(data?.productCode ?? '');
-        setProductName(data?.productName ?? '');
-      } else if (res?.status === 400) {
-        toast.error(res?.data?.message);
-      } else if (res?.status === 403) {
-        toast.error(String(res?.data));
-      } else {
-        navigate(ROUTE_PATH.error404);
+    fetchProductOptions().then((res) => {
+      switch (res?.status) {
+        case 200:
+          setProductList(res?.data?.options ?? []);
+          break;
+        case 400:
+          toast.error(res?.data?.message);
+          break;
+        case 403:
+          toast.error(String(res?.data));
+          break;
+        default:
+          navigate(ROUTE_PATH.error404);
       }
     });
   };
   const funcButtonHandleClickExecute = (
     e: React.MouseEvent<HTMLButtonElement>
   ) => {
-    let messages = [];
-    if (productCode === '') {
-      messages.push(true);
-    }
-    if (productName === '') {
-      messages.push(true);
-    }
-    if (messages.length < 1) {
-      let data = {
-        transactionCode: params.key,
-        productCode: productCode,
-        productName: productName,
-      };
-
-      fetchData<MessageResponse>(ROUTE_API.operationProduct, data, 'PUT').then(
-        (res) => {
-          switch (res?.status) {
-            case 200:
-              toast.success(res?.data?.message);
-              navigate(ROUTE_PATH.product);
-              break;
-            case 400:
-              toast.error(res?.data?.message);
-              break;
-            case 403:
-              toast.error(String(res?.data));
-              break;
-            default:
-              redirect(ROUTE_PATH.error404);
-          }
+    if (validateRequiredFields([selectedProduct, productCode, productName])) {
+      createProduct(
+        buildProductCreateDto(selectedProduct, productCode, productName)
+      ).then((res) => {
+        switch (res?.status) {
+          case 200:
+            toast.success(res?.data?.message);
+            navigate(ROUTE_PATH.product);
+            break;
+          case 400:
+            toast.error(res?.data?.message);
+            break;
+          case 403:
+            toast.error(String(res?.data));
+            break;
+          default:
+            navigate(ROUTE_PATH.error404);
         }
-      );
+      });
     }
     e.preventDefault();
+  };
+
+  const roleHandleChange = (value: SingleValue<SelectOption>) => {
+    setSelectedProduct(value?.value ?? '');
   };
 
   const productCodeHandleChange = (
@@ -151,6 +140,23 @@ const ProductEditPage = () => {
               <div className="card-body">
                 <div className="col-md-6">
                   <div className="form-group mb-3">
+                    <label className="form-label required">Product code</label>
+                    <div>
+                      <Select
+                        styles={{
+                          menuPortal: (base) => ({ ...base, zIndex: 9999 }),
+                        }}
+                        menuPortalTarget={document.body}
+                        value={productList.find(function (option) {
+                          return option.value === selectedProduct;
+                        })}
+                        onChange={roleHandleChange}
+                        options={productList}
+                        required
+                      />
+                    </div>
+                  </div>
+                  <div className="form-group mb-3">
                     <label className="form-label required">Product Label</label>
                     <div>
                       <input
@@ -217,4 +223,4 @@ const ProductEditPage = () => {
   );
 };
 
-export default ProductEditPage;
+export default ProductCreatePage;

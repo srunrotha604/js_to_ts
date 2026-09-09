@@ -1,88 +1,56 @@
 import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import Select, { SingleValue } from 'react-select';
+import { useNavigate, useParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import type {
-  MessageResponse,
-  ProductOptionsResponse,
-} from '../../../../@type/project_configuration';
-import type { SelectOption } from '../../../../@type/report';
-import { fetchData } from '../../../../services/$service';
-import { ROUTE_API, ROUTE_PATH } from '../../../../utils/route-util';
+import { ROUTE_PATH } from '../../../../utils/route-util';
+import { fetchProductByKey, updateProduct } from '../../interface-adapters';
+import { buildProductEditDto, validateRequiredFields } from '../../use-cases';
 
-const ProductCreatePage = () => {
-  document.title = 'E-CHANNEL PORTAL | product | create';
+const ProductEditPage = () => {
+  document.title = 'E-CHANNEL PORTAL | product | edit';
+  const params = useParams<{ key: string }>();
   const navigate = useNavigate();
 
   const [productCode, setProductCode] = useState('');
   const [productName, setProductName] = useState('');
-  const [productList, setProductList] = useState<SelectOption[]>([]);
-  const [selectedProduct, setSelectedProduct] = useState('');
   const getList = () => {
-    fetchData<ProductOptionsResponse>(
-      ROUTE_API.operationProductProduct,
-      {},
-      'GET'
-    ).then((res) => {
-      switch (res?.status) {
-        case 200:
-          setProductList(res?.data?.options ?? []);
-          break;
-        case 400:
-          toast.error(res?.data?.message);
-          break;
-        case 403:
-          toast.error(String(res?.data));
-          break;
-        default:
-          navigate(ROUTE_PATH.error404);
+    fetchProductByKey(params.key ?? '').then((res) => {
+      if (res?.status === 200) {
+        const data = res?.data?.list?.[0];
+        setProductCode(data?.productCode ?? '');
+        setProductName(data?.productName ?? '');
+      } else if (res?.status === 400) {
+        toast.error(res?.data?.message);
+      } else if (res?.status === 403) {
+        toast.error(String(res?.data));
+      } else {
+        navigate(ROUTE_PATH.error404);
       }
     });
   };
   const funcButtonHandleClickExecute = (
     e: React.MouseEvent<HTMLButtonElement>
   ) => {
-    let messages = [];
-    if (selectedProduct === '') {
-      messages.push(true);
-    }
-    if (productCode === '') {
-      messages.push(true);
-    }
-    if (productName === '') {
-      messages.push(true);
-    }
-    if (messages.length < 1) {
-      let data = {
-        productsequenceCode: selectedProduct,
-        productCode: productCode,
-        productName: productName,
-      };
-
-      fetchData<MessageResponse>(ROUTE_API.operationProduct, data, 'POST').then(
-        (res) => {
-          switch (res?.status) {
-            case 200:
-              toast.success(res?.data?.message);
-              navigate(ROUTE_PATH.product);
-              break;
-            case 400:
-              toast.error(res?.data?.message);
-              break;
-            case 403:
-              toast.error(String(res?.data));
-              break;
-            default:
-              navigate(ROUTE_PATH.error404);
-          }
+    if (validateRequiredFields([productCode, productName])) {
+      updateProduct(
+        buildProductEditDto(params.key, productCode, productName)
+      ).then((res) => {
+        switch (res?.status) {
+          case 200:
+            toast.success(res?.data?.message);
+            navigate(ROUTE_PATH.product);
+            break;
+          case 400:
+            toast.error(res?.data?.message);
+            break;
+          case 403:
+            toast.error(String(res?.data));
+            break;
+          default:
+            navigate(ROUTE_PATH.error404);
         }
-      );
+      });
     }
     e.preventDefault();
-  };
-
-  const roleHandleChange = (value: SingleValue<SelectOption>) => {
-    setSelectedProduct(value?.value ?? '');
   };
 
   const productCodeHandleChange = (
@@ -109,7 +77,7 @@ const ProductCreatePage = () => {
           <div className="page-header d-print-none">
             <div className="row align-items-center">
               <div className="col">
-                <h2 className="page-title">Product create</h2>
+                <h2 className="page-title">Product edit</h2>
               </div>
               <div className="col-auto ms-auto d-print-none">
                 <div className="btn-list">
@@ -162,23 +130,6 @@ const ProductCreatePage = () => {
             <div className="card">
               <div className="card-body">
                 <div className="col-md-6">
-                  <div className="form-group mb-3">
-                    <label className="form-label required">Product code</label>
-                    <div>
-                      <Select
-                        styles={{
-                          menuPortal: (base) => ({ ...base, zIndex: 9999 }),
-                        }}
-                        menuPortalTarget={document.body}
-                        value={productList.find(function (option) {
-                          return option.value === selectedProduct;
-                        })}
-                        onChange={roleHandleChange}
-                        options={productList}
-                        required
-                      />
-                    </div>
-                  </div>
                   <div className="form-group mb-3">
                     <label className="form-label required">Product Label</label>
                     <div>
@@ -246,4 +197,4 @@ const ProductCreatePage = () => {
   );
 };
 
-export default ProductCreatePage;
+export default ProductEditPage;

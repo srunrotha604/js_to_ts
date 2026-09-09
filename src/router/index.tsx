@@ -10,15 +10,13 @@ const LogoutPage = lazy(() => import('../pages/default/LogoutPage'));
 const Error404Page = lazy(() => import('../pages/error_handle/Error404Page'));
 const Error500Page = lazy(() => import('../pages/error_handle/Error500Page'));
 const ProjectPage = lazy(
-  () =>
-    import('../pages/system_setup/project_configuration/project/ProjectPage')
+  () => import('../domains/project-configuration/ui/pages/ProjectPage')
 );
 const BranchPage = lazy(
-  () => import('../pages/system_setup/project_configuration/branch/BranchPage')
+  () => import('../domains/project-configuration/ui/pages/BranchPage')
 );
 const ProductPage = lazy(
-  () =>
-    import('../pages/system_setup/project_configuration/product/ProductPage')
+  () => import('../domains/project-configuration/ui/pages/ProductPage')
 );
 const UserPage = lazy(
   () => import('../pages/system_setup/sytem_users/user/UserPage')
@@ -36,52 +34,35 @@ const ForgotPasswordPage = lazy(
   () => import('../pages/default/ForgotPasswordPage')
 );
 const ProjectCreatePage = lazy(
-  () =>
-    import(
-      '../pages/system_setup/project_configuration/project/ProjectCreatePage'
-    )
+  () => import('../domains/project-configuration/ui/pages/ProjectCreatePage')
 );
 const ProjectEditPage = lazy(
-  () =>
-    import(
-      '../pages/system_setup/project_configuration/project/ProjectEditPage'
-    )
+  () => import('../domains/project-configuration/ui/pages/ProjectEditPage')
 );
 const ProjectPolicyPage = lazy(
-  () =>
-    import(
-      '../pages/system_setup/project_configuration/project_policy/ProjectPolicyPage'
-    )
+  () => import('../domains/project-configuration/ui/pages/ProjectPolicyPage')
 );
 const ProjectPolicyCreatePage = lazy(
   () =>
     import(
-      '../pages/system_setup/project_configuration/project_policy/ProjectPolicyCreatePage'
+      '../domains/project-configuration/ui/pages/ProjectPolicyCreatePage'
     )
 );
 const BranchCreatePage = lazy(
-  () =>
-    import(
-      '../pages/system_setup/project_configuration/branch/BranchCreatePage'
-    )
+  () => import('../domains/project-configuration/ui/pages/BranchCreatePage')
 );
 const BranchProjectPage = lazy(
-  () =>
-    import(
-      '../pages/system_setup/project_configuration/branch/BranchProjectPage'
-    )
+  () => import('../domains/project-configuration/ui/pages/BranchProjectPage')
 );
 const BranchProjectCreatePage = lazy(
   () =>
     import(
-      '../pages/system_setup/project_configuration/branch/BranchProjectCreatePage'
+      '../domains/project-configuration/ui/pages/BranchProjectCreatePage'
     )
 );
 const BranchProjectEditPage = lazy(
   () =>
-    import(
-      '../pages/system_setup/project_configuration/branch/BranchProjectEditPage'
-    )
+    import('../domains/project-configuration/ui/pages/BranchProjectEditPage')
 );
 const UserCreatePage = lazy(
   () => import('../pages/system_setup/sytem_users/user/UserCreatePage')
@@ -120,16 +101,10 @@ const DataEntryImportPage = lazy(
     )
 );
 const ProductCreatePage = lazy(
-  () =>
-    import(
-      '../pages/system_setup/project_configuration/product/ProductCreatePage'
-    )
+  () => import('../domains/project-configuration/ui/pages/ProductCreatePage')
 );
 const ProductEditPage = lazy(
-  () =>
-    import(
-      '../pages/system_setup/project_configuration/product/ProductEditPage'
-    )
+  () => import('../domains/project-configuration/ui/pages/ProductEditPage')
 );
 const InsuranceProductPage = lazy(
   () => import('../domains/customer/ui/pages/InsuranceProductPage')
@@ -208,7 +183,6 @@ export default function AllRoutes() {
           path={ROUTE_PATH.projectPolicyCreate(':key')}
           element={<ProjectPolicyCreatePage />}
         />
-        <Route path={ROUTE_PATH.branch} element={<BranchPage />} />
         <Route path={ROUTE_PATH.branchCreate} element={<BranchCreatePage />} />
         <Route
           path={ROUTE_PATH.branchProject(':key')}

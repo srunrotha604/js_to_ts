@@ -1,48 +1,23 @@
 import React, { useEffect, useState } from 'react';
-import { redirect, useNavigate, useParams } from 'react-router-dom';
-import Select, { MultiValue, SingleValue } from 'react-select';
+import { useNavigate, useParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import type {
-  BranchProjectDetailResponse,
-  BranchProjectOption,
-  MessageResponse,
-} from '../../../../@type/project_configuration';
-import type { SelectOption } from '../../../../@type/report';
-import { fetchData } from '../../../../services/$service';
-import { ROUTE_API, ROUTE_PATH } from '../../../../utils/route-util';
+import { ROUTE_PATH } from '../../../../utils/route-util';
+import { fetchProjectByKey, updateProject } from '../../interface-adapters';
+import { buildProjectEditDto, validateRequiredFields } from '../../use-cases';
 
-const BranchProjectEditPage = () => {
+const ProjectEditPage = () => {
   document.title = 'E-CHANNEL PORTAL | project | edit';
   const navigate = useNavigate();
   const params = useParams<{ key: string }>();
 
-  const [optionProject, setOptionProject] = useState<BranchProjectOption[]>([]);
-  const [selectedProject, setSelectdProject] = useState('');
-  const [optionPolicies, setOptionPolicies] = useState<SelectOption[]>([]);
-  const [selectedPolicies, setSelectdPolicies] = useState<string[]>([]);
-  const [branch, setBranch] = useState('');
+  const [projectName, setProjectName] = useState('');
 
   const getList = () => {
-    fetchData<BranchProjectDetailResponse>(
-      `${ROUTE_API.opertionBranchProject}/` + params.key,
-      {},
-      'GET'
-    ).then((res) => {
+    fetchProjectByKey(params.key ?? '').then((res) => {
       switch (res?.status) {
         case 200:
-          {
-            let project = res?.data?.options ?? [];
-            setOptionProject(project);
-            setSelectdProject(res?.data?.list?.[0]?.projectFamily ?? '');
-            setBranch(res?.data?.list?.[0]?.branchFamily ?? '');
-            let policiesItem = project.find(
-              (item) => item.value === res?.data?.list?.[0]?.projectFamily
-            );
-            setOptionPolicies(policiesItem?.policies ?? []);
-            setSelectdPolicies(
-              (res?.data?.list?.[0]?.policies ?? '').split(',').filter(Boolean)
-            );
-          }
+          let data = res?.data?.list?.[0];
+          setProjectName(data?.projectName ?? '');
           break;
         case 400:
           toast.error(res?.data?.message);
@@ -51,7 +26,7 @@ const BranchProjectEditPage = () => {
           toast.error(String(res?.data));
           break;
         default:
-          redirect(ROUTE_PATH.notFound);
+          navigate(ROUTE_PATH.error404);
       }
     });
   };
@@ -59,68 +34,49 @@ const BranchProjectEditPage = () => {
   const funcButtonHandleClickExecute = (
     e: React.MouseEvent<HTMLButtonElement>
   ) => {
-    let messages = [];
-    if (selectedProject === '') {
-      messages.push(true);
-    }
-    if (selectedProject === '') {
-      messages.push(true);
-    }
-    if (messages.length < 1) {
-      let data = {
-        transactionCode: params.key,
-        policies: selectedPolicies.toString(),
-      };
-      fetchData<MessageResponse>(
-        ROUTE_API.opertionBranchProject,
-        data,
-        'PUT'
-      ).then((res) => {
-        switch (res?.status) {
-          case 200:
-            navigate(ROUTE_PATH.branchProject(branch));
-            break;
-          case 400:
-            toast.error(res?.data?.message);
-            break;
-          case 403:
-            toast.error(String(res?.data));
-            break;
-          default:
-            navigate(ROUTE_PATH.notFound);
+    if (validateRequiredFields([projectName])) {
+      updateProject(buildProjectEditDto(params.key, projectName)).then(
+        (res) => {
+          switch (res?.status) {
+            case 200:
+              toast.success(res?.data?.message);
+              navigate(ROUTE_PATH.project);
+              break;
+            case 400:
+              toast.error(res?.data?.message);
+              break;
+            case 403:
+              toast.error(String(res?.data));
+              break;
+            default:
+              navigate(ROUTE_PATH.error404);
+          }
         }
-      });
+      );
     }
     e.preventDefault();
+  };
+
+  const projectNameHandleChange = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    setProjectName(event.target.value);
+  };
+  const goBackHandleClick = () => {
+    navigate(ROUTE_PATH.project);
   };
 
   useEffect(() => {
     getList();
   }, []);
-
-  const projectHandleChange = (value: SingleValue<BranchProjectOption>) => {
-    setSelectdProject(value?.value ?? '');
-    let policiesItem = optionProject?.find(
-      (item) => item.value === value?.value
-    );
-    setOptionPolicies(policiesItem?.policies ?? []);
-  };
-  const PoliciesHandleChange = (value: MultiValue<SelectOption> | null) => {
-    setSelectdPolicies(Array.isArray(value) ? value.map((x) => x.value) : []);
-  };
-
-  const goBackHandleClick = () => {
-    navigate(ROUTE_PATH.branchProject(branch));
-  };
-
   return (
-    <React.Fragment>
+    <>
       <div className="page-wrapper">
         <div className="container-xl">
           <div className="page-header d-print-none">
             <div className="row align-items-center">
               <div className="col">
-                <h2 className="page-title">Project Edit</h2>
+                <h2 className="page-title">Project edit</h2>
               </div>
               <div className="col-auto ms-auto d-print-none">
                 <div className="btn-list">
@@ -172,34 +128,24 @@ const BranchProjectEditPage = () => {
           <div className="container-xl">
             <div className="card">
               <div className="card-body">
-                <div className="col-md-12">
+                <div className="col-md-6">
                   <div className="form-group mb-3">
                     <label className="form-label required">Project name</label>
-                    <Select
-                      value={optionProject?.filter(function (option) {
-                        return option.value === selectedProject;
-                      })}
-                      onChange={projectHandleChange}
-                      options={optionProject}
-                      required
-                      isDisabled
-                    />
+                    <div>
+                      <input
+                        type="text"
+                        className={
+                          projectName !== ''
+                            ? 'form-control'
+                            : 'form-control is-invalid is-invalid-lite'
+                        }
+                        placeholder="Project name"
+                        onChange={projectNameHandleChange}
+                        value={projectName}
+                        required
+                      />
+                    </div>
                   </div>
-                  <div className="form-group mb-3">
-                    <label className="form-label required">Polocies</label>
-                    <Select
-                      placeholder="Select Option"
-                      value={optionPolicies.filter((obj) =>
-                        selectedPolicies.includes(obj.value)
-                      )}
-                      options={optionPolicies}
-                      onChange={PoliciesHandleChange}
-                      isMulti
-                      isClearable
-                      closeMenuOnSelect={false}
-                    />
-                  </div>
-
                   <div className="form-footer">
                     <button
                       className="btn btn-primary"
@@ -229,8 +175,8 @@ const BranchProjectEditPage = () => {
           </div>
         </div>
       </div>
-    </React.Fragment>
+    </>
   );
 };
 
-export default BranchProjectEditPage;
+export default ProjectEditPage;

@@ -1,15 +1,20 @@
 import React, { useEffect, useState } from 'react';
-import { redirect, useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import Select, { MultiValue, SingleValue } from 'react-select';
 import { toast } from 'react-toastify';
-import type {
-  BranchProjectOption,
-  BranchProjectOptionsResponse,
-  MessageResponse,
-} from '../../../../@type/project_configuration';
 import type { SelectOption } from '../../../../@type/report';
-import { fetchData } from '../../../../services/$service';
-import { ROUTE_API, ROUTE_PATH } from '../../../../utils/route-util';
+import { ROUTE_PATH } from '../../../../utils/route-util';
+import type { BranchProjectOption } from '../../entities';
+import {
+  createBranchProject,
+  fetchBranchProjectOptions,
+} from '../../interface-adapters';
+import {
+  buildBranchProjectCreateDto,
+  filterPoliciesByProjectKey,
+  validateRequiredFields,
+} from '../../use-cases';
+
 const BranchProjectCreatePage = () => {
   document.title = 'E-CHANNEL PORTAL | project | import';
   const navigate = useNavigate();
@@ -21,11 +26,7 @@ const BranchProjectCreatePage = () => {
   const [selectedPolicies, setSelectdPolicies] = useState<string[]>([]);
 
   const getList = () => {
-    fetchData<BranchProjectOptionsResponse>(
-      `${ROUTE_API.opertionBranchProject}/` + params.key,
-      {},
-      'GET'
-    ).then((res) => {
+    fetchBranchProjectOptions(params.key ?? '').then((res) => {
       switch (res?.status) {
         case 200:
           setOptionProject(res?.data?.options ?? []);
@@ -37,7 +38,7 @@ const BranchProjectCreatePage = () => {
           toast.error(String(res?.data));
           break;
         default:
-          redirect(ROUTE_PATH.notFound);
+          navigate(ROUTE_PATH.notFound);
       }
     });
   };
@@ -45,23 +46,9 @@ const BranchProjectCreatePage = () => {
   const funcButtonHandleClickExecute = (
     e: React.MouseEvent<HTMLButtonElement>
   ) => {
-    let messages = [];
-    if (selectedProject === '') {
-      messages.push(true);
-    }
-    if (selectedProject === '') {
-      messages.push(true);
-    }
-    if (messages.length < 1) {
-      let data = {
-        branchFamily: params.key,
-        projectFamily: selectedProject,
-        policies: selectedPolicies.toString(),
-      };
-      fetchData<MessageResponse>(
-        ROUTE_API.opertionBranchProject,
-        data,
-        'POST'
+    if (validateRequiredFields([selectedProject, selectedPolicies])) {
+      createBranchProject(
+        buildBranchProjectCreateDto(params.key, selectedProject, selectedPolicies)
       ).then((res) => {
         switch (res?.status) {
           case 200:
@@ -74,7 +61,7 @@ const BranchProjectCreatePage = () => {
             toast.error(String(res?.data));
             break;
           default:
-            redirect(ROUTE_PATH.notFound);
+            navigate(ROUTE_PATH.notFound);
         }
       });
     }
@@ -87,10 +74,7 @@ const BranchProjectCreatePage = () => {
 
   const projectHandleChange = (value: SingleValue<BranchProjectOption>) => {
     setSelectdProject(value?.value ?? '');
-    let policiesItem = optionProject?.find(
-      (item) => item.value === value?.value
-    );
-    setOptionPolicies(policiesItem?.policies ?? []);
+    setOptionPolicies(filterPoliciesByProjectKey(optionProject, value?.value ?? ''));
   };
   const PoliciesHandleChange = (value: MultiValue<SelectOption> | null) => {
     setSelectdPolicies(Array.isArray(value) ? value.map((x) => x.value) : []);

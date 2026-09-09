@@ -9,14 +9,18 @@ import {
   createFilter,
   WindowedMenuList,
 } from 'react-windowed-select';
-import type {
-  MessageResponse,
-  PolicyOption,
-  ProjectPolicyOptionResponse,
-} from '../../../../@type/project_configuration';
 import type { SelectOption } from '../../../../@type/report';
-import { fetchData } from '../../../../services/$service';
-import { ROUTE_API, ROUTE_PATH } from '../../../../utils/route-util';
+import { ROUTE_PATH } from '../../../../utils/route-util';
+import type { PolicyOption } from '../../entities';
+import {
+  createProjectPolicy,
+  fetchProjectPolicyOptions,
+} from '../../interface-adapters';
+import {
+  buildProjectPolicyCreateDto,
+  filterPoliciesByProductKey,
+  validateRequiredFields,
+} from '../../use-cases';
 
 const ProjectPolicyCreatePage = () => {
   document.title = 'E-CHANNEL PORTAL | project | policy | create';
@@ -33,19 +37,9 @@ const ProjectPolicyCreatePage = () => {
   const funcButtonHandleClickExecute = (
     e: React.MouseEvent<HTMLButtonElement>
   ) => {
-    let messages = [];
-    if (selectedPolicy === '') {
-      messages.push(true);
-    }
-    if (messages.length < 1) {
-      const data = {
-        projectFamily: params.key,
-        policyCode: selectedPolicy,
-      };
-      fetchData<MessageResponse>(
-        ROUTE_API.operationProjectPolicy,
-        data,
-        'POST'
+    if (validateRequiredFields([selectedPolicy])) {
+      createProjectPolicy(
+        buildProjectPolicyCreateDto(params.key, selectedPolicy)
       ).then((res) => {
         switch (res?.status) {
           case 200:
@@ -67,11 +61,7 @@ const ProjectPolicyCreatePage = () => {
   };
 
   const getPolicyOption = () => {
-    fetchData<ProjectPolicyOptionResponse>(
-      ROUTE_API.coreSystemOperationPolicy,
-      {},
-      'GET'
-    ).then((res) => {
+    fetchProjectPolicyOptions().then((res) => {
       switch (res?.status) {
         case 200:
           setOptionProduct(res?.data?.product ?? []);
@@ -98,10 +88,9 @@ const ProjectPolicyCreatePage = () => {
   const productHandleChange = (value: SingleValue<SelectOption>) => {
     if (value !== null) {
       setSelectdProduct(value.value);
-      const policyList = arrPolicy?.filter((item) => {
-        return item.keyCode === value.value.toString();
-      });
-      setOptionPolicy(policyList);
+      setOptionPolicy(
+        filterPoliciesByProductKey(arrPolicy, value.value.toString())
+      );
     } else {
       setSelectdProduct('');
     }
