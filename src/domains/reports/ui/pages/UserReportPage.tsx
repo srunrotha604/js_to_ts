@@ -3,23 +3,22 @@ import fileDownload from 'js-file-download';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import ReactPaginate from 'react-paginate';
 import Select from 'react-select';
-import type {
-  CompanyBranchOption,
-  SelectOption,
-  UserReportItem,
-  UserReportListResponse,
-} from '../../@type/report';
-import Button from '../../components/common/Button';
-import { selectCustomStyles } from '../../components/common/reactSelectStyles';
-import DateRangeSelector from '../../components/form/DateRangeSelector';
-import { useAuth } from '../../context/AuthContext';
-import ComponentStatus from '../../domains/customer/ui/components/ComponentStatus';
-import useLoading from '../../hooks/useLoading';
-import useMessage from '../../hooks/useMessage';
-import { fetchDataAsync } from '../../services/$service';
-import { formatDay } from '../../utils/format-day';
-import { ROUTE_API } from '../../utils/route-util';
-import { RECORDSTATUS } from '../../utils/status';
+import type { CompanyBranchOption, SelectOption } from '../../../../@type/report';
+import Button from '../../../../components/common/Button';
+import { selectCustomStyles } from '../../../../components/common/reactSelectStyles';
+import DateRangeSelector from '../../../../components/form/DateRangeSelector';
+import { useAuth } from '../../../../context/AuthContext';
+import ComponentStatus from '../../../customer/ui/components/ComponentStatus';
+import useLoading from '../../../../hooks/useLoading';
+import useMessage from '../../../../hooks/useMessage';
+import type { UserReportItem } from '../../entities';
+import { RECORDSTATUS } from '../../entities';
+import { exportUserReportList, fetchUserReportList } from '../../interface-adapters';
+import {
+  buildUserReportExportFilename,
+  buildUserReportQueryParams,
+  deriveBranchOptions,
+} from '../../use-cases';
 
 const UserReportPage = () => {
   document.title = 'Report | User report';
@@ -54,14 +53,7 @@ const UserReportPage = () => {
 
   useEffect(() => {
     if (company) {
-      const e_chanel_storage = localStorage.getItem('e_chanel_storage');
-      const token_text = e_chanel_storage ? JSON.parse(e_chanel_storage) : null;
-      const companyDetails = company?.find(
-        (item) => item?.value === token_text?.company
-      );
-      const tempBranch = companyDetails?.branch || [];
-
-      setBranch(tempBranch);
+      setBranch(deriveBranchOptions(company));
     }
   }, []);
 
@@ -92,25 +84,11 @@ const UserReportPage = () => {
   }) => {
     try {
       startLoading();
-      const response = await fetchDataAsync<UserReportListResponse>(
-        ROUTE_API.exportOperationUser,
-        {
-          params: {
-            status: status?.map((item) => item.value).join(',') || '',
-            pageSize,
-            pageNumber,
-            branchName:
-              selectedBranch?.map((item) => item.value).join(',') || '',
-            startDate: date?.startDate
-              ? formatDay(date?.startDate, 'YYYYMMDD')
-              : null,
-            endDate: date?.endDate
-              ? formatDay(date?.endDate, 'YYYYMMDD')
-              : null,
-            type: 'filter',
-          },
-        }
-      );
+      const response = await fetchUserReportList({
+        ...buildUserReportQueryParams({ status, selectedBranch, date }),
+        pageSize,
+        pageNumber,
+      });
       setTotalDocs(response?.data?.totalDocs ?? 0);
       setData(response?.data?.list ?? []);
       setIsFieldDirty(false);
@@ -128,29 +106,11 @@ const UserReportPage = () => {
   const exportList = async () => {
     try {
       startExportLoading();
-      const response = await fetchDataAsync<Blob>(
-        ROUTE_API.exportOperationUser,
-        {
-          params: {
-            status: status?.map((item) => item.value).join(',') || '',
-            branchName:
-              selectedBranch?.map((item) => item.value).join(',') || '',
-            startDate: date?.startDate
-              ? formatDay(date?.startDate, 'YYYYMMDD')
-              : null,
-            endDate: date?.endDate
-              ? formatDay(date?.endDate, 'YYYYMMDD')
-              : null,
-            type: 'export',
-          },
-          responseType: 'blob',
-        }
+      const response = await exportUserReportList(
+        buildUserReportQueryParams({ status, selectedBranch, date })
       );
       if (!response?.data) return;
-      fileDownload(
-        response.data,
-        `user_export ${formatDay(new Date(), 'DD-MM-YY')}.xlsx`
-      );
+      fileDownload(response.data, buildUserReportExportFilename());
     } catch (error) {
       console.log(error);
       showErrorResponseMessage(error);

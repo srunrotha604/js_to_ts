@@ -3,24 +3,29 @@ import fileDownload from 'js-file-download';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import ReactPaginate from 'react-paginate';
 import ReactSelect from 'react-select';
-import type {
-  CompanyBranchOption,
-  CustomerReportItem,
-  CustomerReportListResponse,
-  SelectOption,
-} from '../../../@type/report';
-import Button from '../../../components/common/Button';
-import { selectCustomStyles } from '../../../components/common/reactSelectStyles';
-import DateRangeSelector from '../../../components/form/DateRangeSelector';
-import ProjectSelect from '../../../components/form/ProjectSelect';
-import { useAuth } from '../../../context/AuthContext';
-import { STATUS, typeOptions } from '../../../domains/customer/entities';
-import ComponentStatus from '../../../domains/customer/ui/components/ComponentStatus';
-import useLoading from '../../../hooks/useLoading';
-import useMessage from '../../../hooks/useMessage';
-import { fetchDataAsync } from '../../../services/$service';
-import { formatDay, getStartOfMonthDate } from '../../../utils/format-day';
-import { ROUTE_API } from '../../../utils/route-util';
+import type { CompanyBranchOption, SelectOption } from '../../../../@type/report';
+import Button from '../../../../components/common/Button';
+import { selectCustomStyles } from '../../../../components/common/reactSelectStyles';
+import DateRangeSelector from '../../../../components/form/DateRangeSelector';
+import ProjectSelect from '../../../../components/form/ProjectSelect';
+import { useAuth } from '../../../../context/AuthContext';
+import { STATUS, typeOptions } from '../../../customer/entities';
+import ComponentStatus from '../../../customer/ui/components/ComponentStatus';
+import useLoading from '../../../../hooks/useLoading';
+import useMessage from '../../../../hooks/useMessage';
+import { getStartOfMonthDate } from '../../../../utils/format-day';
+import type { CustomerReportItem } from '../../entities';
+import {
+  exportCustomerReportList,
+  fetchCustomerReportList,
+} from '../../interface-adapters';
+import {
+  buildCustomerReportExportFilename,
+  buildCustomerReportQueryParams,
+  deriveBranchOptions,
+  normalizeIssueDateRange,
+  paginateCustomerReportList,
+} from '../../use-cases';
 
 const CustomerReportPage = () => {
   document.title = 'Report | customer report';
@@ -69,15 +74,8 @@ const CustomerReportPage = () => {
   };
 
   useEffect(() => {
-    const e_chanel_storage = localStorage.getItem('e_chanel_storage');
-    const token_text = e_chanel_storage ? JSON.parse(e_chanel_storage) : null;
-
-    if (company && token_text) {
-      const companyDetails = company.find(
-        (item) => item?.value === token_text?.company
-      );
-      const tempBranch = companyDetails?.branch || [];
-      setBranch(tempBranch);
+    if (company) {
+      setBranch(deriveBranchOptions(company));
     }
   }, [company]);
   useEffect(() => {
@@ -132,38 +130,26 @@ const CustomerReportPage = () => {
   }) => {
     try {
       startLoading();
-      const response = await fetchDataAsync<CustomerReportListResponse>(
-        ROUTE_API.customerReport,
-        {
-          params: {
-            type: type?.map((item) => item.value).join(',') || '',
-            status: status?.map((item) => item.value).join(',') || '',
-            startDate: date?.startDate
-              ? formatDay(date.startDate, 'YYYYMMDD')
-              : '',
-            endDate: date?.endDate ? formatDay(date.endDate, 'YYYYMMDD') : '',
-            startIssueDate: issueDateRange?.startIssueDate
-              ? formatDay(issueDateRange.startIssueDate, 'YYYYMMDD')
-              : '',
-            endIssueDate: issueDateRange?.endIssueDate
-              ? formatDay(issueDateRange.endIssueDate, 'YYYYMMDD')
-              : '',
-            expirePolicy: expirePolicy ? 'true' : 'false',
-            branchName:
-              selectedBranch?.map((item) => item.value).join(',') || '',
-            projectName:
-              selectedProject?.map((item) => item.value).join(',') || '',
-          },
-        }
+      const response = await fetchCustomerReportList(
+        buildCustomerReportQueryParams({
+          type,
+          status,
+          date,
+          issueDateRange,
+          expirePolicy,
+          selectedBranch,
+          selectedProject,
+        })
       );
 
-      const allData = response?.data?.list || [];
-      const total = allData.length;
-      const startIndex = (pageNumber - 1) * pageSize;
-      const endIndex = startIndex + pageSize;
+      const { items, total } = paginateCustomerReportList(
+        response?.data?.list ?? [],
+        pageNumber,
+        pageSize
+      );
 
       setTotalDocs(total);
-      setData(allData.slice(startIndex, endIndex));
+      setData(items);
       setIsFieldDirty(false);
       resetTableScroll();
     } catch (error) {
@@ -185,58 +171,30 @@ const CustomerReportPage = () => {
       endIssueDate?: Date | null;
     } = {}
   ) => {
-    const { startDate, endDate, startIssueDate, endIssueDate } = payload;
-
-    const s = startIssueDate ?? startDate ?? null;
-    const e = endIssueDate ?? endDate ?? null;
-    const toJsDate = (d: Date | null) => d;
-
-    setIssueDateRange({
-      startIssueDate: toJsDate(s),
-      endIssueDate: toJsDate(e),
-    });
+    setIssueDateRange(normalizeIssueDateRange(payload));
   };
 
   const [exportLoading, startExportLoading, stopExportLoading] = useLoading();
   const { showErrorResponseMessage } = useMessage();
-  const safeFormat = (d: Date | null | undefined, f: string) =>
-    d ? formatDay(d, f) : '';
 
   const exportList = async () => {
     try {
       startExportLoading();
-      const params = {
-        type: type?.map((item) => item.value).join(',') || '',
-        status: status?.map((item) => item.value).join(',') || '',
-        startDate: safeFormat(date?.startDate, 'YYYYMMDD'),
-        endDate: safeFormat(date?.endDate, 'YYYYMMDD'),
-        expirePolicy: expirePolicy ? 'true' : 'false',
-        startIssueDate: safeFormat(issueDateRange?.startIssueDate, 'YYYYMMDD'),
-        endIssueDate: safeFormat(issueDateRange?.endIssueDate, 'YYYYMMDD'),
-        branchName: selectedBranch?.map((item) => item.value).join(',') || '',
-        projectName: selectedProject?.map((item) => item.value).join(',') || '',
-      };
-      const response = await fetchDataAsync<Blob>(
-        ROUTE_API.exportOperationCustomer,
-        {
-          params,
-          responseType: 'blob',
-        }
+      const response = await exportCustomerReportList(
+        buildCustomerReportQueryParams({
+          type,
+          status,
+          date,
+          issueDateRange,
+          expirePolicy,
+          selectedBranch,
+          selectedProject,
+        })
       );
       if (!response?.data) return;
       fileDownload(
         response.data,
-        `${
-          issueDateRange?.startIssueDate && issueDateRange?.endIssueDate
-            ? `customer_export card_issue_date ${safeFormat(
-                issueDateRange?.startIssueDate,
-                'DD-MM-YY'
-              )} ${safeFormat(issueDateRange?.endIssueDate, 'DD-MM-YY')}`
-            : `customer_export ${safeFormat(
-                date?.startDate,
-                'DD-MM-YY'
-              )} ${safeFormat(date?.endDate, 'DD-MM-YY')}`
-        }.xlsx`
+        buildCustomerReportExportFilename({ dateRange: date, issueDateRange })
       );
     } catch (error) {
       showErrorResponseMessage(error);

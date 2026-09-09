@@ -157,9 +157,11 @@ const BatchDetailPage = lazy(
 );
 const VersionHandlePage = lazy(() => import('../pages/version-history/index'));
 const CustomerReportPage = lazy(
-  () => import('../pages/reports/customer_report/CustomerReportPage')
+  () => import('../domains/reports/ui/pages/CustomerReportPage')
 );
-const UserReportPage = lazy(() => import('../pages/reports/UserRportPage'));
+const UserReportPage = lazy(
+  () => import('../domains/reports/ui/pages/UserReportPage')
+);
 const ProfilePage = lazy(() => import('../pages/default/ProfilePage'));
 const ChangePasswordPage = lazy(
   () => import('../pages/default/ChangePasswordPage')
