@@ -10,20 +10,17 @@ import type {
   SelectOption,
 } from '../../../@type/report';
 import Button from '../../../components/common/Button';
-import ComponentStatus from '../../../components/customer/ComponentStatus';
+import { selectCustomStyles } from '../../../components/common/reactSelectStyles';
 import DateRangeSelector from '../../../components/form/DateRangeSelector';
 import ProjectSelect from '../../../components/form/ProjectSelect';
-import {
-  selectCustomStyles,
-  typeOptions,
-} from '../../../components/transaction/TransactionTabList';
 import { useAuth } from '../../../context/AuthContext';
+import { STATUS, typeOptions } from '../../../domains/customer/entities';
+import ComponentStatus from '../../../domains/customer/ui/components/ComponentStatus';
 import useLoading from '../../../hooks/useLoading';
 import useMessage from '../../../hooks/useMessage';
 import { fetchDataAsync } from '../../../services/$service';
 import { formatDay, getStartOfMonthDate } from '../../../utils/format-day';
 import { ROUTE_API } from '../../../utils/route-util';
-import { STATUS } from '../../../utils/status';
 
 const CustomerReportPage = () => {
   document.title = 'Report | customer report';

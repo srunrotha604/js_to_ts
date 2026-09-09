@@ -1,41 +1,32 @@
 import axios from 'axios';
-import type {
-  ComponentType,
-  Dispatch,
-  ForwardRefExoticComponent,
-  SetStateAction,
-} from 'react';
+import type { Dispatch, ForwardRefExoticComponent, SetStateAction } from 'react';
 import { forwardRef, useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import type {
-  CustomerListResponse,
-  CustomerTransaction,
-  TransactionTotalCounts,
-} from '../../@type/batch';
 import ApproveRejectConfirmationModal from '../../components/common/ActionConfirmationModal';
 import Button from '../../components/common/Button';
 import ModalRaw, { useModal } from '../../components/common/modal/index';
 import Spinner, { useSpinner } from '../../components/common/Spinner';
-import ComponentStatus from '../../components/customer/ComponentStatus';
-import TransactionBatchProccessModalRaw from '../../components/transaction/TransactionBatchProccessModal';
-import TransactionTabListRaw from '../../components/transaction/TransactionTabList';
-import TransactionTabSelectRaw, {
-  useTransactionTabSelect,
-} from '../../components/transaction/TransactionTabSelect';
+import type { TransactionTabListHandle } from '../../components/transaction/TransactionTable';
 import { useAuth } from '../../context/AuthContext';
+import type {
+  CustomerListResponse,
+  CustomerTransaction,
+  TransactionTotalCounts,
+} from '../../domains/customer/entities';
+import { STATUS } from '../../domains/customer/entities';
+import { useTransactionTabSelect } from '../../domains/customer/interface-adapters';
+import ComponentStatus from '../../domains/customer/ui/components/ComponentStatus';
+import CustomerBatchProcessModal from '../../domains/customer/ui/components/transaction-table/CustomerBatchProcessModal';
+import CustomerTransactionSelect from '../../domains/customer/ui/components/transaction-table/CustomerTransactionSelect';
+import CustomerTransactionTable from '../../domains/customer/ui/components/transaction-table/CustomerTransactionTable';
+import { actions } from '../../domains/customer/use-cases/workflow-actions';
+import { getConfirmedMessageText } from '../../domains/customer/use-cases/get-confirm-message-text';
+import { isTransactionStatusCountChanged } from '../../domains/customer/use-cases/transaction-status-tracking';
 import { fetchDataAsync } from '../../services/$service';
-import { actions } from '../../utils/actions';
 import { delay } from '../../utils/delay';
-import { getConfirmedMessageText } from '../../utils/get-confirm-message-text';
 import { pluralize } from '../../utils/pluralize';
 import { ROUTE_API, ROUTE_PATH } from '../../utils/route-util';
-import { STATUS, isTransactionStatusCountChanged } from '../../utils/status';
-const TransactionTabList =
-  TransactionTabListRaw as ForwardRefExoticComponent<any>;
-const TransactionBatchProccessModal =
-  TransactionBatchProccessModalRaw as ForwardRefExoticComponent<any>;
-const TransactionTabSelect = TransactionTabSelectRaw as ComponentType<any>;
 const TypedModal = ModalRaw as unknown as ForwardRefExoticComponent<
   React.RefAttributes<HTMLDivElement> & {
     title?: React.ReactNode;
@@ -59,50 +50,50 @@ const HomePage = () => {
       {
         label: STATUS.All,
         status: STATUS.All,
-        getTotal: (total: TransactionTotalCounts) => total?.total,
+        getTotal: (total?: TransactionTotalCounts) => total?.total,
       },
       {
         label: STATUS.Draft,
         status: STATUS.Draft,
-        getTotal: (total: TransactionTotalCounts) => total?.draft,
+        getTotal: (total?: TransactionTotalCounts) => total?.draft,
         hidden: !hasPermissionAccessTransaction('draft'),
       },
       {
         label: STATUS.Submitted,
         status: STATUS.Submitted,
-        getTotal: (total: TransactionTotalCounts) => total?.submitted,
+        getTotal: (total?: TransactionTotalCounts) => total?.submitted,
         hidden: !hasPermissionAccessTransaction('submitted'),
       },
       {
         label: STATUS.Approved,
         status: STATUS.Approved,
-        getTotal: (total: TransactionTotalCounts) => total?.approved,
+        getTotal: (total?: TransactionTotalCounts) => total?.approved,
         hidden: !hasPermissionAccessTransaction('approved'),
       },
       {
         label: STATUS.BM_Rejected,
         status: STATUS.BM_Rejected,
-        getTotal: (total: TransactionTotalCounts) => total?.bmReject,
+        getTotal: (total?: TransactionTotalCounts) => total?.bmReject,
         hidden: !hasPermissionAccessTransaction('bmRejected'),
       },
       {
         label: STATUS.Confirmed,
         status: STATUS.Confirmed,
         type: 'Single,Batch',
-        getTotal: (total: TransactionTotalCounts) => total?.confirmed,
+        getTotal: (total?: TransactionTotalCounts) => total?.confirmed,
         hidden: !hasPermissionAccessTransaction('confirmed'),
       },
       {
         label: STATUS.DRI_Rejected,
         status: STATUS.DRI_Rejected,
-        getTotal: (total: TransactionTotalCounts) => total?.driReject,
+        getTotal: (total?: TransactionTotalCounts) => total?.driReject,
         hidden: !hasPermissionAccessTransaction('driRejected'),
       },
       {
         label: 'Deleted-END',
         status: STATUS.Confirmed_Deleted,
         type: 'Delete',
-        getTotal: (total: TransactionTotalCounts) => total?.confirmedDeleted,
+        getTotal: (total?: TransactionTotalCounts) => total?.confirmedDeleted,
         hidden: !hasPermissionAccessTransaction('confirmed'),
       },
     ],
@@ -181,7 +172,7 @@ const HomePage = () => {
     delay([closeSpinner, openModal]);
   };
 
-  const tabListRef = useRef<{ getList: () => void } | null>(null);
+  const tabListRef = useRef<TransactionTabListHandle | null>(null);
   const handleProcess = async (rejectRemark?: string) => {
     try {
       closeActionModal();
@@ -249,7 +240,7 @@ const HomePage = () => {
       className="container-xl full-height-dashboard-container overflow-auto"
       style={{ height: '0', overflow: 'hidden', display: 'flex' }}
     >
-      <TransactionTabList
+      <CustomerTransactionTable
         tab={navTab}
         onFetchSuccess={(data: {
           data?: { total?: TransactionTotalCounts[] };
@@ -281,7 +272,7 @@ const HomePage = () => {
             >
               {tabStatus !== STATUS.All && (
                 <>
-                  <TransactionTabSelect
+                  <CustomerTransactionSelect
                     title="Click to Process Selected"
                     disableSelectAll
                     onClick={handleProcessSelected}
@@ -321,7 +312,7 @@ const HomePage = () => {
           onApprove={handleProcess}
           onReject={handleProcess}
         />
-        <TransactionBatchProccessModal
+        <CustomerBatchProcessModal
           loading={spinnerState.loading}
           data={{
             selectedCustomerList,

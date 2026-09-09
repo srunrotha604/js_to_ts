@@ -10,10 +10,10 @@ import type {
   UserReportListResponse,
 } from '../../@type/report';
 import Button from '../../components/common/Button';
-import ComponentStatus from '../../components/customer/ComponentStatus';
+import { selectCustomStyles } from '../../components/common/reactSelectStyles';
 import DateRangeSelector from '../../components/form/DateRangeSelector';
-import { selectCustomStyles } from '../../components/transaction/TransactionTabList';
 import { useAuth } from '../../context/AuthContext';
+import ComponentStatus from '../../domains/customer/ui/components/ComponentStatus';
 import useLoading from '../../hooks/useLoading';
 import useMessage from '../../hooks/useMessage';
 import { fetchDataAsync } from '../../services/$service';

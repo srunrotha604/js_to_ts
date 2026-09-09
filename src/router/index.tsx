@@ -132,26 +132,28 @@ const ProductEditPage = lazy(
     )
 );
 const InsuranceProductPage = lazy(
-  () => import('../pages/customer/InsuranceProductPage')
+  () => import('../domains/customer/ui/pages/InsuranceProductPage')
 );
-const CustomerPage = lazy(() => import('../pages/customer/CustomerPage'));
+const CustomerPage = lazy(
+  () => import('../domains/customer/ui/pages/CustomerPage')
+);
 const CustomerCreatePage = lazy(
-  () => import('../pages/customer/CustomerCreatePage')
+  () => import('../domains/customer/ui/pages/CustomerCreatePage')
 );
 const CustomerEditPage = lazy(
-  () => import('../pages/customer/CustomerEditPage')
+  () => import('../domains/customer/ui/pages/CustomerEditPage')
 );
 const CustomerDeletePage = lazy(
-  () => import('../pages/customer/CustomerDeletePage')
+  () => import('../domains/customer/ui/pages/CustomerDeletePage')
 );
 const CustomerTransationDetailPage = lazy(
-  () => import('../pages/customer/CustomerTransationDetailPage')
+  () => import('../domains/customer/ui/pages/CustomerTransationDetailPage')
 );
-const BatchRegister = lazy(
-  () => import('../pages/batch-register/BatchRegister')
+const BatchRegisterPage = lazy(
+  () => import('../domains/batch/ui/pages/BatchRegisterPage')
 );
 const BatchDetailPage = lazy(
-  () => import('../pages/batch-register/BatchDetailPage')
+  () => import('../domains/batch/ui/pages/BatchDetailPage')
 );
 const VersionHandlePage = lazy(() => import('../pages/version-history/index'));
 const CustomerReportPage = lazy(
@@ -276,7 +278,10 @@ export default function AllRoutes() {
           path={ROUTE_PATH.customerTransaction(':key')}
           element={<CustomerTransationDetailPage />}
         />
-        <Route path={ROUTE_PATH.batchRegister} element={<BatchRegister />} />
+        <Route
+          path={ROUTE_PATH.batchRegister}
+          element={<BatchRegisterPage />}
+        />
         <Route
           path={ROUTE_PATH.customerBatch(':key')}
           element={<BatchDetailPage />}

@@ -15,7 +15,7 @@ import TableCellStatusCodeHandle from '../../../../components/form/TableCellStat
 import Loading from '../../../../components/Loading';
 import TableBreakBar from '../../../../components/table/table_action/TableBreakBar';
 import TableCellTextDeleteConfirm from '../../../../components/table/table_action/TableCellTextDeleteConfirm';
-import { selectCustomStyles } from '../../../../components/transaction/TransactionTabList';
+import { selectCustomStyles } from '../../../../components/common/reactSelectStyles';
 import { useAuth } from '../../../../context/AuthContext';
 import { fetchData } from '../../../../services/$service';
 import { ROUTE_API, ROUTE_PATH } from '../../../../utils/route-util';

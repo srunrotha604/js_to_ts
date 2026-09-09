@@ -6,8 +6,14 @@ import type { UserProfile } from '../@type/profile';
 import type { CompanyBranchOption } from '../@type/report';
 import { fetchDataAsync } from '../services/$service';
 import { ROUTE_API } from '../utils/route-util';
-import { clearTransactionStatusCount } from '../utils/status';
 import ModuleContextProvider from './module/ModuleContext';
+
+const logoutHandlers = new Set<() => void>();
+export const registerLogoutHandler = (fn: () => void) => {
+  logoutHandlers.add(fn);
+  return () => logoutHandlers.delete(fn);
+};
+
 const AuthContext = createContext<AuthContextValue>({
   loading: true,
   hasPermissionProccessTransaction: () => false,
@@ -133,7 +139,7 @@ const AuthContextProvider = ({ children }: { children?: ReactNode }) => {
     setPermission(null);
     setToken(null);
     setIsUserDRIAdmin(false);
-    clearTransactionStatusCount();
+    logoutHandlers.forEach((fn) => fn());
   };
   const appName = 'E-channel Portal';
   return (

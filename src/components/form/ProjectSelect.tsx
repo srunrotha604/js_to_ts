@@ -4,7 +4,7 @@ import Select from 'react-select';
 import type {
   ProjectCategoryResponse,
   ProjectPolicyOption,
-} from '../../@type/batch';
+} from '../../domains/customer/entities';
 import { fetchData } from '../../services/$service';
 import { ROUTE_API } from '../../utils/route-util';
 
