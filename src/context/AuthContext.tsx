@@ -1,18 +1,13 @@
 import type { ReactNode } from 'react';
 import { createContext, useContext, useEffect, useState } from 'react';
-import type {
-  AuthContextValue,
-  AuthToken,
-  PermissionSet,
-} from '../@type/auth';
+import type { AuthContextValue, AuthToken, PermissionSet } from '../@type/auth';
 import type { AuthModuleState } from '../@type/module';
-import type { CompanyBranchOption } from '../@type/report';
 import type { UserProfile } from '../@type/profile';
+import type { CompanyBranchOption } from '../@type/report';
 import { fetchDataAsync } from '../services/$service';
 import { ROUTE_API } from '../utils/route-util';
 import { clearTransactionStatusCount } from '../utils/status';
 import ModuleContextProvider from './module/ModuleContext';
-
 const AuthContext = createContext<AuthContextValue>({
   loading: true,
   hasPermissionProccessTransaction: () => false,
@@ -131,7 +126,6 @@ const AuthContextProvider = ({ children }: { children?: ReactNode }) => {
   const selectedBranch = selectedCompany?.branch?.find(
     (item) => item.value === token?.branch
   );
-
   const clearUser = () => {
     setUser(null);
     setMenu([]);
@@ -141,7 +135,6 @@ const AuthContextProvider = ({ children }: { children?: ReactNode }) => {
     setIsUserDRIAdmin(false);
     clearTransactionStatusCount();
   };
-
   const appName = 'E-channel Portal';
   return (
     <AuthContext.Provider
@@ -168,7 +161,5 @@ const AuthContextProvider = ({ children }: { children?: ReactNode }) => {
     </AuthContext.Provider>
   );
 };
-
 export const useAuth = () => useContext(AuthContext);
-
 export default AuthContextProvider;

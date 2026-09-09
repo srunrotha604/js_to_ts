@@ -62,7 +62,10 @@ const BranchProjectPage = () => {
     });
   };
 
-  const getRecordHandleClick = (option: string, item: BranchProjectListItem) => {
+  const getRecordHandleClick = (
+    option: string,
+    item: BranchProjectListItem
+  ) => {
     switch (option) {
       case 'delete':
         setGetKey(item.transactionCode ?? '');

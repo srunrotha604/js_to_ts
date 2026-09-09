@@ -9,7 +9,9 @@ interface TableRowStatusComponentHandleProps {
   route: string;
 }
 
-const TableRowStatusComponentHandle = (props: TableRowStatusComponentHandleProps) => {
+const TableRowStatusComponentHandle = (
+  props: TableRowStatusComponentHandleProps
+) => {
   const { active, success, uuid, route } = props;
   const { showErrorResponseMessage } = useMessage();
 

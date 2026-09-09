@@ -136,7 +136,7 @@ const CustomerReportPage = () => {
     try {
       startLoading();
       const response = await fetchDataAsync<CustomerReportListResponse>(
-        '/export/operation-customer/filter',
+        ROUTE_API.customerReport,
         {
           params: {
             type: type?.map((item) => item.value).join(',') || '',

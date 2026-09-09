@@ -11,7 +11,6 @@ interface ExistedPolicyModalProps {
   actions?: ReactNode;
   loading?: boolean;
 }
-// eslint-disable-next-line react/display-name
 const ExistedPolicyModal = forwardRef<HTMLDivElement, ExistedPolicyModalProps>(
   ({ data, actions }, ref) => {
     return (

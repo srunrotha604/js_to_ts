@@ -2,19 +2,19 @@ import { useEffect, useState } from 'react';
 import { MdClear } from 'react-icons/md';
 import { useNavigate, useParams } from 'react-router-dom';
 import type { ClearIndicatorProps, SingleValue } from 'react-select';
+import ReactSelect from 'react-select';
 import { toast } from 'react-toastify';
 import {
   components,
   createFilter,
   WindowedMenuList,
 } from 'react-windowed-select';
-import ReactSelect from 'react-select';
-import type { SelectOption } from '../../../../@type/report';
 import type {
   MessageResponse,
   PolicyOption,
   ProjectPolicyOptionResponse,
 } from '../../../../@type/project_configuration';
+import type { SelectOption } from '../../../../@type/report';
 import { fetchData } from '../../../../services/$service';
 import { ROUTE_API, ROUTE_PATH } from '../../../../utils/route-util';
 
@@ -30,7 +30,9 @@ const ProjectPolicyCreatePage = () => {
   const [optionProduct, setOptionProduct] = useState<SelectOption[]>([]);
   const [selectedProduct, setSelectdProduct] = useState('');
 
-  const funcButtonHandleClickExecute = (e: React.MouseEvent<HTMLButtonElement>) => {
+  const funcButtonHandleClickExecute = (
+    e: React.MouseEvent<HTMLButtonElement>
+  ) => {
     let messages = [];
     if (selectedPolicy === '') {
       messages.push(true);
@@ -40,24 +42,26 @@ const ProjectPolicyCreatePage = () => {
         projectFamily: params.key,
         policyCode: selectedPolicy,
       };
-      fetchData<MessageResponse>('/operation-project/policy', data, 'POST').then(
-        (res) => {
-          switch (res?.status) {
-            case 200:
-              toast.success(res?.data?.message);
-              navigate(ROUTE_PATH.projectPolicy(params.key ?? ''));
-              break;
-            case 400:
-              toast.error(res?.data?.message);
-              break;
-            case 403:
-              toast.error(String(res?.data));
-              break;
-            default:
-              navigate(ROUTE_PATH.error404);
-          }
+      fetchData<MessageResponse>(
+        ROUTE_API.operationProjectPolicy,
+        data,
+        'POST'
+      ).then((res) => {
+        switch (res?.status) {
+          case 200:
+            toast.success(res?.data?.message);
+            navigate(ROUTE_PATH.projectPolicy(params.key ?? ''));
+            break;
+          case 400:
+            toast.error(res?.data?.message);
+            break;
+          case 403:
+            toast.error(String(res?.data));
+            break;
+          default:
+            navigate(ROUTE_PATH.error404);
         }
-      );
+      });
     }
     e.preventDefault();
   };

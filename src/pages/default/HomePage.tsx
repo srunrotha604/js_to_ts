@@ -1,3 +1,4 @@
+import axios from 'axios';
 import type {
   ComponentType,
   Dispatch,
@@ -7,7 +8,6 @@ import type {
 import { forwardRef, useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import axios from 'axios';
 import type {
   CustomerListResponse,
   CustomerTransaction,
@@ -29,13 +29,8 @@ import { actions } from '../../utils/actions';
 import { delay } from '../../utils/delay';
 import { getConfirmedMessageText } from '../../utils/get-confirm-message-text';
 import { pluralize } from '../../utils/pluralize';
-import { ROUTE_PATH } from '../../utils/route-util';
+import { ROUTE_API, ROUTE_PATH } from '../../utils/route-util';
 import { STATUS, isTransactionStatusCountChanged } from '../../utils/status';
-
-// TransactionTabList / TransactionBatchProccessModal / TransactionTabSelect / Modal
-// are large, widely-shared components still in plain JS; cast locally so their
-// prop types don't collapse to an empty object here without touching their
-// shared source (same pattern used in BatchDetailPage.tsx).
 const TransactionTabList =
   TransactionTabListRaw as ForwardRefExoticComponent<any>;
 const TransactionBatchProccessModal =
@@ -153,7 +148,7 @@ const HomePage = () => {
     try {
       let response;
       response = await fetchDataAsync<CustomerListResponse>(
-        '/operation-customer',
+        ROUTE_API.operationCustomer,
         {
           params: {
             transaction: selectedTransaction.join(','),
@@ -206,10 +201,13 @@ const HomePage = () => {
         summaryData.remark = rejectRemark;
       }
 
-      await fetchDataAsync(`/operation-customer${isDeleted ? '/delete' : ''}`, {
-        data: summaryData,
-        method: 'POST',
-      });
+      await fetchDataAsync(
+        ` ${ROUTE_API.operationCustomer}${isDeleted ? '/delete' : ''}`,
+        {
+          data: summaryData,
+          method: 'POST',
+        }
+      );
 
       toast.success(
         `${selectedCustomerList.length} ${pluralize(
@@ -227,8 +225,6 @@ const HomePage = () => {
       delay(closeSpinner);
     }
   };
-
-  // close modal when no customer selected
   useEffect(() => {
     if (open && selectedCustomerList.length <= 0) {
       closeModal();
@@ -255,7 +251,9 @@ const HomePage = () => {
     >
       <TransactionTabList
         tab={navTab}
-        onFetchSuccess={(data: { data?: { total?: TransactionTotalCounts[] } }) => {
+        onFetchSuccess={(data: {
+          data?: { total?: TransactionTotalCounts[] };
+        }) => {
           const transactionTotal = data?.data?.total?.[0] ?? {};
           if (!isUserDRIAdmin) {
             const isChanged = isTransactionStatusCountChanged(
@@ -302,7 +300,6 @@ const HomePage = () => {
             hasPermissionProccessTransaction(action.action)
           );
         }}
-        // enableItemCheckbox={isEnableItem}
         onTabChange={resetSelectedTransaction}
         handleSelectAllInCurrentList={handleSelectAllInCurrentList}
         handleSelectItem={handleSelectTransaction}
@@ -368,48 +365,46 @@ interface PopupInfoProps {
   onClose: () => void;
 }
 
-// eslint-disable-next-line react/display-name
 const PopupInfo = forwardRef<HTMLDivElement, PopupInfoProps>(
   ({ data, onClose }, ref) => {
     const navigate = useNavigate();
     return (
-    <TypedModal
-      size="sm"
-      title={'Task Reminder'}
-      bodyClassName="d-flex flex-column pt-3 pb-3"
-      content={
-        <>
-          <div
-            style={{
-              fontSize: '22px',
-              display: 'inline-flex',
-              justifyContent: 'center',
-              marginBottom: '18px',
-            }}
-          >
-            <ComponentStatus status="DRI-Rejected" />
-            <span style={{ margin: '0 6px' }}>
-              {' '}
-              {`( ${data?.driReject} )`}{' '}
-            </span>{' '}
-          </div>
-          <div style={{ display: 'flex', justifyContent: 'center' }}>
-            <Button
-              onClick={() => {
-                navigate(
-                  `${ROUTE_PATH.dashboard}?status=${STATUS.DRI_Rejected}`
-                );
-                onClose();
+      <TypedModal
+        size="sm"
+        title={'Task Reminder'}
+        bodyClassName="d-flex flex-column pt-3 pb-3"
+        content={
+          <>
+            <div
+              style={{
+                fontSize: '22px',
+                display: 'inline-flex',
+                justifyContent: 'center',
+                marginBottom: '18px',
               }}
             >
-              View
-            </Button>
-          </div>
-        </>
-      }
-      ref={ref}
-    ></TypedModal>
-  );
+              <ComponentStatus status="DRI-Rejected" />
+              <span style={{ margin: '0 6px' }}>
+                {`( ${data?.driReject} )`}
+              </span>
+            </div>
+            <div style={{ display: 'flex', justifyContent: 'center' }}>
+              <Button
+                onClick={() => {
+                  navigate(
+                    `${ROUTE_PATH.dashboard}?status=${STATUS.DRI_Rejected}`
+                  );
+                  onClose();
+                }}
+              >
+                View
+              </Button>
+            </div>
+          </>
+        }
+        ref={ref}
+      ></TypedModal>
+    );
   }
 );
 

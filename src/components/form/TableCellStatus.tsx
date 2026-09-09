@@ -1,5 +1,5 @@
-import DeleteButton from '../buttons/DeleteButton';
 import CancelButton from '../buttons/CancelButton';
+import DeleteButton from '../buttons/DeleteButton';
 import Modal, { useModal } from '../common/modal';
 
 interface TableCellStatusProps {

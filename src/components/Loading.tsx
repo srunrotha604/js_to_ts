@@ -1,9 +1,7 @@
 import { useState } from 'react';
-
 interface LoadingProps {
   value?: boolean;
 }
-
 function Loading(props: LoadingProps) {
   const [loading] = useState(props.value);
   return (
@@ -27,5 +25,4 @@ function Loading(props: LoadingProps) {
     </>
   );
 }
-
 export default Loading;

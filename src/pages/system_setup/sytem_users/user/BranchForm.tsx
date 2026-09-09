@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Select from 'react-select';
 import { toast } from 'react-toastify';
+import TableRowDeleteComponentHandle from '../../../..//components/table/table_action/TableRowDeleteComponentHandle';
 import type { SelectOption } from '../../../../@type/report';
 import type {
   UserBranchCategoryResponse,
@@ -9,13 +10,12 @@ import type {
   UserBranchListItem,
   UserBranchResponse,
 } from '../../../../@type/system_users';
-import TableRowDeleteComponentHandle from '../../../..//components/table/table_action/TableRowDeleteComponentHandle';
-import ButtonGroup from '../../../../components/buttons/ButtonGroup';
-import CancelButton from '../../../../components/buttons/CancelButton';
-import SubmitButton from '../../../../components/buttons/SubmitButton';
 import PlusIcon from '../../../../components/Icons/PlusIcon';
 import SquareCheckIcon from '../../../../components/Icons/SquareCheckIcon';
 import WrapperComponent from '../../../../components/WrapperComponent';
+import ButtonGroup from '../../../../components/buttons/ButtonGroup';
+import CancelButton from '../../../../components/buttons/CancelButton';
+import SubmitButton from '../../../../components/buttons/SubmitButton';
 import Modal, { useModal } from '../../../../components/common/modal';
 import SearchBox from '../../../../components/input/SearchBox';
 import PageBodyComponent from '../../../../components/pages/PageBodyComponent';

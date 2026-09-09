@@ -1,15 +1,15 @@
+import axios from 'axios';
 import type { ForwardRefExoticComponent } from 'react';
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import axios from 'axios';
-import type { CustomerListResponse, CustomerTransaction } from '../../@type/batch';
-import { useModal } from '../../components/common/modal';
-import { useAuth } from '../../context/AuthContext';
-import { fetchDataAsync } from '../../services/$service';
-
+import type {
+  CustomerListResponse,
+  CustomerTransaction,
+} from '../../@type/batch';
 import ApproveRejectConfirmationModal from '../../components/common/ActionConfirmationModal';
 import Button from '../../components/common/Button';
+import { useModal } from '../../components/common/modal';
 import Spinner, { useSpinner } from '../../components/common/Spinner';
 import TransactionDetailCard, {
   TransactionDetailCardContainer,
@@ -18,15 +18,13 @@ import {
   ShowLogsButton,
   TransactionLogsModal as TransactionLogsModalRaw,
 } from '../../components/transaction/TransactionTabList';
+import { useAuth } from '../../context/AuthContext';
+import { fetchDataAsync } from '../../services/$service';
 import { actions } from '../../utils/actions';
 import { delay } from '../../utils/delay';
 import { getConfirmedMessageText } from '../../utils/get-confirm-message-text';
 import { handleApiError } from '../../utils/handleApiError';
-
-// TransactionLogsModal is a large, widely-shared forwardRef component still in
-// plain JS; cast locally so its prop types don't collapse to an empty object
-// here without touching its shared source (same pattern used in
-// BatchDetailPage.tsx / HomePage.tsx).
+import { ROUTE_API } from '../../utils/route-util';
 const TransactionLogsModal =
   TransactionLogsModalRaw as ForwardRefExoticComponent<any>;
 
@@ -46,7 +44,7 @@ const CustomerTransationDetailPage = () => {
     try {
       openSpinner();
       const response = await fetchDataAsync<CustomerListResponse>(
-        `/operation-customer?transactionCode=${params.key}`
+        `${ROUTE_API.operationCustomer}?transactionCode=${params.key}`
       );
       setDetail(response?.data?.list?.[0] ?? null);
     } catch (error) {

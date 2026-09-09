@@ -20,7 +20,9 @@ const BranchCreatePage = () => {
   const [address, setAddress] = useState('');
   const params = useParams<{ key: string }>();
 
-  const funcButtonHandleClickExecute = (e: React.MouseEvent<HTMLButtonElement>) => {
+  const funcButtonHandleClickExecute = (
+    e: React.MouseEvent<HTMLButtonElement>
+  ) => {
     let messages = [];
     if (branchCode === '') {
       messages.push(true);
@@ -62,10 +64,14 @@ const BranchCreatePage = () => {
     e.preventDefault();
   };
 
-  const branchCodeHandleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const branchCodeHandleChange = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
     setBranchCode(event.target.value);
   };
-  const branchNameHandleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const branchNameHandleChange = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
     setBranchName(event.target.value);
   };
   const contactsHandleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -74,10 +80,14 @@ const BranchCreatePage = () => {
   const phoneHandleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setPhone(event.target.value);
   };
-  const mobileOneHandleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const mobileOneHandleChange = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
     setMobileOne(event.target.value);
   };
-  const mobileTwoHandleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const mobileTwoHandleChange = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
     setMobileTwo(event.target.value);
   };
   const emailHandleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -86,7 +96,9 @@ const BranchCreatePage = () => {
   const websiteHandleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setWebsite(event.target.value);
   };
-  const addressHandleChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
+  const addressHandleChange = (
+    event: React.ChangeEvent<HTMLTextAreaElement>
+  ) => {
     setAddress(event.target.value);
   };
 

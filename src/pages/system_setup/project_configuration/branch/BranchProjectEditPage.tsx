@@ -2,12 +2,12 @@ import React, { useEffect, useState } from 'react';
 import { redirect, useNavigate, useParams } from 'react-router-dom';
 import Select, { MultiValue, SingleValue } from 'react-select';
 import { toast } from 'react-toastify';
-import type { SelectOption } from '../../../../@type/report';
 import type {
   BranchProjectDetailResponse,
   BranchProjectOption,
   MessageResponse,
 } from '../../../../@type/project_configuration';
+import type { SelectOption } from '../../../../@type/report';
 import { fetchData } from '../../../../services/$service';
 import { ROUTE_API, ROUTE_PATH } from '../../../../utils/route-util';
 
@@ -40,9 +40,7 @@ const BranchProjectEditPage = () => {
             );
             setOptionPolicies(policiesItem?.policies ?? []);
             setSelectdPolicies(
-              (res?.data?.list?.[0]?.policies ?? '')
-                .split(',')
-                .filter(Boolean)
+              (res?.data?.list?.[0]?.policies ?? '').split(',').filter(Boolean)
             );
           }
           break;
@@ -58,7 +56,9 @@ const BranchProjectEditPage = () => {
     });
   };
 
-  const funcButtonHandleClickExecute = (e: React.MouseEvent<HTMLButtonElement>) => {
+  const funcButtonHandleClickExecute = (
+    e: React.MouseEvent<HTMLButtonElement>
+  ) => {
     let messages = [];
     if (selectedProject === '') {
       messages.push(true);
@@ -100,7 +100,9 @@ const BranchProjectEditPage = () => {
 
   const projectHandleChange = (value: SingleValue<BranchProjectOption>) => {
     setSelectdProject(value?.value ?? '');
-    let policiesItem = optionProject?.find((item) => item.value === value?.value);
+    let policiesItem = optionProject?.find(
+      (item) => item.value === value?.value
+    );
     setOptionPolicies(policiesItem?.policies ?? []);
   };
   const PoliciesHandleChange = (value: MultiValue<SelectOption> | null) => {

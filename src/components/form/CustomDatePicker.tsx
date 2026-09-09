@@ -1,10 +1,10 @@
-import type { ChangeEvent } from 'react';
+import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import type { PickerValidDate } from '@mui/x-date-pickers/models';
-import type { Dayjs } from 'dayjs';
 import { format } from 'date-fns';
+import type { Dayjs } from 'dayjs';
+import type { ChangeEvent } from 'react';
 
 interface CustomDatePickerProps {
   label?: string;
@@ -32,7 +32,6 @@ const CustomDatePicker = ({
     : null;
 
   const handleChange = (value: PickerValidDate | null) => {
-    // AdapterDateFns is configured below, so the picker always hands back a Date here.
     const picked = value as Date | null;
     if (!picked || isNaN(picked.getTime())) {
       onChange?.(null);
@@ -42,7 +41,12 @@ const CustomDatePicker = ({
     const d = new Date(picked);
     if (includeCurrentTime) {
       const now = new Date();
-      d.setHours(now.getHours(), now.getMinutes(), now.getSeconds(), now.getMilliseconds());
+      d.setHours(
+        now.getHours(),
+        now.getMinutes(),
+        now.getSeconds(),
+        now.getMilliseconds()
+      );
     }
 
     const formatted = format(d, 'M/d/yyyy h:mm:ss a');

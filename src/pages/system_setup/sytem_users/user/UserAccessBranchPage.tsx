@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
 import ReactPaginate from 'react-paginate';
 import { redirect, useNavigate, useParams } from 'react-router-dom';
-import Select from 'react-select';
 import type { StylesConfig } from 'react-select';
+import Select from 'react-select';
 import { toast } from 'react-toastify';
 import type { SelectOption } from '../../../../@type/report';
 import type {
@@ -11,7 +11,6 @@ import type {
 } from '../../../../@type/system_users';
 import { fetchData } from '../../../../services/$service';
 import { ROUTE_API, ROUTE_PATH } from '../../../../utils/route-util';
-
 const UserAccessBranchPage = () => {
   document.title = 'E-CHANNEL PORTAL | user access branch';
   const navigate = useNavigate();
@@ -155,10 +154,7 @@ const UserAccessBranchPage = () => {
     });
   };
 
-  const getRecordHandleClick = (
-    option: string,
-    item: UserAccessBranchItem
-  ) => {
+  const getRecordHandleClick = (option: string, item: UserAccessBranchItem) => {
     switch (option) {
       case 'delete':
         setTransationCode(item.transactionCode ?? '');

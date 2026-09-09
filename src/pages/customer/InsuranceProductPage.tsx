@@ -9,11 +9,6 @@ const InsuranceProductPage = () => {
   document.title = 'E-CHANNEL PORTAL | insurance product';
   const navigate = useNavigate();
   const [arrProduct, setArrProduct] = useState<ProductOption[]>([]);
-
-  // const [module] = useState(
-  //   JSON.parse(localStorage.getItem('insurance-product_menu_storage'))
-  // );
-
   const getList = () => {
     fetchData<ProductListResponse>(
       ROUTE_API.operationCustomerProduct,
@@ -37,7 +32,6 @@ const InsuranceProductPage = () => {
   };
 
   useEffect(() => {
-    // if (module?.[1]?.status === 'A')
     getList();
   }, []);
 

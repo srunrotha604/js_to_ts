@@ -31,9 +31,7 @@ const RoleAccessPage = () => {
   const [selectedRole, setSelectedRole] = useState('');
   const [listAccess, setListAccess] = useState<SelectOption[]>([]);
   const [selectedAccess, setSelectedAccess] = useState<string | string[]>('');
-  const [selectedProcess, setSelectedProcess] = useState<string | string[]>(
-    ''
-  );
+  const [selectedProcess, setSelectedProcess] = useState<string | string[]>('');
   const getList = () => {
     fetchData<RoleAccessListResponse>(
       ROUTE_API.applicationRoleAccess,

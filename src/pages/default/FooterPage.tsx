@@ -23,22 +23,6 @@ const FooterPage = () => {
       console.error('Error fetching version:', error);
     }
   };
-
-  // useEffect(() => {
-  //   if (!user) return;
-  //   loadVersion();
-
-  //   const handleVersionUpdated = () => {
-  //     loadVersion();
-  //   };
-
-  //   window.addEventListener('versionUpdated', handleVersionUpdated);
-
-  //   return () => {
-  //     window.removeEventListener('versionUpdated', handleVersionUpdated);
-  //   };
-  // }, [user]);
-
   useEffect(() => {
     if (user) {
       loadVersion();
@@ -59,20 +43,6 @@ const FooterPage = () => {
     <footer className="footer footer-transparent d-print-none py-1">
       <div className="container-xl">
         <div className="row text-center align-items-center">
-          {/* <div className="col-lg-auto ms-lg-auto">
-            <ul className="list-inline list-inline-dots mb-0">
-              <li className="list-inline-item">
-                <a href="./docs/index.html" className="link-secondary">
-                  Documentation
-                </a>
-              </li>
-              <li className="list-inline-item">
-              <a href="./license.html" className="link-secondary">
-                  License
-                </a>
-              </li>
-            </ul>
-          </div> */}
           <div className="col-12 col-md-6 d-flex justify-content-md-start">
             <ul className="list-inline list-inline-dots mb-0">
               <li className="list-inline-item">

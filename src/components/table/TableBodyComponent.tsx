@@ -37,7 +37,11 @@ const TableBodyComponent = (props: TableBodyComponentProps) => {
                     {headerItems?.map((item, index) => (
                       <th
                         key={index}
-                        className={item?.width && item.width > 0 ? `tb-w-${item?.width}` : ''}
+                        className={
+                          item?.width && item.width > 0
+                            ? `tb-w-${item?.width}`
+                            : ''
+                        }
                       >
                         {item?.name}
                       </th>

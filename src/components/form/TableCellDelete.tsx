@@ -1,8 +1,8 @@
-import TrashIcon from '../Icons/TrashIcon';
 import { Tooltip } from 'react-tooltip';
-import DeleteButton from '../buttons/DeleteButton';
 import CancelButton from '../buttons/CancelButton';
+import DeleteButton from '../buttons/DeleteButton';
 import Modal, { useModal } from '../common/modal';
+import TrashIcon from '../Icons/TrashIcon';
 
 interface TableCellDeleteProps {
   onClick?: () => void;

@@ -29,11 +29,6 @@ const CustomerEditPage = () => {
   const [step, setStep] = useState(STEP.Edited);
   const methods = useForm();
   const navigate = useNavigate();
-
-  // const [module] = useState(
-  //   JSON.parse(localStorage.getItem('insurance-product_menu_storage'))
-  // );
-
   const getList = () => {
     fetchData<ProjectCategoryResponse>(
       ROUTE_API.operationCustomerProduct + '/' + params.productCode,
@@ -101,7 +96,6 @@ const CustomerEditPage = () => {
     submitData: { status?: string }
   ) => {
     if (submitData.status === 'Draft') {
-      // toast.success('Save draft successfully');
       navigate(-1);
     } else {
       setTransationSubmitted(responseData);

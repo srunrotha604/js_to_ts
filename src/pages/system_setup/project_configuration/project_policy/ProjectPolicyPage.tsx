@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
 import ReactPaginate from 'react-paginate';
+import { useNavigate, useParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import type {
   MessageResponse,
@@ -9,7 +9,7 @@ import type {
 } from '../../../../@type/project_configuration';
 import Loading from '../../../../components/Loading';
 import { fetchData } from '../../../../services/$service';
-import { ROUTE_PATH } from '../../../../utils/route-util';
+import { ROUTE_API, ROUTE_PATH } from '../../../../utils/route-util';
 
 const ProjectPolicyPage = () => {
   document.title = 'E-CHANNEL PORTAL | project';
@@ -23,7 +23,7 @@ const ProjectPolicyPage = () => {
 
   const getList = () => {
     fetchData<ProjectPolicyListResponse>(
-      '/operation-project/policy/' + params.key,
+      `${ROUTE_API.operationProjectPolicy}/` + params.key,
       {},
       'GET'
     ).then((res) => {
@@ -49,24 +49,26 @@ const ProjectPolicyPage = () => {
     let data = {
       transactionCode: transactionCode,
     };
-    fetchData<MessageResponse>('/operation-project/policy', data, 'DELETE').then(
-      (res) => {
-        switch (res?.status) {
-          case 200:
-            toast.success(res?.data?.message);
-            getList();
-            break;
-          case 400:
-            toast.error(res?.data?.message);
-            break;
-          case 403:
-            toast.error(String(res?.data));
-            break;
-          default:
-            navigate(ROUTE_PATH.error404);
-        }
+    fetchData<MessageResponse>(
+      `${ROUTE_API.operationProjectPolicy}`,
+      data,
+      'DELETE'
+    ).then((res) => {
+      switch (res?.status) {
+        case 200:
+          toast.success(res?.data?.message);
+          getList();
+          break;
+        case 400:
+          toast.error(res?.data?.message);
+          break;
+        case 403:
+          toast.error(String(res?.data));
+          break;
+        default:
+          navigate(ROUTE_PATH.error404);
       }
-    );
+    });
   };
 
   const getRecordHandleClick = (option: string, item: ProjectPolicyItem) => {

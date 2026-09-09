@@ -5,13 +5,15 @@ import { ROUTE_PATH } from '../../utils/route-util';
 
 interface PrivateRouteProps {
   children?: ReactNode;
-  //  auth = true : if want redirect when user is login
-  //  auth = false : if want redirect when use is not login
   auth?: boolean;
   redirect: string;
 }
 
-const PrivateRoute = ({ children, auth = false, redirect }: PrivateRouteProps) => {
+const PrivateRoute = ({
+  children,
+  auth = false,
+  redirect,
+}: PrivateRouteProps) => {
   const { loading, user } = useAuth();
   const location = useLocation();
 

@@ -1,12 +1,12 @@
-import { useState, useEffect } from 'react';
+import ClearIcon from '@mui/icons-material/Clear';
+import { Box, Button, IconButton, InputAdornment } from '@mui/material';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import { Box, IconButton, InputAdornment, Button } from '@mui/material';
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import type { PickerValidDate } from '@mui/x-date-pickers/models';
 import dayjs from 'dayjs';
-import ClearIcon from '@mui/icons-material/Clear';
 import 'dayjs/locale/en';
+import { useEffect, useState } from 'react';
 
 interface MuiDateRangeValue {
   startDate?: Date | null;
@@ -15,11 +15,19 @@ interface MuiDateRangeValue {
 
 interface MuiDateRangePickerProps {
   date?: MuiDateRangeValue;
-  onDateChange?: (value: { startDate: Date | null; endDate: Date | null }) => void;
+  onDateChange?: (value: {
+    startDate: Date | null;
+    endDate: Date | null;
+  }) => void;
 }
 
-export default function MuiDateRangePicker({ date = {}, onDateChange }: MuiDateRangePickerProps) {
-  const [startDate, setStartDate] = useState<Date | null>(date.startDate ?? null);
+export default function MuiDateRangePicker({
+  date = {},
+  onDateChange,
+}: MuiDateRangePickerProps) {
+  const [startDate, setStartDate] = useState<Date | null>(
+    date.startDate ?? null
+  );
   const [endDate, setEndDate] = useState<Date | null>(date.endDate ?? null);
 
   useEffect(() => {
@@ -28,12 +36,9 @@ export default function MuiDateRangePicker({ date = {}, onDateChange }: MuiDateR
   }, [date]);
 
   const handleStartChange = (value: PickerValidDate | null) => {
-    // AdapterDayjs is configured below, so the picker always hands back a Dayjs here.
     const newValue = value as dayjs.Dayjs | null;
     const newStart = newValue ? newValue.toDate() : null;
     let newEnd = endDate;
-
-    // reset endDate if it's before newStart
     if (newStart && endDate && dayjs(endDate).isBefore(dayjs(newStart))) {
       newEnd = null;
       setEndDate(null);
@@ -81,7 +86,10 @@ export default function MuiDateRangePicker({ date = {}, onDateChange }: MuiDateR
               InputProps: {
                 endAdornment: startDate && (
                   <InputAdornment position="end">
-                    <IconButton onClick={() => handleStartChange(null)} size="small">
+                    <IconButton
+                      onClick={() => handleStartChange(null)}
+                      size="small"
+                    >
                       <ClearIcon fontSize="small" />
                     </IconButton>
                   </InputAdornment>
@@ -107,7 +115,10 @@ export default function MuiDateRangePicker({ date = {}, onDateChange }: MuiDateR
               InputProps: {
                 endAdornment: endDate && (
                   <InputAdornment position="end">
-                    <IconButton onClick={() => handleEndChange(null)} size="small">
+                    <IconButton
+                      onClick={() => handleEndChange(null)}
+                      size="small"
+                    >
                       <ClearIcon fontSize="small" />
                     </IconButton>
                   </InputAdornment>
@@ -118,7 +129,12 @@ export default function MuiDateRangePicker({ date = {}, onDateChange }: MuiDateR
         />
 
         {(startDate || endDate) && (
-          <Button onClick={clearAll} size="small" variant="outlined" color="secondary">
+          <Button
+            onClick={clearAll}
+            size="small"
+            variant="outlined"
+            color="secondary"
+          >
             Clear All
           </Button>
         )}

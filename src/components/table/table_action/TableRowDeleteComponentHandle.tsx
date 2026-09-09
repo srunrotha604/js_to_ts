@@ -15,7 +15,9 @@ interface TableRowDeleteComponentHandleProps {
   message?: ReactNode;
 }
 
-const TableRowDeleteComponentHandle = (props: TableRowDeleteComponentHandleProps) => {
+const TableRowDeleteComponentHandle = (
+  props: TableRowDeleteComponentHandleProps
+) => {
   const { success, uuid, route, title, message } = props;
   const { modalRef, openModal, closeModal } = useModal();
   const { showErrorResponseMessage } = useMessage();

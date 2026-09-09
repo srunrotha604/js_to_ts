@@ -4,7 +4,6 @@ import Modal from '../components/common/modal';
 import { fetchDataAsync } from '../services/$service';
 import { ROUTE_API } from '../utils/route-util';
 import IssueDateDetailModal from './IssueDateDetailModal';
-
 interface IssueDateModalItem {
   sureName?: string;
   firstName?: string;
@@ -16,7 +15,6 @@ interface IssueDateModalItem {
     secureCode?: string;
   };
 }
-
 interface IssueDateModalProps {
   open?: boolean;
   closeModal?: () => void;
@@ -38,15 +36,10 @@ const IssueDateModal = ({
   const [issueStatus, setIssueStatus] = useState<boolean | null>(null);
   const [showDetailIssueModal, setShowDetailIssueModal] = useState(false);
   const [remark, setRemark] = useState('');
-
   const hasIssueDate = !!item?.customerIssueDate?.issueDate;
-  const datalist = item?.issueDateStatus;
-
   useEffect(() => {
     if (open) {
       setIssueStatus(item?.issueDateStatus ?? null);
-
-      // Optionally get a default remark from the item
       const existingRemark = item?.customerIssueDate?.remark || '';
       setRemark(existingRemark);
     }
@@ -54,9 +47,7 @@ const IssueDateModal = ({
 
   const updateCardConfirmation = async (status: 'confirm' | 'cancel') => {
     const secureCode = item?.customerIssueDate?.secureCode;
-
     if (!secureCode) return;
-
     try {
       const response = await fetchDataAsync<{ message?: string }>(
         ROUTE_API.operationCustomerCardConfirmation,
@@ -86,23 +77,23 @@ const IssueDateModal = ({
         );
       }
     } catch (err) {
-      console.error('Error during update:', err instanceof Error ? err.message : err);
+      console.error(
+        'Error during update:',
+        err instanceof Error ? err.message : err
+      );
     }
   };
-
   const handleYes = async () => {
     await updateCardConfirmation('confirm');
     setIssueStatus(true);
     closeModal?.();
     setTimeout(() => setShowDetailIssueModal(true), 150);
   };
-
   const handleNo = async () => {
     await updateCardConfirmation('cancel');
     setIssueStatus(false);
     closeModal?.();
   };
-
   return (
     <>
       {open && (
@@ -146,7 +137,6 @@ const IssueDateModal = ({
           </div>
         </Modal>
       )}
-
       {showDetailIssueModal && (
         <IssueDateDetailModal
           key="issue-detail-modal"
@@ -158,5 +148,4 @@ const IssueDateModal = ({
     </>
   );
 };
-
 export default IssueDateModal;

@@ -23,7 +23,6 @@ const ProjectEditPage = () => {
     ).then((res) => {
       switch (res?.status) {
         case 200:
-          // eslint-disable-next-line no-case-declarations
           let data = res?.data?.list?.[0];
           setProjectName(data?.projectName ?? '');
           break;
@@ -39,7 +38,9 @@ const ProjectEditPage = () => {
     });
   };
 
-  const funcButtonHandleClickExecute = (e: React.MouseEvent<HTMLButtonElement>) => {
+  const funcButtonHandleClickExecute = (
+    e: React.MouseEvent<HTMLButtonElement>
+  ) => {
     let messages = [];
     if (projectName === '') {
       messages.push(true);
@@ -71,7 +72,9 @@ const ProjectEditPage = () => {
     e.preventDefault();
   };
 
-  const projectNameHandleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const projectNameHandleChange = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
     setProjectName(event.target.value);
   };
   const goBackHandleClick = () => {

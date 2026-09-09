@@ -1,12 +1,19 @@
 import { useEffect, useMemo, useState } from 'react';
-import Select from 'react-select';
 import type { StylesConfig } from 'react-select';
-import type { ProjectCategoryResponse, ProjectPolicyOption } from '../../@type/batch';
+import Select from 'react-select';
+import type {
+  ProjectCategoryResponse,
+  ProjectPolicyOption,
+} from '../../@type/batch';
 import { fetchData } from '../../services/$service';
 import { ROUTE_API } from '../../utils/route-util';
 
 const fetchProject = async () =>
-  fetchData<ProjectCategoryResponse>(ROUTE_API.operationCustomerProduct, {}, 'GET');
+  fetchData<ProjectCategoryResponse>(
+    ROUTE_API.operationCustomerProduct,
+    {},
+    'GET'
+  );
 
 export interface ProjectSelectOption {
   label: string;

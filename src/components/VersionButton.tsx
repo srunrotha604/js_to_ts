@@ -1,13 +1,10 @@
-// components/VersionButton.tsx
 import { Typography } from '@mui/material';
 import { useEffect, useState } from 'react';
 import type { VersionListResponse } from '../@type/version';
 import { fetchDataAsync } from '../services/$service'; // adjust the path if needed
 import { ROUTE_API } from '../utils/route-util';
-
 const VersionButton = () => {
   const [version, setVersion] = useState('');
-
   useEffect(() => {
     const getVersion = async () => {
       try {
@@ -21,7 +18,6 @@ const VersionButton = () => {
     };
     getVersion();
   }, []);
-
   return version ? (
     <Typography variant="body2" color="textPrimary">
       Version {version}

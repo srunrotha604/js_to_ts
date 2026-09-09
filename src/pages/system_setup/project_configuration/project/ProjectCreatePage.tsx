@@ -10,7 +10,9 @@ const ProjectCreatePage = () => {
   const navigate = useNavigate();
 
   const [projectName, setProjectName] = useState('');
-  const funcButtonHandleClickExecute = (e: React.MouseEvent<HTMLButtonElement>) => {
+  const funcButtonHandleClickExecute = (
+    e: React.MouseEvent<HTMLButtonElement>
+  ) => {
     let messages = [];
     if (projectName === '') {
       messages.push(true);
@@ -41,7 +43,9 @@ const ProjectCreatePage = () => {
     e.preventDefault();
   };
 
-  const projectNameHandleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const projectNameHandleChange = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
     setProjectName(event.target.value);
   };
   const goBackHandleClick = () => {

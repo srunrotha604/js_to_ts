@@ -1,3 +1,4 @@
+import axios from 'axios';
 import type {
   ComponentType,
   Dispatch,
@@ -8,7 +9,6 @@ import { useEffect, useRef, useState } from 'react';
 import { useLocation, useNavigate, useParams } from 'react-router';
 import { useSearchParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import axios from 'axios';
 import type {
   CustomerListResponse,
   CustomerTransaction,
@@ -31,13 +31,8 @@ import { fetchDataAsync } from '../../services/$service';
 import type { ActionItem } from '../../utils/actions';
 import { delay } from '../../utils/delay';
 import { pluralize } from '../../utils/pluralize';
-import { ROUTE_PATH } from '../../utils/route-util';
+import { ROUTE_API, ROUTE_PATH } from '../../utils/route-util';
 import { STATUS } from '../../utils/status';
-
-// TransactionTabList / TransactionBatchProccessModal / TransactionTabSelect are
-// large, widely-shared components still in plain JS; cast locally so their
-// prop types don't collapse to an empty object here without touching their
-// shared source (same pattern used in BatchDetailPage.tsx / HomePage.tsx).
 const TransactionTabList =
   TransactionTabListRaw as ForwardRefExoticComponent<any>;
 const TransactionBatchProccessModal =
@@ -94,16 +89,14 @@ const CustomerDeletePage = () => {
   const [isApprove, setIsApprove] = useState<boolean | null>(null);
   const [processStatus, setProccessStatus] = useState<string | null>(null);
   const [totalDocs, setTotalDocs] = useState<number | null>(null);
-  const [currentTabStatus, setCurrentTabStatus] = useState<string | null>(
-    null
-  );
+  const [currentTabStatus, setCurrentTabStatus] = useState<string | null>(null);
 
   const getSelectedCustomerList = async () => {
     try {
       let response;
       if (selectedAll) {
         response = await fetchDataAsync<CustomerListResponse>(
-          `/operation-customer`,
+          ROUTE_API.operationCustomer,
           {
             params: {
               status: currentTabStatus,
@@ -113,7 +106,7 @@ const CustomerDeletePage = () => {
         );
       } else {
         response = await fetchDataAsync<CustomerListResponse>(
-          '/operation-customer',
+          ROUTE_API.operationCustomer,
           {
             params: {
               transaction: selectedTransaction.join(','),
@@ -155,7 +148,7 @@ const CustomerDeletePage = () => {
         summaryDate.remark = rejectRemark;
       }
 
-      await fetchDataAsync('/operation-customer/delete', {
+      await fetchDataAsync(ROUTE_API.operationCustomerDelete, {
         data: summaryDate,
         method: 'POST',
       });
@@ -177,8 +170,6 @@ const CustomerDeletePage = () => {
       delay(closeSpinner);
     }
   };
-
-  // close modal when no customer selected
   useEffect(() => {
     if (open && selectedCustomerList.length <= 0) {
       closeModal();

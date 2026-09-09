@@ -9,7 +9,6 @@ import type {
 } from '../../../../@type/system_users';
 import { fetchData } from '../../../../services/$service';
 import { ROUTE_API, ROUTE_PATH } from '../../../../utils/route-util';
-
 const UserAccessStatusPage = () => {
   document.title = 'E-CHANNEL PORTAL | user access status';
   const navigate = useNavigate();

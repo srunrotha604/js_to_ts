@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import Select from 'react-select';
 import type { StylesConfig } from 'react-select';
+import Select from 'react-select';
 import { toast } from 'react-toastify';
 import type { SelectOption } from '../../../../@type/report';
 import type {
@@ -26,7 +26,7 @@ const UserRoleCreatePage = () => {
 
   const getApplicationList = () => {
     fetchData<ApplicationOptionsResponse>(
-      '/DataOption/application/' + params.key,
+      ROUTE_API.dataOptionApplication(params.key || ''),
       {},
       'GET'
     ).then((res) => {
@@ -92,7 +92,7 @@ const UserRoleCreatePage = () => {
     setSelectedApplication(e?.value ?? '');
 
     fetchData<SystemUserRoleOptionsResponse>(
-      '/DataOption/system-user-role/' + e?.value,
+      ROUTE_API.dataOptionSystemUserRole(e?.value || ''),
       {},
       'GET'
     ).then((res) => {

@@ -26,7 +26,12 @@ interface IssueDateDetailModalProps {
   item?: IssueDateDetailItem | null;
 }
 
-const IssueDateDetailModal = ({ open, onClose, modalRef, item }: IssueDateDetailModalProps) => {
+const IssueDateDetailModal = ({
+  open,
+  onClose,
+  modalRef,
+  item,
+}: IssueDateDetailModalProps) => {
   const [detail, setDetail] = useState<IssueConfirmationDetail | null>(null);
 
   useEffect(() => {

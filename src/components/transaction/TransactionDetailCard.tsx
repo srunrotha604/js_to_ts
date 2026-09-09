@@ -1,6 +1,8 @@
 import type { ReactNode } from 'react';
 import { useNavigate } from 'react-router';
-import TransactionDetail, { type TransactionDetailData } from './TransactionDetail';
+import TransactionDetail, {
+  type TransactionDetailData,
+} from './TransactionDetail';
 
 interface TransactionDetailCardProps {
   data?: TransactionDetailData | null;
@@ -8,7 +10,11 @@ interface TransactionDetailCardProps {
   children?: ReactNode;
 }
 
-const TransactionDetailCard = ({ data, actions, children }: TransactionDetailCardProps) => {
+const TransactionDetailCard = ({
+  data,
+  actions,
+  children,
+}: TransactionDetailCardProps) => {
   const navigate = useNavigate();
 
   const handleGoBack = () => {
@@ -71,7 +77,11 @@ const TransactionHeader = ({ status, deleted }: TransactionHeaderProps) => {
   );
 };
 
-export const TransactionDetailCardContainer = ({ children }: { children?: ReactNode }) => {
+export const TransactionDetailCardContainer = ({
+  children,
+}: {
+  children?: ReactNode;
+}) => {
   return (
     <div className="page-wrapper full-height-dashboard-container justify-content-center">
       <div className="container-xl py-4">

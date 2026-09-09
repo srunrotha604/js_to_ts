@@ -7,10 +7,8 @@ import type {
   UserRoleListResponse,
 } from '../../../../@type/system_users';
 import Loading from '../../../../components/Loading';
-
 import { fetchData } from '../../../../services/$service';
 import { ROUTE_API, ROUTE_PATH } from '../../../../utils/route-util';
-
 const UserRolePage = () => {
   document.title = 'E-CHANNEL PORTAL | user';
   const navigate = useNavigate();
@@ -25,7 +23,7 @@ const UserRolePage = () => {
 
   const getList = () => {
     fetchData<UserRoleListResponse>(
-      `${ROUTE_API.eChanelUserRole}/` + params.key,
+      ROUTE_API.eChanelUserRoleByKey(params.key || ''),
       {},
       'GET'
     ).then((res) => {

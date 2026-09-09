@@ -32,7 +32,6 @@ interface CustomPatternProps {
   onKeyDown?: (event: KeyboardEvent<HTMLInputElement>) => void;
 }
 
-// eslint-disable-next-line react/display-name
 export const CustomPattern = forwardRef<HTMLInputElement, CustomPatternProps>(
   ({ value, onClick, onChange, onFocus, onKeyDown }, ref) => {
     return (
@@ -189,7 +188,6 @@ const CustomerCreate = (props: CustomerCreateProps) => {
     if (formData.dateOfBirth && formData.dateOfBirth.toDate) {
       handleDateChange(formData.dateOfBirth, () => {});
     }
-    console.log('Form data on init:', formData); // Debug log to check initial form data
   }, []);
 
   return (

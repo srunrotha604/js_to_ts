@@ -17,7 +17,7 @@ const ProductEditPage = () => {
   const [productName, setProductName] = useState('');
   const getList = () => {
     fetchData<ProductListResponse>(
-      '/operation-product/' + params.key,
+      `${ROUTE_API.operationProduct}/` + params.key,
       {},
       'GET'
     ).then((res) => {
@@ -34,7 +34,9 @@ const ProductEditPage = () => {
       }
     });
   };
-  const funcButtonHandleClickExecute = (e: React.MouseEvent<HTMLButtonElement>) => {
+  const funcButtonHandleClickExecute = (
+    e: React.MouseEvent<HTMLButtonElement>
+  ) => {
     let messages = [];
     if (productCode === '') {
       messages.push(true);
@@ -71,10 +73,14 @@ const ProductEditPage = () => {
     e.preventDefault();
   };
 
-  const productCodeHandleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const productCodeHandleChange = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
     setProductCode(event.target.value);
   };
-  const productNameHandleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const productNameHandleChange = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
     setProductName(event.target.value);
   };
   const goBackHandleClick = () => {

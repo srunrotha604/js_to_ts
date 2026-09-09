@@ -196,7 +196,6 @@ const ForgotPasswordPage = () => {
             setResetSuccess(true);
             break;
           case 400:
-            // setInvalidFeedBack(res?.data?.message);
             toast.error(res?.data?.message ?? '');
             break;
           case 403:

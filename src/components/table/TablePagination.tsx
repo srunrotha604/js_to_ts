@@ -1,6 +1,6 @@
 import ReactPaginate from 'react-paginate';
-import PreviousIcon from '../Icons/PreviousIcon';
 import NextIcon from '../Icons/NextIcon';
+import PreviousIcon from '../Icons/PreviousIcon';
 
 interface TablePaginationProps {
   totalDocs?: number;

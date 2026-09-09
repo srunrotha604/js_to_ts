@@ -3,7 +3,10 @@ import { PatternFormat } from 'react-number-format';
 import { useNavigate } from 'react-router-dom';
 import Select from 'react-select';
 import { toast } from 'react-toastify';
-import type { CompanyBranchOption, SelectOption } from '../../../../@type/report';
+import type {
+  CompanyBranchOption,
+  SelectOption,
+} from '../../../../@type/report';
 import type {
   MessageResponse,
   RoleOptionsResponse,
@@ -110,9 +113,7 @@ const UserCreatePage = () => {
   ) => {
     setTextFirstName(event.target.value);
   };
-  const lastNameHandleChange = (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
+  const lastNameHandleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setTextLastName(event.target.value);
   };
 
@@ -122,9 +123,8 @@ const UserCreatePage = () => {
 
   const branchHandleChange = (e: SelectOption | null) => {
     setSelectedBranch(e?.value ?? '');
-    console.log(e?.value);
     fetchData<MessageResponse>(
-      `/e-chanel-user/access/branch-manager?transaction=${e?.value}`,
+      `${ROUTE_API.branchManager}?transaction=${e?.value}`,
       {},
       'GET'
     ).then((res) => {

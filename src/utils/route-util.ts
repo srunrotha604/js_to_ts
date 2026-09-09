@@ -112,6 +112,7 @@ const ROUTE_API = {
     `/e-chanel-user/access/${userCode}`,
   eChanelUser: '/e-chanel-user',
   eChanelUserRole: '/e-chanel-user/role',
+  branchManager: '/e-chanel-user/access/branch-manager',
   eChanelUserRoleByKey: (key: string | number) => `/e-chanel-user/role/${key}`,
   eChanelUserBranch: '/e-chanel-user/branch',
   eChanelUserBranchCategory: '/e-chanel-user/branch/category',
@@ -135,7 +136,9 @@ const ROUTE_API = {
   applicationVersion: '/application-version',
   applicationVersionActive: '/application-version/active',
   log: '/log',
+  operationLog: '/operation-customer/log',
   logContactUs: '/log/contact-us',
+  customerReport: '/export/operation-customer/filter',
 };
 
 export { ROUTE_API, ROUTE_PATH };

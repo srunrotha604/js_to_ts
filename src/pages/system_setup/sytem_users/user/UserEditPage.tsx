@@ -124,9 +124,7 @@ const UserEditPage = () => {
   ) => {
     setTextFirstName(event.target.value);
   };
-  const lastNameHandleChange = (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
+  const lastNameHandleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setTextLastName(event.target.value);
   };
 

@@ -2,11 +2,11 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Select, { SingleValue } from 'react-select';
 import { toast } from 'react-toastify';
-import type { SelectOption } from '../../../../@type/report';
 import type {
   MessageResponse,
   ProductOptionsResponse,
 } from '../../../../@type/project_configuration';
+import type { SelectOption } from '../../../../@type/report';
 import { fetchData } from '../../../../services/$service';
 import { ROUTE_API, ROUTE_PATH } from '../../../../utils/route-util';
 
@@ -39,7 +39,9 @@ const ProductCreatePage = () => {
       }
     });
   };
-  const funcButtonHandleClickExecute = (e: React.MouseEvent<HTMLButtonElement>) => {
+  const funcButtonHandleClickExecute = (
+    e: React.MouseEvent<HTMLButtonElement>
+  ) => {
     let messages = [];
     if (selectedProduct === '') {
       messages.push(true);
@@ -83,10 +85,14 @@ const ProductCreatePage = () => {
     setSelectedProduct(value?.value ?? '');
   };
 
-  const productCodeHandleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const productCodeHandleChange = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
     setProductCode(event.target.value);
   };
-  const productNameHandleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const productNameHandleChange = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
     setProductName(event.target.value);
   };
   const goBackHandleClick = () => {

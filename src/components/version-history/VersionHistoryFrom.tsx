@@ -6,12 +6,10 @@ import type { VersionItem } from '../../@type/version';
 import Modal, { useModal } from '../../components/common/modal';
 import CustomDatePicker from '../../components/form/CustomDatePicker';
 import { createNewVersion } from '../../pages/version-history/versionexport';
-
 interface VersionFormValues {
   version: string;
   description: string;
 }
-
 interface VersionHistoryFormProps {
   onCreated?: (version: Omit<VersionItem, 'uuid'>) => void;
 }

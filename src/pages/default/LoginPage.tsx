@@ -60,7 +60,6 @@ const LoginPage = () => {
             setInvalidFeedBack(String(res?.data));
             break;
           default:
-          // navigate("/404");
         }
       });
     }

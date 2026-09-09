@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react';
-import { formatDay, convertAge } from '../../utils/format-day';
+import { convertAge, formatDay } from '../../utils/format-day';
 import LabelValueList from '../common/LabelValueList';
 import TransactionNumber from '../common/TransactionNumber';
 import ComponentStatus from '../customer/ComponentStatus';

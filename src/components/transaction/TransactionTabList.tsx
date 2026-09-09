@@ -14,17 +14,17 @@ import {
   useNavigate,
   useSearchParams,
 } from 'react-router-dom';
-import Select from 'react-select';
 import type { StylesConfig } from 'react-select';
+import Select from 'react-select';
 import { toast } from 'react-toastify';
 import { useDebouncedCallback } from 'use-debounce';
-import '../../assets/style/custom_style.css';
 import type {
   CustomerListResponse,
   CustomerTransaction,
   TransactionTotalCounts,
 } from '../../@type/batch';
 import type { SelectOption } from '../../@type/report';
+import '../../assets/style/custom_style.css';
 import ComponentStatus from '../../components/customer/ComponentStatus';
 import IssueDateDetailModal from '../../components/IssueDateDetailModal';
 import IssueDateModal from '../../components/IssueDateModal';
@@ -34,7 +34,7 @@ import useMessage from '../../hooks/useMessage';
 import { fetchData, fetchDataAsync } from '../../services/$service';
 import { delay } from '../../utils/delay';
 import { formatDay } from '../../utils/format-day';
-import { ROUTE_PATH } from '../../utils/route-util';
+import { ROUTE_API, ROUTE_PATH } from '../../utils/route-util';
 import Button from '../common/Button';
 import Checkbox from '../common/Checkbox';
 import Modal, { useModal } from '../common/modal/index';
@@ -127,8 +127,6 @@ interface TransactionTabListProps {
   enableCheckbox?: boolean | ((args: { tabStatus: string }) => boolean);
   enableItemCheckbox?: boolean | ((item: CustomerTransaction) => boolean);
 }
-
-//eslint-disable-next-line react/display-name
 const TransactionTabList = forwardRef<
   TransactionTabListHandle,
   TransactionTabListProps
@@ -141,7 +139,7 @@ const TransactionTabList = forwardRef<
       renderTableHead,
       renderTableBody,
       path = ROUTE_PATH.dashboard,
-      url = '/operation-customer',
+      url = `${ROUTE_API.operationCustomer}`,
       extraParams = '',
       renderExtraFilter,
       onTabChange,
@@ -183,9 +181,7 @@ const TransactionTabList = forwardRef<
       label: 'All',
     });
     const [tabStatus, setTabStatus] = useState(defaultTab);
-    // const [query, setQuery] = useState('');
     const navigate = useNavigate();
-
     const [rowPerPage, setRowPerPage] = useState(25);
     const [pageNum, setPageNum] = useState(1);
     const { showErrorResponseMessage } = useMessage();
@@ -266,7 +262,7 @@ const TransactionTabList = forwardRef<
 
     const getListDetails = (transactionCode?: string) => {
       return fetchData<CustomerListResponse>(
-        '/operation-customer?transactionCode=' + transactionCode,
+        `${ROUTE_API.operationCustomer}?transactionCode=` + transactionCode,
         {},
         'GET'
       ).then((res) => {
@@ -383,7 +379,9 @@ const TransactionTabList = forwardRef<
     useEffect(() => {
       if (company) {
         const e_chanel_storage = localStorage.getItem('e_chanel_storage');
-        const token_text = e_chanel_storage ? JSON.parse(e_chanel_storage) : null;
+        const token_text = e_chanel_storage
+          ? JSON.parse(e_chanel_storage)
+          : null;
         const companyDetails = company?.find(
           (item) => item?.value === token_text?.company
         );
@@ -411,20 +409,11 @@ const TransactionTabList = forwardRef<
               pageNum,
               searchRef.current?.value ?? '',
               type?.value ?? 'All'
-              // date.startDate,
-              // date.endDate
             );
           },
         };
       },
-      [
-        tabStatus,
-        selectedBranch,
-        rowPerPage,
-        pageNum,
-        type,
-        // date
-      ]
+      [tabStatus, selectedBranch, rowPerPage, pageNum, type]
     );
 
     useEffect(() => {
@@ -455,19 +444,11 @@ const TransactionTabList = forwardRef<
         );
         resetTableScroll();
       }
-      // return () => {
-      //   abortController.abort();
-      // };
     }, [searchParams, branch]);
 
-    const debounceSearch = useDebouncedCallback(
-      // function
-      (value: string) => {
-        navigateList({ pageNum: 1, search: value });
-      },
-      // delay in ms
-      400
-    );
+    const debounceSearch = useDebouncedCallback((value: string) => {
+      navigateList({ pageNum: 1, search: value });
+    }, 400);
 
     const {
       modalRef: transactionLogModalRef,
@@ -557,7 +538,9 @@ const TransactionTabList = forwardRef<
                       <li className="nav-item" key={index}>
                         <a
                           href={`#${item.status}`}
-                          onClick={() => tabHandleClick(item.status ?? '', item.type)}
+                          onClick={() =>
+                            tabHandleClick(item.status ?? '', item.type)
+                          }
                           className={`nav-link text-${item.label} ${
                             tabStatus === item.status ? 'active' : ''
                           }`}
@@ -1010,7 +993,6 @@ const TransactionTabList = forwardRef<
           modalRef={issueDateModalRef}
           item={issueDateItem}
           arrCustomer={arrCustomer}
-          // onStatusChange={handleStatusChange}
           onUpdate={refreshCardStatus}
         />
 
@@ -1052,19 +1034,17 @@ interface TransactionLogsModalProps {
   closeSpinner: () => void;
 }
 
-// eslint-disable-next-line react/display-name
 export const TransactionLogsModal = forwardRef<
   HTMLDivElement,
   TransactionLogsModalProps
 >(({ transactionNo, open, onClose, openSpinner, closeSpinner }, ref) => {
-  // const { modalRef, openModal, open, closeModal } = useModal();
   const [detail, setDetail] = useState<TransactionLogItem[]>([]);
 
   const getDetails = async () => {
     try {
       openSpinner();
       const response = await fetchDataAsync<{ list?: TransactionLogItem[] }>(
-        `/operation-customer/log?transaction=${transactionNo}`
+        `${ROUTE_API.operationLog}?transaction=${transactionNo}`
       );
       setDetail(response?.data?.list ?? []);
     } catch (error) {
@@ -1134,17 +1114,12 @@ export const selectCustomStyles: StylesConfig<any, boolean> = {
   }),
   valueContainer: (provided) => ({
     ...provided,
-    // maxWidth: '300px',
     whiteSpace: 'nowrap',
-    // minWidth: '50px',
     flexWrap: 'nowrap',
-    // textOverflow: 'ellipsis',
     maxWidth: '90%',
-    // whiteSpace: "nowrap",
     overflow: 'hidden',
   }),
   menu: (base) => {
-    // eslint-disable-next-line no-unused-vars
     const { width, ...css } = base;
     return { ...css, minWidth: '300px' };
   },

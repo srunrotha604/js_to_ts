@@ -172,14 +172,6 @@ const VersionHistoryEdit = ({
               Cancel
             </button>
             <div>
-              {/* <button
-                type="submit"
-                className="btn btn-primary me-2"
-                disabled={submitting}
-              >
-                {submitting ? 'Updating...' : 'Update'}
-              </button> */}
-
               <button
                 type="button"
                 className="btn btn-danger"

@@ -1,9 +1,13 @@
-import type { Dispatch, ForwardRefExoticComponent, SetStateAction } from 'react';
+import axios from 'axios';
+import type {
+  Dispatch,
+  ForwardRefExoticComponent,
+  SetStateAction,
+} from 'react';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useLocation, useNavigate, useParams } from 'react-router';
 import { useSearchParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import axios from 'axios';
 import type {
   BatchDetail,
   CustomerListResponse,
@@ -34,15 +38,10 @@ import { getConfirmedMessageText } from '../../utils/get-confirm-message-text';
 import { pluralize } from '../../utils/pluralize';
 import { ROUTE_API } from '../../utils/route-util';
 import { STATUS } from '../../utils/status';
-
-// TransactionTabList / TransactionBatchProccessModal are large, widely-shared
-// forwardRef components still in plain JS; cast locally so their prop types
-// don't collapse to an empty object here without touching their shared source.
 const TransactionTabList =
   TransactionTabListRaw as ForwardRefExoticComponent<any>;
 const TransactionBatchProccessModal =
   TransactionBatchProccessModalRaw as ForwardRefExoticComponent<any>;
-
 const BatchDetailPage = () => {
   const location = useLocation();
   const [searchParams] = useSearchParams();
@@ -94,9 +93,7 @@ const BatchDetailPage = () => {
   const [isApprove, setIsApprove] = useState<boolean | null>(null);
   const [processStatus, setProccessStatus] = useState<string | null>(null);
   const [batchDetail, setBatchDetail] = useState<BatchDetail | null>(null);
-  const [currentTabStatus, setCurrentTabStatus] = useState<string | null>(
-    null
-  );
+  const [currentTabStatus, setCurrentTabStatus] = useState<string | null>(null);
 
   const { openSpinner, closeSpinner, spinnerState } = useSpinner();
 
@@ -156,7 +153,7 @@ const BatchDetailPage = () => {
         );
       } else {
         response = await fetchDataAsync<CustomerListResponse>(
-          '/operation-customer',
+          ROUTE_API.operationCustomer,
           {
             params: {
               transaction: selectedTransaction.join(','),
@@ -251,8 +248,6 @@ const BatchDetailPage = () => {
       delay(closeSpinner);
     }
   };
-
-  // close modal when no customer selected
   useEffect(() => {
     if (open && selectedCustomerList.length <= 0) {
       closeModal();
@@ -398,7 +393,6 @@ const BatchDetailPage = () => {
                   <th>Name</th>
                   <th>Tel No.</th>
                   <th>Gender</th>
-                  {/* <th>Position</th> */}
                   <th>Nationality</th>
                   <th>NIC/Passport</th>
                 </>

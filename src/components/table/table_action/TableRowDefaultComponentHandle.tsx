@@ -10,7 +10,9 @@ interface TableRowDefaultComponentHandleProps {
   method?: string;
 }
 
-const TableRowDefaultComponentHandle = (props: TableRowDefaultComponentHandleProps) => {
+const TableRowDefaultComponentHandle = (
+  props: TableRowDefaultComponentHandleProps
+) => {
   const { data, success, uuid, route, method } = props;
   const { showErrorResponseMessage } = useMessage();
   const onSubmit = async () => {
