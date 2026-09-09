@@ -4,3 +4,4 @@ export * from './api/profile.api';
 export * from './api/change-password.api';
 export * from './api/contact-us.api';
 export * from './api/home.api';
+export * from './api/error-log.api';

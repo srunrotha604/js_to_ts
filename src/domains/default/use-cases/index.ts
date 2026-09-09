@@ -7,3 +7,4 @@ export * from './build-login-dto';
 export * from './build-change-password-dto';
 export * from './build-forgot-password-dto';
 export * from './build-profile-update-dto';
+export * from './build-client-error-log-dto';

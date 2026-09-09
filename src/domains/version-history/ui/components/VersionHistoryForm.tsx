@@ -2,10 +2,12 @@ import { useEffect, useState } from 'react';
 import 'react-datepicker/dist/react-datepicker.css';
 import { useForm } from 'react-hook-form';
 import { toast } from 'react-toastify';
-import type { VersionItem } from '../../@type/version';
-import Modal, { useModal } from '../../components/common/modal';
-import CustomDatePicker from '../../components/form/CustomDatePicker';
-import { createNewVersion } from '../../pages/version-history/versionexport';
+import CustomDatePicker from '../../../../components/form/CustomDatePicker';
+import Modal, { useModal } from '../../../../components/common/modal';
+import type { VersionItem } from '../../entities';
+import { createVersion } from '../../interface-adapters';
+import { formatReleaseDate } from '../../use-cases';
+
 interface VersionFormValues {
   version: string;
   description: string;
@@ -25,8 +27,6 @@ const VersionHistoryForm = ({ onCreated }: VersionHistoryFormProps) => {
     formState: { errors },
   } = useForm<VersionFormValues>();
 
-  document.title = 'Alt-Fa APIs Admin System | System user-company';
-
   useEffect(() => {
     const handleFocusIn = (e: FocusEvent) => {
       if ((e.target as HTMLElement).closest('[data-tabler-disable-focus]')) {
@@ -43,15 +43,11 @@ const VersionHistoryForm = ({ onCreated }: VersionHistoryFormProps) => {
       return;
     }
 
-    const dateObj = new Date(selectedDate);
-    const pad = (n: number) => n.toString().padStart(2, '0');
-    const releaseDateStr = `${dateObj.getFullYear()}-${pad(
-      dateObj.getMonth() + 1
-    )}-${pad(dateObj.getDate())}`;
+    const releaseDateStr = formatReleaseDate(new Date(selectedDate));
 
     try {
       setSubmitting(true);
-      await createNewVersion({
+      await createVersion({
         releaseDate: releaseDateStr,
         version: formData.version,
         description: formData.description,

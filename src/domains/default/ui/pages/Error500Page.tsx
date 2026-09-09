@@ -1,14 +1,14 @@
 import { Link } from 'react-router-dom';
-import { ROUTE_PATH } from '../../utils/route-util';
-function Error404Page() {
-  document.title = 'Error 404';
+import { ROUTE_PATH } from '../../../../utils/route-util';
+function Error500Page() {
+  document.title = 'Error 500';
   return (
     <div className="container-tight py-4">
       <div className="empty">
-        <div className="empty-header">404</div>
-        <p className="empty-title">Oops… You just found an error page</p>
+        <div className="empty-header">500</div>
+        <p className="empty-title">Oops… You just no permission to this page</p>
         <p className="empty-subtitle text-muted">
-          We are sorry but the page you are looking for was not found
+          We are sorry but you don't have permission to access this page
         </p>
         <div className="empty-action">
           <Link to={ROUTE_PATH.dashboard} className="btn btn-primary">
@@ -37,4 +37,4 @@ function Error404Page() {
   );
 }
 
-export default Error404Page;
+export default Error500Page;

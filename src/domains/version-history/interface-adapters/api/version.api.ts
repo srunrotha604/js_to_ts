@@ -1,21 +1,21 @@
+import { fetchDataAsync } from '../../../../services/$service';
+import { ROUTE_API } from '../../../../utils/route-util';
 import type {
   CreateVersionArgs,
   DeleteVersionArgs,
   UpdateVersionArgs,
   UpdateVersionResponse,
   VersionListResponse,
-} from '../../@type/version';
-import { fetchDataAsync } from '../../services/$service';
-import { ROUTE_API } from '../../utils/route-util';
+} from '../../entities';
 
-export const getVersionList = async () => {
+export const fetchVersionList = async () => {
   const response = await fetchDataAsync<VersionListResponse>(
     ROUTE_API.applicationVersion
   );
   return response?.data;
 };
 
-export const createNewVersion = async (args: CreateVersionArgs) => {
+export const createVersion = async (args: CreateVersionArgs) => {
   const payload = {
     releaseDate: args.releaseDate,
     version: args.version,
@@ -56,7 +56,7 @@ export const updateVersion = async (args: UpdateVersionArgs) => {
   return response?.data;
 };
 
-export const getCurrentVersion = async () => {
+export const fetchCurrentVersion = async () => {
   const response = await fetchDataAsync<VersionListResponse>(
     ROUTE_API.applicationVersionActive
   );

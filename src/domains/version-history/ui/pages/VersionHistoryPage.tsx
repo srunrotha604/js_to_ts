@@ -3,28 +3,26 @@ import { useEffect, useState } from 'react';
 import 'react-datepicker/dist/react-datepicker.css';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import type { VersionItem } from '../../@type/version';
-import VersionHistoryEdit from '../../components/version-history/VersionHistoryEdit';
-import VersionHistoryForm from '../../components/version-history/VersionHistoryFrom';
-import { ROUTE_PATH } from '../../utils/route-util';
-import { getVersionList } from './versionexport';
+import { ROUTE_PATH } from '../../../../utils/route-util';
+import type { VersionItem } from '../../entities';
+import { fetchVersionList } from '../../interface-adapters';
+import { formatVersionDescription } from '../../use-cases';
+import VersionHistoryEdit from '../components/VersionHistoryEdit';
+import VersionHistoryForm from '../components/VersionHistoryForm';
 
 const VersionHistoryPage = () => {
   const [editItem, setEditItem] = useState<VersionItem | null>(null);
   const [showModal, setShowModal] = useState(false);
   const [versionList, setVersionList] = useState<VersionItem[]>([]);
-  const [arrProject, setArrProject] = useState<VersionItem[]>([]);
   const [refreshFlag, setRefreshFlag] = useState(false);
   const navigate = useNavigate();
   const getList = async () => {
     try {
-      const response = await getVersionList();
+      const response = await fetchVersionList();
       if (response?.status === 200) {
         const data = response.data;
-        setArrProject(data?.list || []);
         setVersionList(data?.list || []);
       } else if (response?.list) {
-        setArrProject(response.list || []);
         setVersionList(response.list || []);
       } else {
         toast.warning('No data found.');
@@ -65,7 +63,7 @@ const VersionHistoryPage = () => {
     setEditItem(null);
   };
 
-  const handleNewVersionAdded = (newVersion: Omit<VersionItem, 'uuid'>) => {
+  const handleNewVersionAdded = () => {
     setRefreshFlag((prev) => !prev);
   };
 
@@ -107,13 +105,11 @@ const VersionHistoryPage = () => {
               className="mb-0"
               style={{ listStyleType: 'none', paddingLeft: 0 }}
             >
-              {(item.description || '')
-                .split(/\n|(?:\r?\n)|(?:- )/g)
-                .map((line) => line.trim())
-                .filter((line) => line.length > 0)
-                .map((line, idx) => (
-                  <li key={idx}>{line.endsWith('.') ? line : line + '.'}</li>
-                ))}
+              {formatVersionDescription(item.description).map(
+                (line, idx) => (
+                  <li key={idx}>{line}</li>
+                )
+              )}
             </ul>
           </li>
         ))}

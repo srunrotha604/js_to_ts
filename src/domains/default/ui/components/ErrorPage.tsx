@@ -2,40 +2,26 @@ import { useEffect } from 'react';
 import type { FallbackProps } from 'react-error-boundary';
 import { HiOutlineFaceFrown } from 'react-icons/hi2';
 import { Link } from 'react-router-dom';
-import { useAuth } from '../../context/AuthContext';
-import { fetchDataAsync } from '../../services/$service';
-import { ROUTE_API, ROUTE_PATH } from '../../utils/route-util';
+import { useAuth } from '../../../../context/AuthContext';
+import { ROUTE_PATH } from '../../../../utils/route-util';
+import { logClientError } from '../../interface-adapters';
+import { buildClientErrorLogDto } from '../../use-cases';
 
 const ErrorPage = ({ error }: FallbackProps) => {
-  document.title = 'Something wen wrong';
-  const { user, selectedCompany, selectedBranch, permission } = useAuth() as {
-    user: { email?: string } | null;
-    selectedCompany: { label?: string } | null;
-    selectedBranch: { label?: string } | null;
-    permission: unknown;
-  };
+  document.title = 'Something went wrong';
+  const { user, selectedCompany, selectedBranch, permission } = useAuth();
 
   useEffect(() => {
     const sendErrorLog = async () => {
-      const errorBody = {
-        hostname: window.location.hostname,
-        pathname: window.location.href,
-        message: error.message,
-        body: JSON.stringify({
-          error: error.stack,
-          access: localStorage.getItem('e_chanel_storage'),
-          permission,
-          selectedBranch: selectedBranch?.label || null,
-          selectedCompany: selectedCompany?.label || null,
-        }),
-        email: user?.email || '',
-      };
+      const errorBody = buildClientErrorLogDto(error, {
+        email: user?.email,
+        selectedBranchLabel: selectedBranch?.label,
+        selectedCompanyLabel: selectedCompany?.label,
+        permission,
+      });
       try {
         if (import.meta.env.PROD) {
-          await fetchDataAsync(ROUTE_API.log, {
-            method: 'POST',
-            data: errorBody,
-          });
+          await logClientError(errorBody);
         } else {
           console.log(errorBody);
         }

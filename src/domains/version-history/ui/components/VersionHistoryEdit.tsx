@@ -3,12 +3,10 @@ import ReactDatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { useForm } from 'react-hook-form';
 import { toast } from 'react-toastify';
-import type { VersionItem } from '../../@type/version';
-import {
-  deleteVersion,
-  updateVersion,
-} from '../../pages/version-history/versionexport';
-import Modal, { useModal } from '../common/modal';
+import Modal, { useModal } from '../../../../components/common/modal';
+import type { VersionItem } from '../../entities';
+import { deleteVersion, updateVersion } from '../../interface-adapters';
+import { formatReleaseDate } from '../../use-cases';
 
 interface VersionFormValues {
   version: string;
@@ -66,10 +64,7 @@ const VersionHistoryEdit = ({
     try {
       setSubmitting(true);
       const dateObj = selectedDate ?? new Date();
-      const pad = (n: number) => n.toString().padStart(2, '0');
-      const releaseDateStr = `${dateObj.getFullYear()}-${pad(
-        dateObj.getMonth() + 1
-      )}-${pad(dateObj.getDate())}`;
+      const releaseDateStr = formatReleaseDate(dateObj);
 
       const payload = {
         uuid: version.uuid,

@@ -9,8 +9,12 @@ const HomePage = lazy(() => import('../domains/default/ui/pages/HomePage'));
 const LogoutPage = lazy(
   () => import('../domains/default/ui/pages/LogoutPage')
 );
-const Error404Page = lazy(() => import('../pages/error_handle/Error404Page'));
-const Error500Page = lazy(() => import('../pages/error_handle/Error500Page'));
+const Error404Page = lazy(
+  () => import('../domains/default/ui/pages/Error404Page')
+);
+const Error500Page = lazy(
+  () => import('../domains/default/ui/pages/Error500Page')
+);
 const ProjectPage = lazy(
   () => import('../domains/project-configuration/ui/pages/ProjectPage')
 );
@@ -123,7 +127,9 @@ const BatchRegisterPage = lazy(
 const BatchDetailPage = lazy(
   () => import('../domains/batch/ui/pages/BatchDetailPage')
 );
-const VersionHandlePage = lazy(() => import('../pages/version-history/index'));
+const VersionHandlePage = lazy(
+  () => import('../domains/version-history/ui/pages/VersionHistoryPage')
+);
 const CustomerReportPage = lazy(
   () => import('../domains/reports/ui/pages/CustomerReportPage')
 );
