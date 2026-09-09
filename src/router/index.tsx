@@ -19,16 +19,13 @@ const ProductPage = lazy(
   () => import('../domains/project-configuration/ui/pages/ProductPage')
 );
 const UserPage = lazy(
-  () => import('../pages/system_setup/sytem_users/user/UserPage')
+  () => import('../domains/system-users/ui/pages/UserPage')
 );
 const RoleAccessPage = lazy(
-  () => import('../pages/system_setup/sytem_users/user/UserRolePage')
+  () => import('../domains/system-users/ui/pages/RoleAccessPage')
 );
 const DataEntryPage = lazy(
-  () =>
-    import(
-      '../pages/system_setup/sytem_users/bm_create_data_entry/DataEntryPage'
-    )
+  () => import('../domains/system-users/ui/pages/DataEntryPage')
 );
 const ForgotPasswordPage = lazy(
   () => import('../pages/default/ForgotPasswordPage')
@@ -65,40 +62,34 @@ const BranchProjectEditPage = lazy(
     import('../domains/project-configuration/ui/pages/BranchProjectEditPage')
 );
 const UserCreatePage = lazy(
-  () => import('../pages/system_setup/sytem_users/user/UserCreatePage')
+  () => import('../domains/system-users/ui/pages/UserCreatePage')
 );
 const UserEditPage = lazy(
-  () => import('../pages/system_setup/sytem_users/user/UserEditPage')
+  () => import('../domains/system-users/ui/pages/UserEditPage')
 );
 const UserRolePage = lazy(
-  () => import('../pages/system_setup/sytem_users/user/UserRolePage')
+  () => import('../domains/system-users/ui/pages/UserRolePage')
 );
 const UserRoleCreatePage = lazy(
-  () => import('../pages/system_setup/sytem_users/user/UserRoleCreatePage')
+  () => import('../domains/system-users/ui/pages/UserRoleCreatePage')
 );
 const CompanyForm = lazy(
-  () => import('../pages/system_setup/sytem_users/user/CompanyForm')
+  () => import('../domains/system-users/ui/pages/CompanyForm')
 );
 const BranchForm = lazy(
-  () => import('../pages/system_setup/sytem_users/user/BranchForm')
+  () => import('../domains/system-users/ui/pages/BranchForm')
 );
 const UserAccessBranchPage = lazy(
-  () => import('../pages/system_setup/sytem_users/user/UserAccessBranchPage')
+  () => import('../domains/system-users/ui/pages/UserAccessBranchPage')
 );
 const UserAccessStatusPage = lazy(
-  () => import('../pages/system_setup/sytem_users/user/UserAccessStatusPage')
+  () => import('../domains/system-users/ui/pages/UserAccessStatusPage')
 );
 const DataEntryCreatePage = lazy(
-  () =>
-    import(
-      '../pages/system_setup/sytem_users/bm_create_data_entry/DataEntryCreatePage'
-    )
+  () => import('../domains/system-users/ui/pages/DataEntryCreatePage')
 );
 const DataEntryImportPage = lazy(
-  () =>
-    import(
-      '../pages/system_setup/sytem_users/bm_create_data_entry/DataEntryImportPage'
-    )
+  () => import('../domains/system-users/ui/pages/DataEntryImportPage')
 );
 const ProductCreatePage = lazy(
   () => import('../domains/project-configuration/ui/pages/ProductCreatePage')

@@ -145,6 +145,7 @@ const SideBarPage = () => {
                   pathName === 'branch' ||
                   pathName === 'product' ||
                   pathName === 'user' ||
+                  pathName === 'role-access' ||
                   pathName === 'data-entry'
                     ? 'nav-item dropdown active'
                     : 'nav-item dropdown'
