@@ -107,7 +107,6 @@ export default function DateRangeSelector({
       );
     }
   };
-
   const apply = () => {
     const { startDate, endDate } = draftRange[0];
     setCommitted({ startDate, endDate });
