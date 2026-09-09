@@ -1,4 +1,3 @@
-/*--- app routes ---*/
 const ROUTE_PATH = {
   root: '/',
   login: '/login',
@@ -71,7 +70,7 @@ const ROUTE_PATH = {
 
   batchCreate: '/dashboard/batch/create',
 };
-/*--- api routes  ---*/
+
 const ROUTE_API = {
   root: import.meta.env.VITE_API_URL,
   login: '/login',
