@@ -27,6 +27,21 @@ export const valid_token_data = () => {
   }
 };
 
+const readStoredToken = () => {
+  const alt_fa_storage = localStorage.getItem('e_chanel_storage') || '';
+  return JSON.parse(alt_fa_storage);
+};
+
+const buildAuthHeaders = (tokenText: any, contentType: string) => ({
+  Authorization: `Bearer ${tokenText.token}`,
+  application_id: import.meta.env.VITE_APP_ID,
+  company: tokenText.company,
+  branch: tokenText.branch,
+  hostName: window.location.origin,
+  'Content-Type': contentType,
+  accept: '*',
+});
+
 export const refreshToken = async () => {
   const storage = localStorage.getItem('e_chanel_storage');
 
@@ -75,27 +90,20 @@ export const refreshToken = async () => {
   return alt_fa_token;
 };
 
+// Swallows request failures into the returned value (callers switch on `.status`),
+// unlike fetchDataAsync below which lets failures throw (callers try/catch).
 export const fetchData = async <T = unknown>(
   url: string,
   data: unknown,
   method = 'GET'
 ): Promise<import('axios').AxiosResponse<T> | undefined> => {
   valid_token_data();
-  let alt_fa_storage = localStorage.getItem('e_chanel_storage') || '';
-  let token_text = JSON.parse(alt_fa_storage);
+  const token_text = readStoredToken();
   const respond = await axios<T>({
     url: import.meta.env.VITE_API_URL + url,
     method: method,
     data: data,
-    headers: {
-      Authorization: `Bearer ${token_text.token}`,
-      application_id: import.meta.env.VITE_APP_ID,
-      company: token_text.company,
-      branch: token_text.branch,
-      hostName: window.location.origin,
-      'Content-Type': 'application/json',
-      accept: '*',
-    },
+    headers: buildAuthHeaders(token_text, 'application/json'),
   })
     .then((res) => {
       return res;
@@ -112,15 +120,15 @@ interface FetchDataAsyncOptions {
   [key: string]: unknown;
 }
 
+// Lets request failures throw (callers try/catch), unlike fetchData/fileUpload
+// above/below which swallow failures into the returned value.
 export const fetchDataAsync = async <T = unknown>(
   url: string,
   { method, data, ...other }: FetchDataAsyncOptions = {}
 ): Promise<import('axios').AxiosResponse<T> | undefined> => {
   valid_token_data();
 
-  let alt_fa_storage = localStorage.getItem('e_chanel_storage') || '';
-
-  let token_text = JSON.parse(alt_fa_storage);
+  const token_text = readStoredToken();
 
   if (!token_text.token) return;
 
@@ -128,15 +136,7 @@ export const fetchDataAsync = async <T = unknown>(
     url: import.meta.env.VITE_API_URL + url,
     method: method ?? 'GET',
     data: data,
-    headers: {
-      Authorization: `Bearer ${token_text.token}`,
-      application_id: import.meta.env.VITE_APP_ID,
-      company: token_text.company,
-      branch: token_text.branch,
-      hostName: window.location.origin,
-      'Content-Type': 'application/json',
-      accept: '*',
-    },
+    headers: buildAuthHeaders(token_text, 'application/json'),
     ...other,
   });
 };
@@ -147,59 +147,15 @@ export const fileUpload = async <T = unknown>(
   method = 'GET'
 ): Promise<import('axios').AxiosResponse<T> | undefined> => {
   valid_token_data();
-  let alt_fa_storage = localStorage.getItem('e_chanel_storage') || '';
-  let token_text = JSON.parse(alt_fa_storage);
+  const token_text = readStoredToken();
   const respond = await axios<T>({
     url: import.meta.env.VITE_API_URL + url,
     method: method,
     data: data,
-    headers: {
-      Authorization: `Bearer ${token_text.token}`,
-      application_id: import.meta.env.VITE_APP_ID,
-      company: token_text.company,
-      branch: token_text.branch,
-      hostName: window.location.origin,
-      'Content-Type': 'multipart/form-data',
-      accept: '*',
-    },
+    headers: buildAuthHeaders(token_text, 'multipart/form-data'),
   })
     .then((res) => {
       return res;
-    })
-    .catch((res) => {
-      return res.response;
-    });
-  return respond;
-};
-
-export const fileDownload = async (
-  url: string,
-  data: unknown,
-  method = 'GET'
-) => {
-  valid_token_data();
-  let alt_fa_storage = localStorage.getItem('e_chanel_storage') || '';
-  let token_text = JSON.parse(alt_fa_storage);
-  const respond = await axios({
-    url: import.meta.env.VITE_API_URL + url,
-    method: method,
-    responseType: 'blob',
-    headers: {
-      'Access-Control-Allow-Origin': '*',
-      Authorization: `Bearer ${token_text.token}`,
-      application_id: import.meta.env.VITE_APP_ID,
-      company: token_text.company,
-      branch: token_text.branch,
-      hostName: window.location.origin,
-    },
-  })
-    .then((res) => {
-      const url = window.URL.createObjectURL(new Blob([res.data]));
-      const link = document.createElement('a');
-      link.href = url;
-      link.setAttribute('download', 'File Name.xlsx');
-      document.body.appendChild(link);
-      link.click();
     })
     .catch((res) => {
       return res.response;
