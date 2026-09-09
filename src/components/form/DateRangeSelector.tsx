@@ -27,7 +27,6 @@ export default function DateRangeSelector({
     startDate: date?.startDate ?? null,
     endDate: date?.endDate ?? null,
   });
-
   const [draftRange, setDraftRange] = useState([
     {
       startDate: date?.startDate ?? new Date(),
@@ -35,13 +34,11 @@ export default function DateRangeSelector({
       key: 'selection',
     },
   ]);
-
   const [textValue, setTextValue] = useState('');
-
+  const [hasDraftChanged, setHasDraftChanged] = useState(false);
   useEffect(() => {
     const startDate = date?.startDate ?? null;
     const endDate = date?.endDate ?? null;
-
     setCommitted({ startDate, endDate });
     setDraftRange([
       {
@@ -59,42 +56,51 @@ export default function DateRangeSelector({
       setTextValue('');
     }
   }, [date?.startDate, date?.endDate]);
-
   const ref = useRef<HTMLDivElement>(null);
-
+  const popupRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
-      if (ref.current && !ref.current.contains(e.target as Node)) {
-        setOpen(false);
-        setDraftRange([
-          {
-            startDate: committed.startDate ?? new Date(),
-            endDate: committed.endDate ?? new Date(),
-            key: 'selection',
-          },
-        ]);
+      const target = e.target as Node;
+      const clickedInsideWrapper = ref.current?.contains(target);
+      const clickedInsidePopup = popupRef.current?.contains(target);
+      if (clickedInsideWrapper || clickedInsidePopup) return;
 
-        if (committed.startDate && committed.endDate) {
-          setTextValue(
-            `${format(committed.startDate, 'dd/MM/yyyy')} - ${format(
-              committed.endDate,
-              'dd/MM/yyyy'
-            )}`
-          );
-        } else {
-          setTextValue('');
-        }
+      setOpen(false);
+
+      if (hasDraftChanged) {
+        apply();
+        return;
+      }
+
+      setDraftRange([
+        {
+          startDate: committed.startDate ?? new Date(),
+          endDate: committed.endDate ?? new Date(),
+          key: 'selection',
+        },
+      ]);
+
+      if (committed.startDate && committed.endDate) {
+        setTextValue(
+          `${format(committed.startDate, 'dd/MM/yyyy')} - ${format(
+            committed.endDate,
+            'dd/MM/yyyy'
+          )}`
+        );
+      } else {
+        setTextValue('');
       }
     };
 
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, [committed]);
+  }, [committed, hasDraftChanged]);
 
   const onPickerChange = (item: RangeKeyDict) => {
     const { startDate, endDate } = item.selection;
     setDraftRange([item.selection as (typeof draftRange)[number]]);
-
+    onDateChange?.({ startDate: startDate || null, endDate: endDate || null });
+    setHasDraftChanged(true);
     if (startDate && endDate) {
       setTextValue(
         `${format(startDate, 'dd/MM/yyyy')} - ${format(endDate, 'dd/MM/yyyy')}`
@@ -116,6 +122,7 @@ export default function DateRangeSelector({
 
     onDateChange?.({ startDate, endDate });
     setOpen(false);
+    setHasDraftChanged(false);
   };
 
   const cancel = () => {
@@ -139,6 +146,7 @@ export default function DateRangeSelector({
     }
 
     setOpen(false);
+    setHasDraftChanged(false);
   };
 
   const clear = (e: React.MouseEvent) => {
@@ -186,7 +194,7 @@ export default function DateRangeSelector({
     const parsedEnd = parse(endStr, 'dd/MM/yyyy', new Date());
 
     if (!isValid(parsedStart) || !isValid(parsedEnd)) {
-      return; // invalid
+      return;
     }
 
     const startDate = parsedStart;
@@ -231,6 +239,7 @@ export default function DateRangeSelector({
                 key: 'selection',
               },
             ]);
+            setHasDraftChanged(false);
           }}
           value={textValue}
           onChange={handleInputChange}
