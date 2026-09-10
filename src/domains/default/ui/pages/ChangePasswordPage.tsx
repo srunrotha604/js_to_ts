@@ -1,11 +1,22 @@
-import React, { useEffect, useState } from 'react';
+import { useRequest } from 'ahooks';
+import React, { useState } from 'react';
+import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import EyeIcon from '../../../../components/Icons/EyeIcon';
 import EyeOffIcon from '../../../../components/Icons/EyeOffIcon';
 import { ROUTE_PATH } from '../../../../utils/route-util';
-import { changePassword, fetchCurrentUserProfile } from '../../interface-adapters';
-import { buildChangePasswordDto, validateRequiredFields } from '../../use-cases';
+import {
+  changePassword,
+  fetchCurrentUserProfile,
+} from '../../interface-adapters';
+import { buildChangePasswordDto } from '../../use-cases';
+
+interface ChangePasswordFormValues {
+  password: string;
+  newPassword: string;
+  confirmPassword: string;
+}
 
 const ChangePasswordPage = () => {
   const navigate = useNavigate();
@@ -13,10 +24,6 @@ const ChangePasswordPage = () => {
   const [userUrl, setUserUrl] = useState('');
   const [userName, setUserName] = useState('');
   const [userCode, setUserCode] = useState('');
-  const [password, setPassword] = useState('');
-  const [newPassword, setNewPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
-  const [invalidFeedBack, setInvalidFeedBack] = useState('');
   const [show, setShow] = useState({
     password: false,
     newPassword: false,
@@ -25,8 +32,10 @@ const ChangePasswordPage = () => {
   const toggleEye = (key: keyof typeof show) =>
     setShow((s) => ({ ...s, [key]: !s[key] }));
 
-  const getList = () => {
-    fetchCurrentUserProfile().then((res) => {
+  const { register, handleSubmit } = useForm<ChangePasswordFormValues>();
+
+  useRequest(fetchCurrentUserProfile, {
+    onSuccess: (res) => {
       switch (res?.status) {
         case 200:
           {
@@ -45,82 +54,53 @@ const ChangePasswordPage = () => {
         default:
           navigate(ROUTE_PATH.notFound);
       }
-    });
-  };
-
-  const funcButtonHandleClickExecute = (
-    e: React.FormEvent<HTMLFormElement>
-  ) => {
-    if (
-      validateRequiredFields([
-        userName,
-        password,
-        newPassword,
-        confirmPassword,
-      ])
-    ) {
-      changePassword(
-        buildChangePasswordDto(password, newPassword, confirmPassword)
-      ).then((res) => {
-        switch (res?.status) {
-          case 200: {
-            toast.success(
-              res?.data?.message ?? 'Password changed successfully',
-              {
-                autoClose: 50,
-                pauseOnHover: false,
-                onClose: () => navigate(ROUTE_PATH.dashboard),
-              }
-            );
-            break;
-          }
-          case 400:
-            toast.error(res?.data?.message ?? '');
-            break;
-          case 403:
-            toast.error(String(res?.data));
-            break;
-          default:
-            navigate(ROUTE_PATH.notFound);
+    },
+  });
+  const { run: runChangePassword } = useRequest(changePassword, {
+    manual: true,
+    onSuccess: (res) => {
+      switch (res?.status) {
+        case 200: {
+          toast.success(
+            res?.data?.message ?? 'Password changed successfully',
+            {
+              autoClose: 50,
+              pauseOnHover: false,
+              onClose: () => navigate(ROUTE_PATH.dashboard),
+            }
+          );
+          break;
         }
-      });
-    }
-    e.preventDefault();
-  };
-  const userNameHandleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setUserName(event.target.value);
-    setInvalidFeedBack('');
-  };
-  const PasswordHandleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setPassword(event.target.value);
-    setInvalidFeedBack('');
-  };
-  const newPasswordHandleChange = (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    setNewPassword(event.target.value);
-    setInvalidFeedBack('');
-  };
-  const ConfirmPasswordHandleChange = (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    setConfirmPassword(event.target.value);
-    setInvalidFeedBack('');
+        case 400:
+          toast.error(res?.data?.message ?? '');
+          break;
+        case 403:
+          toast.error(String(res?.data));
+          break;
+        default:
+          navigate(ROUTE_PATH.notFound);
+      }
+    },
+  });
+
+  const onSubmit = (data: ChangePasswordFormValues) => {
+    runChangePassword(
+      buildChangePasswordDto(
+        data.password,
+        data.newPassword,
+        data.confirmPassword
+      )
+    );
   };
 
   const goBackHandleClick = () => {
     navigate(ROUTE_PATH.dashboard);
   };
-
-  useEffect(() => {
-    getList();
-  }, []);
-
   return (
     <React.Fragment>
       <div className="container-tight py-4">
         <form
-          onSubmit={funcButtonHandleClickExecute}
+          onSubmit={handleSubmit(onSubmit)}
           className="card card-md"
           action="."
           method="get"
@@ -141,7 +121,6 @@ const ChangePasswordPage = () => {
                 className="profile-image-details"
               />
             </div>
-            <h5 className="text-center text-danger">{invalidFeedBack}</h5>
             <div className="mb-3 mt-2">
               <label className="form-label">User</label>
               <input
@@ -152,7 +131,6 @@ const ChangePasswordPage = () => {
                     : 'form-control is-invalid is-invalid-lite'
                 }
                 placeholder="User"
-                onChange={userNameHandleChange}
                 value={userName}
                 required
                 readOnly
@@ -167,9 +145,8 @@ const ChangePasswordPage = () => {
                   className={'form-control'}
                   placeholder="Password"
                   autoComplete="off"
-                  onChange={PasswordHandleChange}
-                  value={password}
                   required
+                  {...register('password', { required: true })}
                 />
                 <button
                   type="button"
@@ -192,9 +169,8 @@ const ChangePasswordPage = () => {
                   className={'form-control'}
                   placeholder="New password"
                   autoComplete="off"
-                  onChange={newPasswordHandleChange}
-                  value={newPassword}
                   required
+                  {...register('newPassword', { required: true })}
                 />
                 <button
                   type="button"
@@ -219,9 +195,8 @@ const ChangePasswordPage = () => {
                   className={'form-control'}
                   placeholder="Confirm password"
                   autoComplete="off"
-                  onChange={ConfirmPasswordHandleChange}
-                  value={confirmPassword}
                   required
+                  {...register('confirmPassword', { required: true })}
                 />
                 <button
                   type="button"

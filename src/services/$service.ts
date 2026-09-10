@@ -89,9 +89,6 @@ export const refreshToken = async () => {
 
   return alt_fa_token;
 };
-
-// Swallows request failures into the returned value (callers switch on `.status`),
-// unlike fetchDataAsync below which lets failures throw (callers try/catch).
 export const fetchData = async <T = unknown>(
   url: string,
   data: unknown,
@@ -119,9 +116,6 @@ interface FetchDataAsyncOptions {
   data?: unknown;
   [key: string]: unknown;
 }
-
-// Lets request failures throw (callers try/catch), unlike fetchData/fileUpload
-// above/below which swallow failures into the returned value.
 export const fetchDataAsync = async <T = unknown>(
   url: string,
   { method, data, ...other }: FetchDataAsyncOptions = {}

@@ -11,6 +11,7 @@
     "browser": true,
     "es6": true
   },
+  "parser": "@typescript-eslint/parser",
   "parserOptions": {
     "ecmaFeatures": {
       "jsx": true
@@ -18,7 +19,7 @@
     "ecmaVersion": "latest",
     "sourceType": "module"
   },
-  "plugins": ["react", "import", "react-hooks", "prettier"],
+  "plugins": ["react", "import", "react-hooks", "prettier", "@typescript-eslint"],
   "rules": {
     "react-hooks/rules-of-hooks": "error",
     "react-hooks/exhaustive-deps": "off",
@@ -29,6 +30,35 @@
       {
         "endOfLine": "auto",
         "singleQuote": true
+      }
+    ],
+    "import/no-restricted-paths": [
+      "error",
+      {
+        "zones": [
+          {
+            "target": "./src/domains/*/entities/**",
+            "from": [
+              "./src/domains/*/use-cases/**",
+              "./src/domains/*/interface-adapters/**",
+              "./src/domains/*/ui/**"
+            ],
+            "message": "Clean Architecture violation: entities is the innermost layer and must not depend on use-cases, interface-adapters, or ui."
+          },
+          {
+            "target": "./src/domains/*/use-cases/**",
+            "from": [
+              "./src/domains/*/interface-adapters/**",
+              "./src/domains/*/ui/**"
+            ],
+            "message": "Clean Architecture violation: use-cases must not depend on interface-adapters or ui. Dependencies point inward only."
+          },
+          {
+            "target": "./src/domains/*/interface-adapters/**",
+            "from": ["./src/domains/*/ui/**"],
+            "message": "Clean Architecture violation: interface-adapters must not depend on ui. Dependencies point inward only."
+          }
+        ]
       }
     ]
   }

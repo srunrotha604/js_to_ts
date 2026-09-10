@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from 'react';
+import { useRequest } from 'ahooks';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import type { UserProfile } from '../../../../@type/profile';
@@ -26,8 +27,8 @@ const ProfilePage = () => {
   const [address2, setAddress2] = useState('');
   const [userCode, setUserCode] = useState('');
 
-  const getList = () => {
-    fetchCurrentUserProfile().then((res) => {
+  const { loading: profileLoading } = useRequest(fetchCurrentUserProfile, {
+    onSuccess: (res) => {
       switch (res?.status) {
         case 200:
           {
@@ -54,14 +55,14 @@ const ProfilePage = () => {
         default:
           navigate(ROUTE_PATH.notFound);
       }
-    });
-  };
+    },
+  });
 
-  const profileUploadHandleClickExecute = () => {
-    if (selectedFile !== '') {
-      const formData = new FormData();
-      formData.append('selectedFile', selectedFile);
-      uploadProfileAvatar(formData).then((res) => {
+  const { run: uploadAvatar, loading: uploadLoading } = useRequest(
+    uploadProfileAvatar,
+    {
+      manual: true,
+      onSuccess: (res) => {
         switch (res?.status) {
           case 200:
             toast.success(res?.data?.message ?? '');
@@ -76,12 +77,43 @@ const ProfilePage = () => {
           default:
             navigate(ROUTE_PATH.notFound);
         }
-      });
+      },
+    }
+  );
+
+  const { run: saveProfile, loading: saveLoading } = useRequest(
+    saveProfileInfo,
+    {
+      manual: true,
+      onSuccess: (res) => {
+        switch (res?.status) {
+          case 200:
+            toast.success(res?.data?.message ?? '');
+            window.location.reload();
+            break;
+          case 400:
+            toast.error(res?.data?.message ?? '');
+            break;
+          case 403:
+            toast.error(String(res?.data));
+            break;
+          default:
+            navigate(ROUTE_PATH.notFound);
+        }
+      },
+    }
+  );
+
+  const profileUploadHandleClickExecute = () => {
+    if (selectedFile !== '') {
+      const formData = new FormData();
+      formData.append('selectedFile', selectedFile);
+      uploadAvatar(formData);
     }
   };
 
   const saveChangeHandleExecute = () => {
-    saveProfileInfo(
+    saveProfile(
       buildProfileUpdateDto({
         userCode,
         email1,
@@ -94,22 +126,7 @@ const ProfilePage = () => {
         address2,
         otherContact,
       })
-    ).then((res) => {
-      switch (res?.status) {
-        case 200:
-          toast.success(res?.data?.message ?? '');
-          window.location.reload();
-          break;
-        case 400:
-          toast.error(res?.data?.message ?? '');
-          break;
-        case 403:
-          toast.error(String(res?.data));
-          break;
-        default:
-          navigate(ROUTE_PATH.notFound);
-      }
-    });
+    );
   };
 
   const goBackHandleClick = () => {
@@ -121,10 +138,6 @@ const ProfilePage = () => {
       setSelectedFile(event.target.files[0]);
     }
   };
-
-  useEffect(() => {
-    getList();
-  }, []);
 
   return (
     <React.Fragment>
@@ -140,6 +153,12 @@ const ProfilePage = () => {
                       <div>
                         <h3 className="lh-1">Profile User</h3>
                       </div>
+                      {profileLoading && (
+                        <span
+                          className="spinner-border spinner-border-sm ms-2"
+                          role="status"
+                        />
+                      )}
                     </div>
                     <div
                       style={{
@@ -162,23 +181,30 @@ const ProfilePage = () => {
                         accept=".jpg,.jpeg,.png"
                       />
                       <span className="input-group-text">
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          className="icon cursor-pointer"
-                          width={24}
-                          height={24}
-                          viewBox="0 0 24 24"
-                          strokeWidth={2}
-                          stroke="currentColor"
-                          fill="none"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          onClick={profileUploadHandleClickExecute}
-                        >
-                          <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                          <polyline points="9 11 12 14 20 6" />
-                          <path d="M20 12v6a2 2 0 0 1 -2 2h-12a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h9" />
-                        </svg>
+                        {uploadLoading ? (
+                          <span
+                            className="spinner-border spinner-border-sm"
+                            role="status"
+                          />
+                        ) : (
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            className="icon cursor-pointer"
+                            width={24}
+                            height={24}
+                            viewBox="0 0 24 24"
+                            strokeWidth={2}
+                            stroke="currentColor"
+                            fill="none"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            onClick={profileUploadHandleClickExecute}
+                          >
+                            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                            <polyline points="9 11 12 14 20 6" />
+                            <path d="M20 12v6a2 2 0 0 1 -2 2h-12a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h9" />
+                          </svg>
+                        )}
                       </span>
                     </div>
                     <ul className="list-unstyled space-y-2 mt-3">
@@ -615,23 +641,31 @@ const ProfilePage = () => {
                       <button
                         className="btn btn-primary"
                         onClick={saveChangeHandleExecute}
+                        disabled={saveLoading}
                       >
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          className="icon"
-                          width={24}
-                          height={24}
-                          viewBox="0 0 24 24"
-                          strokeWidth={2}
-                          stroke="currentColor"
-                          fill="none"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                        >
-                          <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                          <polyline points="9 11 12 14 20 6" />
-                          <path d="M20 12v6a2 2 0 0 1 -2 2h-12a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h9" />
-                        </svg>
+                        {saveLoading ? (
+                          <span
+                            className="spinner-border spinner-border-sm me-2"
+                            role="status"
+                          />
+                        ) : (
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            className="icon"
+                            width={24}
+                            height={24}
+                            viewBox="0 0 24 24"
+                            strokeWidth={2}
+                            stroke="currentColor"
+                            fill="none"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                          >
+                            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                            <polyline points="9 11 12 14 20 6" />
+                            <path d="M20 12v6a2 2 0 0 1 -2 2h-12a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h9" />
+                          </svg>
+                        )}
                         Save change
                       </button>
                       <button
