@@ -24,6 +24,7 @@ export const valid_token_data = () => {
     const merged = { ...defaultData, ...parsed };
     localStorage.setItem('e_chanel_storage', JSON.stringify(merged));
   } catch (e) {
+    console.log(e);
     localStorage.setItem('e_chanel_storage', JSON.stringify(defaultData));
   }
 };
@@ -53,19 +54,11 @@ const buildHeaders = (tokenText: any, data: unknown) => {
 };
 
 export const refreshToken = async () => {
-  const storage = localStorage.getItem('e_chanel_storage');
-
+  const storage = localStorage.getItem('e_chanel_storage') || '';
+  const token_text = JSON.parse(storage);
   if (!storage) {
     throw new Error('No token data in localStorage');
   }
-
-  let token_text;
-  try {
-    token_text = JSON.parse(storage);
-  } catch (e) {
-    throw new Error('Invalid token data in localStorage');
-  }
-
   if (!token_text.token || !token_text.refreshToken) {
     throw new Error('Missing token / refreshToken');
   }
