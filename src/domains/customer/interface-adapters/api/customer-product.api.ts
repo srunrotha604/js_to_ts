@@ -1,4 +1,4 @@
-import { fetchData } from '../../../../services/$service';
+import { HttpUtil } from '../../../../utils/http-util';
 import { ROUTE_API } from '../../../../utils/route-util';
 import type {
   ProductListResponse,
@@ -6,20 +6,16 @@ import type {
 } from '../../entities';
 
 export const fetchProductList = () =>
-  fetchData<ProductListResponse>(ROUTE_API.operationCustomerProduct, {}, 'GET');
+  HttpUtil.get<ProductListResponse>(ROUTE_API.operationCustomerProduct);
 
 export const fetchProductAndPoliciesBySequenceCode = (
   productSequenceCode: string
 ) =>
-  fetchData<ProductListResponse & ProjectCategoryResponse>(
-    `${ROUTE_API.operationCustomerProduct}/${productSequenceCode}`,
-    {},
-    'GET'
+  HttpUtil.get<ProductListResponse & ProjectCategoryResponse>(
+    `${ROUTE_API.operationCustomerProduct}/${productSequenceCode}`
   );
 
 export const fetchPoliciesByProductCode = (productCode: string) =>
-  fetchData<ProjectCategoryResponse>(
-    `${ROUTE_API.operationCustomerProduct}/${productCode}`,
-    {},
-    'GET'
+  HttpUtil.get<ProjectCategoryResponse>(
+    `${ROUTE_API.operationCustomerProduct}/${productCode}`
   );

@@ -5,7 +5,7 @@ import type { ReactNode } from 'react';
 import { useLayoutEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import { refreshToken } from '../services/$service';
+import { refreshToken } from '../utils/http-util';
 import { ROUTE_PATH } from '../utils/route-util';
 
 interface JwtPayload {

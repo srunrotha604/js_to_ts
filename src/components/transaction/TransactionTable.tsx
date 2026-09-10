@@ -27,7 +27,7 @@ import '../../assets/style/custom_style.css';
 import { selectCustomStyles } from '../common/reactSelectStyles';
 import { useAuth } from '../../context/AuthContext';
 import useMessage from '../../hooks/useMessage';
-import { fetchData, fetchDataAsync } from '../../services/$service';
+import { HttpUtil } from '../../utils/http-util';
 import { ROUTE_API, ROUTE_PATH } from '../../utils/route-util';
 import { useModal } from '../common/modal/index';
 import Spinner, { useSpinner } from '../common/Spinner';
@@ -210,7 +210,7 @@ const TransactionTableInner = <T extends TransactionLike,>(
     const listType = type === 'All' || branch.length === -1 ? '' : `${type}`;
 
     try {
-      const res = await fetchDataAsync<ListResponse<T>>(
+      const res = await HttpUtil.get<ListResponse<T>>(
         `${url}?${extraParams}&status=${listStatus}&branchName=${listBranch}&pageSize=${rowPerPage}&pageNumber=${pageNum}&search=${search}&${
           typeFilter ? `type=${listType}` : ''
         }`,
@@ -243,10 +243,8 @@ const TransactionTableInner = <T extends TransactionLike,>(
   };
 
   const getListDetails = (transactionCode?: string) => {
-    return fetchData<ListResponse<T>>(
-      `${ROUTE_API.operationCustomer}?transactionCode=` + transactionCode,
-      {},
-      'GET'
+    return HttpUtil.get<ListResponse<T>>(
+      `${ROUTE_API.operationCustomer}?transactionCode=` + transactionCode
     ).then((res) => {
       switch (res?.status) {
         case 200:

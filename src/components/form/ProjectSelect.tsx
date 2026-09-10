@@ -5,15 +5,11 @@ import type {
   ProjectCategoryResponse,
   ProjectPolicyOption,
 } from '../../domains/customer/entities';
-import { fetchData } from '../../services/$service';
+import { HttpUtil } from '../../utils/http-util';
 import { ROUTE_API } from '../../utils/route-util';
 
 const fetchProject = async () =>
-  fetchData<ProjectCategoryResponse>(
-    ROUTE_API.operationCustomerProduct,
-    {},
-    'GET'
-  );
+  HttpUtil.get<ProjectCategoryResponse>(ROUTE_API.operationCustomerProduct);
 
 export interface ProjectSelectOption {
   label: string;

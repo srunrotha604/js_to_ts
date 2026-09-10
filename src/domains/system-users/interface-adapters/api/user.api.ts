@@ -1,4 +1,4 @@
-import { fetchData } from '../../../../services/$service';
+import { HttpUtil } from '../../../../utils/http-util';
 import { ROUTE_API } from '../../../../utils/route-util';
 import type {
   MessageResponse,
@@ -7,21 +7,17 @@ import type {
 } from '../../entities';
 
 export const fetchUserList = (branchName: string) =>
-  fetchData<UserListResponse>(
-    `${ROUTE_API.eChanelUser}?branchName=${branchName}`,
-    {},
-    'GET'
+  HttpUtil.get<UserListResponse>(
+    `${ROUTE_API.eChanelUser}?branchName=${branchName}`
   );
 
 export const fetchUserByCode = (key: string) =>
-  fetchData<UserListResponse>(
-    `${ROUTE_API.eChanelUser}?transaction=${key}&branchName=`,
-    {},
-    'GET'
+  HttpUtil.get<UserListResponse>(
+    `${ROUTE_API.eChanelUser}?transaction=${key}&branchName=`
   );
 
 export const fetchUserRoleOptions = () =>
-  fetchData<RoleOptionsResponse>(ROUTE_API.eChanelUserAccess, {}, 'GET');
+  HttpUtil.get<RoleOptionsResponse>(ROUTE_API.eChanelUserAccess);
 
 export const createUser = (data: {
   email: string;
@@ -30,7 +26,7 @@ export const createUser = (data: {
   role: string;
   branch: string;
   phone: string;
-}) => fetchData<MessageResponse>(ROUTE_API.eChanelUser, data, 'POST');
+}) => HttpUtil.post<MessageResponse>(ROUTE_API.eChanelUser, data);
 
 export const updateUser = (data: { key?: string; role: string }) =>
-  fetchData<MessageResponse>(ROUTE_API.eChanelUser, data, 'PUT');
+  HttpUtil.put<MessageResponse>(ROUTE_API.eChanelUser, data);

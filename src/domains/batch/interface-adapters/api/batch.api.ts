@@ -1,5 +1,5 @@
 import type { FileWithPath } from 'react-dropzone';
-import { fetchDataAsync, fileUpload } from '../../../../services/$service';
+import { HttpUtil } from '../../../../utils/http-util';
 import { ROUTE_API } from '../../../../utils/route-util';
 import type { CustomerListResponse } from '../../../customer/entities';
 import type { BatchCustomerListResult } from '../../entities';
@@ -14,20 +14,19 @@ export const uploadBatchExcel = (
   });
   formData.append('data', JSON.stringify(data));
 
-  return fileUpload<BatchCustomerListResult>(
+  return HttpUtil.post<BatchCustomerListResult>(
     ROUTE_API.operationCustomerBatchUpload,
-    formData,
-    'POST'
+    formData
   );
 };
 
 export const submitBatchCustomerList = async (
   data: Record<string, unknown>
 ) => {
-  const response = await fetchDataAsync(ROUTE_API.operationCustomerBatch, {
-    data,
-    method: 'POST',
-  });
+  const response = await HttpUtil.post(
+    ROUTE_API.operationCustomerBatch,
+    data
+  );
   return response?.data;
 };
 
@@ -35,7 +34,7 @@ export const fetchBatchTransactionList = async (
   batchNumber: string,
   params: Record<string, unknown>
 ) => {
-  const response = await fetchDataAsync<CustomerListResponse>(
+  const response = await HttpUtil.get<CustomerListResponse>(
     `${ROUTE_API.operationCustomerBatch}?batchNumber=${batchNumber}`,
     { params }
   );
@@ -45,9 +44,9 @@ export const fetchBatchTransactionList = async (
 export const processBatchTransactions = async (
   data: Record<string, unknown>
 ) => {
-  const response = await fetchDataAsync(ROUTE_API.operationCustomerBatch, {
-    data,
-    method: 'POST',
-  });
+  const response = await HttpUtil.post(
+    ROUTE_API.operationCustomerBatch,
+    data
+  );
   return response?.data;
 };

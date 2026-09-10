@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react';
 import { toast } from 'react-toastify';
 import useMessage from '../../../hooks/useMessage';
-import { fetchDataAsync } from '../../../services/$service';
+import { HttpUtil } from '../../../utils/http-util';
 import ButtonGroup from '../../buttons/ButtonGroup';
 import CancelButton from '../../buttons/CancelButton';
 import SubmitButton from '../../buttons/SubmitButton';
@@ -23,10 +23,7 @@ const TableCellTextDeleteConfirm = (props: TableCellTextDeleteConfirmProps) => {
 
   const onSubmit = async () => {
     try {
-      await fetchDataAsync(route, {
-        data,
-        method: 'delete',
-      });
+      await HttpUtil.delete(route, data);
       toast.success('Success!');
       closeModal();
       success();

@@ -1,7 +1,7 @@
 import type { RefObject } from 'react';
 import { useEffect, useState } from 'react';
 import Modal from '../components/common/modal';
-import { fetchDataAsync } from '../services/$service';
+import { HttpUtil } from '../utils/http-util';
 import { ROUTE_API } from '../utils/route-util';
 import IssueDateDetailModal from './IssueDateDetailModal';
 interface IssueDateModalItem {
@@ -49,15 +49,12 @@ const IssueDateModal = ({
     const secureCode = item?.customerIssueDate?.secureCode;
     if (!secureCode) return;
     try {
-      const response = await fetchDataAsync<{ message?: string }>(
+      const response = await HttpUtil.put<{ message?: string }>(
         ROUTE_API.operationCustomerCardConfirmation,
         {
-          method: 'PUT',
-          data: {
-            secureCode,
-            remark: remark || '',
-            status,
-          },
+          secureCode,
+          remark: remark || '',
+          status,
         }
       );
 

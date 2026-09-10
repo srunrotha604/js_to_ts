@@ -1,21 +1,17 @@
-import { fetchData } from '../../../../services/$service';
+import { HttpUtil } from '../../../../utils/http-util';
 import { ROUTE_API } from '../../../../utils/route-util';
 import type { MessageResponse, ProjectListResponse } from '../../entities';
 
 export const fetchProjectList = () =>
-  fetchData<ProjectListResponse>(ROUTE_API.operationProject, {}, 'GET');
+  HttpUtil.get<ProjectListResponse>(ROUTE_API.operationProject);
 
 export const fetchProjectByKey = (key: string) =>
-  fetchData<ProjectListResponse>(
-    ROUTE_API.operationProjectByKey(key),
-    {},
-    'GET'
-  );
+  HttpUtil.get<ProjectListResponse>(ROUTE_API.operationProjectByKey(key));
 
 export const createProject = (data: { projectName: string }) =>
-  fetchData<MessageResponse>(ROUTE_API.operationProject, data, 'POST');
+  HttpUtil.post<MessageResponse>(ROUTE_API.operationProject, data);
 
 export const updateProject = (data: {
   transactionCode?: string;
   projectName: string;
-}) => fetchData<MessageResponse>(ROUTE_API.operationProject, data, 'PUT');
+}) => HttpUtil.put<MessageResponse>(ROUTE_API.operationProject, data);

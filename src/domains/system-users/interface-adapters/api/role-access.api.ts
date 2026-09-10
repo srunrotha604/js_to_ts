@@ -1,12 +1,12 @@
-import { fetchData } from '../../../../services/$service';
+import { HttpUtil } from '../../../../utils/http-util';
 import { ROUTE_API } from '../../../../utils/route-util';
 import type { MessageResponse, RoleAccessListResponse } from '../../entities';
 
 export const fetchRoleAccessList = () =>
-  fetchData<RoleAccessListResponse>(ROUTE_API.applicationRoleAccess, {}, 'GET');
+  HttpUtil.get<RoleAccessListResponse>(ROUTE_API.applicationRoleAccess);
 
 export const updateRoleAccess = (data: {
   transactionCode: string;
   access: string;
   process: string;
-}) => fetchData<MessageResponse>(ROUTE_API.applicationRoleAccess, data, 'PUT');
+}) => HttpUtil.put<MessageResponse>(ROUTE_API.applicationRoleAccess, data);

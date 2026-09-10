@@ -1,4 +1,4 @@
-import { fetchData } from '../../../../services/$service';
+import { HttpUtil } from '../../../../utils/http-util';
 import { ROUTE_API } from '../../../../utils/route-util';
 import type {
   DataEntryListResponse,
@@ -7,14 +7,12 @@ import type {
 } from '../../entities';
 
 export const fetchDataEntryList = (branchName: string | undefined) =>
-  fetchData<DataEntryListResponse>(
-    `${ROUTE_API.eChanelDataEntry}?branchName=${branchName}`,
-    {},
-    'GET'
+  HttpUtil.get<DataEntryListResponse>(
+    `${ROUTE_API.eChanelDataEntry}?branchName=${branchName}`
   );
 
 export const fetchDataEntryRoleOptions = () =>
-  fetchData<RoleOptionsResponse>(ROUTE_API.eChanelDataEntryAccess, {}, 'GET');
+  HttpUtil.get<RoleOptionsResponse>(ROUTE_API.eChanelDataEntryAccess);
 
 export const createDataEntry = (data: {
   email: string;
@@ -22,13 +20,13 @@ export const createDataEntry = (data: {
   sureName: string;
   role: string;
   phone: string;
-}) => fetchData<MessageResponse>(ROUTE_API.eChanelDataEntry, data, 'POST');
+}) => HttpUtil.post<MessageResponse>(ROUTE_API.eChanelDataEntry, data);
 
 export const importDataEntry = (data: { email: string }) =>
-  fetchData<MessageResponse>(ROUTE_API.eChanelDataEntryImport, data, 'POST');
+  HttpUtil.post<MessageResponse>(ROUTE_API.eChanelDataEntryImport, data);
 
 export const toggleDataEntryStatus = (data: { key?: string }) =>
-  fetchData<MessageResponse>(ROUTE_API.eChanelDataEntryStatus, data, 'POST');
+  HttpUtil.post<MessageResponse>(ROUTE_API.eChanelDataEntryStatus, data);
 
 export const deleteDataEntry = (data: { key?: string }) =>
-  fetchData<MessageResponse>(ROUTE_API.eChanelDataEntry, data, 'DELETE');
+  HttpUtil.delete<MessageResponse>(ROUTE_API.eChanelDataEntry, data);

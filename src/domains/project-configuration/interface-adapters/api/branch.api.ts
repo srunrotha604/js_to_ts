@@ -1,9 +1,9 @@
-import { fetchData } from '../../../../services/$service';
+import { HttpUtil } from '../../../../utils/http-util';
 import { ROUTE_API } from '../../../../utils/route-util';
 import type { BranchListResponse, MessageResponse } from '../../entities';
 
 export const fetchBranchList = () =>
-  fetchData<BranchListResponse>(ROUTE_API.opertionBranch, {}, 'GET');
+  HttpUtil.get<BranchListResponse>(ROUTE_API.opertionBranch);
 
 export const createBranch = (data: {
   branchCode: string;
@@ -15,9 +15,9 @@ export const createBranch = (data: {
   email: string;
   website: string;
   address: string;
-}) => fetchData<MessageResponse>(ROUTE_API.opertionBranch, data, 'POST');
+}) => HttpUtil.post<MessageResponse>(ROUTE_API.opertionBranch, data);
 
 export const assignBranchAdmin = (data: {
   branchCode: string;
   value: string;
-}) => fetchData<MessageResponse>(ROUTE_API.opertionBranchAdmin, data, 'PUT');
+}) => HttpUtil.put<MessageResponse>(ROUTE_API.opertionBranchAdmin, data);

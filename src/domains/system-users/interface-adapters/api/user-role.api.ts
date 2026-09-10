@@ -1,4 +1,4 @@
-import { fetchData } from '../../../../services/$service';
+import { HttpUtil } from '../../../../utils/http-util';
 import { ROUTE_API } from '../../../../utils/route-util';
 import type {
   ApplicationOptionsResponse,
@@ -8,31 +8,23 @@ import type {
 } from '../../entities';
 
 export const fetchUserRoleList = (key: string) =>
-  fetchData<UserRoleListResponse>(
-    ROUTE_API.eChanelUserRoleByKey(key),
-    {},
-    'GET'
-  );
+  HttpUtil.get<UserRoleListResponse>(ROUTE_API.eChanelUserRoleByKey(key));
 
 export const deleteUserRole = (data: { key: string }) =>
-  fetchData<MessageResponse>(ROUTE_API.eChanelUserRole, data, 'DELETE');
+  HttpUtil.delete<MessageResponse>(ROUTE_API.eChanelUserRole, data);
 
 export const createUserRole = (data: {
   applicationFamily: string;
   roleFamily: string;
   userCode?: string;
-}) => fetchData<MessageResponse>(ROUTE_API.eChanelUserRole, data, 'POST');
+}) => HttpUtil.post<MessageResponse>(ROUTE_API.eChanelUserRole, data);
 
 export const fetchApplicationOptions = (key: string) =>
-  fetchData<ApplicationOptionsResponse>(
-    ROUTE_API.dataOptionApplication(key),
-    {},
-    'GET'
+  HttpUtil.get<ApplicationOptionsResponse>(
+    ROUTE_API.dataOptionApplication(key)
   );
 
 export const fetchSystemUserRoleOptions = (value: string) =>
-  fetchData<SystemUserRoleOptionsResponse>(
-    ROUTE_API.dataOptionSystemUserRole(value),
-    {},
-    'GET'
+  HttpUtil.get<SystemUserRoleOptionsResponse>(
+    ROUTE_API.dataOptionSystemUserRole(value)
   );

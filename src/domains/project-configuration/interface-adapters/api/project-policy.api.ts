@@ -1,4 +1,4 @@
-import { fetchData } from '../../../../services/$service';
+import { HttpUtil } from '../../../../utils/http-util';
 import { ROUTE_API } from '../../../../utils/route-util';
 import type {
   MessageResponse,
@@ -7,24 +7,19 @@ import type {
 } from '../../entities';
 
 export const fetchProjectPolicyList = (projectKey: string) =>
-  fetchData<ProjectPolicyListResponse>(
-    ROUTE_API.operationProjectPolicyByKey(projectKey),
-    {},
-    'GET'
+  HttpUtil.get<ProjectPolicyListResponse>(
+    ROUTE_API.operationProjectPolicyByKey(projectKey)
   );
 
 export const deleteProjectPolicy = (data: { transactionCode: string }) =>
-  fetchData<MessageResponse>(ROUTE_API.operationProjectPolicy, data, 'DELETE');
+  HttpUtil.delete<MessageResponse>(ROUTE_API.operationProjectPolicy, data);
 
 export const fetchProjectPolicyOptions = () =>
-  fetchData<ProjectPolicyOptionResponse>(
-    ROUTE_API.coreSystemOperationPolicy,
-    {},
-    'GET'
+  HttpUtil.get<ProjectPolicyOptionResponse>(
+    ROUTE_API.coreSystemOperationPolicy
   );
 
 export const createProjectPolicy = (data: {
   projectFamily?: string;
   policyCode: string;
-}) =>
-  fetchData<MessageResponse>(ROUTE_API.operationProjectPolicy, data, 'POST');
+}) => HttpUtil.post<MessageResponse>(ROUTE_API.operationProjectPolicy, data);

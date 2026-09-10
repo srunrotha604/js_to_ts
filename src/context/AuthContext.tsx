@@ -4,7 +4,7 @@ import type { AuthContextValue, AuthToken, PermissionSet } from '../@type/auth';
 import type { AuthModuleState } from '../@type/module';
 import type { UserProfile } from '../@type/profile';
 import type { CompanyBranchOption } from '../@type/report';
-import { fetchDataAsync } from '../services/$service';
+import { HttpUtil } from '../utils/http-util';
 import { ROUTE_API } from '../utils/route-util';
 import ModuleContextProvider from './module/ModuleContext';
 
@@ -48,12 +48,12 @@ interface PermissionAccessResponse extends PermissionSet {
 
 const fetchPermissionAccess = async () => {
   const URL = ROUTE_API.operationCustomerAccess;
-  return fetchDataAsync<PermissionAccessResponse>(URL);
+  return HttpUtil.get<PermissionAccessResponse>(URL);
 };
 
 const fetchUserInfo = async () => {
   const URL = ROUTE_API.login;
-  return fetchDataAsync<UserInfoResponse>(URL);
+  return HttpUtil.get<UserInfoResponse>(URL);
 };
 
 const AuthContextProvider = ({ children }: { children?: ReactNode }) => {

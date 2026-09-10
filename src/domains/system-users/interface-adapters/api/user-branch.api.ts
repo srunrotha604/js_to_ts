@@ -1,4 +1,4 @@
-import { fetchData, fetchDataAsync } from '../../../../services/$service';
+import { HttpUtil } from '../../../../utils/http-util';
 import { ROUTE_API } from '../../../../utils/route-util';
 import type {
   MessageResponse,
@@ -14,10 +14,12 @@ export interface BranchAccessQuery {
 }
 
 export const fetchUserBranch = (params: BranchAccessQuery) =>
-  fetchDataAsync<UserBranchResponse>(ROUTE_API.eChanelUserBranch, { params });
+  HttpUtil.get<UserBranchResponse>(ROUTE_API.eChanelUserBranch, {
+    params,
+  });
 
 export const fetchUserBranchCategory = (params: BranchAccessQuery) =>
-  fetchDataAsync<UserBranchCategoryResponse>(
+  HttpUtil.get<UserBranchCategoryResponse>(
     ROUTE_API.eChanelUserBranchCategory,
     { params }
   );
@@ -27,24 +29,22 @@ export const createUserBranchAccess = (data: {
   companyFamily?: string | null;
   userCode?: string | null;
   branchFamily: string;
-}) => fetchDataAsync(ROUTE_API.eChanelUserBranch, { data, method: 'post' });
+}) => HttpUtil.post(ROUTE_API.eChanelUserBranch, data);
 
 export const setDefaultUserBranchAccess = (data: {
   transactionCode?: string;
   applicationFamily?: string | null;
   companyFamily?: string | null;
   userCode?: string | null;
-}) => fetchDataAsync(ROUTE_API.eChanelUserBranch, { data, method: 'put' });
+}) => HttpUtil.put(ROUTE_API.eChanelUserBranch, data);
 
 export const fetchUserAccessBranchList = (
   applicationId: string,
   companyCode: string,
   userCode: string
 ) =>
-  fetchData<UserAccessBranchListResponse>(
-    `${ROUTE_API.eChanelUserBranch}/${applicationId}/${companyCode}/${userCode}`,
-    {},
-    'GET'
+  HttpUtil.get<UserAccessBranchListResponse>(
+    `${ROUTE_API.eChanelUserBranch}/${applicationId}/${companyCode}/${userCode}`
   );
 
 export const addUserAccessBranch = (data: {
@@ -52,14 +52,14 @@ export const addUserAccessBranch = (data: {
   companyFamily?: string;
   userCode?: string;
   branchFamily: string;
-}) => fetchData<MessageResponse>(ROUTE_API.eChanelUserBranch, data, 'POST');
+}) => HttpUtil.post<MessageResponse>(ROUTE_API.eChanelUserBranch, data);
 
 export const removeUserAccessBranch = (data: { transactionCode: string }) =>
-  fetchData<MessageResponse>(ROUTE_API.eChanelUserBranch, data, 'DELETE');
+  HttpUtil.delete<MessageResponse>(ROUTE_API.eChanelUserBranch, data);
 
 export const setDefaultUserAccessBranch = (data: {
   transactionCode?: string;
   applicationFamily?: string;
   companyFamily?: string;
   userCode?: string;
-}) => fetchData<MessageResponse>(ROUTE_API.eChanelUserBranch, data, 'PUT');
+}) => HttpUtil.put<MessageResponse>(ROUTE_API.eChanelUserBranch, data);

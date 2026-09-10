@@ -3,7 +3,7 @@ import { forwardRef, useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 import Button from '../../../../../components/common/Button';
 import Modal from '../../../../../components/common/modal';
-import { fetchDataAsync } from '../../../../../services/$service';
+import { HttpUtil } from '../../../../../utils/http-util';
 import { delay } from '../../../../../utils/delay';
 import { ROUTE_API } from '../../../../../utils/route-util';
 import ComponentStatus from '../ComponentStatus';
@@ -38,9 +38,9 @@ export const TransactionLogsModal = forwardRef<
   const getDetails = async () => {
     try {
       openSpinner();
-      const response = await fetchDataAsync<{ list?: TransactionLogItem[] }>(
-        `${ROUTE_API.operationLog}?transaction=${transactionNo}`
-      );
+      const response = await HttpUtil.get<{
+        list?: TransactionLogItem[];
+      }>(`${ROUTE_API.operationLog}?transaction=${transactionNo}`);
       setDetail(response?.data?.list ?? []);
     } catch (error) {
       toast.error(

@@ -1,4 +1,4 @@
-import { fetchDataAsync } from '../../../../services/$service';
+import { HttpUtil } from '../../../../utils/http-util';
 import { ROUTE_API } from '../../../../utils/route-util';
 export const logClientError = (data: {
   hostname: string;
@@ -6,4 +6,4 @@ export const logClientError = (data: {
   message: string;
   body: string;
   email: string;
-}) => fetchDataAsync(ROUTE_API.log, { method: 'POST', data });
+}) => HttpUtil.post(ROUTE_API.log, data);

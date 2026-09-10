@@ -1,4 +1,4 @@
-import { fetchData } from '../../../../services/$service';
+import { HttpUtil } from '../../../../utils/http-util';
 import { ROUTE_API } from '../../../../utils/route-util';
 import type {
   BranchProjectDetailResponse,
@@ -8,36 +8,30 @@ import type {
 } from '../../entities';
 
 export const fetchBranchProjectOptions = (branchKey: string) =>
-  fetchData<BranchProjectOptionsResponse>(
-    ROUTE_API.opertionBranchProjectByKey(branchKey),
-    {},
-    'GET'
+  HttpUtil.get<BranchProjectOptionsResponse>(
+    ROUTE_API.opertionBranchProjectByKey(branchKey)
   );
 
 export const fetchBranchProjectList = (branchKey: string) =>
-  fetchData<BranchProjectListResponse>(
-    ROUTE_API.opertionBranchProjectByKey(branchKey),
-    {},
-    'GET'
+  HttpUtil.get<BranchProjectListResponse>(
+    ROUTE_API.opertionBranchProjectByKey(branchKey)
   );
 
 export const fetchBranchProjectDetail = (key: string) =>
-  fetchData<BranchProjectDetailResponse>(
-    ROUTE_API.opertionBranchProjectByKey(key),
-    {},
-    'GET'
+  HttpUtil.get<BranchProjectDetailResponse>(
+    ROUTE_API.opertionBranchProjectByKey(key)
   );
 
 export const createBranchProject = (data: {
   branchFamily?: string;
   projectFamily: string;
   policies: string;
-}) => fetchData<MessageResponse>(ROUTE_API.opertionBranchProject, data, 'POST');
+}) => HttpUtil.post<MessageResponse>(ROUTE_API.opertionBranchProject, data);
 
 export const updateBranchProject = (data: {
   transactionCode?: string;
   policies: string;
-}) => fetchData<MessageResponse>(ROUTE_API.opertionBranchProject, data, 'PUT');
+}) => HttpUtil.put<MessageResponse>(ROUTE_API.opertionBranchProject, data);
 
 export const deleteBranchProject = (data: { transactionCode: string }) =>
-  fetchData<MessageResponse>(ROUTE_API.opertionBranchProject, data, 'DELETE');
+  HttpUtil.delete<MessageResponse>(ROUTE_API.opertionBranchProject, data);

@@ -1,4 +1,4 @@
-import { fetchDataAsync } from '../../../../services/$service';
+import { HttpUtil } from '../../../../utils/http-util';
 import { ROUTE_API } from '../../../../utils/route-util';
 import type {
   CreateVersionArgs,
@@ -9,7 +9,7 @@ import type {
 } from '../../entities';
 
 export const fetchVersionList = async () => {
-  const response = await fetchDataAsync<VersionListResponse>(
+  const response = await HttpUtil.get<VersionListResponse>(
     ROUTE_API.applicationVersion
   );
   return response?.data;
@@ -23,12 +23,9 @@ export const createVersion = async (args: CreateVersionArgs) => {
   };
 
   try {
-    const response = await fetchDataAsync<VersionListResponse>(
+    const response = await HttpUtil.post<VersionListResponse>(
       ROUTE_API.applicationVersion,
-      {
-        method: 'POST',
-        data: payload,
-      }
+      payload
     );
 
     return response?.data;
@@ -46,18 +43,15 @@ export const updateVersion = async (args: UpdateVersionArgs) => {
     uuid: args.uuid,
   };
 
-  const response = await fetchDataAsync<UpdateVersionResponse>(
+  const response = await HttpUtil.put<UpdateVersionResponse>(
     ROUTE_API.applicationVersion,
-    {
-      method: 'PUT',
-      data: payload,
-    }
+    payload
   );
   return response?.data;
 };
 
 export const fetchCurrentVersion = async () => {
-  const response = await fetchDataAsync<VersionListResponse>(
+  const response = await HttpUtil.get<VersionListResponse>(
     ROUTE_API.applicationVersionActive
   );
   return response;
@@ -65,12 +59,9 @@ export const fetchCurrentVersion = async () => {
 
 export const deleteVersion = async (args: DeleteVersionArgs) => {
   const payload = { uuid: args.uuid };
-  const response = await fetchDataAsync<VersionListResponse>(
+  const response = await HttpUtil.delete<VersionListResponse>(
     ROUTE_API.applicationVersion,
-    {
-      method: 'DELETE',
-      data: payload,
-    }
+    payload
   );
   return response?.data;
 };

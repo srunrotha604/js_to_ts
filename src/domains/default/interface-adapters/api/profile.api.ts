@@ -1,10 +1,10 @@
-import { fetchData, fileUpload } from '../../../../services/$service';
+import { HttpUtil } from '../../../../utils/http-util';
 import { ROUTE_API } from '../../../../utils/route-util';
 import type { MessageResponse, UserProfileResponse } from '../../entities';
 export const fetchCurrentUserProfile = () =>
-  fetchData<UserProfileResponse>(ROUTE_API.login, {}, 'GET');
+  HttpUtil.get<UserProfileResponse>(ROUTE_API.login);
 export const uploadProfileAvatar = (formData: FormData) =>
-  fileUpload<MessageResponse>(ROUTE_API.systemUser, formData, 'PATCH');
+  HttpUtil.patch<MessageResponse>(ROUTE_API.systemUser, formData);
 export const saveProfileInfo = (data: {
   userCode: string;
   email1: string;
@@ -16,4 +16,4 @@ export const saveProfileInfo = (data: {
   address1: string;
   address2: string;
   otherContact: string;
-}) => fetchData<MessageResponse>(ROUTE_API.systemUserInfo, data, 'POST');
+}) => HttpUtil.post<MessageResponse>(ROUTE_API.systemUserInfo, data);

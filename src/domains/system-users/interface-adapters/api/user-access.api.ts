@@ -1,12 +1,10 @@
-import { fetchData } from '../../../../services/$service';
+import { HttpUtil } from '../../../../utils/http-util';
 import { ROUTE_API } from '../../../../utils/route-util';
 import type { MessageResponse, UserAccessDetailResponse } from '../../entities';
 
 export const fetchUserAccessDetail = (userCode: string) =>
-  fetchData<UserAccessDetailResponse>(
-    ROUTE_API.eChanelUserAccessByCode(userCode),
-    {},
-    'GET'
+  HttpUtil.get<UserAccessDetailResponse>(
+    ROUTE_API.eChanelUserAccessByCode(userCode)
   );
 
 export const saveUserAccessStatus = (data: {
@@ -14,11 +12,9 @@ export const saveUserAccessStatus = (data: {
   accessStatus: string;
   processStatus: string;
   adminBranch: string;
-}) => fetchData<MessageResponse>(ROUTE_API.eChanelUserAccess, data, 'POST');
+}) => HttpUtil.post<MessageResponse>(ROUTE_API.eChanelUserAccess, data);
 
 export const checkBranchManagerConflict = (branchKey: string) =>
-  fetchData<MessageResponse>(
-    `${ROUTE_API.branchManager}?transaction=${branchKey}`,
-    {},
-    'GET'
+  HttpUtil.get<MessageResponse>(
+    `${ROUTE_API.branchManager}?transaction=${branchKey}`
   );

@@ -1,4 +1,4 @@
-import { fetchDataAsync } from '../../../../services/$service';
+import { HttpUtil } from '../../../../utils/http-util';
 import { ROUTE_API } from '../../../../utils/route-util';
 import type { CustomerListResponse, CustomerTransaction } from '../../entities';
 import type {
@@ -9,7 +9,7 @@ import type {
 export const fetchCustomerDuplicateCheck = async (
   identifiers: DuplicateCheckIdentifiers
 ) => {
-  const response = await fetchDataAsync<DuplicateCustomerResult>(
+  const response = await HttpUtil.get<DuplicateCustomerResult>(
     ROUTE_API.operationCustomerDuplicate,
     { params: identifiers }
   );
@@ -19,7 +19,7 @@ export const fetchCustomerDuplicateCheck = async (
 export const fetchCustomerTransactionByCode = async (
   transactionCode: string
 ) => {
-  const response = await fetchDataAsync<{ list?: CustomerTransaction[] }>(
+  const response = await HttpUtil.get<{ list?: CustomerTransaction[] }>(
     `${ROUTE_API.operationCustomer}?transactionCode=${transactionCode}`
   );
   return response?.data?.list?.[0] ?? null;
@@ -28,7 +28,7 @@ export const fetchCustomerTransactionByCode = async (
 export const fetchCustomerTransactionList = async (
   params: Record<string, unknown>
 ) => {
-  const response = await fetchDataAsync<CustomerListResponse>(
+  const response = await HttpUtil.get<CustomerListResponse>(
     ROUTE_API.operationCustomer,
     { params }
   );
@@ -38,30 +38,24 @@ export const fetchCustomerTransactionList = async (
 export const createCustomerTransaction = async (
   data: Record<string, unknown>
 ) => {
-  const response = await fetchDataAsync(ROUTE_API.operationCustomer, {
-    method: 'POST',
-    data,
-  });
+  const response = await HttpUtil.post(ROUTE_API.operationCustomer, data);
   return response?.data;
 };
 
 export const updateCustomerTransaction = async (
   data: Record<string, unknown>
 ) => {
-  const response = await fetchDataAsync(ROUTE_API.operationCustomer, {
-    method: 'PUT',
-    data,
-  });
+  const response = await HttpUtil.put(ROUTE_API.operationCustomer, data);
   return response?.data;
 };
 
 export const deleteCustomerTransactions = async (
   data: Record<string, unknown>
 ) => {
-  const response = await fetchDataAsync(ROUTE_API.operationCustomerDelete, {
-    method: 'POST',
-    data,
-  });
+  const response = await HttpUtil.post(
+    ROUTE_API.operationCustomerDelete,
+    data
+  );
   return response?.data;
 };
 
@@ -69,9 +63,9 @@ export const processCustomerTransaction = async (
   isDeleted: boolean,
   data: Record<string, unknown>
 ) => {
-  const response = await fetchDataAsync(
+  const response = await HttpUtil.post(
     `${ROUTE_API.operationCustomer}${isDeleted ? '/delete' : ''}`,
-    { method: 'POST', data }
+    data
   );
   return response?.data;
 };

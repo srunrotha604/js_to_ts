@@ -1,4 +1,4 @@
-import { fetchData } from '../../../../services/$service';
+import { HttpUtil } from '../../../../utils/http-util';
 import { ROUTE_API } from '../../../../utils/route-util';
 import type {
   MessageResponse,
@@ -7,33 +7,25 @@ import type {
 } from '../../entities';
 
 export const fetchProductList = () =>
-  fetchData<ProductListResponse>(ROUTE_API.operationProduct, {}, 'GET');
+  HttpUtil.get<ProductListResponse>(ROUTE_API.operationProduct);
 
 export const fetchProductByKey = (key: string) =>
-  fetchData<ProductListResponse>(
-    ROUTE_API.operationProductByKey(key),
-    {},
-    'GET'
-  );
+  HttpUtil.get<ProductListResponse>(ROUTE_API.operationProductByKey(key));
 
 export const fetchProductOptions = () =>
-  fetchData<ProductOptionsResponse>(
-    ROUTE_API.operationProductProduct,
-    {},
-    'GET'
-  );
+  HttpUtil.get<ProductOptionsResponse>(ROUTE_API.operationProductProduct);
 
 export const createProduct = (data: {
   productsequenceCode: string;
   productCode: string;
   productName: string;
-}) => fetchData<MessageResponse>(ROUTE_API.operationProduct, data, 'POST');
+}) => HttpUtil.post<MessageResponse>(ROUTE_API.operationProduct, data);
 
 export const updateProduct = (data: {
   transactionCode?: string;
   productCode: string;
   productName: string;
-}) => fetchData<MessageResponse>(ROUTE_API.operationProduct, data, 'PUT');
+}) => HttpUtil.put<MessageResponse>(ROUTE_API.operationProduct, data);
 
 export const deleteProduct = (data: { transactionCode: string }) =>
-  fetchData<MessageResponse>(ROUTE_API.operationProduct, data, 'DELETE');
+  HttpUtil.delete<MessageResponse>(ROUTE_API.operationProduct, data);

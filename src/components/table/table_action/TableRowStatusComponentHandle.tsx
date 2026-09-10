@@ -1,6 +1,6 @@
 import { toast } from 'react-toastify';
 import useMessage from '../../../hooks/useMessage';
-import { fetchDataAsync } from '../../../services/$service';
+import { HttpUtil } from '../../../utils/http-util';
 
 interface TableRowStatusComponentHandleProps {
   active?: boolean;
@@ -20,10 +20,7 @@ const TableRowStatusComponentHandle = (
       const data = {
         uuid: uuid,
       };
-      await fetchDataAsync(route, {
-        data,
-        method: 'POST',
-      });
+      await HttpUtil.post(route, data);
       toast.success('Success!');
       success();
     } catch (error) {
