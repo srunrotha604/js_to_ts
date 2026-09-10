@@ -85,7 +85,7 @@ const RoleAccessPage = () => {
   const pageCount = Math.ceil((arrList?.length ?? 0) / PER_PAGE);
   return (
     <React.Fragment>
-      <Loading value={loading} />
+      {loading && <Loading value={loading} />}
       <Modal ref={modalRef} title={'Access & Process'} size="xl">
         <div className="mb-3">
           <label className="form-label required">Access</label>

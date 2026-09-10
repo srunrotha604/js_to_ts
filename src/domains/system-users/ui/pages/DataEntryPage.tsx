@@ -125,7 +125,7 @@ const DataEntryPage = () => {
   const pageCount = Math.ceil((filteredList?.length ?? 0) / PER_PAGE);
   return (
     <>
-      <Loading value={loading} />
+      {loading && <Loading value={loading} />}
       <div className="page-wrapper">
         <div className="container-xl">
           <div className="page-header d-print-none">

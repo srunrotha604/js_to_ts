@@ -28,7 +28,7 @@ const TableBodyComponent = (props: TableBodyComponentProps) => {
         )}
 
         <div className="table-responsive">
-          <Loading value={loading} />
+          {loading && <Loading value={loading} />}
           {!loading ? (
             <>
               <table className="table table-hover card-table table-vcenter text-nowrap datatable">

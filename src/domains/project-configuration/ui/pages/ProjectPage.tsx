@@ -55,7 +55,7 @@ const ProjectPage = () => {
 
   return (
     <React.Fragment>
-      <Loading value={loading} />
+      {loading && <Loading value={loading} />}
       <div className="page-wrapper">
         <div className="container-xl">
           <div className="page-header d-print-none">
