@@ -1,5 +1,8 @@
 import clsx from 'clsx';
 import React, { useEffect, useState } from 'react';
+import { LuUserPlus } from 'react-icons/lu';
+import { RxHome } from 'react-icons/rx';
+import { TbReport, TbSettings } from 'react-icons/tb';
 import type { NavLinkProps } from 'react-router-dom';
 import { Link, NavLink, useLocation } from 'react-router-dom';
 import Select from 'react-select';
@@ -96,25 +99,7 @@ const SideBarPage = () => {
               to={ROUTE_PATH.dashboard}
               end
               label="Home"
-              icon={
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="icon"
-                  width={24}
-                  height={24}
-                  viewBox="0 0 24 24"
-                  strokeWidth={2}
-                  stroke="#5F5F5F"
-                  fill="none"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                >
-                  <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                  <polyline points="5 12 3 12 12 3 21 12 19 12" />
-                  <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7" />
-                  <path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6" />
-                </svg>
-              }
+              icon={<RxHome size={16} color="#1d273b" />}
             />
           )}
 
@@ -139,22 +124,7 @@ const SideBarPage = () => {
                   aria-label="Open user menu"
                 >
                   <span className="nav-link-icon d-none d-md-inline-block">
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      className="icon"
-                      width={24}
-                      height={24}
-                      viewBox="0 0 24 24"
-                      strokeWidth={2}
-                      stroke="#5F5F5F"
-                      fill="none"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    >
-                      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                      <path d="M10.325 4.317c.426 -1.756 2.924 -1.756 3.35 0a1.724 1.724 0 0 0 2.573 1.066c1.543 -.94 3.31 .826 2.37 2.37a1.724 1.724 0 0 0 1.065 2.572c1.756 .426 1.756 2.924 0 3.35a1.724 1.724 0 0 0 -1.066 2.573c.94 1.543 -.826 3.31 -2.37 2.37a1.724 1.724 0 0 0 -2.572 1.065c-.426 1.756 -2.924 1.756 -3.35 0a1.724 1.724 0 0 0 -2.573 -1.066c-1.543 .94 -3.31 -.826 -2.37 -2.37a1.724 1.724 0 0 0 -1.065 -2.572c-1.756 -.426 -1.756 -2.924 0 -3.35a1.724 1.724 0 0 0 1.066 -2.573c-.94 -1.543 .826 -3.31 2.37 -2.37c1 .608 2.296 .07 2.572 -1.065z" />
-                      <circle cx={12} cy={12} r={3} />
-                    </svg>
+                    <TbSettings size={16} color="#1d273b" />
                   </span>
                   <span className="nav-link-title">System setup</span>
                 </Link>
@@ -210,23 +180,7 @@ const SideBarPage = () => {
                   aria-label="Open user menu"
                 >
                   <span className="nav-link-icon d-none d-md-inline-block">
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      className="icon"
-                      width={24}
-                      height={24}
-                      viewBox="0 0 24 24"
-                      strokeWidth={2}
-                      stroke="#5F5F5F"
-                      fill="none"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    >
-                      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                      <circle cx={9} cy={7} r={4} />
-                      <path d="M3 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" />
-                      <path d="M16 11h6m-3 -3v6" />
-                    </svg>
+                    <LuUserPlus size={16} color="#1d273b" />
                   </span>
                   <span className="nav-link-title">Customer</span>
                 </Link>
@@ -281,27 +235,7 @@ const SideBarPage = () => {
                   aria-label="Open user menu"
                 >
                   <span className="nav-link-icon d-none d-md-inline-block">
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      className="icon"
-                      width={24}
-                      height={24}
-                      viewBox="0 0 24 24"
-                      strokeWidth={2}
-                      stroke="#5F5F5F"
-                      fill="none"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    >
-                      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                      <path d="M8 5h-2a2 2 0 0 0 -2 2v12a2 2 0 0 0 2 2h5.697" />
-                      <path d="M18 14v4h4" />
-                      <path d="M18 11v-4a2 2 0 0 0 -2 -2h-2" />
-                      <rect x={8} y={3} width={6} height={4} rx={2} />
-                      <circle cx={18} cy={18} r={4} />
-                      <path d="M8 11h4" />
-                      <path d="M8 15h3" />
-                    </svg>
+                    <TbReport size={16} color="#1d273b" />
                   </span>
                   <span className="nav-link-title">Report</span>
                 </Link>

@@ -1,5 +1,10 @@
 import { useRequest } from 'ahooks';
 import React, { useState } from 'react';
+import { FaRegEdit } from 'react-icons/fa';
+import { IoIosArrowForward } from 'react-icons/io';
+import { IoAddSharp, IoChevronBack } from 'react-icons/io5';
+import { LuEye } from 'react-icons/lu';
+import { TfiReload } from 'react-icons/tfi';
 import ReactPaginate from 'react-paginate';
 import { Link, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
@@ -7,7 +12,6 @@ import Loading from '../../../../components/Loading';
 import { ROUTE_PATH } from '../../../../utils/route-util';
 import type { ProjectItem } from '../../entities';
 import { fetchProjectList, useListPagination } from '../../interface-adapters';
-
 const ProjectPage = () => {
   document.title = 'E-CHANNEL PORTAL | project';
   const navigate = useNavigate();
@@ -69,92 +73,32 @@ const ProjectPage = () => {
                     <div className="btn-list">
                       <div>
                         <button
-                          className="btn btn-primary d-none d-sm-inline-block"
+                          className="btn btn-primary d-none d-sm-inline-flex align-items-center gap-2"
                           onClick={() => refreshList()}
                         >
-                          <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            className="icon icon-tabler icon-tabler-refresh"
-                            width={24}
-                            height={24}
-                            viewBox="0 0 24 24"
-                            strokeWidth="1.5"
-                            stroke="currentColor"
-                            fill="none"
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                          >
-                            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                            <path d="M20 11a8.1 8.1 0 0 0 -15.5 -2m-.5 -4v4h4" />
-                            <path d="M4 13a8.1 8.1 0 0 0 15.5 2m.5 4v-4h-4" />
-                          </svg>
+                          <TfiReload size={16} />
                           Reload
                         </button>
                         <button
                           className="btn btn-primary d-sm-none btn-icon"
                           onClick={() => refreshList()}
                         >
-                          <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            className="icon icon-tabler icon-tabler-refresh"
-                            width={24}
-                            height={24}
-                            viewBox="0 0 24 24"
-                            strokeWidth="1.5"
-                            stroke="currentColor"
-                            fill="none"
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                          >
-                            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                            <path d="M20 11a8.1 8.1 0 0 0 -15.5 -2m-.5 -4v4h4" />
-                            <path d="M4 13a8.1 8.1 0 0 0 15.5 2m.5 4v-4h-4" />
-                          </svg>
+                          <TfiReload size={16} />
                         </button>
                       </div>
                       <>
                         <button
-                          className="btn btn-primary d-none d-sm-inline-block"
+                          className="btn btn-primary d-none d-sm-inline-flex align-items-center gap-2"
                           onClick={createNewHandleClick}
                         >
-                          <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            className="icon"
-                            width={24}
-                            height={24}
-                            viewBox="0 0 24 24"
-                            strokeWidth={2}
-                            stroke="currentColor"
-                            fill="none"
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                          >
-                            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                            <line x1={12} y1={5} x2={12} y2={19} />
-                            <line x1={5} y1={12} x2={19} y2={12} />
-                          </svg>
+                          <IoAddSharp size={20} />
                           Create project
                         </button>
                         <button
                           className="btn btn-primary d-sm-none btn-icon"
                           onClick={createNewHandleClick}
                         >
-                          <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            className="icon"
-                            width={24}
-                            height={24}
-                            viewBox="0 0 24 24"
-                            strokeWidth={2}
-                            stroke="currentColor"
-                            fill="none"
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                          >
-                            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                            <line x1={12} y1={5} x2={12} y2={19} />
-                            <line x1={5} y1={12} x2={19} y2={12} />
-                          </svg>
+                          <IoAddSharp size={16} />
                         </button>
                       </>
                     </div>
@@ -234,58 +178,19 @@ const ProjectPage = () => {
                           )}
                           <td>
                             <a
-                              className="cursor-pointer"
+                              className="cursor-pointer me-2"
                               data-bs-toggle="offcanvas"
                               href="#offcanvasView"
                               onClick={() => handleViewClick(item)}
                             >
-                              <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                className="icon icon-tabler icon-tabler-eye"
-                                width={24}
-                                height={24}
-                                viewBox="0 0 24 24"
-                                strokeWidth="1.5"
-                                stroke="#00abfb"
-                                fill="none"
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                              >
-                                <path
-                                  stroke="none"
-                                  d="M0 0h24v24H0z"
-                                  fill="none"
-                                />
-                                <circle cx={12} cy={12} r={2} />
-                                <path d="M22 12c-2.667 4.667 -6 7 -10 7s-7.333 -2.333 -10 -7c2.667 -4.667 6 -7 10 -7s7.333 2.333 10 7" />
-                              </svg>
+                              <LuEye size={16} color="#00abfb" />
                             </a>
                             <Link
                               to={ROUTE_PATH.projectEdit(
                                 item.transactionCode ?? ''
                               )}
                             >
-                              <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                className="icon icon-tabler icon-tabler-edit"
-                                width={24}
-                                height={24}
-                                viewBox="0 0 24 24"
-                                strokeWidth="1.5"
-                                stroke="#00b341"
-                                fill="none"
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                              >
-                                <path
-                                  stroke="none"
-                                  d="M0 0h24v24H0z"
-                                  fill="none"
-                                />
-                                <path d="M9 7h-3a2 2 0 0 0 -2 2v9a2 2 0 0 0 2 2h9a2 2 0 0 0 2 -2v-3" />
-                                <path d="M9 15h3l8.5 -8.5a1.5 1.5 0 0 0 -3 -3l-8.5 8.5v3" />
-                                <line x1={16} y1={5} x2={19} y2={8} />
-                              </svg>
+                              <FaRegEdit size={16} color="#00b341" />
                             </Link>
                           </td>
                         </tr>
@@ -300,41 +205,14 @@ const ProjectPage = () => {
                   <ReactPaginate
                     previousLabel={
                       <div>
-                        <svg
-                          className="icon"
-                          width={24}
-                          height={24}
-                          viewBox="0 0 24 24"
-                          strokeWidth={2}
-                          stroke="currentColor"
-                          fill="none"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                        >
-                          <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                          <polyline points="15 6 9 12 15 18" />
-                        </svg>
+                        <IoChevronBack size={16} />
                         prev
                       </div>
                     }
                     nextLabel={
                       <div>
                         next
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          className="icon"
-                          width={24}
-                          height={24}
-                          viewBox="0 0 24 24"
-                          strokeWidth={2}
-                          stroke="currentColor"
-                          fill="none"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                        >
-                          <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                          <polyline points="9 6 15 12 9 18" />
-                        </svg>
+                        <IoIosArrowForward size={16} />
                       </div>
                     }
                     pageCount={pageCount}
