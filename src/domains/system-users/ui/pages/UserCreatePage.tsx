@@ -1,3 +1,4 @@
+import { useRequest } from 'ahooks';
 import { useEffect, useState } from 'react';
 import { PatternFormat } from 'react-number-format';
 import { useNavigate } from 'react-router-dom';
@@ -33,36 +34,19 @@ const UserCreatePage = () => {
   const [selectedBranch, setSelectedBranch] = useState('');
   const [message, setMessage] = useState('');
 
-  const getList = () => {
-    fetchUserRoleOptions().then((res) => {
+  useRequest(fetchUserRoleOptions, {
+    onSuccess: (res) => {
       if (res?.status == 200) {
         setOptionRole(res?.data?.role ?? []);
       }
-    });
-  };
+    },
+  });
 
-  const funcButtonHandleClickExecute = (
-    e: React.MouseEvent<HTMLButtonElement>
-  ) => {
-    if (
-      validateRequiredFields([
-        textEmail,
-        textFirstName,
-        textLastName,
-        selectedBranch,
-        selectedRole,
-      ])
-    ) {
-      createUser(
-        buildUserCreateDto({
-          email: textEmail,
-          givenName: textFirstName,
-          sureName: textLastName,
-          role: selectedRole,
-          branch: selectedBranch,
-          phone,
-        })
-      ).then((res) => {
+  const { run: runCreateUser, loading: createLoading } = useRequest(
+    createUser,
+    {
+      manual: true,
+      onSuccess: (res) => {
         switch (res?.status) {
           case 200:
             toast.success(res?.data?.message);
@@ -77,13 +61,59 @@ const UserCreatePage = () => {
           default:
             navigate(ROUTE_PATH.error404);
         }
-      });
+      },
+    }
+  );
+
+  const { run: runCheckBranchManagerConflict } = useRequest(
+    checkBranchManagerConflict,
+    {
+      manual: true,
+      onSuccess: (res) => {
+        switch (res?.status) {
+          case 200:
+            setMessage(res?.data?.message ?? '');
+            break;
+          case 400:
+            toast.error(res?.data?.message);
+            break;
+          case 403:
+            toast.error(res?.data as unknown as string);
+            break;
+          default:
+            navigate(ROUTE_PATH.error404);
+        }
+      },
+    }
+  );
+
+  const funcButtonHandleClickExecute = (
+    e: React.MouseEvent<HTMLButtonElement>
+  ) => {
+    if (
+      validateRequiredFields([
+        textEmail,
+        textFirstName,
+        textLastName,
+        selectedBranch,
+        selectedRole,
+      ])
+    ) {
+      runCreateUser(
+        buildUserCreateDto({
+          email: textEmail,
+          givenName: textFirstName,
+          sureName: textLastName,
+          role: selectedRole,
+          branch: selectedBranch,
+          phone,
+        })
+      );
     }
     e.preventDefault();
   };
 
   useEffect(() => {
-    getList();
     setOptionBranch(deriveBranchOptions(company));
   }, []);
 
@@ -105,21 +135,7 @@ const UserCreatePage = () => {
 
   const branchHandleChange = (e: SelectOption | null) => {
     setSelectedBranch(e?.value ?? '');
-    checkBranchManagerConflict(e?.value ?? '').then((res) => {
-      switch (res?.status) {
-        case 200:
-          setMessage(res?.data?.message ?? '');
-          break;
-        case 400:
-          toast.error(res?.data?.message);
-          break;
-        case 403:
-          toast.error(res?.data as unknown as string);
-          break;
-        default:
-          navigate(ROUTE_PATH.error404);
-      }
-    });
+    runCheckBranchManagerConflict(e?.value ?? '');
   };
 
   const roleHandleChange = (e: SelectOption | null) => {
@@ -296,7 +312,14 @@ const UserCreatePage = () => {
                     <button
                       className="btn btn-primary"
                       onClick={funcButtonHandleClickExecute}
+                      disabled={createLoading}
                     >
+                      {createLoading && (
+                        <span
+                          className="spinner-border spinner-border-sm me-2"
+                          role="status"
+                        />
+                      )}
                       Submit
                     </button>
                   </div>

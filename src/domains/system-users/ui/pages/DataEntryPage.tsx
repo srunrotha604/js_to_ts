@@ -1,4 +1,5 @@
-import { useEffect, useState } from 'react';
+import { useRequest } from 'ahooks';
+import { useState } from 'react';
 import ReactPaginate from 'react-paginate';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
@@ -23,35 +24,37 @@ const DataEntryPage = () => {
   const { selectedBranch } = useAuth() as {
     selectedBranch: { value?: string } | null;
   };
-  const [loading, setLoading] = useState(false);
   const [query, setQuery] = useState('');
   const [arrList, setArrList] = useState<DataEntryItem[]>([]);
-  const getList = () => {
-    fetchDataEntryList(selectedBranch?.value).then((res) => {
-      switch (res?.status) {
-        case 200:
-          setLoading(true);
-          setArrList(res?.data?.list ?? []);
-          setLoading(false);
-          break;
-        case 400:
-          toast.error(res?.data?.message);
-          break;
-        case 403:
-          toast.error(res?.data as unknown as string);
-          break;
-        default:
-          navigate(ROUTE_PATH.error404);
-      }
-    });
-  };
 
-  const statusHandleClickExecute = (key?: string) => {
-    toggleDataEntryStatus({ key }).then((res) => {
+  const { loading, refresh: refreshList } = useRequest(
+    () => fetchDataEntryList(selectedBranch?.value),
+    {
+      onSuccess: (res) => {
+        switch (res?.status) {
+          case 200:
+            setArrList(res?.data?.list ?? []);
+            break;
+          case 400:
+            toast.error(res?.data?.message);
+            break;
+          case 403:
+            toast.error(res?.data as unknown as string);
+            break;
+          default:
+            navigate(ROUTE_PATH.error404);
+        }
+      },
+    }
+  );
+
+  const { run: runToggleDataEntryStatus } = useRequest(toggleDataEntryStatus, {
+    manual: true,
+    onSuccess: (res) => {
       switch (res?.status) {
         case 200:
           toast.success(res?.data?.message);
-          getList();
+          refreshList();
           break;
         case 400:
           toast.error(res?.data?.message);
@@ -62,31 +65,36 @@ const DataEntryPage = () => {
         default:
           navigate(ROUTE_PATH.error404);
       }
-    });
+    },
+  });
+
+  const { run: runDeleteDataEntry } = useRequest(deleteDataEntry, {
+    manual: true,
+    onSuccess: (res) => {
+      switch (res?.status) {
+        case 200:
+          toast.success(res?.data?.message);
+          refreshList();
+          break;
+        case 400:
+          toast.error(res?.data?.message);
+          break;
+        case 403:
+          toast.error(res?.data as unknown as string);
+          break;
+        default:
+          navigate(ROUTE_PATH.error404);
+      }
+    },
+  });
+
+  const statusHandleClickExecute = (key?: string) => {
+    runToggleDataEntryStatus({ key });
   };
 
   const funcRemoveHandleClickExecute = (key?: string) => {
-    deleteDataEntry({ key }).then((res) => {
-      switch (res?.status) {
-        case 200:
-          toast.success(res?.data?.message);
-          getList();
-          break;
-        case 400:
-          toast.error(res?.data?.message);
-          break;
-        case 403:
-          toast.error(res?.data as unknown as string);
-          break;
-        default:
-          navigate(ROUTE_PATH.error404);
-      }
-    });
+    runDeleteDataEntry({ key });
   };
-
-  useEffect(() => {
-    getList();
-  }, []);
 
   const createNewHandleClick = () => {
     navigate(ROUTE_PATH.dataEntryCreate);
@@ -130,7 +138,7 @@ const DataEntryPage = () => {
                   <div>
                     <button
                       className="btn btn-primary d-none d-sm-inline-block"
-                      onClick={getList}
+                      onClick={() => refreshList()}
                     >
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -152,7 +160,7 @@ const DataEntryPage = () => {
                     </button>
                     <button
                       className="btn btn-primary d-sm-none btn-icon"
-                      onClick={getList}
+                      onClick={() => refreshList()}
                     >
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -338,7 +346,7 @@ const DataEntryPage = () => {
                             <td className="cursor-pointer">
                               <AddPhoneNumberModal
                                 item={item}
-                                success={() => getList()}
+                                success={() => refreshList()}
                                 onSubmit={addDataEntryPhoneNumber}
                               />
                             </td>

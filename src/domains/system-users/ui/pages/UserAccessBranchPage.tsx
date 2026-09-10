@@ -1,4 +1,5 @@
-import { useEffect, useState } from 'react';
+import { useRequest } from 'ahooks';
+import { useState } from 'react';
 import ReactPaginate from 'react-paginate';
 import { useNavigate, useParams } from 'react-router-dom';
 import Select from 'react-select';
@@ -29,28 +30,98 @@ const UserAccessBranchPage = () => {
   const [selectedValue, setSelectedValue] = useState('');
   const [options, setOptions] = useState<SelectOption[]>([]);
 
-  const getList = () => {
-    fetchUserAccessBranchList(
-      params.applicationId ?? '',
-      params.companyCode ?? '',
-      params.userCode ?? ''
-    ).then((res) => {
-      switch (res?.status) {
-        case 200:
-          setArrList(res?.data?.list ?? []);
-          setOptions(res?.data?.options ?? []);
-          break;
-        case 400:
-          toast.error(res?.data?.message);
-          break;
-        case 403:
-          toast.error(res?.data as unknown as string);
-          break;
-        default:
-          navigate(ROUTE_PATH.error404);
-      }
+  const { refresh: refreshList } = useRequest(
+    () =>
+      fetchUserAccessBranchList(
+        params.applicationId ?? '',
+        params.companyCode ?? '',
+        params.userCode ?? ''
+      ),
+    {
+      onSuccess: (res) => {
+        switch (res?.status) {
+          case 200:
+            setArrList(res?.data?.list ?? []);
+            setOptions(res?.data?.options ?? []);
+            break;
+          case 400:
+            toast.error(res?.data?.message);
+            break;
+          case 403:
+            toast.error(res?.data as unknown as string);
+            break;
+          default:
+            navigate(ROUTE_PATH.error404);
+        }
+      },
+    }
+  );
+
+  const { run: runAddUserAccessBranch, loading: addLoading } = useRequest(
+    addUserAccessBranch,
+    {
+      manual: true,
+      onSuccess: (res) => {
+        switch (res?.status) {
+          case 200:
+            toast.success(res?.data?.message);
+            refreshList();
+            setSelectedValue('');
+            break;
+          case 400:
+            toast.error(res?.data?.message);
+            break;
+          case 403:
+            toast.error(res?.data as unknown as string);
+            break;
+          default:
+            navigate(ROUTE_PATH.error404);
+        }
+      },
+    }
+  );
+
+  const { run: runRemoveUserAccessBranch, loading: removeLoading } =
+    useRequest(removeUserAccessBranch, {
+      manual: true,
+      onSuccess: (res) => {
+        switch (res?.status) {
+          case 200:
+            toast.success(res?.data?.message);
+            refreshList();
+            break;
+          case 400:
+            toast.error(res?.data?.message);
+            break;
+          case 403:
+            toast.error(res?.data as unknown as string);
+            break;
+          default:
+            navigate(ROUTE_PATH.error404);
+        }
+      },
     });
-  };
+
+  const { run: runSetDefaultUserAccessBranch, loading: defaultLoading } =
+    useRequest(setDefaultUserAccessBranch, {
+      manual: true,
+      onSuccess: (res) => {
+        switch (res?.status) {
+          case 200:
+            toast.success(res?.data?.message);
+            refreshList();
+            break;
+          case 400:
+            toast.error(res?.data?.message);
+            break;
+          case 403:
+            toast.error(res?.data as unknown as string);
+            break;
+          default:
+            navigate(ROUTE_PATH.error404);
+        }
+      },
+    });
 
   const addCompanyHandleExecute = () => {
     if (!validateRequiredFields([selectedValue])) {
@@ -66,80 +137,30 @@ const UserAccessBranchPage = () => {
       });
       return;
     }
-    addUserAccessBranch({
+    runAddUserAccessBranch({
       applicationFamily: params.applicationId,
       companyFamily: params.companyCode,
       userCode: params.userCode,
       branchFamily: selectedValue,
-    }).then((res) => {
-      switch (res?.status) {
-        case 200:
-          toast.success(res?.data?.message);
-          getList();
-          setSelectedValue('');
-          break;
-        case 400:
-          toast.error(res?.data?.message);
-          break;
-        case 403:
-          toast.error(res?.data as unknown as string);
-          break;
-        default:
-          navigate(ROUTE_PATH.error404);
-      }
     });
   };
 
   const funcRemoveHandleClickExecute = () => {
-    removeUserAccessBranch({ transactionCode }).then((res) => {
-      switch (res?.status) {
-        case 200:
-          toast.success(res?.data?.message);
-          getList();
-          break;
-        case 400:
-          toast.error(res?.data?.message);
-          break;
-        case 403:
-          toast.error(res?.data as unknown as string);
-          break;
-        default:
-          navigate(ROUTE_PATH.error404);
-      }
-    });
+    runRemoveUserAccessBranch({ transactionCode });
   };
 
   const makeDefaultBranchHandleClickExecute = (item: UserAccessBranchItem) => {
-    setDefaultUserAccessBranch({
+    runSetDefaultUserAccessBranch({
       transactionCode: item.transactionCode,
       applicationFamily: item.applicationFamily,
       companyFamily: item.companyFamily,
       userCode: params.userCode,
-    }).then((res) => {
-      switch (res?.status) {
-        case 200:
-          toast.success(res?.data?.message);
-          getList();
-          break;
-        case 400:
-          toast.error(res?.data?.message);
-          break;
-        case 403:
-          toast.error(res?.data as unknown as string);
-          break;
-        default:
-          navigate(ROUTE_PATH.error404);
-      }
     });
   };
 
   const handleDeleteClick = (item: UserAccessBranchItem) => {
     setTransationCode(item.transactionCode ?? '');
   };
-
-  useEffect(() => {
-    getList();
-  }, []);
 
   const goBackHandleClick = () => {
     navigate(
@@ -171,7 +192,7 @@ const UserAccessBranchPage = () => {
                   <div>
                     <button
                       className="btn btn-primary d-none d-sm-inline-block"
-                      onClick={getList}
+                      onClick={() => refreshList()}
                     >
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -193,7 +214,7 @@ const UserAccessBranchPage = () => {
                     </button>
                     <button
                       className="btn btn-primary d-sm-none btn-icon"
-                      onClick={getList}
+                      onClick={() => refreshList()}
                     >
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -372,7 +393,12 @@ const UserAccessBranchPage = () => {
                                   makeDefaultBranchHandleClickExecute(item)
                                 }
                               >
-                                {item.defaultCompany === 'A' ? (
+                                {defaultLoading ? (
+                                  <span
+                                    className="spinner-border spinner-border-sm"
+                                    role="status"
+                                  />
+                                ) : item.defaultCompany === 'A' ? (
                                   <svg
                                     xmlns="http://www.w3.org/2000/svg"
                                     className="icon icon-tabler icon-tabler-trash"
@@ -534,22 +560,30 @@ const UserAccessBranchPage = () => {
                 className="btn btn-primary ms-auto"
                 data-bs-dismiss="modal"
                 onClick={addCompanyHandleExecute}
+                disabled={addLoading}
               >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="icon"
-                  width={24}
-                  height={24}
-                  viewBox="0 0 24 24"
-                  strokeWidth={2}
-                  stroke="currentColor"
-                  fill="none"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                >
-                  <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                  <path d="M5 12l5 5l10 -10" />
-                </svg>
+                {addLoading ? (
+                  <span
+                    className="spinner-border spinner-border-sm me-2"
+                    role="status"
+                  />
+                ) : (
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="icon"
+                    width={24}
+                    height={24}
+                    viewBox="0 0 24 24"
+                    strokeWidth={2}
+                    stroke="currentColor"
+                    fill="none"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                    <path d="M5 12l5 5l10 -10" />
+                  </svg>
+                )}
                 Submit
               </button>
             </div>
@@ -610,8 +644,16 @@ const UserAccessBranchPage = () => {
                       className="btn btn-danger w-100"
                       data-bs-dismiss="modal"
                       onClick={funcRemoveHandleClickExecute}
+                      disabled={removeLoading}
                     >
-                      Confirm
+                      {removeLoading ? (
+                        <span
+                          className="spinner-border spinner-border-sm me-2"
+                          role="status"
+                        />
+                      ) : (
+                        'Confirm'
+                      )}
                     </button>
                   </div>
                 </div>

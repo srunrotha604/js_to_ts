@@ -1,5 +1,6 @@
+import { useRequest } from 'ahooks';
 import axios from 'axios';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import 'react-datepicker/dist/react-datepicker.css';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
@@ -14,11 +15,10 @@ const VersionHistoryPage = () => {
   const [editItem, setEditItem] = useState<VersionItem | null>(null);
   const [showModal, setShowModal] = useState(false);
   const [versionList, setVersionList] = useState<VersionItem[]>([]);
-  const [refreshFlag, setRefreshFlag] = useState(false);
   const navigate = useNavigate();
-  const getList = async () => {
-    try {
-      const response = await fetchVersionList();
+
+  const { loading, refresh: refreshList } = useRequest(fetchVersionList, {
+    onSuccess: (response) => {
       if (response?.status === 200) {
         const data = response.data;
         setVersionList(data?.list || []);
@@ -27,7 +27,8 @@ const VersionHistoryPage = () => {
       } else {
         toast.warning('No data found.');
       }
-    } catch (error) {
+    },
+    onError: (error) => {
       console.error('Error fetching configuration:', error);
 
       if (axios.isAxiosError(error)) {
@@ -43,12 +44,8 @@ const VersionHistoryPage = () => {
       } else {
         toast.error('Failed to load configuration.');
       }
-    }
-  };
-
-  useEffect(() => {
-    getList();
-  }, [refreshFlag]);
+    },
+  });
 
   const handleOpenEdit = (version: VersionItem) => {
     setShowModal(false);
@@ -64,7 +61,7 @@ const VersionHistoryPage = () => {
   };
 
   const handleNewVersionAdded = () => {
-    setRefreshFlag((prev) => !prev);
+    refreshList();
   };
 
   const handleVersionDeleted = (deletedUuid: string) => {
@@ -78,7 +75,7 @@ const VersionHistoryPage = () => {
       )
     );
 
-    setRefreshFlag((prev) => !prev);
+    refreshList();
   };
 
   return (
@@ -87,6 +84,7 @@ const VersionHistoryPage = () => {
         <h2>Version History</h2>
         <VersionHistoryForm onCreated={handleNewVersionAdded} />
       </div>
+      {loading && <p className="text-muted mt-3 mb-0">Loading...</p>}
       <ul className="list-group mt-3">
         {versionList.map((item) => (
           <li key={item.uuid} className="list-group-item">

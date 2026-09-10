@@ -1,3 +1,4 @@
+import { useRequest } from 'ahooks';
 import { useEffect, useState } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -26,8 +27,8 @@ const CustomerEditPage = () => {
   const [step, setStep] = useState(STEP.Edited);
   const methods = useForm();
   const navigate = useNavigate();
-  const getList = () => {
-    fetchPoliciesByProductCode(params.productCode ?? '').then((res) => {
+  useRequest(() => fetchPoliciesByProductCode(params.productCode ?? ''), {
+    onSuccess: (res) => {
       switch (res?.status) {
         case 200:
           setArrProject(res?.data?.category ?? []);
@@ -41,14 +42,13 @@ const CustomerEditPage = () => {
         default:
           navigate(ROUTE_PATH.notFound);
       }
-    });
-  };
+    },
+  });
 
   const { spinnerState, openSpinner, closeSpinner } = useSpinner();
 
   useEffect(() => {
     openSpinner();
-    getList();
   }, []);
 
   const getActiveStep = () => {

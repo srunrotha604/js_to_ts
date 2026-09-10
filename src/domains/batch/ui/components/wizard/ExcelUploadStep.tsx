@@ -1,3 +1,4 @@
+import { useRequest } from 'ahooks';
 import clsx from 'clsx';
 import { useCallback, useEffect, useState } from 'react';
 import type { FileWithPath } from 'react-dropzone';
@@ -12,7 +13,6 @@ import ActionConfirmationModal from '../../../../../components/common/ActionConf
 import Button from '../../../../../components/common/Button';
 import { useModal } from '../../../../../components/common/modal/index';
 import Image from '../../../../../components/Image';
-import useLoading from '../../../../../hooks/useLoading';
 import { ROUTE_PATH } from '../../../../../utils/route-util';
 import type { ProjectPolicyOption } from '../../../../customer/entities';
 import type { BatchCustomerListResult } from '../../../entities';
@@ -38,7 +38,6 @@ const ExcelUploadStep = (props: ExcelUploadStepProps) => {
   const { control, handleSubmit, reset, getValues, setValue } =
     useFormContext();
   const [myFiles, setMyFiles] = useState<FileWithPath[]>([]);
-  const [loading, startLoading, stopLoading] = useLoading();
   const onDrop = useCallback(
     (acceptedFiles: FileWithPath[]) => {
       setMyFiles([...acceptedFiles]);
@@ -103,33 +102,33 @@ const ExcelUploadStep = (props: ExcelUploadStepProps) => {
     setPolicy([]);
   };
 
+  const { run: runUploadBatchExcel, loading } = useRequest(uploadBatchExcel, {
+    manual: true,
+    onSuccess: (res) => {
+      switch (res?.status) {
+        case 200:
+          handleReviewStep(res?.data ?? {}, product);
+          break;
+        case 400:
+          toast.error(res?.data?.message ?? '');
+          break;
+        case 403:
+          toast.error(String(res?.data));
+          break;
+        default:
+          redirect(ROUTE_PATH.error404);
+      }
+    },
+  });
+
   const onSubmit = (data: {
     project?: { value?: string };
     policy?: { value?: string };
   }) => {
-    startLoading();
-    uploadBatchExcel(myFiles, {
+    runUploadBatchExcel(myFiles, {
       ProjectCode: data.project?.value,
       Policies: data.policy?.value,
       ProductCode: product,
-    }).then((res) => {
-      switch (res?.status) {
-        case 200:
-          stopLoading();
-          handleReviewStep(res?.data ?? {}, product);
-          break;
-        case 400:
-          stopLoading();
-          toast.error(res?.data?.message ?? '');
-          break;
-        case 403:
-          stopLoading();
-          toast.error(String(res?.data));
-          break;
-        default:
-          stopLoading();
-          redirect(ROUTE_PATH.error404);
-      }
     });
   };
 

@@ -1,4 +1,5 @@
-import { useEffect, useState } from 'react';
+import { useRequest } from 'ahooks';
+import { useState } from 'react';
 import { MdClear } from 'react-icons/md';
 import { useNavigate, useParams } from 'react-router-dom';
 import type { ClearIndicatorProps, SingleValue } from 'react-select';
@@ -34,13 +35,11 @@ const ProjectPolicyCreatePage = () => {
   const [optionProduct, setOptionProduct] = useState<SelectOption[]>([]);
   const [selectedProduct, setSelectdProduct] = useState('');
 
-  const funcButtonHandleClickExecute = (
-    e: React.MouseEvent<HTMLButtonElement>
-  ) => {
-    if (validateRequiredFields([selectedPolicy])) {
-      createProjectPolicy(
-        buildProjectPolicyCreateDto(params.key, selectedPolicy)
-      ).then((res) => {
+  const { run: runCreateProjectPolicy, loading: createLoading } = useRequest(
+    createProjectPolicy,
+    {
+      manual: true,
+      onSuccess: (res) => {
         switch (res?.status) {
           case 200:
             toast.success(res?.data?.message);
@@ -55,13 +54,23 @@ const ProjectPolicyCreatePage = () => {
           default:
             navigate(ROUTE_PATH.error404);
         }
-      });
+      },
+    }
+  );
+
+  const funcButtonHandleClickExecute = (
+    e: React.MouseEvent<HTMLButtonElement>
+  ) => {
+    if (validateRequiredFields([selectedPolicy])) {
+      runCreateProjectPolicy(
+        buildProjectPolicyCreateDto(params.key, selectedPolicy)
+      );
     }
     e.preventDefault();
   };
 
-  const getPolicyOption = () => {
-    fetchProjectPolicyOptions().then((res) => {
+  useRequest(fetchProjectPolicyOptions, {
+    onSuccess: (res) => {
       switch (res?.status) {
         case 200:
           setOptionProduct(res?.data?.product ?? []);
@@ -76,8 +85,8 @@ const ProjectPolicyCreatePage = () => {
         default:
           navigate(ROUTE_PATH.error404);
       }
-    });
-  };
+    },
+  });
 
   const policyHandleChange = (value: SingleValue<PolicyOption>) => {
     {
@@ -99,10 +108,6 @@ const ProjectPolicyCreatePage = () => {
   const goBackHandleClick = () => {
     navigate(ROUTE_PATH.projectPolicy(params.key ?? ''));
   };
-
-  useEffect(() => {
-    getPolicyOption();
-  }, []);
 
   const customFilter = createFilter({ ignoreAccents: false });
   const customComponents = {
@@ -218,22 +223,30 @@ const ProjectPolicyCreatePage = () => {
                     <button
                       className="btn btn-primary"
                       onClick={funcButtonHandleClickExecute}
+                      disabled={createLoading}
                     >
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        className="icon icon-tabler icon-tabler-check"
-                        width={24}
-                        height={24}
-                        viewBox="0 0 24 24"
-                        strokeWidth="1.5"
-                        stroke="currentColor"
-                        fill="none"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                      >
-                        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                        <path d="M5 12l5 5l10 -10" />
-                      </svg>
+                      {createLoading ? (
+                        <span
+                          className="spinner-border spinner-border-sm me-2"
+                          role="status"
+                        />
+                      ) : (
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          className="icon icon-tabler icon-tabler-check"
+                          width={24}
+                          height={24}
+                          viewBox="0 0 24 24"
+                          strokeWidth="1.5"
+                          stroke="currentColor"
+                          fill="none"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        >
+                          <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                          <path d="M5 12l5 5l10 -10" />
+                        </svg>
+                      )}
                       Submit
                     </button>
                   </div>

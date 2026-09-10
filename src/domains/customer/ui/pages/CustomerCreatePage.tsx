@@ -1,4 +1,5 @@
-import { useEffect, useState } from 'react';
+import { useRequest } from 'ahooks';
+import { useState } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import { useNavigate, useParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
@@ -28,8 +29,8 @@ const CustomerCreatePage = () => {
   const [step, setStep] = useState(STEP.Create);
   const methods = useForm();
 
-  const getList = () => {
-    fetchProductAndPoliciesBySequenceCode(params.key ?? '').then((res) => {
+  useRequest(() => fetchProductAndPoliciesBySequenceCode(params.key ?? ''), {
+    onSuccess: (res) => {
       switch (res?.status) {
         case 200:
           setArrProduct(
@@ -48,14 +49,8 @@ const CustomerCreatePage = () => {
         default:
           navigate(ROUTE_PATH.notFound);
       }
-    });
-  };
-
-  useEffect(() => {
-    {
-      getList();
-    }
-  }, []);
+    },
+  });
 
   const getActiveStep = () => {
     switch (step) {

@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from 'react';
+import { useRequest } from 'ahooks';
+import React, { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import Select from 'react-select';
 import { toast } from 'react-toastify';
@@ -20,8 +21,8 @@ const UserEditPage = () => {
   const [textLastName, setTextLastName] = useState('');
   const [RoleCategory, setOptionBranch] = useState<SelectOption[]>([]);
   const [selectedRole, setSelectedRole] = useState('');
-  const getList = () => {
-    fetchUserByCode(params.key ?? '').then((res) => {
+  useRequest(() => fetchUserByCode(params.key ?? ''), {
+    onSuccess: (res) => {
       switch (res?.status) {
         case 200: {
           const dataList = res?.data?.list?.[0];
@@ -39,8 +40,11 @@ const UserEditPage = () => {
         default:
           navigate(ROUTE_PATH.error404);
       }
-    });
-    fetchUserRoleOptions().then((res) => {
+    },
+  });
+
+  useRequest(fetchUserRoleOptions, {
+    onSuccess: (res) => {
       switch (res?.status) {
         case 200:
           setOptionBranch(res?.data?.role ?? []);
@@ -55,15 +59,14 @@ const UserEditPage = () => {
         default:
           navigate(ROUTE_PATH.error404);
       }
-    });
-  };
-  const funcButtonHandleClickExecute = (
-    e: React.MouseEvent<HTMLButtonElement>
-  ) => {
-    if (
-      validateRequiredFields([textEmail, textFirstName, textLastName, selectedRole])
-    ) {
-      updateUser(buildUserEditDto(params.key, selectedRole)).then((res) => {
+    },
+  });
+
+  const { run: runUpdateUser, loading: updateLoading } = useRequest(
+    updateUser,
+    {
+      manual: true,
+      onSuccess: (res) => {
         switch (res?.status) {
           case 200:
             toast.success(res?.data?.message);
@@ -78,14 +81,20 @@ const UserEditPage = () => {
           default:
             navigate(ROUTE_PATH.error404);
         }
-      });
+      },
+    }
+  );
+
+  const funcButtonHandleClickExecute = (
+    e: React.MouseEvent<HTMLButtonElement>
+  ) => {
+    if (
+      validateRequiredFields([textEmail, textFirstName, textLastName, selectedRole])
+    ) {
+      runUpdateUser(buildUserEditDto(params.key, selectedRole));
     }
     e.preventDefault();
   };
-
-  useEffect(() => {
-    getList();
-  }, []);
 
   const emailHandleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setTextEmail(event.target.value);
@@ -244,7 +253,14 @@ const UserEditPage = () => {
                     <button
                       className="btn btn-primary"
                       onClick={funcButtonHandleClickExecute}
+                      disabled={updateLoading}
                     >
+                      {updateLoading && (
+                        <span
+                          className="spinner-border spinner-border-sm me-2"
+                          role="status"
+                        />
+                      )}
                       Submit
                     </button>
                   </div>

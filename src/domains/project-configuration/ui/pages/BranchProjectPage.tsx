@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from 'react';
+import { useRequest } from 'ahooks';
+import React, { useState } from 'react';
 import ReactPaginate from 'react-paginate';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
@@ -15,28 +16,27 @@ const BranchProjectPage = () => {
   document.title = 'E-CHANNEL PORTAL | Branch';
   const navigate = useNavigate();
   const params = useParams<{ key: string }>();
-  const [loading, setLoading] = useState(false);
   const [arrList, setArrList] = useState<BranchProjectListItem[]>([]);
   const [query, setQuery] = useState('');
   const [getKey, setGetKey] = useState('');
 
-  const getList = () => {
-    fetchBranchProjectList(params.key ?? '').then((res) => {
-      if (res?.status === 200) {
-        setLoading(true);
-        setArrList(res?.data?.list ?? []);
-        setLoading(false);
-      }
-    });
-  };
+  const { loading, refresh: refreshList } = useRequest(
+    () => fetchBranchProjectList(params.key ?? ''),
+    {
+      onSuccess: (res) => {
+        if (res?.status === 200) {
+          setArrList(res?.data?.list ?? []);
+        }
+      },
+    }
+  );
 
-  const deleteProjectHandleClickExecute = () => {
-    deleteBranchProject({ transactionCode: getKey }).then((res) => {
+  const { run: runDeleteBranchProject, loading: deleteLoading } = useRequest(deleteBranchProject, {
+    manual: true,
+    onSuccess: (res) => {
       switch (res?.status) {
         case 200:
-          setLoading(true);
-          getList();
-          setLoading(false);
+          refreshList();
           toast.success(res?.data?.message);
           break;
         case 400:
@@ -48,16 +48,16 @@ const BranchProjectPage = () => {
         default:
           navigate(ROUTE_PATH.notFound);
       }
-    });
+    },
+  });
+
+  const deleteProjectHandleClickExecute = () => {
+    runDeleteBranchProject({ transactionCode: getKey });
   };
 
   const handleDeleteClick = (item: BranchProjectListItem) => {
     setGetKey(item.transactionCode ?? '');
   };
-
-  useEffect(() => {
-    getList();
-  }, []);
 
   const createNewHandleClick = () => {
     navigate(ROUTE_PATH.branchProjectCreate(params.key ?? ''));
@@ -94,7 +94,7 @@ const BranchProjectPage = () => {
                       <div>
                         <button
                           className="btn btn-primary d-none d-sm-inline-block"
-                          onClick={getList}
+                          onClick={() => refreshList()}
                         >
                           <svg
                             xmlns="http://www.w3.org/2000/svg"
@@ -116,7 +116,7 @@ const BranchProjectPage = () => {
                         </button>
                         <button
                           className="btn btn-primary d-sm-none btn-icon"
-                          onClick={getList}
+                          onClick={() => refreshList()}
                         >
                           <svg
                             xmlns="http://www.w3.org/2000/svg"
@@ -524,8 +524,16 @@ const BranchProjectPage = () => {
                       className="btn btn-danger w-100"
                       data-bs-dismiss="modal"
                       onClick={deleteProjectHandleClickExecute}
+                      disabled={deleteLoading}
                     >
-                      Confirm
+                      {deleteLoading ? (
+                        <span
+                          className="spinner-border spinner-border-sm me-2"
+                          role="status"
+                        />
+                      ) : (
+                        'Confirm'
+                      )}
                     </button>
                   </div>
                 </div>

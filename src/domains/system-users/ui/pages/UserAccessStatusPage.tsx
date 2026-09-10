@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from 'react';
+import { useRequest } from 'ahooks';
+import React, { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import Select from 'react-select';
 import { toast } from 'react-toastify';
@@ -27,47 +28,22 @@ const UserAccessStatusPage = () => {
     []
   );
 
-  const getList = () => {
-    fetchUserAccessDetail(params.userCode ?? '').then((res) => {
-      switch (res?.status) {
-        case 200:
-          setValue(res?.data?.role?.[0]?.value ?? '');
-          setOptionsAccess(res?.data?.access ?? []);
-          setOptionsProcess(res?.data?.access ?? []);
-          setAdmin(res?.data?.role?.[0]?.keyCode ?? '');
-          setSelectedAccessValue(parseCsvList(res?.data?.role?.[0]?.label ?? ''));
-          setSelectedProcessValue(
-            parseCsvList(res?.data?.role?.[0]?.labelSecond ?? '')
-          );
-          break;
-        case 400:
-          toast.error(res?.data?.message);
-          break;
-        case 403:
-          toast.error(res?.data as unknown as string);
-          break;
-        default:
-          navigate(ROUTE_PATH.error404);
-      }
-    });
-  };
-
-  const funcButtonHandleClickExecute = (
-    e: React.MouseEvent<HTMLButtonElement>
-  ) => {
-    if (validateRequiredFields([selectedAccessValue])) {
-      saveUserAccessStatus(
-        buildUserAccessStatusDto(
-          value,
-          selectedAccessValue,
-          selectedProcessValue,
-          admin
-        )
-      ).then((res) => {
+  const { refresh: refreshDetail } = useRequest(
+    () => fetchUserAccessDetail(params.userCode ?? ''),
+    {
+      onSuccess: (res) => {
         switch (res?.status) {
           case 200:
-            toast.success(res?.data?.message);
-            getList();
+            setValue(res?.data?.role?.[0]?.value ?? '');
+            setOptionsAccess(res?.data?.access ?? []);
+            setOptionsProcess(res?.data?.access ?? []);
+            setAdmin(res?.data?.role?.[0]?.keyCode ?? '');
+            setSelectedAccessValue(
+              parseCsvList(res?.data?.role?.[0]?.label ?? '')
+            );
+            setSelectedProcessValue(
+              parseCsvList(res?.data?.role?.[0]?.labelSecond ?? '')
+            );
             break;
           case 400:
             toast.error(res?.data?.message);
@@ -78,14 +54,48 @@ const UserAccessStatusPage = () => {
           default:
             navigate(ROUTE_PATH.error404);
         }
-      });
+      },
+    }
+  );
+
+  const { run: runSaveUserAccessStatus, loading: saveLoading } = useRequest(
+    saveUserAccessStatus,
+    {
+      manual: true,
+      onSuccess: (res) => {
+        switch (res?.status) {
+          case 200:
+            toast.success(res?.data?.message);
+            refreshDetail();
+            break;
+          case 400:
+            toast.error(res?.data?.message);
+            break;
+          case 403:
+            toast.error(res?.data as unknown as string);
+            break;
+          default:
+            navigate(ROUTE_PATH.error404);
+        }
+      },
+    }
+  );
+
+  const funcButtonHandleClickExecute = (
+    e: React.MouseEvent<HTMLButtonElement>
+  ) => {
+    if (validateRequiredFields([selectedAccessValue])) {
+      runSaveUserAccessStatus(
+        buildUserAccessStatusDto(
+          value,
+          selectedAccessValue,
+          selectedProcessValue,
+          admin
+        )
+      );
     }
     e.preventDefault();
   };
-
-  useEffect(() => {
-    getList();
-  }, []);
 
   const goBackHandleClick = () => {
     navigate(ROUTE_PATH.user);
@@ -206,7 +216,14 @@ const UserAccessStatusPage = () => {
                     <button
                       className="btn btn-primary"
                       onClick={funcButtonHandleClickExecute}
+                      disabled={saveLoading}
                     >
+                      {saveLoading && (
+                        <span
+                          className="spinner-border spinner-border-sm me-2"
+                          role="status"
+                        />
+                      )}
                       Submit
                     </button>
                   </div>

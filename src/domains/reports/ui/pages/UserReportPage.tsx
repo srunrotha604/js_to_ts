@@ -1,19 +1,25 @@
+import { useRequest } from 'ahooks';
 import clsx from 'clsx';
 import fileDownload from 'js-file-download';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import ReactPaginate from 'react-paginate';
 import Select from 'react-select';
-import type { CompanyBranchOption, SelectOption } from '../../../../@type/report';
+import type {
+  CompanyBranchOption,
+  SelectOption,
+} from '../../../../@type/report';
 import Button from '../../../../components/common/Button';
 import { selectCustomStyles } from '../../../../components/common/reactSelectStyles';
 import DateRangeSelector from '../../../../components/form/DateRangeSelector';
 import { useAuth } from '../../../../context/AuthContext';
-import ComponentStatus from '../../../customer/ui/components/ComponentStatus';
-import useLoading from '../../../../hooks/useLoading';
 import useMessage from '../../../../hooks/useMessage';
+import ComponentStatus from '../../../customer/ui/components/ComponentStatus';
 import type { UserReportItem } from '../../entities';
 import { RECORDSTATUS } from '../../entities';
-import { exportUserReportList, fetchUserReportList } from '../../interface-adapters';
+import {
+  exportUserReportList,
+  fetchUserReportList,
+} from '../../interface-adapters';
 import {
   buildUserReportExportFilename,
   buildUserReportQueryParams,
@@ -28,7 +34,6 @@ const UserReportPage = () => {
     company: CompanyBranchOption[] | null;
   };
   const [data, setData] = useState<UserReportItem[] | null>(null);
-  const [loading, startLoading, stopLoading] = useLoading();
 
   const [status, setStatus] = useState<SelectOption[]>([]);
   const [rowPerPage, setRowPerPage] = useState(25);
@@ -75,49 +80,52 @@ const UserReportPage = () => {
     [hasPermissionAccessTransaction]
   );
 
-  const getList = async ({
-    pageNumber,
-    pageSize,
-  }: {
-    pageNumber: number;
-    pageSize: number;
-  }) => {
-    try {
-      startLoading();
+  const { loading, run: getList } = useRequest(
+    async ({
+      pageNumber,
+      pageSize,
+    }: {
+      pageNumber: number;
+      pageSize: number;
+    }) => {
       const response = await fetchUserReportList({
         ...buildUserReportQueryParams({ status, selectedBranch, date }),
         pageSize,
         pageNumber,
       });
-      setTotalDocs(response?.data?.totalDocs ?? 0);
-      setData(response?.data?.list ?? []);
-      setIsFieldDirty(false);
-      resetTableScroll();
-    } catch (error) {
-      console.log(error);
-    } finally {
-      stopLoading();
+      return response;
+    },
+    {
+      manual: true,
+      onSuccess: (response) => {
+        setTotalDocs(response?.data?.totalDocs ?? 0);
+        setData(response?.data?.list ?? []);
+        setIsFieldDirty(false);
+        resetTableScroll();
+      },
+      onError: (error) => {
+        console.log(error);
+      },
     }
-  };
+  );
 
-  const [exportLoading, startExportLoading, stopExportLoading] = useLoading();
   const { showErrorResponseMessage } = useMessage();
 
-  const exportList = async () => {
-    try {
-      startExportLoading();
+  const { loading: exportLoading, run: exportList } = useRequest(
+    async () => {
       const response = await exportUserReportList(
         buildUserReportQueryParams({ status, selectedBranch, date })
       );
       if (!response?.data) return;
       fileDownload(response.data, buildUserReportExportFilename());
-    } catch (error) {
-      console.log(error);
-      showErrorResponseMessage(error);
-    } finally {
-      stopExportLoading();
+    },
+    {
+      manual: true,
+      onError: (error) => {
+        showErrorResponseMessage(error);
+      },
     }
-  };
+  );
 
   const tableRef = useRef<HTMLDivElement | null>(null);
 

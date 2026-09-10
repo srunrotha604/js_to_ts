@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from 'react';
+import { useRequest } from 'ahooks';
+import React, { useState } from 'react';
 import ReactPaginate from 'react-paginate';
 import { useNavigate } from 'react-router-dom';
 import Select from 'react-select';
@@ -19,45 +20,51 @@ const RoleAccessPage = () => {
   const navigate = useNavigate();
 
   const { modalRef, openModal, closeModal } = useModal();
-  const [loading, setLoading] = useState(false);
   const [arrList, setArrList] = useState<RoleAccessItem[]>([]);
   const [selectedRole, setSelectedRole] = useState('');
   const [listAccess, setListAccess] = useState<SelectOption[]>([]);
   const [selectedAccess, setSelectedAccess] = useState<string[]>([]);
   const [selectedProcess, setSelectedProcess] = useState<string[]>([]);
-  const getList = () => {
-    fetchRoleAccessList().then((res) => {
+
+  const { loading, refresh: refreshList } = useRequest(fetchRoleAccessList, {
+    onSuccess: (res) => {
       if (res?.status == 200) {
-        setLoading(true);
         setArrList(res?.data?.list ?? []);
         setListAccess(res?.data?.access ?? []);
-        setLoading(false);
       }
-    });
-  };
+    },
+  });
+
+  const { run: runUpdateRoleAccess, loading: updateLoading } = useRequest(
+    updateRoleAccess,
+    {
+      manual: true,
+      onSuccess: (res) => {
+        switch (res?.status) {
+          case 200:
+            toast.success(res?.data?.message);
+            closeModal();
+            refreshList();
+            break;
+          case 400:
+            toast.error(res?.data?.message);
+            break;
+          case 403:
+            toast.error(res?.data as unknown as string);
+            break;
+          default:
+            navigate(ROUTE_PATH.error404);
+        }
+      },
+    }
+  );
 
   const funcButtonHandleClickExecute = (
     e: React.MouseEvent<HTMLButtonElement>
   ) => {
-    updateRoleAccess(
+    runUpdateRoleAccess(
       buildRoleAccessUpdateDto(selectedRole, selectedAccess, selectedProcess)
-    ).then((res) => {
-      switch (res?.status) {
-        case 200:
-          toast.success(res?.data?.message);
-          closeModal();
-          getList();
-          break;
-        case 400:
-          toast.error(res?.data?.message);
-          break;
-        case 403:
-          toast.error(res?.data as unknown as string);
-          break;
-        default:
-          navigate(ROUTE_PATH.error404);
-      }
-    });
+    );
     e.preventDefault();
   };
 
@@ -68,10 +75,6 @@ const RoleAccessPage = () => {
   const processHandleChange = (e: readonly SelectOption[] | null) => {
     setSelectedProcess(Array.isArray(e) ? e.map((x) => x.value) : []);
   };
-
-  useEffect(() => {
-    getList();
-  }, []);
 
   const PER_PAGE = 10;
   const [currentPage, setCurrentPage] = useState(0);
@@ -127,7 +130,14 @@ const RoleAccessPage = () => {
             type="submit"
             className="btn btn-primary"
             onClick={funcButtonHandleClickExecute}
+            disabled={updateLoading}
           >
+            {updateLoading && (
+              <span
+                className="spinner-border spinner-border-sm me-2"
+                role="status"
+              />
+            )}
             Submit
           </button>
         </div>
@@ -144,7 +154,7 @@ const RoleAccessPage = () => {
                   <div>
                     <button
                       className="btn btn-primary d-none d-sm-inline-block"
-                      onClick={getList}
+                      onClick={() => refreshList()}
                     >
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -166,7 +176,7 @@ const RoleAccessPage = () => {
                     </button>
                     <button
                       className="btn btn-primary d-sm-none btn-icon"
-                      onClick={getList}
+                      onClick={() => refreshList()}
                     >
                       <svg
                         xmlns="http://www.w3.org/2000/svg"

@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from 'react';
+import { useRequest } from 'ahooks';
+import React, { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import Select, { MultiValue, SingleValue } from 'react-select';
 import { toast } from 'react-toastify';
@@ -27,8 +28,8 @@ const BranchProjectEditPage = () => {
   const [selectedPolicies, setSelectdPolicies] = useState<string[]>([]);
   const [branch, setBranch] = useState('');
 
-  const getList = () => {
-    fetchBranchProjectDetail(params.key ?? '').then((res) => {
+  useRequest(() => fetchBranchProjectDetail(params.key ?? ''), {
+    onSuccess: (res) => {
       switch (res?.status) {
         case 200:
           {
@@ -50,16 +51,14 @@ const BranchProjectEditPage = () => {
         default:
           navigate(ROUTE_PATH.notFound);
       }
-    });
-  };
+    },
+  });
 
-  const funcButtonHandleClickExecute = (
-    e: React.MouseEvent<HTMLButtonElement>
-  ) => {
-    if (validateRequiredFields([selectedProject, selectedPolicies])) {
-      updateBranchProject(
-        buildBranchProjectEditDto(params.key, selectedPolicies)
-      ).then((res) => {
+  const { run: runUpdateBranchProject, loading: updateLoading } = useRequest(
+    updateBranchProject,
+    {
+      manual: true,
+      onSuccess: (res) => {
         switch (res?.status) {
           case 200:
             navigate(ROUTE_PATH.branchProject(branch));
@@ -73,14 +72,20 @@ const BranchProjectEditPage = () => {
           default:
             navigate(ROUTE_PATH.notFound);
         }
-      });
+      },
+    }
+  );
+
+  const funcButtonHandleClickExecute = (
+    e: React.MouseEvent<HTMLButtonElement>
+  ) => {
+    if (validateRequiredFields([selectedProject, selectedPolicies])) {
+      runUpdateBranchProject(
+        buildBranchProjectEditDto(params.key, selectedPolicies)
+      );
     }
     e.preventDefault();
   };
-
-  useEffect(() => {
-    getList();
-  }, []);
 
   const projectHandleChange = (value: SingleValue<BranchProjectOption>) => {
     setSelectdProject(value?.value ?? '');
@@ -185,22 +190,30 @@ const BranchProjectEditPage = () => {
                     <button
                       className="btn btn-primary"
                       onClick={funcButtonHandleClickExecute}
+                      disabled={updateLoading}
                     >
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        className="icon icon-tabler icon-tabler-check"
-                        width={24}
-                        height={24}
-                        viewBox="0 0 24 24"
-                        strokeWidth="1.5"
-                        stroke="currentColor"
-                        fill="none"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                      >
-                        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                        <path d="M5 12l5 5l10 -10" />
-                      </svg>
+                      {updateLoading ? (
+                        <span
+                          className="spinner-border spinner-border-sm me-2"
+                          role="status"
+                        />
+                      ) : (
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          className="icon icon-tabler icon-tabler-check"
+                          width={24}
+                          height={24}
+                          viewBox="0 0 24 24"
+                          strokeWidth="1.5"
+                          stroke="currentColor"
+                          fill="none"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        >
+                          <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                          <path d="M5 12l5 5l10 -10" />
+                        </svg>
+                      )}
                       Submit
                     </button>
                   </div>

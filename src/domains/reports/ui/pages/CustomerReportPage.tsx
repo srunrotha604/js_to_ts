@@ -1,3 +1,4 @@
+import { useRequest } from 'ahooks';
 import clsx from 'clsx';
 import fileDownload from 'js-file-download';
 import { useEffect, useMemo, useRef, useState } from 'react';
@@ -11,7 +12,6 @@ import ProjectSelect from '../../../../components/form/ProjectSelect';
 import { useAuth } from '../../../../context/AuthContext';
 import { STATUS, typeOptions } from '../../../customer/entities';
 import ComponentStatus from '../../../customer/ui/components/ComponentStatus';
-import useLoading from '../../../../hooks/useLoading';
 import useMessage from '../../../../hooks/useMessage';
 import { getStartOfMonthDate } from '../../../../utils/format-day';
 import type { CustomerReportItem } from '../../entities';
@@ -35,7 +35,6 @@ const CustomerReportPage = () => {
     company: CompanyBranchOption[] | null;
   };
   const [data, setData] = useState<CustomerReportItem[] | null>(null);
-  const [loading, startLoading, stopLoading] = useLoading();
   const [type, setType] = useState<SelectOption[]>([
     typeOptions[1],
     typeOptions[2],
@@ -121,15 +120,14 @@ const CustomerReportPage = () => {
     [hasPermissionAccessTransaction]
   );
 
-  const getList = async ({
-    pageNumber = 1,
-    pageSize = 25,
-  }: {
-    pageNumber?: number;
-    pageSize?: number;
-  }) => {
-    try {
-      startLoading();
+  const { loading, run: getList } = useRequest(
+    async ({
+      pageNumber = 1,
+      pageSize = 25,
+    }: {
+      pageNumber?: number;
+      pageSize?: number;
+    }) => {
       const response = await fetchCustomerReportList(
         buildCustomerReportQueryParams({
           type,
@@ -142,22 +140,25 @@ const CustomerReportPage = () => {
         })
       );
 
-      const { items, total } = paginateCustomerReportList(
+      return paginateCustomerReportList(
         response?.data?.list ?? [],
         pageNumber,
         pageSize
       );
-
-      setTotalDocs(total);
-      setData(items);
-      setIsFieldDirty(false);
-      resetTableScroll();
-    } catch (error) {
-      console.error(error);
-    } finally {
-      stopLoading();
+    },
+    {
+      manual: true,
+      onSuccess: ({ items, total }) => {
+        setTotalDocs(total);
+        setData(items);
+        setIsFieldDirty(false);
+        resetTableScroll();
+      },
+      onError: (error) => {
+        console.error(error);
+      },
     }
-  };
+  );
 
   const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setExpirePolicy(e.target.checked);
@@ -174,12 +175,10 @@ const CustomerReportPage = () => {
     setIssueDateRange(normalizeIssueDateRange(payload));
   };
 
-  const [exportLoading, startExportLoading, stopExportLoading] = useLoading();
   const { showErrorResponseMessage } = useMessage();
 
-  const exportList = async () => {
-    try {
-      startExportLoading();
+  const { loading: exportLoading, run: exportList } = useRequest(
+    async () => {
       const response = await exportCustomerReportList(
         buildCustomerReportQueryParams({
           type,
@@ -196,12 +195,14 @@ const CustomerReportPage = () => {
         response.data,
         buildCustomerReportExportFilename({ dateRange: date, issueDateRange })
       );
-    } catch (error) {
-      showErrorResponseMessage(error);
-    } finally {
-      stopExportLoading();
+    },
+    {
+      manual: true,
+      onError: (error) => {
+        showErrorResponseMessage(error);
+      },
     }
-  };
+  );
 
   const tableRef = useRef<HTMLDivElement | null>(null);
 

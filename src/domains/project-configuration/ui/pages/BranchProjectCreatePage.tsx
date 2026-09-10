@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from 'react';
+import { useRequest } from 'ahooks';
+import React, { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import Select, { MultiValue, SingleValue } from 'react-select';
 import { toast } from 'react-toastify';
@@ -25,8 +26,8 @@ const BranchProjectCreatePage = () => {
   const [optionPolicies, setOptionPolicies] = useState<SelectOption[]>([]);
   const [selectedPolicies, setSelectdPolicies] = useState<string[]>([]);
 
-  const getList = () => {
-    fetchBranchProjectOptions(params.key ?? '').then((res) => {
+  useRequest(() => fetchBranchProjectOptions(params.key ?? ''), {
+    onSuccess: (res) => {
       switch (res?.status) {
         case 200:
           setOptionProject(res?.data?.options ?? []);
@@ -40,16 +41,14 @@ const BranchProjectCreatePage = () => {
         default:
           navigate(ROUTE_PATH.notFound);
       }
-    });
-  };
+    },
+  });
 
-  const funcButtonHandleClickExecute = (
-    e: React.MouseEvent<HTMLButtonElement>
-  ) => {
-    if (validateRequiredFields([selectedProject, selectedPolicies])) {
-      createBranchProject(
-        buildBranchProjectCreateDto(params.key, selectedProject, selectedPolicies)
-      ).then((res) => {
+  const { run: runCreateBranchProject, loading: createLoading } = useRequest(
+    createBranchProject,
+    {
+      manual: true,
+      onSuccess: (res) => {
         switch (res?.status) {
           case 200:
             navigate(ROUTE_PATH.branchProject(params.key ?? ''));
@@ -63,14 +62,20 @@ const BranchProjectCreatePage = () => {
           default:
             navigate(ROUTE_PATH.notFound);
         }
-      });
+      },
+    }
+  );
+
+  const funcButtonHandleClickExecute = (
+    e: React.MouseEvent<HTMLButtonElement>
+  ) => {
+    if (validateRequiredFields([selectedProject, selectedPolicies])) {
+      runCreateBranchProject(
+        buildBranchProjectCreateDto(params.key, selectedProject, selectedPolicies)
+      );
     }
     e.preventDefault();
   };
-
-  useEffect(() => {
-    getList();
-  }, []);
 
   const projectHandleChange = (value: SingleValue<BranchProjectOption>) => {
     setSelectdProject(value?.value ?? '');
@@ -174,22 +179,30 @@ const BranchProjectCreatePage = () => {
                     <button
                       className="btn btn-primary"
                       onClick={funcButtonHandleClickExecute}
+                      disabled={createLoading}
                     >
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        className="icon icon-tabler icon-tabler-check"
-                        width={24}
-                        height={24}
-                        viewBox="0 0 24 24"
-                        strokeWidth="1.5"
-                        stroke="currentColor"
-                        fill="none"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                      >
-                        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                        <path d="M5 12l5 5l10 -10" />
-                      </svg>
+                      {createLoading ? (
+                        <span
+                          className="spinner-border spinner-border-sm me-2"
+                          role="status"
+                        />
+                      ) : (
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          className="icon icon-tabler icon-tabler-check"
+                          width={24}
+                          height={24}
+                          viewBox="0 0 24 24"
+                          strokeWidth="1.5"
+                          stroke="currentColor"
+                          fill="none"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        >
+                          <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                          <path d="M5 12l5 5l10 -10" />
+                        </svg>
+                      )}
                       Submit
                     </button>
                   </div>

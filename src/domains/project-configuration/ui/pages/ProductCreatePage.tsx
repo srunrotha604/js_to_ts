@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from 'react';
+import { useRequest } from 'ahooks';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Select, { SingleValue } from 'react-select';
 import { toast } from 'react-toastify';
@@ -15,8 +16,9 @@ const ProductCreatePage = () => {
   const [productName, setProductName] = useState('');
   const [productList, setProductList] = useState<SelectOption[]>([]);
   const [selectedProduct, setSelectedProduct] = useState('');
-  const getList = () => {
-    fetchProductOptions().then((res) => {
+
+  useRequest(fetchProductOptions, {
+    onSuccess: (res) => {
       switch (res?.status) {
         case 200:
           setProductList(res?.data?.options ?? []);
@@ -30,15 +32,14 @@ const ProductCreatePage = () => {
         default:
           navigate(ROUTE_PATH.error404);
       }
-    });
-  };
-  const funcButtonHandleClickExecute = (
-    e: React.MouseEvent<HTMLButtonElement>
-  ) => {
-    if (validateRequiredFields([selectedProduct, productCode, productName])) {
-      createProduct(
-        buildProductCreateDto(selectedProduct, productCode, productName)
-      ).then((res) => {
+    },
+  });
+
+  const { run: runCreateProduct, loading: createLoading } = useRequest(
+    createProduct,
+    {
+      manual: true,
+      onSuccess: (res) => {
         switch (res?.status) {
           case 200:
             toast.success(res?.data?.message);
@@ -53,7 +54,17 @@ const ProductCreatePage = () => {
           default:
             navigate(ROUTE_PATH.error404);
         }
-      });
+      },
+    }
+  );
+
+  const funcButtonHandleClickExecute = (
+    e: React.MouseEvent<HTMLButtonElement>
+  ) => {
+    if (validateRequiredFields([selectedProduct, productCode, productName])) {
+      runCreateProduct(
+        buildProductCreateDto(selectedProduct, productCode, productName)
+      );
     }
     e.preventDefault();
   };
@@ -76,9 +87,6 @@ const ProductCreatePage = () => {
     navigate(ROUTE_PATH.product);
   };
 
-  useEffect(() => {
-    getList();
-  }, []);
   return (
     <React.Fragment>
       <div className="page-wrapper">
@@ -194,22 +202,30 @@ const ProductCreatePage = () => {
                     <button
                       className="btn btn-primary"
                       onClick={funcButtonHandleClickExecute}
+                      disabled={createLoading}
                     >
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        className="icon icon-tabler icon-tabler-check"
-                        width={24}
-                        height={24}
-                        viewBox="0 0 24 24"
-                        strokeWidth="1.5"
-                        stroke="currentColor"
-                        fill="none"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                      >
-                        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                        <path d="M5 12l5 5l10 -10" />
-                      </svg>
+                      {createLoading ? (
+                        <span
+                          className="spinner-border spinner-border-sm me-2"
+                          role="status"
+                        />
+                      ) : (
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          className="icon icon-tabler icon-tabler-check"
+                          width={24}
+                          height={24}
+                          viewBox="0 0 24 24"
+                          strokeWidth="1.5"
+                          stroke="currentColor"
+                          fill="none"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        >
+                          <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                          <path d="M5 12l5 5l10 -10" />
+                        </svg>
+                      )}
                       Submit
                     </button>
                   </div>

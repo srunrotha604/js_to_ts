@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from 'react';
+import { useRequest } from 'ahooks';
+import React, { useState } from 'react';
 import ReactPaginate from 'react-paginate';
 import { useNavigate, useParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
@@ -16,48 +17,56 @@ const ProjectPolicyPage = () => {
   const navigate = useNavigate();
   const params = useParams<{ key: string }>();
 
-  const [loading, setLoading] = useState(false);
   const [arrList, setArrList] = useState<ProjectPolicyItem[]>([]);
   const [query, setQuery] = useState('');
   const [transactionCode, setTransationCode] = useState('');
 
-  const getList = () => {
-    fetchProjectPolicyList(params.key ?? '').then((res) => {
-      switch (res?.status) {
-        case 200:
-          setLoading(true);
-          setArrList(res?.data?.list ?? []);
-          setLoading(false);
-          break;
-        case 400:
-          toast.error(res?.data?.message);
-          break;
-        case 403:
-          toast.error(String(res?.data));
-          break;
-        default:
-          navigate(ROUTE_PATH.error404);
-      }
-    });
-  };
+  const { loading, refresh: refreshList } = useRequest(
+    () => fetchProjectPolicyList(params.key ?? ''),
+    {
+      onSuccess: (res) => {
+        switch (res?.status) {
+          case 200:
+            setArrList(res?.data?.list ?? []);
+            break;
+          case 400:
+            toast.error(res?.data?.message);
+            break;
+          case 403:
+            toast.error(String(res?.data));
+            break;
+          default:
+            navigate(ROUTE_PATH.error404);
+        }
+      },
+    }
+  );
+
+  const { run: runDeleteProjectPolicy, loading: deleteLoading } = useRequest(
+    deleteProjectPolicy,
+    {
+      manual: true,
+      onSuccess: (res) => {
+        switch (res?.status) {
+          case 200:
+            toast.success(res?.data?.message);
+            refreshList();
+            break;
+          case 400:
+            toast.error(res?.data?.message);
+            break;
+          case 403:
+            toast.error(String(res?.data));
+            break;
+          default:
+            navigate(ROUTE_PATH.error404);
+        }
+      },
+    }
+  );
 
   const funcRemoveHandleClickExecute = () => {
-    deleteProjectPolicy({ transactionCode }).then((res) => {
-      switch (res?.status) {
-        case 200:
-          toast.success(res?.data?.message);
-          getList();
-          break;
-        case 400:
-          toast.error(res?.data?.message);
-          break;
-        case 403:
-          toast.error(String(res?.data));
-          break;
-        default:
-          navigate(ROUTE_PATH.error404);
-      }
-    });
+    runDeleteProjectPolicy({ transactionCode });
   };
 
   const getRecordHandleClick = (option: string, item: ProjectPolicyItem) => {
@@ -69,10 +78,6 @@ const ProjectPolicyPage = () => {
         navigate(ROUTE_PATH.error404);
     }
   };
-
-  useEffect(() => {
-    getList();
-  }, []);
 
   const createNewHandleClick = () => {
     navigate(ROUTE_PATH.projectPolicyCreate(params.key ?? ''));
@@ -107,7 +112,7 @@ const ProjectPolicyPage = () => {
                       <div>
                         <button
                           className="btn btn-primary d-none d-sm-inline-block"
-                          onClick={getList}
+                          onClick={() => refreshList()}
                         >
                           <svg
                             xmlns="http://www.w3.org/2000/svg"
@@ -129,7 +134,7 @@ const ProjectPolicyPage = () => {
                         </button>
                         <button
                           className="btn btn-primary d-sm-none btn-icon"
-                          onClick={getList}
+                          onClick={() => refreshList()}
                         >
                           <svg
                             xmlns="http://www.w3.org/2000/svg"
@@ -461,8 +466,16 @@ const ProjectPolicyPage = () => {
                       className="btn btn-danger w-100"
                       data-bs-dismiss="modal"
                       onClick={funcRemoveHandleClickExecute}
+                      disabled={deleteLoading}
                     >
-                      Confirm
+                      {deleteLoading ? (
+                        <span
+                          className="spinner-border spinner-border-sm me-2"
+                          role="status"
+                        />
+                      ) : (
+                        'Confirm'
+                      )}
                     </button>
                   </div>
                 </div>

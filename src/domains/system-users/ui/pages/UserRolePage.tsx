@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from 'react';
+import { useRequest } from 'ahooks';
+import React, { useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import Loading from '../../../../components/Loading';
@@ -11,50 +12,58 @@ const UserRolePage = () => {
   const navigate = useNavigate();
   const params = useParams<{ key: string }>();
 
-  const [loading, setLoading] = useState(false);
   const [arrList, setArrList] = useState<UserRoleItem[]>([]);
   const [getKey, setGetKey] = useState('');
   const [getStatus, setStatus] = useState('');
   const [getApplicationName, setApplicationName] = useState('');
   const [getRoleName, setRoleName] = useState('');
 
-  const getList = () => {
-    fetchUserRoleList(params.key || '').then((res) => {
-      switch (res?.status) {
-        case 200:
-          setLoading(true);
-          setArrList(res?.data?.item ?? []);
-          setLoading(false);
-          break;
-        case 400:
-          toast.error(res?.data?.message);
-          break;
-        case 403:
-          toast.error(res?.data as unknown as string);
-          break;
-        default:
-          navigate(ROUTE_PATH.error404);
-      }
-    });
-  };
+  const { loading, refresh: refreshList } = useRequest(
+    () => fetchUserRoleList(params.key || ''),
+    {
+      onSuccess: (res) => {
+        switch (res?.status) {
+          case 200:
+            setArrList(res?.data?.item ?? []);
+            break;
+          case 400:
+            toast.error(res?.data?.message);
+            break;
+          case 403:
+            toast.error(res?.data as unknown as string);
+            break;
+          default:
+            navigate(ROUTE_PATH.error404);
+        }
+      },
+    }
+  );
+
+  const { run: runDeleteUserRole, loading: deleteLoading } = useRequest(
+    deleteUserRole,
+    {
+      manual: true,
+      onSuccess: (res) => {
+        switch (res?.status) {
+          case 200:
+            toast.success(res?.data?.message);
+            refreshList();
+            break;
+          case 400:
+            toast.error(res?.data?.message);
+            break;
+          case 403:
+            toast.error(res?.data as unknown as string);
+            break;
+          default:
+            navigate(ROUTE_PATH.error404);
+        }
+      },
+    }
+  );
 
   const funcRemoveHandleClickExecute = () => {
-    deleteUserRole({ key: getKey }).then((res) => {
-      switch (res?.status) {
-        case 200:
-          toast.success(res?.data?.message);
-          getList();
-          break;
-        case 400:
-          toast.error(res?.data?.message);
-          break;
-        case 403:
-          toast.error(res?.data as unknown as string);
-          break;
-        default:
-          navigate(ROUTE_PATH.error404);
-      }
-    });
+    runDeleteUserRole({ key: getKey });
   };
 
   const handleDeleteClick = (item: UserRoleItem) => {
@@ -78,10 +87,6 @@ const UserRolePage = () => {
     navigate(ROUTE_PATH.user);
   };
 
-  useEffect(() => {
-    getList();
-  }, []);
-
   return (
     <React.Fragment>
       <Loading value={loading} />
@@ -97,7 +102,7 @@ const UserRolePage = () => {
                   <div>
                     <button
                       className="btn btn-primary d-none d-sm-inline-block"
-                      onClick={getList}
+                      onClick={() => refreshList()}
                     >
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -119,7 +124,7 @@ const UserRolePage = () => {
                     </button>
                     <button
                       className="btn btn-primary d-sm-none btn-icon"
-                      onClick={getList}
+                      onClick={() => refreshList()}
                     >
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -456,8 +461,16 @@ const UserRolePage = () => {
                       className="btn btn-danger w-100"
                       data-bs-dismiss="modal"
                       onClick={funcRemoveHandleClickExecute}
+                      disabled={deleteLoading}
                     >
-                      Confirm
+                      {deleteLoading ? (
+                        <span
+                          className="spinner-border spinner-border-sm me-2"
+                          role="status"
+                        />
+                      ) : (
+                        'Confirm'
+                      )}
                     </button>
                   </div>
                 </div>

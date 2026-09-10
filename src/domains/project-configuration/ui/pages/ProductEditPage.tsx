@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from 'react';
+import { useRequest } from 'ahooks';
+import React, { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { ROUTE_PATH } from '../../../../utils/route-util';
@@ -12,8 +13,9 @@ const ProductEditPage = () => {
 
   const [productCode, setProductCode] = useState('');
   const [productName, setProductName] = useState('');
-  const getList = () => {
-    fetchProductByKey(params.key ?? '').then((res) => {
+
+  useRequest(() => fetchProductByKey(params.key ?? ''), {
+    onSuccess: (res) => {
       if (res?.status === 200) {
         const data = res?.data?.list?.[0];
         setProductCode(data?.productCode ?? '');
@@ -25,15 +27,14 @@ const ProductEditPage = () => {
       } else {
         navigate(ROUTE_PATH.error404);
       }
-    });
-  };
-  const funcButtonHandleClickExecute = (
-    e: React.MouseEvent<HTMLButtonElement>
-  ) => {
-    if (validateRequiredFields([productCode, productName])) {
-      updateProduct(
-        buildProductEditDto(params.key, productCode, productName)
-      ).then((res) => {
+    },
+  });
+
+  const { run: runUpdateProduct, loading: updateLoading } = useRequest(
+    updateProduct,
+    {
+      manual: true,
+      onSuccess: (res) => {
         switch (res?.status) {
           case 200:
             toast.success(res?.data?.message);
@@ -48,7 +49,15 @@ const ProductEditPage = () => {
           default:
             navigate(ROUTE_PATH.error404);
         }
-      });
+      },
+    }
+  );
+
+  const funcButtonHandleClickExecute = (
+    e: React.MouseEvent<HTMLButtonElement>
+  ) => {
+    if (validateRequiredFields([productCode, productName])) {
+      runUpdateProduct(buildProductEditDto(params.key, productCode, productName));
     }
     e.preventDefault();
   };
@@ -67,9 +76,6 @@ const ProductEditPage = () => {
     navigate(ROUTE_PATH.product);
   };
 
-  useEffect(() => {
-    getList();
-  }, []);
   return (
     <React.Fragment>
       <div className="page-wrapper">
@@ -168,22 +174,30 @@ const ProductEditPage = () => {
                     <button
                       className="btn btn-primary"
                       onClick={funcButtonHandleClickExecute}
+                      disabled={updateLoading}
                     >
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        className="icon icon-tabler icon-tabler-check"
-                        width={24}
-                        height={24}
-                        viewBox="0 0 24 24"
-                        strokeWidth="1.5"
-                        stroke="currentColor"
-                        fill="none"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                      >
-                        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                        <path d="M5 12l5 5l10 -10" />
-                      </svg>
+                      {updateLoading ? (
+                        <span
+                          className="spinner-border spinner-border-sm me-2"
+                          role="status"
+                        />
+                      ) : (
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          className="icon icon-tabler icon-tabler-check"
+                          width={24}
+                          height={24}
+                          viewBox="0 0 24 24"
+                          strokeWidth="1.5"
+                          stroke="currentColor"
+                          fill="none"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        >
+                          <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                          <path d="M5 12l5 5l10 -10" />
+                        </svg>
+                      )}
                       Submit
                     </button>
                   </div>

@@ -1,3 +1,4 @@
+import { useRequest } from 'ahooks';
 import React, { useState } from 'react';
 import { AiOutlineCheckCircle } from 'react-icons/ai';
 import { PatternFormat } from 'react-number-format';
@@ -41,51 +42,44 @@ const ForgotPasswordPage = () => {
   const [phoneNumber, setPhoneNumber] = useState('');
   const [viaSMSCode, setViaSMSCode] = useState('');
 
-  const funcButtonHandleClickExecute = (
-    e: React.MouseEvent<HTMLButtonElement>
-  ) => {
-    if (validateRequiredFields([email])) {
-      requestForgotPassword(buildForgotPasswordRequestDto(email)).then(
-        (res) => {
-          switch (res?.status) {
-            case 200:
-              setShowSendEmail(false);
-              setSuccess(false);
-              setConfirmCode('');
-              setConfirmKey(res?.data?.keyCode ?? '');
-              setConfirmCodeMessage(
-                'Enter the code we sent to your email address at'
-              );
-              setAddressMessage(email);
-              setPhoneNumber(res?.data?.phoneNumber ?? '');
-              setViaSMSCode(res?.data?.viaSMSCode ?? '');
-              setShowSMSResend(false);
-              setInvalidFeedBack('');
-              break;
-            case 400:
-              setShowSendEmail(true);
-              setSuccess(false);
-              setInvalidFeedBack(res?.data?.message ?? '');
-              break;
-            case 403:
-              toast.error(String(res?.data));
-              break;
-            default:
-              navigate(ROUTE_PATH.notFound);
-          }
+  const { run: runRequestForgotPassword, loading: requestLoading } =
+    useRequest(requestForgotPassword, {
+      manual: true,
+      onSuccess: (res) => {
+        switch (res?.status) {
+          case 200:
+            setShowSendEmail(false);
+            setSuccess(false);
+            setConfirmCode('');
+            setConfirmKey(res?.data?.keyCode ?? '');
+            setConfirmCodeMessage(
+              'Enter the code we sent to your email address at'
+            );
+            setAddressMessage(email);
+            setPhoneNumber(res?.data?.phoneNumber ?? '');
+            setViaSMSCode(res?.data?.viaSMSCode ?? '');
+            setShowSMSResend(false);
+            setInvalidFeedBack('');
+            break;
+          case 400:
+            setShowSendEmail(true);
+            setSuccess(false);
+            setInvalidFeedBack(res?.data?.message ?? '');
+            break;
+          case 403:
+            toast.error(String(res?.data));
+            break;
+          default:
+            navigate(ROUTE_PATH.notFound);
         }
-      );
-    }
-    e.preventDefault();
-  };
+      },
+    });
 
-  const funcConfirmCodeHandleClickExecute = (
-    e: React.MouseEvent<HTMLButtonElement>
-  ) => {
-    if (validateRequiredFields([confirmCode])) {
-      confirmForgotPasswordCode(
-        buildConfirmCodeDto(email, confirmKey, confirmCode)
-      ).then((res) => {
+  const { run: runConfirmCode, loading: confirmCodeLoading } = useRequest(
+    confirmForgotPasswordCode,
+    {
+      manual: true,
+      onSuccess: (res) => {
         switch (res?.status) {
           case 200:
             setSuccess(true);
@@ -101,35 +95,80 @@ const ForgotPasswordPage = () => {
           default:
             navigate(ROUTE_PATH.notFound);
         }
-      });
+      },
+    }
+  );
+
+  const { run: runRequestViaSms, loading: viaSmsLoading } = useRequest(
+    requestForgotPasswordViaSms,
+    {
+      manual: true,
+      onSuccess: (res) => {
+        switch (res?.status) {
+          case 200:
+            setConfirmCodeMessage(
+              'Enter the code we sent to your phone number'
+            );
+            setAddressMessage(phoneNumber);
+            setShowSMSResend(true);
+            {
+              res?.data?.attempt == 3 ? setPhoneNumber('') : '';
+            }
+            break;
+          case 400:
+            setSuccess(false);
+            setInvalidFeedBack(res?.data?.message ?? '');
+            break;
+          case 403:
+            toast.error(String(res?.data));
+            break;
+          default:
+            navigate(ROUTE_PATH.notFound);
+        }
+      },
+    }
+  );
+
+  const { run: runChangePassword, loading: changePasswordLoading } =
+    useRequest(confirmForgotPasswordChange, {
+      manual: true,
+      onSuccess: (res) => {
+        switch (res?.status) {
+          case 200:
+            setResetSuccess(true);
+            break;
+          case 400:
+            toast.error(res?.data?.message ?? '');
+            break;
+          case 403:
+            toast.error(String(res?.data));
+            break;
+          default:
+            navigate(ROUTE_PATH.notFound);
+        }
+      },
+    });
+
+  const funcButtonHandleClickExecute = (
+    e: React.MouseEvent<HTMLButtonElement>
+  ) => {
+    if (validateRequiredFields([email])) {
+      runRequestForgotPassword(buildForgotPasswordRequestDto(email));
+    }
+    e.preventDefault();
+  };
+
+  const funcConfirmCodeHandleClickExecute = (
+    e: React.MouseEvent<HTMLButtonElement>
+  ) => {
+    if (validateRequiredFields([confirmCode])) {
+      runConfirmCode(buildConfirmCodeDto(email, confirmKey, confirmCode));
     }
     e.preventDefault();
   };
 
   const resqustViaSMSSubmit = () => {
-    requestForgotPasswordViaSms(
-      buildViaSmsDto(email, confirmKey, phoneNumber, viaSMSCode)
-    ).then((res) => {
-      switch (res?.status) {
-        case 200:
-          setConfirmCodeMessage('Enter the code we sent to your phone number');
-          setAddressMessage(phoneNumber);
-          setShowSMSResend(true);
-          {
-            res?.data?.attempt == 3 ? setPhoneNumber('') : '';
-          }
-          break;
-        case 400:
-          setSuccess(false);
-          setInvalidFeedBack(res?.data?.message ?? '');
-          break;
-        case 403:
-          toast.error(String(res?.data));
-          break;
-        default:
-          navigate(ROUTE_PATH.notFound);
-      }
-    });
+    runRequestViaSms(buildViaSmsDto(email, confirmKey, phoneNumber, viaSMSCode));
   };
 
   const funcChangePasswordHandleClickExecute = (
@@ -153,28 +192,14 @@ const ForgotPasswordPage = () => {
         confirmPassword,
       ])
     ) {
-      confirmForgotPasswordChange(
+      runChangePassword(
         buildConfirmChangePasswordDto(
           confirmChangeKey,
           email,
           newPassword,
           confirmPassword
         )
-      ).then((res) => {
-        switch (res?.status) {
-          case 200:
-            setResetSuccess(true);
-            break;
-          case 400:
-            toast.error(res?.data?.message ?? '');
-            break;
-          case 403:
-            toast.error(String(res?.data));
-            break;
-          default:
-            navigate(ROUTE_PATH.notFound);
-        }
-      });
+      );
     }
     e.preventDefault();
   };
@@ -395,8 +420,16 @@ const ForgotPasswordPage = () => {
                         type="submit"
                         className="btn btn-primary w-100"
                         onClick={funcChangePasswordHandleClickExecute}
+                        disabled={changePasswordLoading}
                       >
-                        Confirm
+                        {changePasswordLoading ? (
+                          <span
+                            className="spinner-border spinner-border-sm"
+                            role="status"
+                          />
+                        ) : (
+                          'Confirm'
+                        )}
                       </button>
                     </div>
                   </>
@@ -424,27 +457,41 @@ const ForgotPasswordPage = () => {
                             type="submit"
                             className="btn btn-primary w-100"
                             onClick={funcButtonHandleClickExecute}
+                            disabled={requestLoading}
                           >
-                            <svg
-                              xmlns="http://www.w3.org/2000/svg"
-                              className="icon"
-                              width={24}
-                              height={24}
-                              viewBox="0 0 24 24"
-                              strokeWidth={2}
-                              stroke="currentColor"
-                              fill="none"
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                            >
-                              <path
-                                stroke="none"
-                                d="M0 0h24v24H0z"
-                                fill="none"
+                            {requestLoading ? (
+                              <span
+                                className="spinner-border spinner-border-sm me-2"
+                                role="status"
                               />
-                              <rect x={3} y={5} width={18} height={14} rx={2} />
-                              <polyline points="3 7 12 13 21 7" />
-                            </svg>
+                            ) : (
+                              <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                className="icon"
+                                width={24}
+                                height={24}
+                                viewBox="0 0 24 24"
+                                strokeWidth={2}
+                                stroke="currentColor"
+                                fill="none"
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                              >
+                                <path
+                                  stroke="none"
+                                  d="M0 0h24v24H0z"
+                                  fill="none"
+                                />
+                                <rect
+                                  x={3}
+                                  y={5}
+                                  width={18}
+                                  height={14}
+                                  rx={2}
+                                />
+                                <polyline points="3 7 12 13 21 7" />
+                              </svg>
+                            )}
                             Reset password
                           </button>
                           <Link
@@ -477,27 +524,35 @@ const ForgotPasswordPage = () => {
                             type="submit"
                             className="btn btn-primary w-100"
                             onClick={funcConfirmCodeHandleClickExecute}
+                            disabled={confirmCodeLoading}
                           >
-                            <svg
-                              xmlns="http://www.w3.org/2000/svg"
-                              className="icon icon-tabler icon-tabler-circle-check"
-                              width={24}
-                              height={24}
-                              viewBox="0 0 24 24"
-                              strokeWidth="1.5"
-                              stroke="currentColor"
-                              fill="none"
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                            >
-                              <path
-                                stroke="none"
-                                d="M0 0h24v24H0z"
-                                fill="none"
+                            {confirmCodeLoading ? (
+                              <span
+                                className="spinner-border spinner-border-sm me-2"
+                                role="status"
                               />
-                              <circle cx={12} cy={12} r={9} />
-                              <path d="M9 12l2 2l4 -4" />
-                            </svg>
+                            ) : (
+                              <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                className="icon icon-tabler icon-tabler-circle-check"
+                                width={24}
+                                height={24}
+                                viewBox="0 0 24 24"
+                                strokeWidth="1.5"
+                                stroke="currentColor"
+                                fill="none"
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                              >
+                                <path
+                                  stroke="none"
+                                  d="M0 0h24v24H0z"
+                                  fill="none"
+                                />
+                                <circle cx={12} cy={12} r={9} />
+                                <path d="M9 12l2 2l4 -4" />
+                              </svg>
+                            )}
                             Confirm
                           </button>
                           <button
@@ -518,11 +573,19 @@ const ForgotPasswordPage = () => {
                               ) : (
                                 <p className="mr-5">Still don't get code?</p>
                               )}
-                              <div onClick={() => resqustViaSMSSubmit()}>
+                              <div
+                                onClick={
+                                  viaSmsLoading
+                                    ? undefined
+                                    : () => resqustViaSMSSubmit()
+                                }
+                              >
                                 <p className="cursor-pointer text-underline text-primary">
-                                  {!showSMSResend
-                                    ? 'Let click here to get code via SMS instead'
-                                    : 'Resend OTP Code via SMS again'}
+                                  {viaSmsLoading
+                                    ? 'Sending...'
+                                    : !showSMSResend
+                                      ? 'Let click here to get code via SMS instead'
+                                      : 'Resend OTP Code via SMS again'}
                                 </p>
                               </div>
                             </div>

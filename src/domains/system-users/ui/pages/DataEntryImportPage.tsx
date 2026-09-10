@@ -1,3 +1,4 @@
+import { useRequest } from 'ahooks';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
@@ -10,11 +11,11 @@ const DataEntryImportPage = () => {
   const navigate = useNavigate();
   const [textEmail, setTextEmail] = useState('');
 
-  const funcButtonHandleClickExecute = (
-    e: React.MouseEvent<HTMLButtonElement>
-  ) => {
-    if (validateRequiredFields([textEmail])) {
-      importDataEntry(buildDataEntryImportDto(textEmail)).then((res) => {
+  const { run: runImportDataEntry, loading: importLoading } = useRequest(
+    importDataEntry,
+    {
+      manual: true,
+      onSuccess: (res) => {
         switch (res?.status) {
           case 200:
             toast.success(res?.data?.message);
@@ -29,7 +30,15 @@ const DataEntryImportPage = () => {
           default:
             navigate(ROUTE_PATH.error404);
         }
-      });
+      },
+    }
+  );
+
+  const funcButtonHandleClickExecute = (
+    e: React.MouseEvent<HTMLButtonElement>
+  ) => {
+    if (validateRequiredFields([textEmail])) {
+      runImportDataEntry(buildDataEntryImportDto(textEmail));
     }
     e.preventDefault();
   };
@@ -123,7 +132,14 @@ const DataEntryImportPage = () => {
                     <button
                       className="btn btn-primary"
                       onClick={funcButtonHandleClickExecute}
+                      disabled={importLoading}
                     >
+                      {importLoading && (
+                        <span
+                          className="spinner-border spinner-border-sm me-2"
+                          role="status"
+                        />
+                      )}
                       Submit
                     </button>
                   </div>

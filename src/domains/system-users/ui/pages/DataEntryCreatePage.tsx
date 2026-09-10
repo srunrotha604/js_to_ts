@@ -1,4 +1,5 @@
-import { useEffect, useState } from 'react';
+import { useRequest } from 'ahooks';
+import { useState } from 'react';
 import { PatternFormat } from 'react-number-format';
 import { useNavigate } from 'react-router-dom';
 import Select from 'react-select';
@@ -22,8 +23,8 @@ const DataEntryCreatePage = () => {
   const [optionRole, setOptionRole] = useState<SelectOption[]>([]);
   const [selectedRole, setSelectedRole] = useState('');
 
-  const getList = () => {
-    fetchDataEntryRoleOptions().then((res) => {
+  useRequest(fetchDataEntryRoleOptions, {
+    onSuccess: (res) => {
       switch (res?.status) {
         case 200:
           setOptionRole(res?.data?.role ?? []);
@@ -37,29 +38,14 @@ const DataEntryCreatePage = () => {
         default:
           navigate(ROUTE_PATH.error404);
       }
-    });
-  };
+    },
+  });
 
-  const funcButtonHandleClickExecute = (
-    e: React.MouseEvent<HTMLButtonElement>
-  ) => {
-    if (
-      validateRequiredFields([
-        textEmail,
-        textFirstName,
-        textLastName,
-        selectedRole,
-      ])
-    ) {
-      createDataEntry(
-        buildDataEntryCreateDto({
-          email: textEmail,
-          givenName: textFirstName,
-          sureName: textLastName,
-          role: selectedRole,
-          phone,
-        })
-      ).then((res) => {
+  const { run: runCreateDataEntry, loading: createLoading } = useRequest(
+    createDataEntry,
+    {
+      manual: true,
+      onSuccess: (res) => {
         switch (res?.status) {
           case 200:
             toast.success(res?.data?.message);
@@ -74,14 +60,33 @@ const DataEntryCreatePage = () => {
           default:
             navigate(ROUTE_PATH.error404);
         }
-      });
+      },
+    }
+  );
+
+  const funcButtonHandleClickExecute = (
+    e: React.MouseEvent<HTMLButtonElement>
+  ) => {
+    if (
+      validateRequiredFields([
+        textEmail,
+        textFirstName,
+        textLastName,
+        selectedRole,
+      ])
+    ) {
+      runCreateDataEntry(
+        buildDataEntryCreateDto({
+          email: textEmail,
+          givenName: textFirstName,
+          sureName: textLastName,
+          role: selectedRole,
+          phone,
+        })
+      );
     }
     e.preventDefault();
   };
-
-  useEffect(() => {
-    getList();
-  }, []);
 
   const emailHandleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setTextEmail(event.target.value);
@@ -246,7 +251,14 @@ const DataEntryCreatePage = () => {
                     <button
                       className="btn btn-primary"
                       onClick={funcButtonHandleClickExecute}
+                      disabled={createLoading}
                     >
+                      {createLoading && (
+                        <span
+                          className="spinner-border spinner-border-sm me-2"
+                          role="status"
+                        />
+                      )}
                       Submit
                     </button>
                   </div>

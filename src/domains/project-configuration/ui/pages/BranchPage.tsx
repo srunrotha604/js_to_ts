@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from 'react';
+import { useRequest } from 'ahooks';
+import React, { useState } from 'react';
 import ReactPaginate from 'react-paginate';
 import { Link, useNavigate } from 'react-router-dom';
 import Select, { MultiValue } from 'react-select';
@@ -18,7 +19,6 @@ import { buildBranchAdminAssignDto } from '../../use-cases';
 const BranchPage = () => {
   document.title = 'E-CHANNEL PORTAL | Branch';
   const navigate = useNavigate();
-  const [loading, setLoading] = useState(false);
   const [arrList, setArrList] = useState<BranchItem[]>([]);
   const [listUser, setListUser] = useState<SelectOption[]>([]);
   const [selectedAdminValue, setSelectedAdminValue] = useState<string[]>([]);
@@ -27,14 +27,12 @@ const BranchPage = () => {
 
   const { modalRef, openModal, closeModal } = useModal();
 
-  const getList = () => {
-    fetchBranchList().then((res) => {
+  const { loading, refresh: refreshList } = useRequest(fetchBranchList, {
+    onSuccess: (res) => {
       switch (res?.status) {
         case 200:
-          setLoading(true);
           setArrList(res?.data?.list ?? []);
           setListUser(res?.data?.user ?? []);
-          setLoading(false);
           break;
         case 400:
           toast.error(res?.data?.message);
@@ -45,39 +43,43 @@ const BranchPage = () => {
         default:
           navigate(ROUTE_PATH.notFound);
       }
-    });
-  };
-
-  useEffect(() => {
-    getList();
-  }, []);
+    },
+  });
 
   const createNewHandleClick = () => {
     navigate(ROUTE_PATH.branchCreate);
   };
 
+  const { run: runAssignBranchAdmin, loading: assignLoading } = useRequest(
+    assignBranchAdmin,
+    {
+      manual: true,
+      onSuccess: (res) => {
+        switch (res?.status) {
+          case 200:
+            toast.success(res?.data?.message);
+            closeModal();
+            refreshList();
+            break;
+          case 400:
+            toast.error(res?.data?.message);
+            break;
+          case 403:
+            toast.error(String(res?.data));
+            break;
+          default:
+            navigate(ROUTE_PATH.error404);
+        }
+      },
+    }
+  );
+
   const funcButtonHandleClickExecute = (
     e: React.MouseEvent<HTMLButtonElement>
   ) => {
-    assignBranchAdmin(
+    runAssignBranchAdmin(
       buildBranchAdminAssignDto(selectedBranch, selectedAdminValue)
-    ).then((res) => {
-      switch (res?.status) {
-        case 200:
-          toast.success(res?.data?.message);
-          closeModal();
-          getList();
-          break;
-        case 400:
-          toast.error(res?.data?.message);
-          break;
-        case 403:
-          toast.error(String(res?.data));
-          break;
-        default:
-          navigate(ROUTE_PATH.error404);
-      }
-    });
+    );
     e.preventDefault();
   };
 
@@ -128,8 +130,13 @@ const BranchPage = () => {
             type="submit"
             className="btn btn-primary"
             onClick={funcButtonHandleClickExecute}
+            disabled={assignLoading}
           >
-            Submit
+            {assignLoading ? (
+              <span className="spinner-border spinner-border-sm" role="status" />
+            ) : (
+              'Submit'
+            )}
           </button>
         </div>
       </Modal>
@@ -148,7 +155,7 @@ const BranchPage = () => {
                       <div>
                         <button
                           className="btn btn-primary d-none d-sm-inline-block"
-                          onClick={getList}
+                          onClick={() => refreshList()}
                         >
                           <svg
                             xmlns="http://www.w3.org/2000/svg"
@@ -170,7 +177,7 @@ const BranchPage = () => {
                         </button>
                         <button
                           className="btn btn-primary d-sm-none btn-icon"
-                          onClick={getList}
+                          onClick={() => refreshList()}
                         >
                           <svg
                             xmlns="http://www.w3.org/2000/svg"

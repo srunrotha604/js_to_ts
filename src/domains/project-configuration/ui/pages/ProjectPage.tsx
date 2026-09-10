@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from 'react';
+import { useRequest } from 'ahooks';
+import React, { useState } from 'react';
 import ReactPaginate from 'react-paginate';
 import { Link, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
@@ -10,20 +11,17 @@ import { fetchProjectList, useListPagination } from '../../interface-adapters';
 const ProjectPage = () => {
   document.title = 'E-CHANNEL PORTAL | project';
   const navigate = useNavigate();
-  const [loading, setLoading] = useState(false);
   const [arrList, setArrList] = useState<ProjectItem[]>([]);
   const [query, setQuery] = useState('');
   const [getApplicationName, setGetApplicationName] = useState('');
   const [getApplicationCode, setGetApplicationCode] = useState('');
   const [getStatus, setGetStatus] = useState('');
 
-  const getList = () => {
-    fetchProjectList().then((res) => {
+  const { loading, refresh: refreshList } = useRequest(fetchProjectList, {
+    onSuccess: (res) => {
       switch (res?.status) {
         case 200:
-          setLoading(true);
           setArrList(res?.data?.list ?? []);
-          setLoading(false);
           break;
         case 400:
           toast.error(res?.data?.message);
@@ -34,18 +32,14 @@ const ProjectPage = () => {
         default:
           navigate(ROUTE_PATH.error404);
       }
-    });
-  };
+    },
+  });
 
   const handleViewClick = (item: ProjectItem) => {
     setGetApplicationName(item.applicationName ?? '');
     setGetApplicationCode(item.applicationCode ?? '');
     setGetStatus(item.status ?? '');
   };
-
-  useEffect(() => {
-    getList();
-  }, []);
 
   const createNewHandleClick = () => {
     navigate(ROUTE_PATH.projectCreate);
@@ -76,7 +70,7 @@ const ProjectPage = () => {
                       <div>
                         <button
                           className="btn btn-primary d-none d-sm-inline-block"
-                          onClick={getList}
+                          onClick={() => refreshList()}
                         >
                           <svg
                             xmlns="http://www.w3.org/2000/svg"
@@ -98,7 +92,7 @@ const ProjectPage = () => {
                         </button>
                         <button
                           className="btn btn-primary d-sm-none btn-icon"
-                          onClick={getList}
+                          onClick={() => refreshList()}
                         >
                           <svg
                             xmlns="http://www.w3.org/2000/svg"

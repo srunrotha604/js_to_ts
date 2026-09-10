@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from 'react';
+import { useRequest } from 'ahooks';
+import React, { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import Select from 'react-select';
 import { toast } from 'react-toastify';
@@ -24,8 +25,8 @@ const UserRoleCreatePage = () => {
   const [selectedApplication, setSelectedApplication] = useState('');
   const [selectedRole, setSelectedRole] = useState('');
 
-  const getApplicationList = () => {
-    fetchApplicationOptions(params.key || '').then((res) => {
+  useRequest(() => fetchApplicationOptions(params.key || ''), {
+    onSuccess: (res) => {
       switch (res?.status) {
         case 200:
           setOptionApplication(res?.data?.application ?? []);
@@ -39,16 +40,14 @@ const UserRoleCreatePage = () => {
         default:
           navigate(ROUTE_PATH.error404);
       }
-    });
-  };
+    },
+  });
 
-  const funcButtonHandleClickExecute = (
-    e: React.MouseEvent<HTMLButtonElement>
-  ) => {
-    if (validateRequiredFields([selectedApplication, selectedRole])) {
-      createUserRole(
-        buildUserRoleCreateDto(selectedApplication, selectedRole, params.key)
-      ).then((res) => {
+  const { run: runCreateUserRole, loading: createLoading } = useRequest(
+    createUserRole,
+    {
+      manual: true,
+      onSuccess: (res) => {
         switch (res?.status) {
           case 200:
             toast.success(res?.data?.message);
@@ -63,29 +62,46 @@ const UserRoleCreatePage = () => {
           default:
             navigate(ROUTE_PATH.error404);
         }
-      });
+      },
+    }
+  );
+
+  const { run: runFetchSystemUserRoleOptions } = useRequest(
+    fetchSystemUserRoleOptions,
+    {
+      manual: true,
+      onSuccess: (res) => {
+        switch (res?.status) {
+          case 200:
+            setOptionRole(res?.data?.options ?? []);
+            break;
+          case 400:
+            toast.error(res?.data?.message);
+            break;
+          case 403:
+            toast.error(res?.data as unknown as string);
+            break;
+          default:
+            navigate(ROUTE_PATH.error404);
+        }
+      },
+    }
+  );
+
+  const funcButtonHandleClickExecute = (
+    e: React.MouseEvent<HTMLButtonElement>
+  ) => {
+    if (validateRequiredFields([selectedApplication, selectedRole])) {
+      runCreateUserRole(
+        buildUserRoleCreateDto(selectedApplication, selectedRole, params.key)
+      );
     }
     e.preventDefault();
   };
 
   const applicationHandleChange = (e: SelectOption | null) => {
     setSelectedApplication(e?.value ?? '');
-
-    fetchSystemUserRoleOptions(e?.value || '').then((res) => {
-      switch (res?.status) {
-        case 200:
-          setOptionRole(res?.data?.options ?? []);
-          break;
-        case 400:
-          toast.error(res?.data?.message);
-          break;
-        case 403:
-          toast.error(res?.data as unknown as string);
-          break;
-        default:
-          navigate(ROUTE_PATH.error404);
-      }
-    });
+    runFetchSystemUserRoleOptions(e?.value || '');
   };
 
   const roleHandleChange = (e: SelectOption | null) => {
@@ -95,10 +111,6 @@ const UserRoleCreatePage = () => {
   const goBackHandleClick = () => {
     navigate(ROUTE_PATH.userRole(params.key ?? ''));
   };
-
-  useEffect(() => {
-    getApplicationList();
-  }, []);
 
   return (
     <React.Fragment>
@@ -198,7 +210,14 @@ const UserRoleCreatePage = () => {
                     <button
                       className="btn btn-primary"
                       onClick={funcButtonHandleClickExecute}
+                      disabled={createLoading}
                     >
+                      {createLoading && (
+                        <span
+                          className="spinner-border spinner-border-sm me-2"
+                          role="status"
+                        />
+                      )}
                       Submit
                     </button>
                   </div>

@@ -1,3 +1,4 @@
+import { useRequest } from 'ahooks';
 import { useEffect, useState } from 'react';
 import ReactPaginate from 'react-paginate';
 import { Link, useNavigate } from 'react-router-dom';
@@ -24,35 +25,30 @@ const UserPage = () => {
   document.title = 'E-CHANNEL PORTAL | user';
   const navigate = useNavigate();
   const { company } = useAuth() as { company: CompanyBranchOption[] | null };
-  const [loading, setLoading] = useState(false);
   const [query, setQuery] = useState('');
   const [arrList, setArrList] = useState<UserItem[]>([]);
   const [optionBranch, setOptionBranch] = useState<SelectOption[]>([]);
   const [selectedBranch, setSelectdBranch] = useState('');
 
-  const getList = () => {
-    fetchUserList(selectedBranch.toString()).then((res) => {
+  const {
+    loading,
+    run: runFetchUserList,
+    refresh: refreshList,
+  } = useRequest(fetchUserList, {
+    defaultParams: [selectedBranch.toString()],
+    onSuccess: (res) => {
       if (res?.status == 200) {
-        setLoading(true);
         setArrList(res?.data?.list ?? []);
-        setLoading(false);
       }
-    });
-  };
+    },
+  });
 
   const branchHandleChange = (data: SelectOption | null) => {
     setSelectdBranch(data?.value ?? '');
-    fetchUserList((data?.value ?? '').toString()).then((res) => {
-      if (res?.status == 200) {
-        setLoading(true);
-        setArrList(res?.data?.list ?? []);
-        setLoading(false);
-      }
-    });
+    runFetchUserList((data?.value ?? '').toString());
   };
 
   useEffect(() => {
-    getList();
     setOptionBranch(deriveBranchOptions(company));
   }, []);
 
@@ -89,7 +85,7 @@ const UserPage = () => {
                   <div>
                     <button
                       className="btn btn-primary d-none d-sm-inline-block"
-                      onClick={getList}
+                      onClick={() => refreshList()}
                     >
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -111,7 +107,7 @@ const UserPage = () => {
                     </button>
                     <button
                       className="btn btn-primary d-sm-none btn-icon"
-                      onClick={getList}
+                      onClick={() => refreshList()}
                     >
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -258,7 +254,7 @@ const UserPage = () => {
                           <td className="cursor-pointer">
                             <AddPhoneNumberModal
                               item={item}
-                              success={() => getList()}
+                              success={() => refreshList()}
                               onSubmit={addUserPhoneNumber}
                             />
                           </td>
@@ -286,7 +282,7 @@ const UserPage = () => {
                               <>
                                 <TableBreakBar />
                                 <TableCellTextDeleteConfirm
-                                  success={() => getList()}
+                                  success={() => refreshList()}
                                   uuid={item?.transactionCode}
                                   route={ROUTE_API.eChanelUser}
                                   title="Delete User"

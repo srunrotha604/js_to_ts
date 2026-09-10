@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from 'react';
+import { useRequest } from 'ahooks';
+import React, { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { ROUTE_PATH } from '../../../../utils/route-util';
@@ -12,12 +13,14 @@ const ProjectEditPage = () => {
 
   const [projectName, setProjectName] = useState('');
 
-  const getList = () => {
-    fetchProjectByKey(params.key ?? '').then((res) => {
+  useRequest(() => fetchProjectByKey(params.key ?? ''), {
+    onSuccess: (res) => {
       switch (res?.status) {
         case 200:
-          let data = res?.data?.list?.[0];
-          setProjectName(data?.projectName ?? '');
+          {
+            const data = res?.data?.list?.[0];
+            setProjectName(data?.projectName ?? '');
+          }
           break;
         case 400:
           toast.error(res?.data?.message);
@@ -28,31 +31,37 @@ const ProjectEditPage = () => {
         default:
           navigate(ROUTE_PATH.error404);
       }
-    });
-  };
+    },
+  });
+
+  const { run: runUpdateProject, loading: updateLoading } = useRequest(
+    updateProject,
+    {
+      manual: true,
+      onSuccess: (res) => {
+        switch (res?.status) {
+          case 200:
+            toast.success(res?.data?.message);
+            navigate(ROUTE_PATH.project);
+            break;
+          case 400:
+            toast.error(res?.data?.message);
+            break;
+          case 403:
+            toast.error(String(res?.data));
+            break;
+          default:
+            navigate(ROUTE_PATH.error404);
+        }
+      },
+    }
+  );
 
   const funcButtonHandleClickExecute = (
     e: React.MouseEvent<HTMLButtonElement>
   ) => {
     if (validateRequiredFields([projectName])) {
-      updateProject(buildProjectEditDto(params.key, projectName)).then(
-        (res) => {
-          switch (res?.status) {
-            case 200:
-              toast.success(res?.data?.message);
-              navigate(ROUTE_PATH.project);
-              break;
-            case 400:
-              toast.error(res?.data?.message);
-              break;
-            case 403:
-              toast.error(String(res?.data));
-              break;
-            default:
-              navigate(ROUTE_PATH.error404);
-          }
-        }
-      );
+      runUpdateProject(buildProjectEditDto(params.key, projectName));
     }
     e.preventDefault();
   };
@@ -66,9 +75,6 @@ const ProjectEditPage = () => {
     navigate(ROUTE_PATH.project);
   };
 
-  useEffect(() => {
-    getList();
-  }, []);
   return (
     <>
       <div className="page-wrapper">
@@ -150,22 +156,30 @@ const ProjectEditPage = () => {
                     <button
                       className="btn btn-primary"
                       onClick={funcButtonHandleClickExecute}
+                      disabled={updateLoading}
                     >
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        className="icon icon-tabler icon-tabler-check"
-                        width={24}
-                        height={24}
-                        viewBox="0 0 24 24"
-                        strokeWidth="1.5"
-                        stroke="currentColor"
-                        fill="none"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                      >
-                        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                        <path d="M5 12l5 5l10 -10" />
-                      </svg>
+                      {updateLoading ? (
+                        <span
+                          className="spinner-border spinner-border-sm me-2"
+                          role="status"
+                        />
+                      ) : (
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          className="icon icon-tabler icon-tabler-check"
+                          width={24}
+                          height={24}
+                          viewBox="0 0 24 24"
+                          strokeWidth="1.5"
+                          stroke="currentColor"
+                          fill="none"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        >
+                          <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                          <path d="M5 12l5 5l10 -10" />
+                        </svg>
+                      )}
                       Submit
                     </button>
                   </div>

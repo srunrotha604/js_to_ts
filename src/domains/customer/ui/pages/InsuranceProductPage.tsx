@@ -1,4 +1,5 @@
-import { useEffect, useState } from 'react';
+import { useRequest } from 'ahooks';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { ROUTE_PATH } from '../../../../utils/route-util';
@@ -9,8 +10,9 @@ const InsuranceProductPage = () => {
   document.title = 'E-CHANNEL PORTAL | insurance product';
   const navigate = useNavigate();
   const [arrProduct, setArrProduct] = useState<ProductOption[]>([]);
-  const getList = () => {
-    fetchProductList().then((res) => {
+
+  useRequest(fetchProductList, {
+    onSuccess: (res) => {
       switch (res?.status) {
         case 200:
           setArrProduct(res?.data?.list ?? []);
@@ -24,12 +26,8 @@ const InsuranceProductPage = () => {
         default:
           navigate(ROUTE_PATH.notFound);
       }
-    });
-  };
-
-  useEffect(() => {
-    getList();
-  }, []);
+    },
+  });
 
   const productHandleClick = (productCode?: string) => {
     navigate(ROUTE_PATH.customerCreateWithProduct(productCode ?? ''));

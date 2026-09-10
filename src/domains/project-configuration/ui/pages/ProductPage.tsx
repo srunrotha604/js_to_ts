@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from 'react';
+import { useRequest } from 'ahooks';
+import React, { useState } from 'react';
 import ReactPaginate from 'react-paginate';
 import { Link, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
@@ -18,18 +19,16 @@ const ProductPage = () => {
   const navigate = useNavigate();
 
   const { modalRef, closeModal, openModal } = useModal();
-  const [loading, setLoading] = useState(false);
   const [arrList, setArrList] = useState<ProductItem[]>([]);
   const [arrDetails, setArrDetails] = useState<ProductItem>({});
   const [query, setQuery] = useState('');
   const [transactionCode, setTransationCode] = useState('');
-  const getList = () => {
-    fetchProductList().then((res) => {
+
+  const { loading, refresh: refreshList } = useRequest(fetchProductList, {
+    onSuccess: (res) => {
       switch (res?.status) {
         case 200:
-          setLoading(true);
           setArrList(res?.data?.list ?? []);
-          setLoading(false);
           break;
         case 400:
           toast.error(res?.data?.message);
@@ -40,19 +39,20 @@ const ProductPage = () => {
         default:
           navigate(ROUTE_PATH.error404);
       }
-    });
-  };
+    },
+  });
 
   const handleViewClick = (item: ProductItem) => {
     setArrDetails(item);
   };
 
-  const deleteRecordHandleClick = () => {
-    deleteProduct({ transactionCode }).then((res) => {
+  const { run: runDeleteProduct } = useRequest(deleteProduct, {
+    manual: true,
+    onSuccess: (res) => {
       switch (res?.status) {
         case 200:
           toast.success(res?.data?.message);
-          getList();
+          refreshList();
           closeModal();
           break;
         case 400:
@@ -64,12 +64,12 @@ const ProductPage = () => {
         default:
           navigate(ROUTE_PATH.error404);
       }
-    });
-  };
+    },
+  });
 
-  useEffect(() => {
-    getList();
-  }, []);
+  const deleteRecordHandleClick = () => {
+    runDeleteProduct({ transactionCode });
+  };
 
   const createNewHandleClick = () => {
     navigate(ROUTE_PATH.productCreate);
@@ -100,7 +100,7 @@ const ProductPage = () => {
                       <div>
                         <button
                           className="btn btn-primary d-none d-sm-inline-block"
-                          onClick={getList}
+                          onClick={() => refreshList()}
                         >
                           <svg
                             xmlns="http://www.w3.org/2000/svg"
@@ -122,7 +122,7 @@ const ProductPage = () => {
                         </button>
                         <button
                           className="btn btn-primary d-sm-none btn-icon"
-                          onClick={getList}
+                          onClick={() => refreshList()}
                         >
                           <svg
                             xmlns="http://www.w3.org/2000/svg"

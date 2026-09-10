@@ -1,4 +1,5 @@
-import { useEffect, useState } from 'react';
+import { useRequest } from 'ahooks';
+import { useState } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
@@ -32,8 +33,8 @@ const BatchRegisterPage = () => {
   );
   const [productCode, setProductCode] = useState('');
 
-  const getList = () => {
-    fetchProductList().then((res) => {
+  useRequest(fetchProductList, {
+    onSuccess: (res) => {
       switch (res?.status) {
         case 200:
           setArrProduct(res?.data?.list ?? []);
@@ -47,11 +48,12 @@ const BatchRegisterPage = () => {
         default:
           navigate(ROUTE_PATH.notFound);
       }
-    });
-  };
+    },
+  });
 
-  const policyList = (value: string) => {
-    fetchPoliciesByProductCode(value).then((res) => {
+  const { run: policyList } = useRequest(fetchPoliciesByProductCode, {
+    manual: true,
+    onSuccess: (res) => {
       switch (res?.status) {
         case 200:
           setArrProject(res?.data?.category ?? []);
@@ -65,12 +67,8 @@ const BatchRegisterPage = () => {
         default:
           navigate(ROUTE_PATH.notFound);
       }
-    });
-  };
-
-  useEffect(() => {
-    getList();
-  }, []);
+    },
+  });
 
   const getActiveStep = () => {
     switch (step) {

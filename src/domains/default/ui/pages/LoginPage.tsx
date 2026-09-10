@@ -1,3 +1,4 @@
+import { useRequest } from 'ahooks';
 import { useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../../../context/AuthContext';
@@ -15,41 +16,46 @@ const LoginPage = () => {
   const [passwordShown, setPasswordShown] = useState(false);
   const { fetchUser } = useAuth();
 
+  const { run: runLogin, loading: loginLoading } = useRequest(login, {
+    manual: true,
+    onSuccess: async (res) => {
+      switch (res?.status) {
+        case 200: {
+          const alt_fa_token = {
+            token: res?.data?.token,
+            refreshToken: res?.data?.refreshToken,
+            company: res?.data?.company,
+            branch: res?.data?.branch,
+          };
+          localStorage.setItem(
+            'e_chanel_storage',
+            JSON.stringify(alt_fa_token)
+          );
+          await fetchUser();
+          if (location?.state?.from?.pathname) {
+            navigate(location?.state?.from?.pathname);
+          } else {
+            navigate(ROUTE_PATH.dashboard);
+          }
+          break;
+        }
+        case 400:
+          setInvalidFeedBack(res?.data?.message ?? '');
+          break;
+        case 403:
+          setInvalidFeedBack(String(res?.data));
+          break;
+        default:
+          navigate(ROUTE_PATH.error404);
+      }
+    },
+  });
+
   const funcButtonHandleClickExecute = (
     e: React.MouseEvent<HTMLButtonElement>
   ) => {
     if (validateRequiredFields([userName, password])) {
-      login(buildLoginDto(userName, password)).then(async (res) => {
-        switch (res?.status) {
-          case 200: {
-            const alt_fa_token = {
-              token: res?.data?.token,
-              refreshToken: res?.data?.refreshToken,
-              company: res?.data?.company,
-              branch: res?.data?.branch,
-            };
-            localStorage.setItem(
-              'e_chanel_storage',
-              JSON.stringify(alt_fa_token)
-            );
-            await fetchUser();
-            if (location?.state?.from?.pathname) {
-              navigate(location?.state?.from?.pathname);
-            } else {
-              navigate(ROUTE_PATH.dashboard);
-            }
-            break;
-          }
-          case 400:
-            setInvalidFeedBack(res?.data?.message ?? '');
-            break;
-          case 403:
-            setInvalidFeedBack(String(res?.data));
-            break;
-          default:
-            navigate(ROUTE_PATH.error404);
-        }
-      });
+      runLogin(buildLoginDto(userName, password));
     }
     e.preventDefault();
   };
@@ -170,8 +176,16 @@ const LoginPage = () => {
                 type="submit"
                 className="btn btn-primary w-100"
                 onClick={funcButtonHandleClickExecute}
+                disabled={loginLoading}
               >
-                Log in
+                {loginLoading ? (
+                  <span
+                    className="spinner-border spinner-border-sm me-2"
+                    role="status"
+                  />
+                ) : (
+                  'Log in'
+                )}
               </button>
             </div>
           </div>
