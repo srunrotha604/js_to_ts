@@ -77,7 +77,7 @@ const ROUTE_API = {
   getProfile: '/api/v1/auth/profile',
   streamTicket: '/api/v1/auth/stream-ticket',
   sessionStream: '/api/v1/auth/session-stream',
-  loginRefreshToken: '/login/refresh-token',
+  loginRefreshToken: '/api/v1/auth/refresh',
   loginChangePassword: '/login/change-password',
   loginForgotPassword: '/login/forgot-password',
   loginConfirmCode: '/login/confirm-code',

@@ -34,7 +34,7 @@ const readStoredToken = () => {
   return JSON.parse(alt_fa_storage);
 };
 
-const buildHeaders = (tokenText: any, data: unknown) => {
+const buildHeaders = (tokenText: any, data: unknown, skipAuth?: boolean) => {
   const headers: Record<string, unknown> = {
     application_id: import.meta.env.VITE_APP_ID,
     company: tokenText.company,
@@ -42,7 +42,7 @@ const buildHeaders = (tokenText: any, data: unknown) => {
     accept: '*',
   };
 
-  if (tokenText.token) {
+  if (tokenText.token && !skipAuth) {
     headers.authorization = `Bearer ${tokenText.token}`;
   }
   if (!(data instanceof FormData)) {
@@ -51,6 +51,17 @@ const buildHeaders = (tokenText: any, data: unknown) => {
 
   return headers;
 };
+
+interface RefreshTokenResponse {
+  accessToken: string;
+  refreshToken: string;
+  tokenType?: string;
+  company?: string;
+  branch?: string;
+  expiration?: string;
+  tokenExpiration?: string;
+  message?: string;
+}
 
 export const refreshToken = async () => {
   const storage = localStorage.getItem('e_chanel_storage') || '';
@@ -63,23 +74,23 @@ export const refreshToken = async () => {
   }
 
   const data = {
-    token: token_text.token,
+    accessToken: token_text.token,
     refreshToken: token_text.refreshToken,
   };
 
-  const res = await axios({
+  const res = await axios<RefreshTokenResponse>({
     url: import.meta.env.VITE_API_URL + ROUTE_API.loginRefreshToken,
     method: 'POST',
     data: data,
-    headers: {
-      application_id: import.meta.env.VITE_APP_ID,
-      'Content-Type': 'application/json',
-      accept: '*/*',
-    },
+    headers: buildHeaders(
+      token_text,
+      data,
+      true
+    ) as AxiosRequestConfig['headers'],
   });
 
   const alt_fa_token = {
-    token: res.data.token,
+    token: res.data.accessToken,
     refreshToken: res.data.refreshToken,
     company: token_text.company || '',
     branch: token_text.branch || '',
@@ -100,6 +111,7 @@ interface HttpUtilOptions {
   params?: unknown;
   responseType?: ResponseType;
   signal?: AbortSignal;
+  skipAuth?: boolean;
   [key: string]: unknown;
 }
 
@@ -117,7 +129,11 @@ const request = async <T = unknown,>(
     url: import.meta.env.VITE_API_URL + url,
     method: method as AxiosRequestConfig['method'],
     data,
-    headers: buildHeaders(token_text, data) as AxiosRequestConfig['headers'],
+    headers: buildHeaders(
+      token_text,
+      data,
+      options.skipAuth
+    ) as AxiosRequestConfig['headers'],
   };
 
   return axios<T>(config)
