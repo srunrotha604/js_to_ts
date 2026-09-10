@@ -74,6 +74,7 @@ const ROUTE_PATH = {
 const ROUTE_API = {
   root: import.meta.env.VITE_API_URL,
   login: '/api/v1/auth/login',
+  getProfile: '/api/v1/auth/profile',
   streamTicket: '/api/v1/auth/stream-ticket',
   sessionStream: '/api/v1/auth/session-stream',
   loginRefreshToken: '/login/refresh-token',

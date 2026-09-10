@@ -1,7 +1,10 @@
 export interface LoginResponse {
-  token?: string;
-  refreshToken?: string;
-  company?: string;
-  branch?: string;
+  accessToken: string;
+  refreshToken: string;
+  tokenType: string;
+  company: string;
+  branch: string;
+  expiration: string;
+  tokenExpiration: string;
   message?: string;
 }

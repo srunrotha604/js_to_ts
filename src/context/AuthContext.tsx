@@ -1,11 +1,12 @@
 import type { ReactNode } from 'react';
-import { createContext, useContext, useEffect, useState } from 'react';
+import { createContext, useContext, useEffect, useRef, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
 import type { AuthContextValue, AuthToken, PermissionSet } from '../@type/auth';
-import type { AuthModuleState } from '../@type/module';
-import type { UserProfile } from '../@type/profile';
-import type { CompanyBranchOption } from '../@type/report';
+import type { Company, Module, Profile, UserProfile } from '../@type/profile';
+import { openSessionStream } from '../domains/default/interface-adapters';
 import { HttpUtil } from '../utils/http-util';
-import { ROUTE_API } from '../utils/route-util';
+import { ROUTE_API, ROUTE_PATH } from '../utils/route-util';
 import ModuleContextProvider from './module/ModuleContext';
 
 const logoutHandlers = new Set<() => void>();
@@ -33,15 +34,6 @@ const AuthContext = createContext<AuthContextValue>({
   mode: '',
 });
 
-interface UserInfoResponse {
-  company?: CompanyBranchOption[];
-  userProfile?: UserProfile[];
-  mainMenu?: AuthModuleState['mainMenu'];
-  menu?: AuthModuleState['menu'];
-  module?: AuthModuleState['module'];
-  mode?: string;
-}
-
 interface PermissionAccessResponse extends PermissionSet {
   driAdmin?: boolean;
 }
@@ -52,20 +44,22 @@ const fetchPermissionAccess = async () => {
 };
 
 const fetchUserInfo = async () => {
-  const URL = ROUTE_API.login;
-  return HttpUtil.get<UserInfoResponse>(URL);
+  const URL = ROUTE_API.getProfile;
+  return HttpUtil.get<Profile>(URL);
 };
 
 const AuthContextProvider = ({ children }: { children?: ReactNode }) => {
+  const navigate = useNavigate();
+  const closeSessionStreamRef = useRef<(() => void) | null>(null);
   const [loading, setLoading] = useState(true);
   const [user, setUser] = useState<UserProfile | null>(null);
   const [isUserDRIAdmin, setIsUserDRIAdmin] = useState(false);
   const [menu, setMenu] = useState<unknown[]>([]);
-  const [company, setCompany] = useState<CompanyBranchOption[] | null>(null);
+  const [company, setCompany] = useState<Company[] | null>(null);
   const [permission, setPermission] = useState<PermissionSet | null>(null);
   const [token, setToken] = useState<AuthToken | null>(null);
   const [mode, setMode] = useState('');
-  const [module, setModule] = useState<AuthModuleState | null>(null);
+  const [module, setModule] = useState<Module[] | null>(null);
 
   const hasPermissionProccessTransaction = (
     execution: string | string[],
@@ -95,7 +89,28 @@ const AuthContextProvider = ({ children }: { children?: ReactNode }) => {
 
   useEffect(() => {
     fetchUser();
+    return () => {
+      closeSessionStreamRef.current?.();
+    };
   }, []);
+
+  const startSessionStream = () => {
+    closeSessionStreamRef.current?.();
+    closeSessionStreamRef.current = null;
+
+    const e_chanel_storage = localStorage.getItem('e_chanel_storage');
+    const storedToken = e_chanel_storage
+      ? JSON.parse(e_chanel_storage).token
+      : null;
+    if (!storedToken) return;
+
+    closeSessionStreamRef.current = openSessionStream(() => {
+      toast.error('Your session has expired. Please log in again.');
+      localStorage.removeItem('e_chanel_storage');
+      clearUser();
+      navigate(ROUTE_PATH.logout, { replace: true });
+    });
+  };
 
   const fetchUser = async () => {
     try {
@@ -104,20 +119,17 @@ const AuthContextProvider = ({ children }: { children?: ReactNode }) => {
       const responsePermission = await fetchPermissionAccess();
       const e_chanel_storage = localStorage.getItem('e_chanel_storage');
       setToken(e_chanel_storage ? JSON.parse(e_chanel_storage) : null);
-      const tempCompany = responseUser?.data?.company;
-      const tempUser = responseUser?.data?.userProfile?.[0];
-      const tempMenu = responseUser?.data?.mainMenu;
-      setModule({
-        mainMenu: responseUser?.data?.mainMenu,
-        menu: responseUser?.data?.menu,
-        module: responseUser?.data?.module,
-      });
+      const tempCompany = responseUser?.data.company;
+      const tempUser = responseUser?.data?.userProfile;
+      const tempMenu = responseUser?.data?.menuItems;
+      setModule(responseUser?.data.module || []);
       setIsUserDRIAdmin(responsePermission?.data?.driAdmin ?? false);
       setCompany(tempCompany ?? null);
       setUser(tempUser ?? null);
       setMenu(tempMenu ?? []);
       setPermission(responsePermission?.data ?? null);
       setMode(responseUser?.data?.mode ?? '');
+      startSessionStream();
     } catch (error) {
       console.log(error);
     } finally {
@@ -126,13 +138,15 @@ const AuthContextProvider = ({ children }: { children?: ReactNode }) => {
   };
 
   const selectedCompany = company?.find(
-    (item) => item.value === token?.company
+    (item) => item.companyCode === token?.company
   );
 
   const selectedBranch = selectedCompany?.branch?.find(
-    (item) => item.value === token?.branch
+    (item) => item.branchCode === token?.branch
   );
   const clearUser = () => {
+    closeSessionStreamRef.current?.();
+    closeSessionStreamRef.current = null;
     setUser(null);
     setMenu([]);
     setCompany(null);

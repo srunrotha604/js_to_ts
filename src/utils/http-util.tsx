@@ -39,12 +39,11 @@ const buildHeaders = (tokenText: any, data: unknown) => {
     application_id: import.meta.env.VITE_APP_ID,
     company: tokenText.company,
     branch: tokenText.branch,
-    hostName: window.location.origin,
     accept: '*',
   };
 
   if (tokenText.token) {
-    headers.Authorization = `Bearer ${tokenText.token}`;
+    headers.authorization = `Bearer ${tokenText.token}`;
   }
   if (!(data instanceof FormData)) {
     headers['Content-Type'] = 'application/json';

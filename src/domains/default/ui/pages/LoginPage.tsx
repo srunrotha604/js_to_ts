@@ -21,7 +21,7 @@ const LoginPage = () => {
       switch (res?.status) {
         case 200: {
           const alt_fa_token = {
-            token: res?.data?.token,
+            token: res?.data?.accessToken,
             refreshToken: res?.data?.refreshToken,
             company: res?.data?.company,
             branch: res?.data?.branch,

@@ -1,6 +1,4 @@
-import type { UserProfile } from './profile';
-import type { CompanyBranchOption, SelectOption } from './report';
-import type { AuthModuleState } from './module';
+import type { Branch, Company, Module, UserProfile } from './profile';
 
 export interface PermissionSet {
   process?: Record<string, unknown>;
@@ -33,11 +31,11 @@ export interface AuthContextValue {
   isUserDRIAdmin: boolean;
   appName: string;
   menu: unknown[];
-  company: CompanyBranchOption[] | null;
-  selectedBranch: SelectOption | null | undefined;
-  selectedCompany: CompanyBranchOption | null | undefined;
+  company: Company[] | null;
+  selectedBranch: Branch | null | undefined;
+  selectedCompany: Company | null | undefined;
   permission: PermissionSet | null;
-  module: AuthModuleState | null;
+  module: Module[] | null;
   token: AuthToken | null;
   mode: string;
 }
