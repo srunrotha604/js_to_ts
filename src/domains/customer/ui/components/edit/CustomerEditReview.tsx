@@ -11,7 +11,6 @@ import { handleApiError } from '../../../../../utils/handleApiError';
 import { updateCustomerTransaction } from '../../../interface-adapters';
 import { buildCustomerEditDto } from '../../../use-cases';
 import TransactionDetail from '../transaction-table/CustomerTransactionDetail';
-
 interface CustomerEditReviewProps {
   handleBackStep?: () => void;
   handleSubmitted: (

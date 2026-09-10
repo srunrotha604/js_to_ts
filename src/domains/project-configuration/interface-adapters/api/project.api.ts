@@ -6,7 +6,11 @@ export const fetchProjectList = () =>
   fetchData<ProjectListResponse>(ROUTE_API.operationProject, {}, 'GET');
 
 export const fetchProjectByKey = (key: string) =>
-  fetchData<ProjectListResponse>(ROUTE_API.operationProjectByKey(key), {}, 'GET');
+  fetchData<ProjectListResponse>(
+    ROUTE_API.operationProjectByKey(key),
+    {},
+    'GET'
+  );
 
 export const createProject = (data: { projectName: string }) =>
   fetchData<MessageResponse>(ROUTE_API.operationProject, data, 'POST');

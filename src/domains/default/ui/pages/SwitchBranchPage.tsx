@@ -1,6 +1,9 @@
 import { useEffect, useState } from 'react';
 import Select from 'react-select';
-import type { CompanyBranchOption, SelectOption } from '../../../../@type/report';
+import type {
+  CompanyBranchOption,
+  SelectOption,
+} from '../../../../@type/report';
 import { useAuth } from '../../../../context/AuthContext';
 import {
   applyBranchSwitch,
@@ -14,7 +17,6 @@ const SwitchBranchPage = () => {
   const [selectedCompany, setSelectdCompany] = useState('');
   const [optionBranch, setOptionBranch] = useState<SelectOption[]>([]);
   const [selectedBranch, setSelectdBranch] = useState('');
-
   const funcButtonHandleClickExecute = (
     e: React.MouseEvent<HTMLButtonElement>
   ) => {

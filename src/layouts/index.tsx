@@ -1,10 +1,10 @@
 import { Box } from '@mui/system';
 import { ErrorBoundary } from 'react-error-boundary';
 import { Outlet } from 'react-router-dom';
+import ErrorPage from '../domains/default/ui/components/ErrorPage';
 import FooterPage from '../domains/default/ui/components/FooterPage';
 import HeaderPage from '../domains/default/ui/components/HeaderPage';
 import SideBarPage from '../domains/default/ui/components/SideBarPage';
-import ErrorPage from '../domains/default/ui/components/ErrorPage';
 
 export default function Layout() {
   return (

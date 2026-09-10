@@ -147,7 +147,8 @@ const ExcelUploadStep = (props: ExcelUploadStepProps) => {
     const stillValid =
       currentPolicy &&
       policies.some(
-        (p: { value?: string }) => String(p.value) === String(currentPolicy.value)
+        (p: { value?: string }) =>
+          String(p.value) === String(currentPolicy.value)
       );
 
     const nextPolicy = stillValid ? currentPolicy : policies[0] ?? null;

@@ -89,7 +89,12 @@ const UserEditPage = () => {
     e: React.MouseEvent<HTMLButtonElement>
   ) => {
     if (
-      validateRequiredFields([textEmail, textFirstName, textLastName, selectedRole])
+      validateRequiredFields([
+        textEmail,
+        textFirstName,
+        textLastName,
+        selectedRole,
+      ])
     ) {
       runUpdateUser(buildUserEditDto(params.key, selectedRole));
     }

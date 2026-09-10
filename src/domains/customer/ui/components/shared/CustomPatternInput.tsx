@@ -1,7 +1,6 @@
 import type { ChangeEvent, FocusEvent, KeyboardEvent, MouseEvent } from 'react';
 import { forwardRef } from 'react';
 import { PatternFormat } from 'react-number-format';
-
 interface CustomPatternProps {
   value?: string;
   onClick?: (event: MouseEvent<HTMLInputElement>) => void;
@@ -9,7 +8,6 @@ interface CustomPatternProps {
   onFocus?: (event: FocusEvent<HTMLInputElement>) => void;
   onKeyDown?: (event: KeyboardEvent<HTMLInputElement>) => void;
 }
-
 const CustomPatternInput = forwardRef<HTMLInputElement, CustomPatternProps>(
   ({ value, onClick, onChange, onFocus, onKeyDown }, ref) => {
     return (

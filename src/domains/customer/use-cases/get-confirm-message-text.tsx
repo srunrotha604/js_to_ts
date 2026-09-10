@@ -1,10 +1,8 @@
 import { pluralize } from '../../../utils/pluralize';
-
 interface GetConfirmedMessageTextParams {
   status: string | null;
   selectedCustomerList?: unknown[];
 }
-
 export const getConfirmedMessageText = ({
   status,
   selectedCustomerList = [],
@@ -27,7 +25,7 @@ export const getConfirmedMessageText = ({
       {`${selectedCustomerList.length > 1 ? 'these' : 'this'}`}{' '}
       <b>
         {selectedCustomerList.length > 0 ? selectedCustomerList.length : ''}
-      </b>{' '}
+      </b>
       {pluralize('transaction', selectedCustomerList?.length)}?
     </p>
   );

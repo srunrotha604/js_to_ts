@@ -1,5 +1,5 @@
-import { formatDay } from '../../../utils/format-day';
 import type { SelectOption } from '../../../@type/report';
+import { formatDay } from '../../../utils/format-day';
 
 export interface BuildCustomerReportQueryParamsInput {
   type: SelectOption[];

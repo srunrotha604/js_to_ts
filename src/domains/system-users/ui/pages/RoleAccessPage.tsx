@@ -9,11 +9,11 @@ import Modal, { useModal } from '../../../../components/common/modal';
 import Loading from '../../../../components/Loading';
 import { ROUTE_PATH } from '../../../../utils/route-util';
 import type { RoleAccessItem } from '../../entities';
-import { fetchRoleAccessList, updateRoleAccess } from '../../interface-adapters';
 import {
-  buildRoleAccessUpdateDto,
-  parseCsvList,
-} from '../../use-cases';
+  fetchRoleAccessList,
+  updateRoleAccess,
+} from '../../interface-adapters';
+import { buildRoleAccessUpdateDto, parseCsvList } from '../../use-cases';
 
 const RoleAccessPage = () => {
   document.title = 'E-CHANNEL PORTAL | Role access';

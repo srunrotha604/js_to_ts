@@ -1,13 +1,10 @@
 import { fetchData, fileUpload } from '../../../../services/$service';
 import { ROUTE_API } from '../../../../utils/route-util';
 import type { MessageResponse, UserProfileResponse } from '../../entities';
-
 export const fetchCurrentUserProfile = () =>
   fetchData<UserProfileResponse>(ROUTE_API.login, {}, 'GET');
-
 export const uploadProfileAvatar = (formData: FormData) =>
   fileUpload<MessageResponse>(ROUTE_API.systemUser, formData, 'PATCH');
-
 export const saveProfileInfo = (data: {
   userCode: string;
   email1: string;

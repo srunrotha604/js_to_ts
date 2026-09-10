@@ -6,9 +6,7 @@ import Layout from '../layouts';
 import { ROUTE_PATH } from '../utils/route-util';
 const Login = lazy(() => import('../domains/default/ui/pages/LoginPage'));
 const HomePage = lazy(() => import('../domains/default/ui/pages/HomePage'));
-const LogoutPage = lazy(
-  () => import('../domains/default/ui/pages/LogoutPage')
-);
+const LogoutPage = lazy(() => import('../domains/default/ui/pages/LogoutPage'));
 const Error404Page = lazy(
   () => import('../domains/default/ui/pages/Error404Page')
 );
@@ -47,9 +45,7 @@ const ProjectPolicyPage = lazy(
 );
 const ProjectPolicyCreatePage = lazy(
   () =>
-    import(
-      '../domains/project-configuration/ui/pages/ProjectPolicyCreatePage'
-    )
+    import('../domains/project-configuration/ui/pages/ProjectPolicyCreatePage')
 );
 const BranchCreatePage = lazy(
   () => import('../domains/project-configuration/ui/pages/BranchCreatePage')
@@ -59,9 +55,7 @@ const BranchProjectPage = lazy(
 );
 const BranchProjectCreatePage = lazy(
   () =>
-    import(
-      '../domains/project-configuration/ui/pages/BranchProjectCreatePage'
-    )
+    import('../domains/project-configuration/ui/pages/BranchProjectCreatePage')
 );
 const BranchProjectEditPage = lazy(
   () =>

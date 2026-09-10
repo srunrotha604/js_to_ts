@@ -31,25 +31,28 @@ const BranchProjectPage = () => {
     }
   );
 
-  const { run: runDeleteBranchProject, loading: deleteLoading } = useRequest(deleteBranchProject, {
-    manual: true,
-    onSuccess: (res) => {
-      switch (res?.status) {
-        case 200:
-          refreshList();
-          toast.success(res?.data?.message);
-          break;
-        case 400:
-          toast.error(res?.data?.message);
-          break;
-        case 403:
-          toast.error(String(res?.data));
-          break;
-        default:
-          navigate(ROUTE_PATH.notFound);
-      }
-    },
-  });
+  const { run: runDeleteBranchProject, loading: deleteLoading } = useRequest(
+    deleteBranchProject,
+    {
+      manual: true,
+      onSuccess: (res) => {
+        switch (res?.status) {
+          case 200:
+            refreshList();
+            toast.success(res?.data?.message);
+            break;
+          case 400:
+            toast.error(res?.data?.message);
+            break;
+          case 403:
+            toast.error(String(res?.data));
+            break;
+          default:
+            navigate(ROUTE_PATH.notFound);
+        }
+      },
+    }
+  );
 
   const deleteProjectHandleClickExecute = () => {
     runDeleteBranchProject({ transactionCode: getKey });

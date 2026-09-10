@@ -26,4 +26,5 @@ export const fetchProjectPolicyOptions = () =>
 export const createProjectPolicy = (data: {
   projectFamily?: string;
   policyCode: string;
-}) => fetchData<MessageResponse>(ROUTE_API.operationProjectPolicy, data, 'POST');
+}) =>
+  fetchData<MessageResponse>(ROUTE_API.operationProjectPolicy, data, 'POST');

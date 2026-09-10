@@ -10,7 +10,6 @@ import WrapperComponent from '../../../../components/WrapperComponent';
 import { ROUTE_API, ROUTE_PATH } from '../../../../utils/route-util';
 import type { UserCompanyDetail, UserCompanyListItem } from '../../entities';
 import { fetchUserCompany } from '../../interface-adapters';
-
 const CompanyForm = () => {
   const navigate = useNavigate();
   const params = new URLSearchParams(location.search);

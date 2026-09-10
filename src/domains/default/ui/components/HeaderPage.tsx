@@ -5,7 +5,6 @@ import companyLogoFull from '../../../../assets/logo-full.jpg';
 import { useAuth } from '../../../../context/AuthContext';
 import { ROUTE_PATH } from '../../../../utils/route-util';
 import { performLogout } from '../../use-cases';
-
 const HeaderPage = () => {
   const { user, clearUser, mode } = useAuth();
   const signOut = () => {

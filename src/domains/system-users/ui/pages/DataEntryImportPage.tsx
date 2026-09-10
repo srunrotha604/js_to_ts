@@ -4,7 +4,10 @@ import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { ROUTE_PATH } from '../../../../utils/route-util';
 import { importDataEntry } from '../../interface-adapters';
-import { buildDataEntryImportDto, validateRequiredFields } from '../../use-cases';
+import {
+  buildDataEntryImportDto,
+  validateRequiredFields,
+} from '../../use-cases';
 
 const DataEntryImportPage = () => {
   document.title = 'E-CHANNEL PORTAL | data entry - import';

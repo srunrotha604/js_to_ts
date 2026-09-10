@@ -10,12 +10,10 @@ import { contactUs } from '../../../../utils/contact';
 import { delay } from '../../../../utils/delay';
 import { ROUTE_PATH } from '../../../../utils/route-util';
 import { submitContactUs } from '../../interface-adapters';
-
 interface ContactUsFormValues {
   phone: string;
   message: string;
 }
-
 const ContactUsPage = () => {
   document.title = 'E-CHANNEL PORTAL | Contact Us';
   const { control, handleSubmit, watch } = useForm<ContactUsFormValues>();

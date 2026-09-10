@@ -27,8 +27,7 @@ export const createUserBranchAccess = (data: {
   companyFamily?: string | null;
   userCode?: string | null;
   branchFamily: string;
-}) =>
-  fetchDataAsync(ROUTE_API.eChanelUserBranch, { data, method: 'post' });
+}) => fetchDataAsync(ROUTE_API.eChanelUserBranch, { data, method: 'post' });
 
 export const setDefaultUserBranchAccess = (data: {
   transactionCode?: string;

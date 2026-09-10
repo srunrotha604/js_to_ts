@@ -68,9 +68,8 @@ interface TransactionHeaderProps {
 const TransactionHeader = ({ status, deleted }: TransactionHeaderProps) => {
   return (
     <h2 className="card-transaction-title text-center mb-3">
-      TRANSACTION{' '}
+      TRANSACTION
       <span className={getStatusColor(status?.toLowerCase())}>
-        {' '}
         {`${deleted ? 'DEL_' : ''}${status?.toUpperCase()}`}
       </span>
     </h2>

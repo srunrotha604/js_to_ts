@@ -5,14 +5,11 @@ import { toast } from 'react-toastify';
 import { ROUTE_PATH } from '../../../../utils/route-util';
 import { fetchProjectByKey, updateProject } from '../../interface-adapters';
 import { buildProjectEditDto, validateRequiredFields } from '../../use-cases';
-
 const ProjectEditPage = () => {
   document.title = 'E-CHANNEL PORTAL | project | edit';
   const navigate = useNavigate();
   const params = useParams<{ key: string }>();
-
   const [projectName, setProjectName] = useState('');
-
   useRequest(() => fetchProjectByKey(params.key ?? ''), {
     onSuccess: (res) => {
       switch (res?.status) {

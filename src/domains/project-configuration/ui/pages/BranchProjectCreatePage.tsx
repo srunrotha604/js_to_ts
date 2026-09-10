@@ -71,7 +71,11 @@ const BranchProjectCreatePage = () => {
   ) => {
     if (validateRequiredFields([selectedProject, selectedPolicies])) {
       runCreateBranchProject(
-        buildBranchProjectCreateDto(params.key, selectedProject, selectedPolicies)
+        buildBranchProjectCreateDto(
+          params.key,
+          selectedProject,
+          selectedPolicies
+        )
       );
     }
     e.preventDefault();
@@ -79,7 +83,9 @@ const BranchProjectCreatePage = () => {
 
   const projectHandleChange = (value: SingleValue<BranchProjectOption>) => {
     setSelectdProject(value?.value ?? '');
-    setOptionPolicies(filterPoliciesByProjectKey(optionProject, value?.value ?? ''));
+    setOptionPolicies(
+      filterPoliciesByProjectKey(optionProject, value?.value ?? '')
+    );
   };
   const PoliciesHandleChange = (value: MultiValue<SelectOption> | null) => {
     setSelectdPolicies(Array.isArray(value) ? value.map((x) => x.value) : []);

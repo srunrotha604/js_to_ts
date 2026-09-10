@@ -10,7 +10,10 @@ import {
   createDataEntry,
   fetchDataEntryRoleOptions,
 } from '../../interface-adapters';
-import { buildDataEntryCreateDto, validateRequiredFields } from '../../use-cases';
+import {
+  buildDataEntryCreateDto,
+  validateRequiredFields,
+} from '../../use-cases';
 
 const DataEntryCreatePage = () => {
   document.title = 'E-CHANNEL PORTAL | data entry - create';

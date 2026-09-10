@@ -2,6 +2,7 @@ import clsx from 'clsx';
 import type { ForwardedRef, MouseEvent, ReactNode } from 'react';
 import { forwardRef, useImperativeHandle, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import type { SelectOption } from '../../../../../@type/report';
 import IssueDateDetailModal from '../../../../../components/IssueDateDetailModal';
 import IssueDateModal from '../../../../../components/IssueDateModal';
 import Checkbox from '../../../../../components/common/Checkbox';
@@ -11,7 +12,6 @@ import TransactionTable, {
   type TransactionTabItem,
   type TransactionTabListHandle,
 } from '../../../../../components/transaction/TransactionTable';
-import type { SelectOption } from '../../../../../@type/report';
 import { useAuth } from '../../../../../context/AuthContext';
 import { formatDay } from '../../../../../utils/format-day';
 import { ROUTE_PATH } from '../../../../../utils/route-util';
@@ -19,7 +19,10 @@ import type { CustomerTransaction } from '../../../entities';
 import { STATUS, typeOptions } from '../../../entities';
 import ComponentStatus from '../ComponentStatus';
 import CustomerTransactionDetailModal from './CustomerTransactionDetailModal';
-import { ShowLogsButton, TransactionLogsModal } from './CustomerTransactionLogs';
+import {
+  ShowLogsButton,
+  TransactionLogsModal,
+} from './CustomerTransactionLogs';
 
 export const CustomerDetailModal = forwardRef<
   HTMLDivElement,
@@ -307,9 +310,9 @@ const CustomerTransactionTable = (
                   {isCompleted
                     ? 'Completed'
                     : item.customerIssueDate?.issueDate
-                    ? new Date(item.customerIssueDate.issueDate).toLocaleDateString(
-                        'en-GB'
-                      )
+                    ? new Date(
+                        item.customerIssueDate.issueDate
+                      ).toLocaleDateString('en-GB')
                     : 'Not Yet Issue'}
                 </button>
               </td>

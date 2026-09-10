@@ -61,14 +61,11 @@ const ChangePasswordPage = () => {
     onSuccess: (res) => {
       switch (res?.status) {
         case 200: {
-          toast.success(
-            res?.data?.message ?? 'Password changed successfully',
-            {
-              autoClose: 50,
-              pauseOnHover: false,
-              onClose: () => navigate(ROUTE_PATH.dashboard),
-            }
-          );
+          toast.success(res?.data?.message ?? 'Password changed successfully', {
+            autoClose: 50,
+            pauseOnHover: false,
+            onClose: () => navigate(ROUTE_PATH.dashboard),
+          });
           break;
         }
         case 400:

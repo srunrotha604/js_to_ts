@@ -3,12 +3,10 @@ import { forwardRef } from 'react';
 import { IoRemove } from 'react-icons/io5';
 import Modal from '../../../../../components/common/modal';
 import type { CustomerTransaction } from '../../../entities';
-
 interface TransactionBatchProccessModalData {
   selectedCustomerList?: CustomerTransaction[];
   tabStatus?: string | null;
 }
-
 interface TransactionBatchProccessModalProps {
   data?: TransactionBatchProccessModalData;
   actions?: ReactNode;
@@ -17,7 +15,6 @@ interface TransactionBatchProccessModalProps {
   closeModal?: () => void;
 }
 
-// eslint-disable-next-line react/display-name
 const TransactionBatchProccessModal = forwardRef<
   HTMLDivElement,
   TransactionBatchProccessModalProps
@@ -43,7 +40,6 @@ const TransactionBatchProccessModal = forwardRef<
               <th>Name</th>
               <th>Tel No.</th>
               <th>Gender</th>
-              {/* <th>Position</th> */}
               <th>Nationality</th>
               <th>NIC/Passport</th>
               <th style={{ width: '10%' }}>Action</th>
@@ -60,11 +56,9 @@ const TransactionBatchProccessModal = forwardRef<
                   </td>
                   <td className="text-muted">{item.telNo}</td>
                   <td className="text-muted">{item.gender}</td>
-                  {/* <td className="text-muted">{item.position}</td> */}
                   <td className="text-muted">{item.nation}</td>
                   <td className="text-muted">{item.nicPassport}</td>
                   <td className="text-muted">
-                    {/* {<IoMdRemoveCircleOutlinel />} */}
                     <button
                       onClick={() => {
                         handleRemoveCustomer(item);

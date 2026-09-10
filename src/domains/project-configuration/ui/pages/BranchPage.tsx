@@ -133,7 +133,10 @@ const BranchPage = () => {
             disabled={assignLoading}
           >
             {assignLoading ? (
-              <span className="spinner-border spinner-border-sm" role="status" />
+              <span
+                className="spinner-border spinner-border-sm"
+                role="status"
+              />
             ) : (
               'Submit'
             )}

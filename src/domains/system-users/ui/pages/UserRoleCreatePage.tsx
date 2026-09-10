@@ -10,7 +10,10 @@ import {
   fetchApplicationOptions,
   fetchSystemUserRoleOptions,
 } from '../../interface-adapters';
-import { buildUserRoleCreateDto, validateRequiredFields } from '../../use-cases';
+import {
+  buildUserRoleCreateDto,
+  validateRequiredFields,
+} from '../../use-cases';
 import { customSelectStyles } from '../components/CustomSelectStyles';
 
 const UserRoleCreatePage = () => {

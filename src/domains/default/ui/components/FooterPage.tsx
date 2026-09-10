@@ -1,10 +1,9 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../../../context/AuthContext';
-import { fetchCurrentVersion } from '../../../version-history/interface-adapters';
 import { contactUs } from '../../../../utils/contact';
 import { ROUTE_PATH } from '../../../../utils/route-util';
-
+import { fetchCurrentVersion } from '../../../version-history/interface-adapters';
 const FooterPage = () => {
   const navigate = useNavigate();
   const [version, setVersion] = useState('');

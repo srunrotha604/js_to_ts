@@ -15,7 +15,6 @@ const LoginPage = () => {
   const [invalidFeedBack, setInvalidFeedBack] = useState('');
   const [passwordShown, setPasswordShown] = useState(false);
   const { fetchUser } = useAuth();
-
   const { run: runLogin, loading: loginLoading } = useRequest(login, {
     manual: true,
     onSuccess: async (res) => {

@@ -3,7 +3,10 @@ import React, { useEffect, useState } from 'react';
 import type { NavLinkProps } from 'react-router-dom';
 import { Link, NavLink, useLocation } from 'react-router-dom';
 import Select from 'react-select';
-import type { CompanyBranchOption, SelectOption } from '../../../../@type/report';
+import type {
+  CompanyBranchOption,
+  SelectOption,
+} from '../../../../@type/report';
 import Modal, { useModal } from '../../../../components/common/modal';
 import { useAuth } from '../../../../context/AuthContext';
 import { useModulePermission } from '../../../../context/module/ModuleContext';

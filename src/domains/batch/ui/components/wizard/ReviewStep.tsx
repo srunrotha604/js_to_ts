@@ -10,10 +10,16 @@ import { useAuth } from '../../../../../context/AuthContext';
 import useMessage from '../../../../../hooks/useMessage';
 import { formatDay } from '../../../../../utils/format-day';
 import { ROUTE_PATH } from '../../../../../utils/route-util';
-import type { BatchCustomerListResult, BatchCustomerRow } from '../../../entities';
+import type {
+  BatchCustomerListResult,
+  BatchCustomerRow,
+} from '../../../entities';
 import { submitBatchCustomerList } from '../../../interface-adapters';
-import { buildBatchSubmitDto, generateDuplicateColorMap } from '../../../use-cases';
 import type { DuplicateColorMap } from '../../../use-cases';
+import {
+  buildBatchSubmitDto,
+  generateDuplicateColorMap,
+} from '../../../use-cases';
 
 const TAB = {
   New: 'New',
@@ -369,7 +375,9 @@ const ReviewStep = (props: ReviewStepProps) => {
                                   <button
                                     className="btn btn-primary"
                                     type="button"
-                                    disabled={(customerList?.totalRecord ?? 0) <= 0}
+                                    disabled={
+                                      (customerList?.totalRecord ?? 0) <= 0
+                                    }
                                     onClick={openModal}
                                   >
                                     Submit

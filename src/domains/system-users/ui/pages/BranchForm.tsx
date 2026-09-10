@@ -5,6 +5,7 @@ import { toast } from 'react-toastify';
 import type { SelectOption } from '../../../../@type/report';
 import PlusIcon from '../../../../components/Icons/PlusIcon';
 import SquareCheckIcon from '../../../../components/Icons/SquareCheckIcon';
+import WrapperComponent from '../../../../components/WrapperComponent';
 import ButtonGroup from '../../../../components/buttons/ButtonGroup';
 import CancelButton from '../../../../components/buttons/CancelButton';
 import SubmitButton from '../../../../components/buttons/SubmitButton';
@@ -15,15 +16,11 @@ import PaginationComponent from '../../../../components/paginations/PaginationCo
 import TableCell from '../../../../components/table/TableCell';
 import TableRow from '../../../../components/table/TableRow';
 import HeaderTableComponent from '../../../../components/table/table_action/HeaderTableComponent';
-import TableRowStatusComponentHandle from '../../../../components/table/table_action/TableRowStatusComponentHandle';
 import TableRowDeleteComponentHandle from '../../../../components/table/table_action/TableRowDeleteComponentHandle';
-import WrapperComponent from '../../../../components/WrapperComponent';
+import TableRowStatusComponentHandle from '../../../../components/table/table_action/TableRowStatusComponentHandle';
 import useMessage from '../../../../hooks/useMessage';
 import { ROUTE_API, ROUTE_PATH } from '../../../../utils/route-util';
-import type {
-  UserBranchDetail,
-  UserBranchListItem,
-} from '../../entities';
+import type { UserBranchDetail, UserBranchListItem } from '../../entities';
 import {
   createUserBranchAccess,
   fetchUserBranch,
@@ -37,9 +34,7 @@ const BranchForm = () => {
   const params = new URLSearchParams(location.search);
   const { modalRef, openModal, closeModal } = useModal();
   document.title = 'Alt-Fa APIs Admin System | System user-company';
-
   const { showErrorResponseMessage } = useMessage();
-
   const [details, setDetail] = useState<UserBranchDetail | null>(null);
   const [list, setList] = useState<UserBranchListItem[] | null>(null);
   const [branchs, setBranch] = useState<SelectOption[] | null>(null);

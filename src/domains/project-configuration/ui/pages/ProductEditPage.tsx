@@ -57,7 +57,9 @@ const ProductEditPage = () => {
     e: React.MouseEvent<HTMLButtonElement>
   ) => {
     if (validateRequiredFields([productCode, productName])) {
-      runUpdateProduct(buildProductEditDto(params.key, productCode, productName));
+      runUpdateProduct(
+        buildProductEditDto(params.key, productCode, productName)
+      );
     }
     e.preventDefault();
   };

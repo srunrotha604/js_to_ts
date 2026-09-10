@@ -1,7 +1,6 @@
 import { fetchData } from '../../../../services/$service';
 import { ROUTE_API } from '../../../../utils/route-util';
 import type { ForgotPasswordResponse } from '../../entities';
-
 export const requestForgotPassword = (data: { email: string }) =>
   fetchData<ForgotPasswordResponse>(
     ROUTE_API.loginForgotPassword,
@@ -13,7 +12,8 @@ export const confirmForgotPasswordCode = (data: {
   email: string;
   keyCode: string;
   otpCode: string;
-}) => fetchData<ForgotPasswordResponse>(ROUTE_API.loginConfirmCode, data, 'POST');
+}) =>
+  fetchData<ForgotPasswordResponse>(ROUTE_API.loginConfirmCode, data, 'POST');
 
 export const requestForgotPasswordViaSms = (data: {
   email: string;

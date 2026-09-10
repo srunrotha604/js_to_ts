@@ -103,11 +103,9 @@ const VersionHistoryPage = () => {
               className="mb-0"
               style={{ listStyleType: 'none', paddingLeft: 0 }}
             >
-              {formatVersionDescription(item.description).map(
-                (line, idx) => (
-                  <li key={idx}>{line}</li>
-                )
-              )}
+              {formatVersionDescription(item.description).map((line, idx) => (
+                <li key={idx}>{line}</li>
+              ))}
             </ul>
           </li>
         ))}

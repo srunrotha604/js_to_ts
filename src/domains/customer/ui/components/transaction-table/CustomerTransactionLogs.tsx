@@ -7,12 +7,10 @@ import { fetchDataAsync } from '../../../../../services/$service';
 import { delay } from '../../../../../utils/delay';
 import { ROUTE_API } from '../../../../../utils/route-util';
 import ComponentStatus from '../ComponentStatus';
-
 interface ShowLogsButtonProps {
   onClick?: () => void;
   variant?: string;
 }
-
 export const ShowLogsButton = ({ onClick, variant }: ShowLogsButtonProps) => {
   return (
     <Button onClick={onClick} variant={variant} size={'sm'}>
@@ -20,13 +18,11 @@ export const ShowLogsButton = ({ onClick, variant }: ShowLogsButtonProps) => {
     </Button>
   );
 };
-
 interface TransactionLogItem {
   createdDate?: string;
   createdBy?: string;
   action?: string;
 }
-
 interface TransactionLogsModalProps {
   transactionNo?: string;
   open?: boolean;
@@ -34,13 +30,11 @@ interface TransactionLogsModalProps {
   openSpinner: (arg?: { title?: string }) => void;
   closeSpinner: () => void;
 }
-
 export const TransactionLogsModal = forwardRef<
   HTMLDivElement,
   TransactionLogsModalProps
 >(({ transactionNo, open, onClose, openSpinner, closeSpinner }, ref) => {
   const [detail, setDetail] = useState<TransactionLogItem[]>([]);
-
   const getDetails = async () => {
     try {
       openSpinner();

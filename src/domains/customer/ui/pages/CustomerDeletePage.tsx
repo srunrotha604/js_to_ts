@@ -26,13 +26,10 @@ import {
   useTransactionTabSelect,
 } from '../../interface-adapters';
 import type { ActionItem } from '../../use-cases';
-import {
-  CustomerDetailModal,
-} from '../components/transaction-table/CustomerTransactionTable';
 import CustomerBatchProcessModal from '../components/transaction-table/CustomerBatchProcessModal';
-import CustomerTransactionSelect from '../components/transaction-table/CustomerTransactionSelect';
 import { TransactionLogsModal } from '../components/transaction-table/CustomerTransactionLogs';
-
+import CustomerTransactionSelect from '../components/transaction-table/CustomerTransactionSelect';
+import { CustomerDetailModal } from '../components/transaction-table/CustomerTransactionTable';
 const CustomerDeletePage = () => {
   const location = useLocation();
   const [searchParams] = useSearchParams();
@@ -55,7 +52,6 @@ const CustomerDeletePage = () => {
     selectedCustomerList,
     setSelectedCustomerList,
   } = useTransactionTabSelect();
-
   const { closeModal, openModal, modalRef, open } = useModal();
   const {
     closeModal: closeActionModal,
@@ -66,7 +62,6 @@ const CustomerDeletePage = () => {
   const [processStatus, setProccessStatus] = useState<string | null>(null);
   const [totalDocs, setTotalDocs] = useState<number | null>(null);
   const [currentTabStatus, setCurrentTabStatus] = useState<string | null>(null);
-
   const getSelectedCustomerList = async () => {
     try {
       const response = selectedAll

@@ -38,8 +38,12 @@ const BranchProjectEditPage = () => {
             setOptionProject(project);
             setSelectdProject(projectFamily);
             setBranch(res?.data?.list?.[0]?.branchFamily ?? '');
-            setOptionPolicies(filterPoliciesByProjectKey(project, projectFamily));
-            setSelectdPolicies(parseCsvList(res?.data?.list?.[0]?.policies ?? ''));
+            setOptionPolicies(
+              filterPoliciesByProjectKey(project, projectFamily)
+            );
+            setSelectdPolicies(
+              parseCsvList(res?.data?.list?.[0]?.policies ?? '')
+            );
           }
           break;
         case 400:
@@ -89,7 +93,9 @@ const BranchProjectEditPage = () => {
 
   const projectHandleChange = (value: SingleValue<BranchProjectOption>) => {
     setSelectdProject(value?.value ?? '');
-    setOptionPolicies(filterPoliciesByProjectKey(optionProject, value?.value ?? ''));
+    setOptionPolicies(
+      filterPoliciesByProjectKey(optionProject, value?.value ?? '')
+    );
   };
   const PoliciesHandleChange = (value: MultiValue<SelectOption> | null) => {
     setSelectdPolicies(Array.isArray(value) ? value.map((x) => x.value) : []);

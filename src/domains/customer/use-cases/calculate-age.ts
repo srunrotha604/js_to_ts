@@ -1,18 +1,11 @@
-import dayjs from 'dayjs';
 import type { Dayjs } from 'dayjs';
+import dayjs from 'dayjs';
 
 export interface AgeResult {
   ageLabel: string;
   isUnderage: boolean;
   dob: Date;
 }
-
-/**
- * Unifies the two divergent age/underage calculations that previously lived
- * separately in CustomerCreate.tsx (plain Date) and CustomerEdit.tsx
- * (dayjs, handling Dayjs/Date/string inputs). Returns null for empty or
- * unparsable input so callers can clear their age display consistently.
- */
 export const calculateAge = (input: unknown): AgeResult | null => {
   if (!input) return null;
 
@@ -43,7 +36,9 @@ export const calculateAge = (input: unknown): AgeResult | null => {
   }
 
   const ageLabel =
-    years < 1 ? `${months} M ${days} D` : `${years} Year${years !== 1 ? 's' : ''}`;
+    years < 1
+      ? `${months} M ${days} D`
+      : `${years} Year${years !== 1 ? 's' : ''}`;
 
   return { ageLabel, isUnderage: years < 18, dob };
 };

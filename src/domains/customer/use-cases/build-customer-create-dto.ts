@@ -1,5 +1,4 @@
 import { STATUS } from '../entities';
-
 export interface CustomerCreateFormData {
   sureName?: string;
   firstName?: string;
@@ -16,11 +15,9 @@ export interface CustomerCreateFormData {
   parentId?: string;
   openingDate?: string;
 }
-
 export interface BuildCustomerCreateDtoContext {
   productCode?: string;
 }
-
 export const buildCustomerCreateDto = (
   data: CustomerCreateFormData,
   context: BuildCustomerCreateDtoContext

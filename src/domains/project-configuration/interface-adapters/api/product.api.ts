@@ -10,7 +10,11 @@ export const fetchProductList = () =>
   fetchData<ProductListResponse>(ROUTE_API.operationProduct, {}, 'GET');
 
 export const fetchProductByKey = (key: string) =>
-  fetchData<ProductListResponse>(ROUTE_API.operationProductByKey(key), {}, 'GET');
+  fetchData<ProductListResponse>(
+    ROUTE_API.operationProductByKey(key),
+    {},
+    'GET'
+  );
 
 export const fetchProductOptions = () =>
   fetchData<ProductOptionsResponse>(

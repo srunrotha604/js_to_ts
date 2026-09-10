@@ -19,9 +19,7 @@ export const fetchCustomerReportList = (params: CustomerReportQueryParams) =>
     params,
   });
 
-export const exportCustomerReportList = (
-  params: CustomerReportQueryParams
-) =>
+export const exportCustomerReportList = (params: CustomerReportQueryParams) =>
   fetchDataAsync<Blob>(ROUTE_API.exportOperationCustomer, {
     params,
     responseType: 'blob',

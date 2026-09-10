@@ -9,7 +9,6 @@ import { fetchProductAndPoliciesBySequenceCode } from '../../interface-adapters'
 import CustomerCreate from '../components/create/CustomerCreate';
 import CustomerCreateReview from '../components/create/CustomerCreateReview';
 import CostomerTransationSubmit from '../components/create/CustomerTransationSubmit';
-
 const STEP = {
   Create: 'create',
   Review: 'Review',

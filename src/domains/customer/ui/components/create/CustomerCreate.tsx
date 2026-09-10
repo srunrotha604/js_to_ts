@@ -3,13 +3,13 @@ import { Controller, useFormContext } from 'react-hook-form';
 import { NumericFormat, PatternFormat } from 'react-number-format';
 import { useNavigate } from 'react-router-dom';
 import Select from 'react-select';
+import { useModal } from '../../../../../components/common/modal';
 import CustomDatePicker from '../../../../../components/form/CustomDatePicker';
 import { pluralize } from '../../../../../utils/pluralize';
-import { useModal } from '../../../../../components/common/modal';
-import { useCustomerDuplicateCheck } from '../../../interface-adapters';
-import { calculateAge } from '../../../use-cases';
 import type { ProjectPolicyOption } from '../../../entities';
 import nation from '../../../entities/reference-data/nationlity.json';
+import { useCustomerDuplicateCheck } from '../../../interface-adapters';
+import { calculateAge } from '../../../use-cases';
 import ExistedPolicyModal from './ExistedPolicyModal';
 
 const nationCambodia = nation.find((item) => item.nationality === 'Cambodian');
@@ -36,11 +36,13 @@ const CustomerCreate = (props: CustomerCreateProps) => {
   const [isUnderage, setIsUnderage] = useState(false);
   const { modalRef, openModal } = useModal();
 
-  const { duplicateCustomer, checkDuplicateCustomer: debouceCheckDuplicateCustomer } =
-    useCustomerDuplicateCheck(() => ({
-      nicPassport: getValues('identifyNumber'),
-      customerId: getValues('childrenId'),
-    }));
+  const {
+    duplicateCustomer,
+    checkDuplicateCustomer: debouceCheckDuplicateCustomer,
+  } = useCustomerDuplicateCheck(() => ({
+    nicPassport: getValues('identifyNumber'),
+    customerId: getValues('childrenId'),
+  }));
 
   const goBackHandleClick = () => {
     navigate(-1);

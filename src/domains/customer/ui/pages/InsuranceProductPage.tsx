@@ -5,12 +5,10 @@ import { toast } from 'react-toastify';
 import { ROUTE_PATH } from '../../../../utils/route-util';
 import type { ProductOption } from '../../entities';
 import { fetchProductList } from '../../interface-adapters';
-
 const InsuranceProductPage = () => {
   document.title = 'E-CHANNEL PORTAL | insurance product';
   const navigate = useNavigate();
   const [arrProduct, setArrProduct] = useState<ProductOption[]>([]);
-
   useRequest(fetchProductList, {
     onSuccess: (res) => {
       switch (res?.status) {

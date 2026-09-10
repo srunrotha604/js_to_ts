@@ -42,8 +42,9 @@ const ForgotPasswordPage = () => {
   const [phoneNumber, setPhoneNumber] = useState('');
   const [viaSMSCode, setViaSMSCode] = useState('');
 
-  const { run: runRequestForgotPassword, loading: requestLoading } =
-    useRequest(requestForgotPassword, {
+  const { run: runRequestForgotPassword, loading: requestLoading } = useRequest(
+    requestForgotPassword,
+    {
       manual: true,
       onSuccess: (res) => {
         switch (res?.status) {
@@ -73,7 +74,8 @@ const ForgotPasswordPage = () => {
             navigate(ROUTE_PATH.notFound);
         }
       },
-    });
+    }
+  );
 
   const { run: runConfirmCode, loading: confirmCodeLoading } = useRequest(
     confirmForgotPasswordCode,
@@ -129,8 +131,9 @@ const ForgotPasswordPage = () => {
     }
   );
 
-  const { run: runChangePassword, loading: changePasswordLoading } =
-    useRequest(confirmForgotPasswordChange, {
+  const { run: runChangePassword, loading: changePasswordLoading } = useRequest(
+    confirmForgotPasswordChange,
+    {
       manual: true,
       onSuccess: (res) => {
         switch (res?.status) {
@@ -147,7 +150,8 @@ const ForgotPasswordPage = () => {
             navigate(ROUTE_PATH.notFound);
         }
       },
-    });
+    }
+  );
 
   const funcButtonHandleClickExecute = (
     e: React.MouseEvent<HTMLButtonElement>
@@ -168,7 +172,9 @@ const ForgotPasswordPage = () => {
   };
 
   const resqustViaSMSSubmit = () => {
-    runRequestViaSms(buildViaSmsDto(email, confirmKey, phoneNumber, viaSMSCode));
+    runRequestViaSms(
+      buildViaSmsDto(email, confirmKey, phoneNumber, viaSMSCode)
+    );
   };
 
   const funcChangePasswordHandleClickExecute = (
@@ -584,8 +590,8 @@ const ForgotPasswordPage = () => {
                                   {viaSmsLoading
                                     ? 'Sending...'
                                     : !showSMSResend
-                                      ? 'Let click here to get code via SMS instead'
-                                      : 'Resend OTP Code via SMS again'}
+                                    ? 'Let click here to get code via SMS instead'
+                                    : 'Resend OTP Code via SMS again'}
                                 </p>
                               </div>
                             </div>

@@ -81,8 +81,9 @@ const UserAccessBranchPage = () => {
     }
   );
 
-  const { run: runRemoveUserAccessBranch, loading: removeLoading } =
-    useRequest(removeUserAccessBranch, {
+  const { run: runRemoveUserAccessBranch, loading: removeLoading } = useRequest(
+    removeUserAccessBranch,
+    {
       manual: true,
       onSuccess: (res) => {
         switch (res?.status) {
@@ -100,7 +101,8 @@ const UserAccessBranchPage = () => {
             navigate(ROUTE_PATH.error404);
         }
       },
-    });
+    }
+  );
 
   const { run: runSetDefaultUserAccessBranch, loading: defaultLoading } =
     useRequest(setDefaultUserAccessBranch, {
@@ -175,8 +177,7 @@ const UserAccessBranchPage = () => {
     setSelectedValue(e?.value ?? '');
   };
 
-  const { pageCount, pagedItems, handlePageClick } =
-    useListPagination(arrList);
+  const { pageCount, pagedItems, handlePageClick } = useListPagination(arrList);
 
   return (
     <>

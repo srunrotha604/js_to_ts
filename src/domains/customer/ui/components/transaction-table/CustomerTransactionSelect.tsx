@@ -3,7 +3,6 @@ import { MdClear } from 'react-icons/md';
 import Button from '../../../../../components/common/Button';
 import Checkbox from '../../../../../components/common/Checkbox';
 import { pluralize } from '../../../../../utils/pluralize';
-
 interface TransactionTabSelectProps {
   totalSelected?: number;
   isSelectedAll?: boolean;
@@ -13,7 +12,6 @@ interface TransactionTabSelectProps {
   onClick?: () => void;
   title?: string;
 }
-
 const CustomerTransactionSelect = ({
   totalSelected,
   isSelectedAll,
@@ -56,5 +54,4 @@ const CustomerTransactionSelect = ({
     )
   );
 };
-
 export default CustomerTransactionSelect;

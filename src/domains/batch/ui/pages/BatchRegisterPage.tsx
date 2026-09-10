@@ -3,12 +3,15 @@ import { useState } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
+import { ROUTE_PATH } from '../../../../utils/route-util';
 import type {
   ProductOption,
   ProjectPolicyOption,
 } from '../../../customer/entities';
-import { fetchPoliciesByProductCode, fetchProductList } from '../../../customer/interface-adapters';
-import { ROUTE_PATH } from '../../../../utils/route-util';
+import {
+  fetchPoliciesByProductCode,
+  fetchProductList,
+} from '../../../customer/interface-adapters';
 import type { BatchCustomerListResult } from '../../entities';
 import ExcelUploadStep from '../components/wizard/ExcelUploadStep';
 import ReviewStep from '../components/wizard/ReviewStep';
@@ -28,9 +31,7 @@ const BatchRegisterPage = () => {
   const [step, setStep] = useState(STEP.SELECTE_PRODUCT);
   const [arrProduct, setArrProduct] = useState<ProductOption[]>([]);
   const [arrProject, setArrProject] = useState<ProjectPolicyOption[]>([]);
-  const [customerList, setCustomerList] = useState<BatchCustomerListResult>(
-    {}
-  );
+  const [customerList, setCustomerList] = useState<BatchCustomerListResult>({});
   const [productCode, setProductCode] = useState('');
 
   useRequest(fetchProductList, {

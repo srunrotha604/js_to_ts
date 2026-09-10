@@ -152,11 +152,13 @@ const CustomerEdit = (props: CustomerEditProps) => {
     setPolicyDetails(nextPolicy);
   }, [project]);
 
-  const { duplicateCustomer, checkDuplicateCustomer: debouceCheckDuplicateCustomer } =
-    useCustomerDuplicateCheck(() => ({
-      nicPassport: getValues('nicPassport'),
-      customerId: getValues('customerId'),
-    }));
+  const {
+    duplicateCustomer,
+    checkDuplicateCustomer: debouceCheckDuplicateCustomer,
+  } = useCustomerDuplicateCheck(() => ({
+    nicPassport: getValues('nicPassport'),
+    customerId: getValues('customerId'),
+  }));
 
   const { modalRef, openModal } = useModal();
   return (

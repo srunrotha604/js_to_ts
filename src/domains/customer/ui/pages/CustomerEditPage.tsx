@@ -10,13 +10,11 @@ import { fetchPoliciesByProductCode } from '../../interface-adapters';
 import CostomerTransationSubmit from '../components/create/CustomerTransationSubmit';
 import CustomerEdit from '../components/edit/CustomerEdit';
 import CustomerEditReview from '../components/edit/CustomerEditReview';
-
 const STEP = {
   Edited: 'Edited',
   Review: 'Review',
   Submitted: 'Submitted',
 };
-
 const CustomerEditPage = () => {
   document.title = 'E-CHANNEL PORTAL | customer edit';
   const params = useParams();

@@ -4,7 +4,10 @@ import { PatternFormat } from 'react-number-format';
 import { useNavigate } from 'react-router-dom';
 import Select from 'react-select';
 import { toast } from 'react-toastify';
-import type { CompanyBranchOption, SelectOption } from '../../../../@type/report';
+import type {
+  CompanyBranchOption,
+  SelectOption,
+} from '../../../../@type/report';
 import { useAuth } from '../../../../context/AuthContext';
 import { ROUTE_PATH } from '../../../../utils/route-util';
 import {
