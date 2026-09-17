@@ -142,6 +142,9 @@ const SwitchBranchPage = lazy(
 const ContactUsPage = lazy(
   () => import('../domains/default/ui/pages/ContactUsPage')
 );
+const LoginListLog = lazy(
+  () => import('../domains/logs-list/ui/pages/LoginListPage')
+);
 export default function AllRoutes() {
   const { user, loading } = useAuth();
 
@@ -157,6 +160,7 @@ export default function AllRoutes() {
       >
         <Route path={ROUTE_PATH.root} element={<HomePage />} />
         <Route path={ROUTE_PATH.dashboard} element={<HomePage />} />
+        <Route path={ROUTE_PATH.loginList} element={<LoginListLog />} />
         <Route path={ROUTE_PATH.logout} element={<LogoutPage />} />
         <Route path={ROUTE_PATH.project} element={<ProjectPage />} />
         <Route path={ROUTE_PATH.branch} element={<BranchPage />} />

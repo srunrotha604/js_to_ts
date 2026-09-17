@@ -1,6 +1,7 @@
 const ROUTE_PATH = {
   root: '/',
   login: '/login',
+  loginList: '/logs-list',
   dashboard: '/dashboard',
   forgotPassword: '/forgot-password',
   error404: '/error404',
@@ -74,6 +75,7 @@ const ROUTE_PATH = {
 const ROUTE_API = {
   root: import.meta.env.VITE_API_URL,
   login: '/api/v1/auth/login',
+  getLoginLogs: '/api/v1/auth/login-history',
   getProfile: '/api/v1/auth/profile',
   streamTicket: '/api/v1/auth/stream-ticket',
   sessionStream: '/api/v1/auth/session-stream',
