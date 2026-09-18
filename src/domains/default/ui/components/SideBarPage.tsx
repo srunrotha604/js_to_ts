@@ -1,5 +1,5 @@
 import clsx from 'clsx';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { LuUserPlus } from 'react-icons/lu';
 import { RxHome } from 'react-icons/rx';
 import { TbReport, TbSettings } from 'react-icons/tb';
@@ -37,6 +37,20 @@ const SideBarPage = () => {
   const [optionBranch, setOptionBranch] = useState<SelectOption[]>([]);
   const [selectedBranch, setSelectdBranch] = useState('');
 
+  const companyOptions = useMemo<CompanyBranchOption[]>(
+    () =>
+      (company ?? []).map((item) => ({
+        label: item.companyName,
+        value: item.companyCode,
+        logo: item.companyLogo,
+        branch: (item.branch ?? []).map((b) => ({
+          label: b.branchName,
+          value: b.branchCode,
+        })),
+      })),
+    [company]
+  );
+
   const funcButtonHandleClickExecute = async (
     e: React.MouseEvent<HTMLButtonElement>
   ) => {
@@ -50,7 +64,7 @@ const SideBarPage = () => {
 
   const companyHandleChange = (data: CompanyBranchOption | null) => {
     setSelectdCompany(data?.value ?? '');
-    setOptionBranch(filterBranchesByCompany(company, data?.value ?? ''));
+    setOptionBranch(filterBranchesByCompany(companyOptions, data?.value ?? ''));
   };
 
   const branchHandleChange = (data: SelectOption | null) => {
@@ -64,11 +78,11 @@ const SideBarPage = () => {
     let token_text = JSON.parse(alt_fa_storage);
 
     let companyDetails = company?.find(
-      (item) => item?.value === token_text?.company
+      (item) => item.companyCode === token_text?.company
     );
 
     let BranchDetails = companyDetails?.branch?.find(
-      (item) => item?.value === token_text?.branch
+      (item) => item.branchCode === token_text?.branch
     );
     return (
       <div
@@ -77,14 +91,18 @@ const SideBarPage = () => {
       >
         <div style={{ marginRight: '10px' }}>
           <img
-            src={companyDetails?.logo}
+            src={companyDetails?.companyLogo}
             alt="company-logo"
             style={{ width: 120, height: 45, objectFit: 'contain' }}
           />
         </div>
         <div>
-          <div className="mt-1 small text-muted">{companyDetails?.label}</div>
-          <div className="mt-1 small text-muted">{BranchDetails?.label}</div>
+          <div className="mt-1 small text-muted">
+            {companyDetails?.companyName}
+          </div>
+          <div className="mt-1 small text-muted">
+            {BranchDetails?.branchName}
+          </div>
         </div>
       </div>
     );
@@ -280,8 +298,11 @@ const SideBarPage = () => {
   };
 
   useEffect(() => {
-    if (company && selectedCompanyContext) {
-      companyHandleChange(selectedCompanyContext);
+    if (selectedCompanyContext) {
+      const matched = companyOptions.find(
+        (option) => option.value === selectedCompanyContext.companyCode
+      );
+      if (matched) companyHandleChange(matched);
     }
   }, [company]);
 
@@ -311,11 +332,11 @@ const SideBarPage = () => {
           <Select
             styles={{ menuPortal: (base) => ({ ...base, zIndex: 9999 }) }}
             menuPortalTarget={document.body}
-            value={company?.find(function (option) {
+            value={companyOptions.find(function (option) {
               return option.value === selectedCompany;
             })}
             onChange={companyHandleChange}
-            options={company ?? []}
+            options={companyOptions}
             required
           />
         </div>

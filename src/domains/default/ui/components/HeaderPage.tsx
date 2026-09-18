@@ -1,3 +1,4 @@
+import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import companyLogo from '../../../../assets/DaraInsurancePlc.png';
 import userIcon from '../../../../assets/default-user.png';
