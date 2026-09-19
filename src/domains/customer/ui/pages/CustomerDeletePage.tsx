@@ -26,6 +26,7 @@ import {
   useTransactionTabSelect,
 } from '../../interface-adapters';
 import type { ActionItem } from '../../use-cases';
+import { mapCustomerTransaction } from '../../use-cases';
 import CustomerBatchProcessModal from '../components/transaction-table/CustomerBatchProcessModal';
 import { TransactionLogsModal } from '../components/transaction-table/CustomerTransactionLogs';
 import CustomerTransactionSelect from '../components/transaction-table/CustomerTransactionSelect';
@@ -168,6 +169,7 @@ const CustomerDeletePage = () => {
             ref={tabListRef}
             DetailModal={CustomerDetailModal}
             LogsModal={TransactionLogsModal}
+            mapItem={mapCustomerTransaction}
             onFetchSuccess={({
               data,
               tabStatus,

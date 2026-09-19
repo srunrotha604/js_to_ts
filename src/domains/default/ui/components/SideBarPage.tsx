@@ -91,7 +91,7 @@ const SideBarPage = () => {
       >
         <div style={{ marginRight: '10px' }}>
           <img
-            src={companyDetails?.companyLogo}
+            src={companyDetails?.companyLogoUrl}
             alt="company-logo"
             style={{ width: 120, height: 45, objectFit: 'contain' }}
           />

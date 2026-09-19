@@ -3,7 +3,13 @@ import { createContext, useContext, useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import type { AuthContextValue, AuthToken, PermissionSet } from '../@type/auth';
-import type { Company, Module, Profile, UserProfile } from '../@type/profile';
+import type {
+  Application,
+  Company,
+  Module,
+  Profile,
+  UserProfile,
+} from '../@type/profile';
 import { openSessionStream } from '../domains/default/interface-adapters';
 import { HttpUtil } from '../utils/http-util';
 import { ROUTE_API, ROUTE_PATH } from '../utils/route-util';
@@ -32,6 +38,7 @@ const AuthContext = createContext<AuthContextValue>({
   module: null,
   token: null,
   mode: '',
+  application: null,
 });
 
 interface PermissionAccessResponse extends PermissionSet {
@@ -60,6 +67,7 @@ const AuthContextProvider = ({ children }: { children?: ReactNode }) => {
   const [token, setToken] = useState<AuthToken | null>(null);
   const [mode, setMode] = useState('');
   const [module, setModule] = useState<Module[] | null>(null);
+  const [application, setApplication] = useState<Application | null>(null);
 
   const hasPermissionProccessTransaction = (
     execution: string | string[],
@@ -122,11 +130,13 @@ const AuthContextProvider = ({ children }: { children?: ReactNode }) => {
       const tempCompany = responseUser?.data.company;
       const tempUser = responseUser?.data?.userProfile;
       const tempMenu = responseUser?.data?.menuItems;
+      const tempApplication = responseUser?.data?.application;
       setModule(responseUser?.data.module || []);
       setIsUserDRIAdmin(responsePermission?.data?.driAdmin ?? false);
       setCompany(tempCompany ?? null);
       setUser(tempUser ?? null);
       setMenu(tempMenu ?? []);
+      setApplication(tempApplication ?? null);
       setPermission(responsePermission?.data ?? null);
       setMode(responseUser?.data?.mode ?? '');
       startSessionStream();
@@ -153,6 +163,7 @@ const AuthContextProvider = ({ children }: { children?: ReactNode }) => {
     setPermission(null);
     setToken(null);
     setIsUserDRIAdmin(false);
+    setApplication(null);
     logoutHandlers.forEach((fn) => fn());
   };
   const appName = 'E-channel Portal';
@@ -175,6 +186,7 @@ const AuthContextProvider = ({ children }: { children?: ReactNode }) => {
         appName,
         module,
         token,
+        application,
       }}
     >
       <ModuleContextProvider {...module}>{children}</ModuleContextProvider>

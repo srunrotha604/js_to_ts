@@ -89,7 +89,7 @@ const ROUTE_API = {
   operationCustomerProduct: '/operation-customer/product',
   operationCustomerProductByCode: (code: string | number) =>
     `/operation-customer/product/${code}`,
-  operationCustomer: '/operation-customer',
+  operationCustomer: '/api/v1/operation-customer',
   operationCustomerDelete: '/operation-customer/delete',
   operationCustomerDuplicate: '/operation-customer/duplicate',
   operationCustomerCardConfirmation: '/operation-customer/card-confirmation',

@@ -6,11 +6,31 @@ export interface TransactionTotalCounts {
   bmReject?: number;
   confirmed?: number;
   driReject?: number;
+  accepted?: number;
   confirmedDeleted?: number;
 }
 
 export interface CustomerListResponse {
   list?: CustomerTransaction[];
+  total?: TransactionTotalCounts[];
+  totalDocs?: number;
+}
+
+// /api/v1/operation-customer responds with typo'd field names (transationCode,
+// transationNumber, dateofBirth) and stringified booleans for `deleted` —
+// mapCustomerTransaction() normalizes this into CustomerTransaction.
+export type CustomerTransactionRaw = Omit<
+  CustomerTransaction,
+  'transactionCode' | 'transactionNumber' | 'dateOfBirth' | 'deleted'
+> & {
+  transationCode?: string;
+  transationNumber?: string;
+  dateofBirth?: string;
+  deleted?: boolean | string;
+};
+
+export interface CustomerRawListResponse {
+  list?: CustomerTransactionRaw[];
   total?: TransactionTotalCounts[];
   totalDocs?: number;
 }

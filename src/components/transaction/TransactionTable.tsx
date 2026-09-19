@@ -24,12 +24,12 @@ import Select from 'react-select';
 import { useDebouncedCallback } from 'use-debounce';
 import type { SelectOption } from '../../@type/report';
 import '../../assets/style/custom_style.css';
-import { selectCustomStyles } from '../common/reactSelectStyles';
 import { useAuth } from '../../context/AuthContext';
 import useMessage from '../../hooks/useMessage';
 import { HttpUtil } from '../../utils/http-util';
 import { ROUTE_API, ROUTE_PATH } from '../../utils/route-util';
 import { useModal } from '../common/modal/index';
+import { selectCustomStyles } from '../common/reactSelectStyles';
 import Spinner, { useSpinner } from '../common/Spinner';
 
 type TotalCounts = Record<string, number | undefined>;
@@ -117,9 +117,10 @@ interface TransactionTableProps<T extends TransactionLike> {
   LogsModal: ForwardRefExoticComponent<
     LogsModalProps & RefAttributes<HTMLDivElement>
   >;
+  mapItem?: (item: T) => T;
 }
 
-const TransactionTableInner = <T extends TransactionLike,>(
+const TransactionTableInner = <T extends TransactionLike>(
   {
     title,
     tab,
@@ -140,6 +141,7 @@ const TransactionTableInner = <T extends TransactionLike,>(
     typeOptions = [],
     DetailModal,
     LogsModal,
+    mapItem,
   }: TransactionTableProps<T>,
   ref: ForwardedRef<TransactionTabListHandle>
 ) => {
@@ -217,7 +219,8 @@ const TransactionTableInner = <T extends TransactionLike,>(
         { signal: signal ?? undefined }
       );
 
-      setArrCustomer(res?.data?.list ?? []);
+      const list = res?.data?.list ?? [];
+      setArrCustomer(mapItem ? list.map(mapItem) : list);
       setTotal(res?.data?.total?.[0]);
       const tempTotalDocs = res?.data?.totalDocs;
       setTotalDocs(tempTotalDocs ?? null);
@@ -247,9 +250,12 @@ const TransactionTableInner = <T extends TransactionLike,>(
       `${ROUTE_API.operationCustomer}?transactionCode=` + transactionCode
     ).then((res) => {
       switch (res?.status) {
-        case 200:
-          setArrDetails(res?.data?.list?.[0] ?? ({} as T));
-          return res?.data?.list?.[0];
+        case 200: {
+          const item = res?.data?.list?.[0];
+          const mapped = item && mapItem ? mapItem(item) : item;
+          setArrDetails(mapped ?? ({} as T));
+          return mapped;
+        }
         case 400:
           showErrorResponseMessage(res);
           break;
@@ -381,21 +387,28 @@ const TransactionTableInner = <T extends TransactionLike,>(
         <div className="card overflow-hidden mt-3 mb-1" style={{ flex: 1 }}>
           <div className="card-header">
             {tab && tab.length > 0 ? (
-              <ul className="nav nav-tabs card-header-tabs" data-bs-toggle="tabs">
+              <ul
+                className="nav nav-tabs card-header-tabs"
+                data-bs-toggle="tabs"
+              >
                 {tab?.map((item, index) => {
                   if (item.hidden) return null;
                   return (
                     <li className="nav-item" key={index}>
                       <a
                         href={`#${item.status}`}
-                        onClick={() => tabHandleClick(item.status ?? '', item.type)}
+                        onClick={() =>
+                          tabHandleClick(item.status ?? '', item.type)
+                        }
                         className={`nav-link text-${item.label} ${
                           tabStatus === item.status ? 'active' : ''
                         }`}
                         data-bs-toggle="tab"
                       >
                         <b>{item.label}</b>
-                        <span className={`badge bg-${item.label} badge-light ml-5`}>
+                        <span
+                          className={`badge bg-${item.label} badge-light ml-5`}
+                        >
                           {item.getTotal(total) ?? '0'}
                         </span>
                       </a>

@@ -3,6 +3,8 @@ export interface MessageResponse {
 }
 
 export interface UserProfile {
+  firstName: string;
+  lastName: string;
   userCode?: string;
   profileImage?: string;
   displayName?: string;

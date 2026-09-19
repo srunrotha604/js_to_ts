@@ -7,7 +7,7 @@ import { useAuth } from '../../../../context/AuthContext';
 import { ROUTE_PATH } from '../../../../utils/route-util';
 import { performLogout } from '../../use-cases';
 const HeaderPage = () => {
-  const { user, clearUser, mode } = useAuth();
+  const { user, clearUser, mode, application } = useAuth();
   const signOut = () => {
     performLogout(clearUser);
   };
@@ -86,9 +86,9 @@ const HeaderPage = () => {
                     className="profile-image w-4"
                   />
                   <div className="d-none d-xl-block ps-2">
-                    <div>{user?.displayName}</div>
+                    <div>{application?.applicationName}</div>
                     <div className="mt-1 small text-muted">
-                      {user?.policyName}
+                      {user.firstName} {user.lastName}
                     </div>
                   </div>
                 </div>

@@ -17,6 +17,7 @@ import { formatDay } from '../../../../../utils/format-day';
 import { ROUTE_PATH } from '../../../../../utils/route-util';
 import type { CustomerTransaction } from '../../../entities';
 import { STATUS, typeOptions } from '../../../entities';
+import { mapCustomerTransaction } from '../../../use-cases';
 import ComponentStatus from '../ComponentStatus';
 import CustomerTransactionDetailModal from './CustomerTransactionDetailModal';
 import {
@@ -189,6 +190,7 @@ const CustomerTransactionTable = (
         typeOptions={typeOptions as SelectOption[]}
         DetailModal={CustomerDetailModal}
         LogsModal={TransactionLogsModal}
+        mapItem={mapCustomerTransaction}
         renderTableHead={(transactionList, tabStatus) => (
           <>
             {isEnableCheckbox(tabStatus) && (

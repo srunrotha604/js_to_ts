@@ -1,4 +1,10 @@
-import type { Branch, Company, Module, UserProfile } from './profile';
+import type {
+  Application,
+  Branch,
+  Company,
+  Module,
+  UserProfile,
+} from './profile';
 
 export interface PermissionSet {
   process?: Record<string, unknown>;
@@ -38,4 +44,5 @@ export interface AuthContextValue {
   module: Module[] | null;
   token: AuthToken | null;
   mode: string;
+  application: Application | null;
 }

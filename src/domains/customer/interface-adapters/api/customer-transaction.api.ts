@@ -1,10 +1,15 @@
 import { HttpUtil } from '../../../../utils/http-util';
 import { ROUTE_API } from '../../../../utils/route-util';
-import type { CustomerListResponse, CustomerTransaction } from '../../entities';
+import type {
+  CustomerListResponse,
+  CustomerRawListResponse,
+  CustomerTransactionRaw,
+} from '../../entities';
 import type {
   DuplicateCheckIdentifiers,
   DuplicateCustomerResult,
 } from '../../use-cases/check-duplicate-customer';
+import { mapCustomerTransaction } from '../../use-cases/map-customer-transaction';
 
 export const fetchCustomerDuplicateCheck = async (
   identifiers: DuplicateCheckIdentifiers
@@ -19,20 +24,25 @@ export const fetchCustomerDuplicateCheck = async (
 export const fetchCustomerTransactionByCode = async (
   transactionCode: string
 ) => {
-  const response = await HttpUtil.get<{ list?: CustomerTransaction[] }>(
+  const response = await HttpUtil.get<{ list?: CustomerTransactionRaw[] }>(
     `${ROUTE_API.operationCustomer}?transactionCode=${transactionCode}`
   );
-  return response?.data?.list?.[0] ?? null;
+  const raw = response?.data?.list?.[0];
+  return raw ? mapCustomerTransaction(raw) : null;
 };
 
 export const fetchCustomerTransactionList = async (
   params: Record<string, unknown>
-) => {
-  const response = await HttpUtil.get<CustomerListResponse>(
+): Promise<CustomerListResponse | null> => {
+  const response = await HttpUtil.get<CustomerRawListResponse>(
     ROUTE_API.operationCustomer,
     { params }
   );
-  return response?.data ?? null;
+  if (!response?.data) return null;
+  return {
+    ...response.data,
+    list: response.data.list?.map(mapCustomerTransaction),
+  };
 };
 
 export const createCustomerTransaction = async (
