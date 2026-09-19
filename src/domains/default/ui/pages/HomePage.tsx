@@ -307,47 +307,46 @@ interface PopupInfoProps {
   onClose: () => void;
 }
 
-const PopupInfo = forwardRef<HTMLDivElement, PopupInfoProps>(
-  ({ data, onClose }, ref) => {
-    const navigate = useNavigate();
-    return (
-      <Modal
-        size="sm"
-        title={'Task Reminder'}
-        bodyClassName="d-flex flex-column pt-3 pb-3"
-        content={
-          <>
-            <div
-              style={{
-                fontSize: '22px',
-                display: 'inline-flex',
-                justifyContent: 'center',
-                marginBottom: '18px',
+const PopupInfo = forwardRef<HTMLDivElement, PopupInfoProps>(function PopupInfo(
+  { data, onClose },
+  ref
+) {
+  const navigate = useNavigate();
+  return (
+    <Modal
+      size="sm"
+      title={'Task Reminder'}
+      bodyClassName="d-flex flex-column pt-3 pb-3"
+      content={
+        <>
+          <div
+            style={{
+              fontSize: '22px',
+              display: 'inline-flex',
+              justifyContent: 'center',
+              marginBottom: '18px',
+            }}
+          >
+            <ComponentStatus status="DRI-Rejected" />
+            <span style={{ margin: '0 6px' }}>{`( ${data?.driReject} )`}</span>
+          </div>
+          <div style={{ display: 'flex', justifyContent: 'center' }}>
+            <Button
+              onClick={() => {
+                navigate(
+                  `${ROUTE_PATH.dashboard}?status=${STATUS.DRI_Rejected}`
+                );
+                onClose();
               }}
             >
-              <ComponentStatus status="DRI-Rejected" />
-              <span style={{ margin: '0 6px' }}>
-                {`( ${data?.driReject} )`}
-              </span>
-            </div>
-            <div style={{ display: 'flex', justifyContent: 'center' }}>
-              <Button
-                onClick={() => {
-                  navigate(
-                    `${ROUTE_PATH.dashboard}?status=${STATUS.DRI_Rejected}`
-                  );
-                  onClose();
-                }}
-              >
-                View
-              </Button>
-            </div>
-          </>
-        }
-        ref={ref}
-      ></Modal>
-    );
-  }
-);
+              View
+            </Button>
+          </div>
+        </>
+      }
+      ref={ref}
+    ></Modal>
+  );
+});
 
 export default HomePage;

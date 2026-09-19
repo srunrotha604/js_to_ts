@@ -304,11 +304,14 @@ const TransactionTableInner = <T extends TransactionLike>(
       const e_chanel_storage = localStorage.getItem('e_chanel_storage');
       const token_text = e_chanel_storage ? JSON.parse(e_chanel_storage) : null;
       const companyDetails = company?.find(
-        (item) => item?.value === token_text?.company
+        (item) => item?.companyCode === token_text?.company
       );
       const tempBranch: SelectOption[] = [
         { value: 'All', label: 'All' },
-        ...(companyDetails?.branch || []),
+        ...(companyDetails?.branch ?? []).map((item) => ({
+          value: item.branchCode,
+          label: item.branchName,
+        })),
       ];
       setBranch(tempBranch);
       if (searchParams.get('branch')) {

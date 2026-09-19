@@ -85,7 +85,7 @@ const ROUTE_API = {
   loginConfirmCode: '/login/confirm-code',
   loginConfirmChangePassword: '/login/confirm-change-password',
   loginViaSms: '/Login/via-sms',
-  operationCustomerAccess: '/operation-customer/access',
+  operationCustomerAccess: '/api/v1/operation-customer/access',
   operationCustomerProduct: '/operation-customer/product',
   operationCustomerProductByCode: (code: string | number) =>
     `/operation-customer/product/${code}`,
