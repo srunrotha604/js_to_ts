@@ -93,6 +93,7 @@ export interface MenuItem {
   code: string;
   type: string;
   active: boolean;
+  [key: string]: unknown;
 }
 
 export interface Module {
@@ -100,6 +101,7 @@ export interface Module {
   name: string;
   parameter: string;
   permission: Permission[];
+  [key: string]: unknown;
 }
 
 export interface Permission {

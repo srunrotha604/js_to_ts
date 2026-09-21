@@ -1,5 +1,4 @@
-import type { ReactNode } from 'react';
-import { createContext, useContext, useMemo } from 'react';
+import React, { createContext, useContext, useMemo } from 'react';
 import type {
   MenuItem,
   ModuleActionItem,
@@ -21,10 +20,10 @@ interface ProccessedModule {
 }
 
 interface ModuleContextProviderProps {
-  children?: ReactNode;
+  children?: React.ReactNode;
   mainMenu?: MenuItem[];
   menu?: MenuItem[];
-  module?: ModuleGroupItem[];
+  module?: ModuleGroupItem[] | null;
 }
 
 const ModuleContextProvider = ({

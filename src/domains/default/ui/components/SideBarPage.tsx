@@ -120,7 +120,6 @@ const SideBarPage = () => {
               icon={<RxHome size={16} color="#1d273b" />}
             />
           )}
-
           <>
             {hasMainMenuPermission('mn10') && (
               <div

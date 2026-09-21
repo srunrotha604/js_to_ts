@@ -6,6 +6,7 @@ import type { AuthContextValue, AuthToken, PermissionSet } from '../@type/auth';
 import type {
   Application,
   Company,
+  MenuItem,
   Module,
   Profile,
   UserProfile,
@@ -61,7 +62,7 @@ const AuthContextProvider = ({ children }: { children?: ReactNode }) => {
   const [loading, setLoading] = useState(true);
   const [user, setUser] = useState<UserProfile | null>(null);
   const [isUserDRIAdmin, setIsUserDRIAdmin] = useState(false);
-  const [menu, setMenu] = useState<unknown[]>([]);
+  const [menu, setMenu] = useState<MenuItem[]>([]);
   const [company, setCompany] = useState<Company[] | null>(null);
   const [permission, setPermission] = useState<PermissionSet | null>(null);
   const [token, setToken] = useState<AuthToken | null>(null);
@@ -189,7 +190,11 @@ const AuthContextProvider = ({ children }: { children?: ReactNode }) => {
         application,
       }}
     >
-      <ModuleContextProvider {...module}>{children}</ModuleContextProvider>
+      <ModuleContextProvider
+        {...{ menu: menu, mainMenu: menu, module: module }}
+      >
+        {children}
+      </ModuleContextProvider>
     </AuthContext.Provider>
   );
 };
