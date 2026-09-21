@@ -14,40 +14,43 @@ import { buildProfileUpdateDto } from '../../use-cases';
 const ProfilePage = () => {
   const navigate = useNavigate();
   document.title = 'E-CHANNEL PORTAL | Profile';
-  const [arrProfile, setArrProfile] = useState<UserProfile>({});
+  const [arrProfile, setArrProfile] = useState<UserProfile | null>(null);
   const [selectedFile, setSelectedFile] = useState<File | ''>('');
   const [email1, setEmail1] = useState('');
-  const [email2, setEmail2] = useState('');
-  const [phone1, setPhone1] = useState('');
-  const [phone2, setPhone2] = useState('');
-  const [website1, setWebsite1] = useState('');
-  const [website2, setWebsite2] = useState('');
-  const [otherContact, setOtherContact] = useState('');
-  const [address1, setAddress1] = useState('');
-  const [address2, setAddress2] = useState('');
+  // const [email2, setEmail2] = useState('');
+  // const [phone1, setPhone1] = useState('');
+  // const [phone2, setPhone2] = useState('');
+  // const [website1, setWebsite1] = useState('');
+  // const [website2, setWebsite2] = useState('');
+  // const [otherContact, setOtherContact] = useState('');
+  // const [address1, setAddress1] = useState('');
+  // const [address2, setAddress2] = useState('');
   const [userCode, setUserCode] = useState('');
-
+  const [roleName, setRoleName] = useState('');
   const { loading: profileLoading } = useRequest(fetchCurrentUserProfile, {
     onSuccess: (res) => {
       switch (res?.status) {
         case 200:
           {
-            const profile = res?.data?.userProfile?.[0] ?? {};
-            setArrProfile(profile);
-            setEmail1(profile.email1 ?? '');
-            setEmail2(profile.email2 ?? '');
-            setPhone1(profile.phone1 ?? '');
-            setPhone2(profile.phone2 ?? '');
-            setWebsite1(profile.website1 ?? '');
-            setWebsite2(profile.website2 ?? '');
-            setOtherContact(profile.otherContact ?? '');
-            setAddress1(profile.address1 ?? '');
-            setAddress2(profile.address2 ?? '');
-            setUserCode(profile.userCode ?? '');
+            const profile = res?.data?.userProfile;
+            if (profile) {
+              setArrProfile(profile);
+              setRoleName(res.data.application.roleName);
+              setEmail1(profile.email ?? '');
+              // setEmail2(profile.email2 ?? '');
+              // setPhone1(profile.phone1 ?? '');
+              // setPhone2(profile.phone2 ?? '');
+              // setWebsite1(profile.website1 ?? '');
+              // setWebsite2(profile.website2 ?? '');
+              // setOtherContact(profile.otherContact ?? '');
+              // setAddress1(profile.address1 ?? '');
+              // setAddress2(profile.address2 ?? '');
+              setUserCode(profile.channelUuid ?? '');
+            }
           }
           break;
         case 400:
-          toast.error(res?.data?.message ?? '');
+          toast.error(res?.statusText ?? '');
           break;
         case 403:
           toast.error(String(res?.data));
@@ -117,14 +120,6 @@ const ProfilePage = () => {
       buildProfileUpdateDto({
         userCode,
         email1,
-        email2,
-        phone1,
-        phone2,
-        website1,
-        website2,
-        address1,
-        address2,
-        otherContact,
       })
     );
   };
@@ -168,8 +163,8 @@ const ProfilePage = () => {
                       }}
                     >
                       <img
-                        src={arrProfile.profileImage}
-                        alt={arrProfile.displayName}
+                        src={arrProfile?.avatarUrl}
+                        alt={arrProfile?.avatarUrl}
                         className="profile-image-details"
                       />
                     </div>
@@ -225,7 +220,9 @@ const ProfilePage = () => {
                           <circle cx={12} cy={7} r={4} />
                           <path d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" />
                         </svg>
-                        <span className="p-l-10">{arrProfile.displayName}</span>
+                        <span className="p-l-10">
+                          {arrProfile?.firstName} {arrProfile?.lastName}
+                        </span>
                       </li>
                       <li>
                         <svg
@@ -247,7 +244,7 @@ const ProfilePage = () => {
                           <line x1={10} y1={9} x2={14} y2={9} />
                           <line x1={12} y1={7} x2={12} y2={11} />
                         </svg>
-                        <span className="p-l-10">{arrProfile.policyName}</span>
+                        <span className="p-l-10">{roleName}</span>
                       </li>
                       <li>
                         <svg
@@ -266,9 +263,9 @@ const ProfilePage = () => {
                           <rect x={3} y={5} width={18} height={14} rx={2} />
                           <polyline points="3 7 12 13 21 7" />
                         </svg>
-                        <span className="p-l-10">{arrProfile.email}</span>
+                        <span className="p-l-10">{arrProfile?.email}</span>
                       </li>
-                      <li>
+                      {/* <li>
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
                           className="icon"
@@ -286,12 +283,12 @@ const ProfilePage = () => {
                           <line x1={11} y1={5} x2={13} y2={5} />
                           <line x1={12} y1={17} x2={12} y2="17.01" />
                         </svg>
-                        <span className="p-l-10">{arrProfile.phone1}</span>
-                      </li>
+                        <span className="p-l-10">{arrProfile?.phone1}</span>
+                      </li> */}
                     </ul>
                   </div>
                 </div>
-                <div className="card mt-3">
+                {/* <div className="card mt-3">
                   <div className="card-status-top bg-primary" />
                   <div className="card-body">
                     <div className="d-flex align-items-center mb-3">
@@ -317,9 +314,9 @@ const ProfilePage = () => {
                           <rect x={3} y={5} width={18} height={14} rx={2} />
                           <polyline points="3 7 12 13 21 7" />
                         </svg>
-                        <span className="p-l-5 font-bold">Email 1:</span>
+                        <span className="p-l-5 font-bold">Email :</span>
                         <div className="text-secondary">
-                          {arrProfile.email1}
+                          {arrProfile?.email}
                         </div>
                       </li>
                       <div className="line-dropdown-menu"></div>
@@ -342,7 +339,7 @@ const ProfilePage = () => {
                         </svg>
                         <span className="p-l-5 font-bold">Email 2:</span>
                         <div className="text-secondary">
-                          {arrProfile.email2}
+                          {arrProfile?.email2}
                         </div>
                       </li>
                       <div className="line-dropdown-menu"></div>
@@ -367,7 +364,7 @@ const ProfilePage = () => {
 
                         <span className="p-l-5 font-bold">Phone 1:</span>
                         <div className="text-secondary">
-                          {arrProfile.phone1}
+                          {arrProfile?.phone1}
                         </div>
                       </li>
                       <div className="line-dropdown-menu"></div>
@@ -392,7 +389,7 @@ const ProfilePage = () => {
 
                         <span className="p-l-5 font-bold">Phone 2:</span>
                         <div className="text-secondary">
-                          {arrProfile.phone2}
+                          {arrProfile?.phone2}
                         </div>
                       </li>
                       <div className="line-dropdown-menu"></div>
@@ -417,7 +414,7 @@ const ProfilePage = () => {
 
                         <span className="p-l-5 font-bold">Website 1:</span>
                         <div className="text-secondary">
-                          {arrProfile.website1}
+                          {arrProfile?.website1}
                         </div>
                       </li>
                       <div className="line-dropdown-menu"></div>
@@ -442,7 +439,7 @@ const ProfilePage = () => {
 
                         <span className="p-l-5 font-bold">Website 2:</span>
                         <div className="text-secondary">
-                          {arrProfile.website2}
+                          {arrProfile?.website2}
                         </div>
                       </li>
                       <div className="line-dropdown-menu"></div>
@@ -465,7 +462,7 @@ const ProfilePage = () => {
 
                         <span className="p-l-5 font-bold">Other Contact:</span>
                         <div className="text-secondary">
-                          {arrProfile.otherContact}
+                          {arrProfile?.otherContact}
                         </div>
                       </li>
                       <div className="line-dropdown-menu"></div>
@@ -488,7 +485,7 @@ const ProfilePage = () => {
                         </svg>
                         <span className="p-l-5 font-bold">Address 1:</span>
                         <div className="text-secondary">
-                          {arrProfile.address1}
+                          {arrProfile?.address1}
                         </div>
                       </li>
                       <div className="line-dropdown-menu"></div>
@@ -511,20 +508,20 @@ const ProfilePage = () => {
                         </svg>
                         <span className="p-l-5 font-bold">Address 2:</span>
                         <div className="text-secondary">
-                          {arrProfile.address2}
+                          {arrProfile?.address2}
                         </div>
                       </li>
                       <div className="line-dropdown-menu"></div>
                     </ul>
                   </div>
-                </div>
+                </div> */}
               </div>
               <div className="col-lg-8">
                 <div className="card">
                   <div className="card-status-top bg-primary" />
                   <div className="card-body">
                     <div className="form-group mb-3">
-                      <label className="form-label">Email 1</label>
+                      <label className="form-label">Email </label>
                       <div>
                         <input
                           type="text"
@@ -536,7 +533,7 @@ const ProfilePage = () => {
                         />
                       </div>
                     </div>
-                    <div className="form-group mb-3">
+                    {/* <div className="form-group mb-3">
                       <label className="form-label">Email 2</label>
                       <div>
                         <input
@@ -548,9 +545,9 @@ const ProfilePage = () => {
                           required
                         />
                       </div>
-                    </div>
-                    <div className="form-group mb-3">
-                      <label className="form-label">Phone 1</label>
+                    </div> */}
+                    {/* <div className="form-group mb-3">
+                      <label className="form-label">Phone</label>
                       <div>
                         <input
                           type="text"
@@ -561,8 +558,8 @@ const ProfilePage = () => {
                           required
                         />
                       </div>
-                    </div>
-                    <div className="form-group mb-3">
+                    </div> */}
+                    {/* <div className="form-group mb-3">
                       <label className="form-label">Phone 2</label>
                       <div>
                         <input
@@ -574,8 +571,8 @@ const ProfilePage = () => {
                           required
                         />
                       </div>
-                    </div>
-                    <div className="form-group mb-3">
+                    </div> */}
+                    {/* <div className="form-group mb-3">
                       <label className="form-label">Website 1</label>
                       <div>
                         <input
@@ -587,8 +584,8 @@ const ProfilePage = () => {
                           required
                         />
                       </div>
-                    </div>
-                    <div className="form-group mb-3">
+                    </div> */}
+                    {/* <div className="form-group mb-3">
                       <label className="form-label">Website 2</label>
                       <div>
                         <input
@@ -600,8 +597,8 @@ const ProfilePage = () => {
                           required
                         />
                       </div>
-                    </div>
-                    <div className="form-group mb-3">
+                    </div> */}
+                    {/* <div className="form-group mb-3">
                       <label className="form-label">Other Contact</label>
                       <div>
                         <textarea
@@ -612,8 +609,8 @@ const ProfilePage = () => {
                           value={otherContact}
                         />
                       </div>
-                    </div>
-                    <div className="form-group mb-3">
+                    </div> */}
+                    {/* <div className="form-group mb-3">
                       <label className="form-label">Address 1</label>
                       <div>
                         <textarea
@@ -624,8 +621,8 @@ const ProfilePage = () => {
                           value={address1}
                         />
                       </div>
-                    </div>
-                    <div className="form-group mb-3">
+                    </div> */}
+                    {/* <div className="form-group mb-3">
                       <label className="form-label">Address 2</label>
                       <div>
                         <textarea
@@ -636,7 +633,7 @@ const ProfilePage = () => {
                           value={address2}
                         />
                       </div>
-                    </div>
+                    </div> */}
                     <div className="btn-list">
                       <button
                         className="btn btn-primary"

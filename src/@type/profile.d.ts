@@ -2,26 +2,6 @@ export interface MessageResponse {
   message?: string;
 }
 
-export interface UserProfile {
-  firstName: string;
-  lastName: string;
-  userCode?: string;
-  profileImage?: string;
-  displayName?: string;
-  policyName?: string;
-  logo?: string;
-  companyName?: string;
-  email?: string;
-  email1?: string;
-  email2?: string;
-  phone1?: string;
-  phone2?: string;
-  website1?: string;
-  website2?: string;
-  otherContact?: string;
-  address1?: string;
-  address2?: string;
-}
 export interface Profile {
   mode: any;
   userProfile: UserProfileNew;
@@ -44,6 +24,31 @@ export interface UserProfileNew {
   avatar: string;
   avatarUrl: string;
   uuid: any;
+}
+export interface ResProfile {
+  mode: any;
+  userProfile: UserProfile;
+  access: Access;
+  application: Application;
+  version: Version;
+  company: Company[];
+  menuItems: MenuItem[];
+  module: Module[];
+  processAccess: ProcessAccess;
+  productAuthorizedLimits: ProductAuthorizedLimits;
+}
+
+export interface UserProfile {
+  username: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  userType: string;
+  avatar: string;
+  avatarUrl: string;
+  uuid: any;
+  channelCode: string;
+  channelUuid: string;
 }
 
 export interface Access {
@@ -93,7 +98,6 @@ export interface MenuItem {
   code: string;
   type: string;
   active: boolean;
-  [key: string]: unknown;
 }
 
 export interface Module {
@@ -101,12 +105,29 @@ export interface Module {
   name: string;
   parameter: string;
   permission: Permission[];
-  [key: string]: unknown;
+  permissionStatus: PermissionStatus;
 }
 
 export interface Permission {
   parameter: string;
   method: string;
+  active: boolean;
+}
+
+export interface PermissionStatus {
+  strictProcess: StrictProcess[];
+  strictAccess: StrictAccess[];
+}
+
+export interface StrictProcess {
+  statusCode: string;
+  statusName: string;
+  active: boolean;
+}
+
+export interface StrictAccess {
+  statusCode: string;
+  statusName: string;
   active: boolean;
 }
 

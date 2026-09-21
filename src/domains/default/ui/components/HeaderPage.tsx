@@ -43,7 +43,7 @@ const HeaderPage = () => {
                 />
               ) : (
                 <img
-                  src={user?.logo ?? companyLogo}
+                  src={companyLogo}
                   width={110}
                   height={32}
                   alt={'logo'}
@@ -56,7 +56,7 @@ const HeaderPage = () => {
                     style={{ marginLeft: '0.5rem', display: 'inline-block' }}
                     className={'text-primary-blue'}
                   >
-                    {user?.companyName || 'E-CHANNEL PORTAL'}
+                    {application?.applicationName || 'E-CHANNEL PORTAL'}
                   </div>
                   {mode != 'Production' ? (
                     <span className="badge bg-indigo-lt mb-2 ml-5">
@@ -78,7 +78,7 @@ const HeaderPage = () => {
                   aria-label="Open user menu"
                 >
                   <img
-                    src={user?.profileImage ?? userIcon}
+                    src={user?.avatarUrl ?? userIcon}
                     onError={(e: React.SyntheticEvent<HTMLImageElement>) => {
                       e.currentTarget.src = userIcon;
                     }}
