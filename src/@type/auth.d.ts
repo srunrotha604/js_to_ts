@@ -3,7 +3,8 @@ import type {
   Branch,
   Company,
   Module,
-  UserProfile,
+  UserProfileNew,
+  Version,
 } from './profile';
 
 export interface PermissionSet {
@@ -33,7 +34,7 @@ export interface AuthContextValue {
   ) => boolean;
   clearUser: () => void;
   fetchUser: () => Promise<void>;
-  user: UserProfile | null;
+  user: UserProfileNew | null;
   isUserDRIAdmin: boolean;
   appName: string;
   menu: unknown[];
@@ -45,4 +46,5 @@ export interface AuthContextValue {
   token: AuthToken | null;
   mode: string;
   application: Application | null;
+  version: Version | null;
 }

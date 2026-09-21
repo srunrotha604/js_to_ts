@@ -83,7 +83,7 @@ const HeaderPage = () => {
                       e.currentTarget.src = userIcon;
                     }}
                     alt="Profile User"
-                    className="profile-image w-4"
+                    className="profile-image w-4 rounded-5"
                   />
                   <div className="d-none d-xl-block ps-2">
                     <div>{application?.applicationName}</div>

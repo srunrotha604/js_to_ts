@@ -1,7 +1,7 @@
 export const buildProjectEditDto = (
-  transactionCode: string | undefined,
+  transationCode: string | undefined,
   projectName: string
 ) => ({
-  transactionCode,
+  transationCode,
   projectName,
 });

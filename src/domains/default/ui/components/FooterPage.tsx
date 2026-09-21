@@ -1,22 +1,22 @@
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../../../context/AuthContext';
 import { contactUs } from '../../../../utils/contact';
 import { ROUTE_PATH } from '../../../../utils/route-util';
-import { fetchCurrentVersion } from '../../../version-history/interface-adapters';
+// import { fetchCurrentVersion } from '../../../version-history/interface-adapters';
 const FooterPage = () => {
   const navigate = useNavigate();
-  const [version, setVersion] = useState('');
-  const { user } = useAuth();
+  // const [version, setVersion] = useState('');
+  const { user, version, application } = useAuth();
   const VersionButton = () => {
     navigate(ROUTE_PATH.version);
   };
 
   const loadVersion = async () => {
     try {
-      const res = await fetchCurrentVersion();
-      const newVersion = res?.data?.version || '';
-      setVersion(newVersion);
+      // const res = await fetchCurrentVersion();
+      // const newVersion = res?.data?.version || '';
+      // setVersion(newVersion);
     } catch (error) {
       console.error('Error fetching version:', error);
     }
@@ -46,13 +46,13 @@ const FooterPage = () => {
               <li className="list-inline-item">
                 Copyright © 2022
                 <span className="link-secondary">
-                  {` ${user?.companyName || 'E-CHANNEL PORTAL'} `}
+                  {` ${application?.applicationName || 'E-CHANNEL PORTAL'} `}
                 </span>
                 All rights reserved
               </li>
               <div className="list-inline-item pointer" onClick={VersionButton}>
                 <span style={{ fontSize: '14px', cursor: 'pointer' }}>
-                  {version ? `Version ${version}` : 'Version'}
+                  {version ? `Version ${version.version}` : 'Version'}
                 </span>
               </div>
             </ul>

@@ -11,7 +11,7 @@ export interface ProjectPolicyOptionResponse {
 }
 
 export interface ProjectPolicyItem {
-  transactionCode?: string;
+  transationCode?: string;
   projectLabel?: string;
   policyCode?: string;
   insuredName?: string;

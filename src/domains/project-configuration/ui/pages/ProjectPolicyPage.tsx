@@ -66,13 +66,13 @@ const ProjectPolicyPage = () => {
   );
 
   const funcRemoveHandleClickExecute = () => {
-    runDeleteProjectPolicy({ transactionCode });
+    runDeleteProjectPolicy({ transationCode: transactionCode });
   };
 
   const getRecordHandleClick = (option: string, item: ProjectPolicyItem) => {
     switch (option) {
       case 'delete':
-        setTransationCode(item.transactionCode ?? '');
+        setTransationCode(item.transationCode ?? '');
         break;
       default:
         navigate(ROUTE_PATH.error404);

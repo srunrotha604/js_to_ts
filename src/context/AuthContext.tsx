@@ -9,7 +9,8 @@ import type {
   MenuItem,
   Module,
   Profile,
-  UserProfile,
+  UserProfileNew,
+  Version,
 } from '../@type/profile';
 import { openSessionStream } from '../domains/default/interface-adapters';
 import { HttpUtil } from '../utils/http-util';
@@ -40,6 +41,7 @@ const AuthContext = createContext<AuthContextValue>({
   token: null,
   mode: '',
   application: null,
+  version: null,
 });
 
 interface PermissionAccessResponse extends PermissionSet {
@@ -60,7 +62,7 @@ const AuthContextProvider = ({ children }: { children?: ReactNode }) => {
   const navigate = useNavigate();
   const closeSessionStreamRef = useRef<(() => void) | null>(null);
   const [loading, setLoading] = useState(true);
-  const [user, setUser] = useState<UserProfile | null>(null);
+  const [user, setUser] = useState<UserProfileNew | null>(null);
   const [isUserDRIAdmin, setIsUserDRIAdmin] = useState(false);
   const [menu, setMenu] = useState<MenuItem[]>([]);
   const [company, setCompany] = useState<Company[] | null>(null);
@@ -69,7 +71,7 @@ const AuthContextProvider = ({ children }: { children?: ReactNode }) => {
   const [mode, setMode] = useState('');
   const [module, setModule] = useState<Module[] | null>(null);
   const [application, setApplication] = useState<Application | null>(null);
-
+  const [version, setVersion] = useState<Version | null>(null);
   const hasPermissionProccessTransaction = (
     execution: string | string[],
     condition: 'and' | 'or' = 'and'
@@ -132,6 +134,7 @@ const AuthContextProvider = ({ children }: { children?: ReactNode }) => {
       const tempUser = responseUser?.data?.userProfile;
       const tempMenu = responseUser?.data?.menuItems;
       const tempApplication = responseUser?.data?.application;
+      setVersion(responseUser?.data.version || null);
       setModule(responseUser?.data.module || []);
       setIsUserDRIAdmin(responsePermission?.data?.driAdmin ?? false);
       setCompany(tempCompany ?? null);
@@ -188,6 +191,7 @@ const AuthContextProvider = ({ children }: { children?: ReactNode }) => {
         module,
         token,
         application,
+        version,
       }}
     >
       <ModuleContextProvider

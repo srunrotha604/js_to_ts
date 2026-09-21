@@ -3,7 +3,6 @@ import React, { useState } from 'react';
 import { FaRegEdit } from 'react-icons/fa';
 import { IoIosArrowForward } from 'react-icons/io';
 import { IoAddSharp, IoChevronBack } from 'react-icons/io5';
-import { LuEye } from 'react-icons/lu';
 import { TfiReload } from 'react-icons/tfi';
 import ReactPaginate from 'react-paginate';
 import { Link, useNavigate } from 'react-router-dom';
@@ -17,9 +16,9 @@ const ProjectPage = () => {
   const navigate = useNavigate();
   const [arrList, setArrList] = useState<ProjectItem[]>([]);
   const [query, setQuery] = useState('');
-  const [getApplicationName, setGetApplicationName] = useState('');
-  const [getApplicationCode, setGetApplicationCode] = useState('');
-  const [getStatus, setGetStatus] = useState('');
+  // const [getApplicationName, setGetApplicationName] = useState('');
+  // const [getApplicationCode, setGetApplicationCode] = useState('');
+  // const [getStatus, setGetStatus] = useState('');
 
   const { loading, refresh: refreshList } = useRequest(fetchProjectList, {
     onSuccess: (res) => {
@@ -39,11 +38,11 @@ const ProjectPage = () => {
     },
   });
 
-  const handleViewClick = (item: ProjectItem) => {
-    setGetApplicationName(item.applicationName ?? '');
-    setGetApplicationCode(item.applicationCode ?? '');
-    setGetStatus(item.status ?? '');
-  };
+  // const handleViewClick = (item: ProjectItem) => {
+  //   setGetApplicationName(item.applicationName ?? '');
+  //   setGetApplicationCode(item.applicationCode ?? '');
+  //   setGetStatus(item.status ?? '');
+  // };
 
   const createNewHandleClick = () => {
     navigate(ROUTE_PATH.projectCreate);
@@ -165,7 +164,7 @@ const ProjectPage = () => {
                           <td className="text-underline">
                             <Link
                               to={ROUTE_PATH.projectPolicy(
-                                item.transactionCode ?? ''
+                                item.transationCode ?? 'sdfasdf'
                               )}
                             >
                               policies
@@ -177,17 +176,17 @@ const ProjectPage = () => {
                             <td className="text-danger">{item.status}</td>
                           )}
                           <td>
-                            <a
+                            {/* <a
                               className="cursor-pointer me-2"
                               data-bs-toggle="offcanvas"
                               href="#offcanvasView"
                               onClick={() => handleViewClick(item)}
                             >
                               <LuEye size={16} color="#00abfb" />
-                            </a>
+                            </a> */}
                             <Link
                               to={ROUTE_PATH.projectEdit(
-                                item.transactionCode ?? ''
+                                item.transationCode ?? ''
                               )}
                             >
                               <FaRegEdit size={16} color="#00b341" />
@@ -236,7 +235,7 @@ const ProjectPage = () => {
           </div>
         </div>
       </div>
-      <div
+      {/* <div
         className="offcanvas offcanvas-start"
         tabIndex={-1}
         id="offcanvasView"
@@ -272,7 +271,7 @@ const ProjectPage = () => {
             </table>
           </div>
         </div>
-      </div>
+      </div> */}
     </React.Fragment>
   );
 };

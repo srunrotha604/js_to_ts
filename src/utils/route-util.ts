@@ -96,12 +96,13 @@ const ROUTE_API = {
   operationCustomerBatch: '/operation-customer/batch',
   operationCustomerBatchUpload: '/operation-customer/batch/upload',
   exportOperationCustomer: '/export/operation-customer',
-  operationProject: '/operation-project',
-  operationProjectByKey: (key: string | number) => `/operation-project/${key}`,
-  operationProjectPolicy: '/operation-project/policy',
+  operationProject: '/api/v1/operation-project',
+  operationProjectByKey: (key: string | number) =>
+    `/api/v1/operation-project/${key}`,
+  operationProjectPolicy: '/api/v1/operation-project/policy',
   operationProjectPolicyByKey: (key: string | number) =>
-    `/operation-project/policy/${key}`,
-  coreSystemOperationPolicy: '/core-system-operation-policy/PG00',
+    `/api/v1/operation-project/policy/${key}`,
+  coreSystemOperationPolicy: '/api/v1/policies',
   opertionBranch: '/opertion-branch',
   opertionBranchAdmin: '/opertion-branch/admin',
   opertionBranchProject: '/opertion-branch/project',

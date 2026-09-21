@@ -1,12 +1,10 @@
 export interface ProjectItem {
-  key?: string;
-  transactionCode?: string;
-  projectName?: string;
-  applicationName?: string;
-  applicationCode?: string;
-  moduleName?: string;
-  description?: string;
-  status?: string;
+  docEntry: number;
+  transationCode: string;
+  projectName: string;
+  status: string;
+  inputter: string;
+  inputDateTime: string;
 }
 
 export interface ProjectListResponse {

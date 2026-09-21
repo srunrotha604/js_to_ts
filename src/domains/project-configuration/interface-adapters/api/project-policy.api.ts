@@ -11,7 +11,7 @@ export const fetchProjectPolicyList = (projectKey: string) =>
     ROUTE_API.operationProjectPolicyByKey(projectKey)
   );
 
-export const deleteProjectPolicy = (data: { transactionCode: string }) =>
+export const deleteProjectPolicy = (data: { transationCode: string }) =>
   HttpUtil.delete<MessageResponse>(ROUTE_API.operationProjectPolicy, data);
 
 export const fetchProjectPolicyOptions = () =>

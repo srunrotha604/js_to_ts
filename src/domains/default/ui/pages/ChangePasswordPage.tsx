@@ -23,7 +23,6 @@ const ChangePasswordPage = () => {
   document.title = 'E-CHANNEL PORTAL | Change Password';
   const [userUrl, setUserUrl] = useState('');
   const [userName, setUserName] = useState('');
-  const [userCode, setUserCode] = useState('');
   const [show, setShow] = useState({
     password: false,
     newPassword: false,
@@ -39,14 +38,14 @@ const ChangePasswordPage = () => {
       switch (res?.status) {
         case 200:
           {
-            const profile = res?.data?.userProfile?.[0];
-            setUserUrl(profile?.profileImage ?? '');
-            setUserName(profile?.displayName ?? '');
-            setUserCode(profile?.userCode ?? '');
+            const profile = res?.data?.userProfile;
+            setUserUrl(profile?.avatarUrl ?? '');
+            setUserName(`${profile.firstName} ${profile.lastName}` || '');
+            // setUserCode(profile?.channelCode ?? '');
           }
           break;
         case 400:
-          toast.error(res?.data?.message ?? '');
+          toast.error(res?.statusText ?? '');
           break;
         case 403:
           toast.error(String(res?.data));
