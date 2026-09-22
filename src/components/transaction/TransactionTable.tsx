@@ -22,7 +22,7 @@ import {
 } from 'react-router-dom';
 import Select from 'react-select';
 import { useDebouncedCallback } from 'use-debounce';
-import type { SelectOption } from '../../@type/report';
+import type { SelectOptionList } from '../../@type/report';
 import '../../assets/style/custom_style.css';
 import { useAuth } from '../../context/AuthContext';
 import useMessage from '../../hooks/useMessage';
@@ -110,7 +110,7 @@ interface TransactionTableProps<T extends TransactionLike> {
   disableRowClick?: boolean;
   onRowClick: (item: T) => void;
   typeFilter?: boolean | ((args: { tabStatus: string }) => boolean);
-  typeOptions?: SelectOption[];
+  typeOptions?: SelectOptionList[];
   DetailModal: ForwardRefExoticComponent<
     DetailModalRenderProps<T> & RefAttributes<HTMLDivElement>
   >;
@@ -152,15 +152,15 @@ const TransactionTableInner = <T extends TransactionLike>(
   const [arrDetails, setArrDetails] = useState<T>({} as T);
   const [total, setTotal] = useState<TotalCounts | undefined>(undefined);
   const [totalDocs, setTotalDocs] = useState<number | null>(null);
-  const [branch, setBranch] = useState<SelectOption[]>([]);
+  const [branch, setBranch] = useState<SelectOptionList[]>([]);
   const { openModal, modalRef } = useModal();
   const [selectedBranch, setSelectedBranch] = useState<
-    SelectOption | undefined
+    SelectOptionList | undefined
   >({
     label: 'All',
     value: 'All',
   });
-  const [type, setType] = useState<SelectOption | undefined>({
+  const [type, setType] = useState<SelectOptionList | undefined>({
     value: 'All',
     label: 'All',
   });
@@ -280,7 +280,7 @@ const TransactionTableInner = <T extends TransactionLike>(
     onTabChange && onTabChange(value);
   };
 
-  const branchSelectedHandleChange = (data: SelectOption | null) => {
+  const branchSelectedHandleChange = (data: SelectOptionList | null) => {
     navigateList({ branch: data?.value });
   };
 
@@ -295,7 +295,7 @@ const TransactionTableInner = <T extends TransactionLike>(
     navigateList({ pageNum: Number(e.selected) + 1 });
   };
 
-  const handleTypeChange = (data: SelectOption | null) => {
+  const handleTypeChange = (data: SelectOptionList | null) => {
     navigateList({ type: data?.value });
   };
 
@@ -306,7 +306,7 @@ const TransactionTableInner = <T extends TransactionLike>(
       const companyDetails = company?.find(
         (item) => item?.companyCode === token_text?.company
       );
-      const tempBranch: SelectOption[] = [
+      const tempBranch: SelectOptionList[] = [
         { value: 'All', label: 'All' },
         ...(companyDetails?.branch ?? []).map((item) => ({
           value: item.branchCode,

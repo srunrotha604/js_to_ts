@@ -86,9 +86,12 @@ const HeaderPage = () => {
                     className="profile-image w-4 rounded-5"
                   />
                   <div className="d-none d-xl-block ps-2">
-                    <div>{application?.applicationName}</div>
-                    <div className="mt-1 small text-muted">
+                    <div>
+                      {' '}
                       {user.firstName} {user.lastName}
+                    </div>
+                    <div className="mt-1 small text-muted">
+                      {application?.roleName}
                     </div>
                   </div>
                 </div>

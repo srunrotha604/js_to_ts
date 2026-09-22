@@ -87,9 +87,11 @@ const CustomerEditReview = (props: CustomerEditReviewProps) => {
                           data={{
                             ...formData,
                             productName,
-                            inputter: user?.displayName,
-                            inputBranch: selectedBranch?.label,
-                            inputCompany: selectedCompany?.label,
+                            inputter: `${
+                              user?.firstName || '' + user?.lastName
+                            }`,
+                            inputBranch: selectedBranch?.branchName,
+                            inputCompany: selectedCompany?.companyName,
                           }}
                         />
                       </div>

@@ -2,7 +2,7 @@ import clsx from 'clsx';
 import type { ForwardedRef, MouseEvent, ReactNode } from 'react';
 import { forwardRef, useImperativeHandle, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import type { SelectOption } from '../../../../../@type/report';
+import type { SelectOptionList } from '../../../../../@type/report';
 import IssueDateDetailModal from '../../../../../components/IssueDateDetailModal';
 import IssueDateModal from '../../../../../components/IssueDateModal';
 import Checkbox from '../../../../../components/common/Checkbox';
@@ -28,11 +28,13 @@ import {
 export const CustomerDetailModal = forwardRef<
   HTMLDivElement,
   { data: CustomerTransaction; onShowLogs: () => void }
->(({ data, onShowLogs }, ref) => (
-  <CustomerTransactionDetailModal data={data} ref={ref}>
-    <ShowLogsButton onClick={onShowLogs} />
-  </CustomerTransactionDetailModal>
-));
+>(function CustomerDetailModal({ data, onShowLogs }, ref) {
+  return (
+    <CustomerTransactionDetailModal data={data} ref={ref}>
+      <ShowLogsButton onClick={onShowLogs} />
+    </CustomerTransactionDetailModal>
+  );
+});
 
 interface CustomerTransactionTableProps {
   title?: ReactNode;
@@ -187,7 +189,7 @@ const CustomerTransactionTable = (
         {...rest}
         ref={innerRef}
         onRowClick={handleRecordClick}
-        typeOptions={typeOptions as SelectOption[]}
+        typeOptions={typeOptions as SelectOptionList[]}
         DetailModal={CustomerDetailModal}
         LogsModal={TransactionLogsModal}
         mapItem={mapCustomerTransaction}
@@ -263,7 +265,7 @@ const CustomerTransactionTable = (
                 }}
               >
                 <TransactionNumberTableItem
-                  transactionNumber={item.transactionNumber}
+                  transactionNumber={item.transationNumber}
                 />
               </td>
               <td

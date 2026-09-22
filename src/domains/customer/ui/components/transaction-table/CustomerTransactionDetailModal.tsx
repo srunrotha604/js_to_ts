@@ -13,7 +13,7 @@ interface TransactionDetailModalProps {
 const TransactionDetailModal = forwardRef<
   HTMLDivElement,
   TransactionDetailModalProps
->(({ data, actions, children }, ref) => {
+>(function TransactionDetailModal({ data, actions, children }, ref) {
   const {
     status,
     inputDateTime,

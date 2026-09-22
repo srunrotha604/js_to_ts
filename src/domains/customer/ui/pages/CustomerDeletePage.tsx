@@ -267,7 +267,7 @@ const CustomerDeletePage = () => {
                     }}
                   >
                     <TransactionNumberTableItem
-                      transactionNumber={item.transactionNumber}
+                      transactionNumber={item.transationNumber}
                     />
                   </td>
                   <td className="text-muted">
