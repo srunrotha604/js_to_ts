@@ -86,12 +86,12 @@ const ROUTE_API = {
   loginConfirmChangePassword: '/login/confirm-change-password',
   loginViaSms: '/Login/via-sms',
   operationCustomerAccess: '/api/v1/operation-customer/access',
-  operationCustomerProduct: '/operation-customer/product',
+  operationCustomerProduct: '/api/v1/operation-customer/product',
   operationCustomerProductByCode: (code: string | number) =>
     `/operation-customer/product/${code}`,
   operationCustomer: '/api/v1/operation-customer',
   operationCustomerDelete: '/operation-customer/delete',
-  operationCustomerDuplicate: '/operation-customer/duplicate',
+  operationCustomerDuplicate: '/api/v1/operation-customer/duplicate',
   operationCustomerCardConfirmation: '/operation-customer/card-confirmation',
   operationCustomerBatch: '/operation-customer/batch',
   operationCustomerBatchUpload: '/operation-customer/batch/upload',
@@ -108,9 +108,10 @@ const ROUTE_API = {
   opertionBranchProject: '/opertion-branch/project',
   opertionBranchProjectByKey: (key: string | number) =>
     `/opertion-branch/project/${key}`,
-  operationProduct: '/operation-product',
-  operationProductByKey: (key: string | number) => `/operation-product/${key}`,
-  operationProductProduct: '/operation-product/product',
+  operationProduct: '/api/v1/operation-products',
+  operationProductByKey: (key: string | number) =>
+    `/api/v1/operation-products/${key}`,
+  operationProductProduct: '/api/v1/operation-products/product',
   applicationRoleAccess: '/application-role/access',
   eChanelUserAccess: '/e-chanel-user/access',
   eChanelUserAccessByCode: (userCode: string | number) =>

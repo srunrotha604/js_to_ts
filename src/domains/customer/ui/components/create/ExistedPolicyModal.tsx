@@ -12,7 +12,7 @@ interface ExistedPolicyModalProps {
   loading?: boolean;
 }
 const ExistedPolicyModal = forwardRef<HTMLDivElement, ExistedPolicyModalProps>(
-  ({ data, actions }, ref) => {
+  function ExistedPolicyModal({ data, actions }, ref) {
     return (
       <Modal
         size="xl"
@@ -47,13 +47,13 @@ const ExistedPolicyModal = forwardRef<HTMLDivElement, ExistedPolicyModalProps>(
                 <tr key={item.transactionCode} className="text-nowrap">
                   <td>
                     <TransactionNumberTableItem
-                      transactionNumber={item.transactionNumber}
+                      transactionNumber={item.transationNumber}
                     ></TransactionNumberTableItem>
                   </td>
                   <td className="text-muted">
                     {item.sureName + ' ' + item.firstName}
                   </td>
-                  <td className="text-muted">{item.projectCode}</td>
+                  <td className="text-muted">{item.projectName}</td>
                   <td className="text-muted">{item.productCode}</td>
                   <td className="text-muted">
                     {formatDay(item.inputDateTime)}

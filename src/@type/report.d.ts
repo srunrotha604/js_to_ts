@@ -1,6 +1,6 @@
 export interface SelectOption {
-  label: string;
-  value: string;
+  productCode: string;
+  productName: string;
   hidden?: boolean;
 }
 

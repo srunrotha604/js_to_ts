@@ -70,7 +70,7 @@ const ProductCreatePage = () => {
   };
 
   const roleHandleChange = (value: SingleValue<SelectOption>) => {
-    setSelectedProduct(value?.value ?? '');
+    setSelectedProduct(value?.productCode ?? '');
   };
 
   const productCodeHandleChange = (
@@ -155,8 +155,12 @@ const ProductCreatePage = () => {
                           menuPortal: (base) => ({ ...base, zIndex: 9999 }),
                         }}
                         menuPortalTarget={document.body}
+                        getOptionLabel={(option) =>
+                          `${option.productCode + '-' + option.productName}`
+                        }
+                        getOptionValue={(option) => option.productCode}
                         value={productList.find(function (option) {
-                          return option.value === selectedProduct;
+                          return option.productCode === selectedProduct;
                         })}
                         onChange={roleHandleChange}
                         options={productList}

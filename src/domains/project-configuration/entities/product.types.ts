@@ -1,7 +1,7 @@
 import type { SelectOption } from '../../../@type/report';
 
 export interface ProductItem {
-  transactionCode?: string;
+  transationCode?: string;
   productsequenceCode?: string;
   productCode?: string;
   productName?: string;

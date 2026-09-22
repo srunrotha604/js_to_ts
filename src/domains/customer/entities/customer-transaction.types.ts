@@ -37,7 +37,7 @@ export interface CustomerRawListResponse {
 
 export interface CustomerTransaction {
   transactionCode?: string;
-  transactionNumber?: string;
+  transationNumber?: string;
   batchNumber?: string;
   coreProductCode?: string;
   uuid?: string;

@@ -286,7 +286,7 @@ const ProductPage = () => {
                             </a>
                             <Link
                               to={ROUTE_PATH.productEdit(
-                                item.transactionCode ?? ''
+                                item.transationCode ?? ''
                               )}
                             >
                               <svg
@@ -314,7 +314,7 @@ const ProductPage = () => {
                             <a
                               className="cursor-pointer"
                               onClick={() => {
-                                setTransationCode(item.transactionCode ?? '');
+                                setTransationCode(item.transationCode ?? '');
                                 openModal();
                               }}
                             >
