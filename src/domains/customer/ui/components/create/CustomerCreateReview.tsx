@@ -92,7 +92,9 @@ const CustomerCreateReview = (props: CustomerCreateReviewProps) => {
                       data={{
                         ...formData,
                         productName,
-                        inputter: `${user?.firstName || '' + user?.lastName}`,
+                        inputter: `${
+                          user?.firstName || '' + user?.lastName || ''
+                        }`,
                         inputBranch: selectedBranch?.branchName,
                         inputCompany: selectedCompany?.companyName,
                       }}

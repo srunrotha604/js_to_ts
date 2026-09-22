@@ -33,7 +33,10 @@ interface TransactionLogsModalProps {
 export const TransactionLogsModal = forwardRef<
   HTMLDivElement,
   TransactionLogsModalProps
->(({ transactionNo, open, onClose, openSpinner, closeSpinner }, ref) => {
+>(function TransactionLogsModal(
+  { transactionNo, open, onClose, openSpinner, closeSpinner },
+  ref
+) {
   const [detail, setDetail] = useState<TransactionLogItem[]>([]);
   const getDetails = async () => {
     try {

@@ -113,7 +113,7 @@ const CustomerTransactionTable = (
           navigate(
             ROUTE_PATH.customerEdit(
               item.transactionCode ?? '',
-              item.coreProductCode ?? ''
+              item.productCode ?? ''
             )
           );
         }
@@ -265,7 +265,7 @@ const CustomerTransactionTable = (
                 }}
               >
                 <TransactionNumberTableItem
-                  transactionNumber={item.transationNumber}
+                  transactionNumber={item.transactionNumber}
                 />
               </td>
               <td

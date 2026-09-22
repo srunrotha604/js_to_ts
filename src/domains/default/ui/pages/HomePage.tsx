@@ -64,7 +64,6 @@ const HomePage = () => {
       {
         label: STATUS.Confirmed,
         status: STATUS.Confirmed,
-        type: 'Single,Batch',
         getTotal: (total?: TransactionTotalCounts) => total?.confirmed,
         hidden: !hasPermissionAccessTransaction('confirmed'),
       },

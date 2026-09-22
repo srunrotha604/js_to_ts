@@ -66,7 +66,7 @@ const CustomerTransationDetailPage = () => {
         status: string | null;
         remark?: string;
       } = {
-        transaction: [detail.transationNumber],
+        transaction: [detail.transactionNumber],
         status: processStatus,
       };
       const isDeleted = detail?.deleted;
@@ -78,7 +78,7 @@ const CustomerTransationDetailPage = () => {
       await processCustomerTransaction(!!isDeleted, summaryDate);
 
       toast.success(
-        `transaction number: ${detail.transationNumber} has been ${processStatus}!`
+        `transaction number: ${detail.transactionNumber} has been ${processStatus}!`
       );
       delay(() => {
         closeSpinner();
@@ -120,7 +120,7 @@ const CustomerTransationDetailPage = () => {
               openSpinner={openSpinner}
               closeSpinner={closeSpinner}
               ref={transactionLogModalRef}
-              transactionNo={detail.transationNumber}
+              transactionNo={detail.transactionNumber}
             />
             <TransactionDetailCard
               data={detail}

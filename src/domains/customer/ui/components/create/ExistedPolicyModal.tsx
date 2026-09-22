@@ -47,7 +47,7 @@ const ExistedPolicyModal = forwardRef<HTMLDivElement, ExistedPolicyModalProps>(
                 <tr key={item.transactionCode} className="text-nowrap">
                   <td>
                     <TransactionNumberTableItem
-                      transactionNumber={item.transationNumber}
+                      transactionNumber={item.transactionNumber}
                     ></TransactionNumberTableItem>
                   </td>
                   <td className="text-muted">

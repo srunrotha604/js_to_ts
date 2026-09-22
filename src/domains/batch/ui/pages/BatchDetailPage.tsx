@@ -389,7 +389,7 @@ const BatchDetailPage = () => {
                     }}
                   >
                     <TransactionNumberTableItem
-                      transactionNumber={item.transationNumber}
+                      transactionNumber={item.transactionNumber}
                     />
                   </td>
                   <td className="text-muted">
