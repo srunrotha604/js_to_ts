@@ -59,7 +59,7 @@ const ForgotPasswordPage = () => {
             );
             setAddressMessage(email);
             setPhoneNumber(res?.data?.phoneNumber ?? '');
-            setViaSMSCode(res?.data?.viaSMSCode ?? '');
+            setViaSMSCode(res?.data?.smsToken ?? '');
             setShowSMSResend(res.data.forgotPasswordViaSMS || false);
             setInvalidFeedBack('');
             break;
@@ -87,7 +87,7 @@ const ForgotPasswordPage = () => {
         switch (res?.status) {
           case 200:
             setSuccess(true);
-            setConfirmChangeKey(res?.data?.keyCode ?? '');
+            setConfirmChangeKey(res?.data?.token ?? '');
             break;
           case 400:
             setSuccess(false);
@@ -176,9 +176,7 @@ const ForgotPasswordPage = () => {
   };
 
   const resqustViaSMSSubmit = () => {
-    runRequestViaSms(
-      buildViaSmsDto(email, confirmKey, phoneNumber, viaSMSCode)
-    );
+    runRequestViaSms(buildViaSmsDto(email, confirmKey, viaSMSCode));
   };
 
   const funcChangePasswordHandleClickExecute = (
@@ -194,23 +192,15 @@ const ForgotPasswordPage = () => {
       return;
     }
 
-    if (
-      validateRequiredFields([
+    runChangePassword(
+      buildConfirmChangePasswordDto(
         email,
         confirmChangeKey,
         newPassword,
-        confirmPassword,
-      ])
-    ) {
-      runChangePassword(
-        buildConfirmChangePasswordDto(
-          confirmChangeKey,
-          email,
-          newPassword,
-          confirmPassword
-        )
-      );
-    }
+        confirmPassword
+      )
+    );
+
     e.preventDefault();
   };
 
@@ -576,21 +566,19 @@ const ForgotPasswordPage = () => {
                           >
                             Cancel
                           </button>
-                          {phoneNumber && phoneNumber != '' ? (
+
+                          {showSMSResend ? (
                             <div className="d-flex justify-content-start mt-3">
-                              {!showSMSResend ? (
-                                <p className="mr-5">Don't get Code?</p>
-                              ) : (
-                                <p className="mr-5">Still don't get code?</p>
-                              )}
+                              <p className="mr-5">Don't get Code?</p>
                               <div
+                                className="ms-1"
                                 onClick={
                                   viaSmsLoading
                                     ? undefined
                                     : () => resqustViaSMSSubmit()
                                 }
                               >
-                                <p className="cursor-pointer text-underline text-primary">
+                                <p className="cursor-pointer text-decoration-underline text-primary">
                                   {viaSmsLoading
                                     ? 'Sending...'
                                     : !showSMSResend

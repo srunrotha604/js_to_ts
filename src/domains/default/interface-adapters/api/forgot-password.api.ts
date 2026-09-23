@@ -12,15 +12,14 @@ export const confirmForgotPasswordCode = (data: {
 
 export const requestForgotPasswordViaSms = (data: {
   email: string;
-  keyCode: string;
-  phoneNumber: string;
-  viaSMSCode: string;
+  token: string;
+  smsToken: string;
 }) => HttpUtil.post<ForgotPasswordResponse>(ROUTE_API.loginViaSms, data);
 
 export const confirmForgotPasswordChange = (data: {
-  keyCode: string;
   email: string;
-  newPassword: string;
+  token: string;
+  password: string;
   confirmPassword: string;
 }) =>
   HttpUtil.post<ForgotPasswordResponse>(

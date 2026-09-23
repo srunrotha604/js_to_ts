@@ -12,24 +12,22 @@ export const buildConfirmCodeDto = (
 
 export const buildViaSmsDto = (
   email: string,
-  keyCode: string,
-  phoneNumber: string,
-  viaSMSCode: string
+  token: string,
+  smsToken: string
 ) => ({
   email,
-  keyCode,
-  phoneNumber,
-  viaSMSCode,
+  token,
+  smsToken,
 });
 
 export const buildConfirmChangePasswordDto = (
-  keyCode: string,
   email: string,
-  newPassword: string,
+  token: string,
+  password: string,
   confirmPassword: string
 ) => ({
-  keyCode,
   email,
-  newPassword,
+  token,
+  password,
   confirmPassword,
 });
