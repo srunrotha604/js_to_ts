@@ -33,7 +33,7 @@ const IssueDateModal = ({
   onStatusChange,
   onUpdate,
 }: IssueDateModalProps) => {
-  const [issueStatus, setIssueStatus] = useState<boolean | null>(null);
+  const [, setIssueStatus] = useState<boolean | null>(null);
   const [showDetailIssueModal, setShowDetailIssueModal] = useState(false);
   const [remark, setRemark] = useState('');
   const hasIssueDate = !!item?.customerIssueDate?.issueDate;
