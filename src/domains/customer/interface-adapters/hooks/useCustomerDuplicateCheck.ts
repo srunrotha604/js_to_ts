@@ -13,6 +13,7 @@ export const useCustomerDuplicateCheck = (
     useState<DuplicateCustomerResult | null>(null);
 
   const checkDuplicateCustomer = async (_search?: string) => {
+    console.log(_search);
     try {
       const result = await fetchCustomerDuplicateCheck(getIdentifiers());
       setDuplicateCustomer(result);

@@ -4,10 +4,7 @@ import fileDownload from 'js-file-download';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import ReactPaginate from 'react-paginate';
 import Select from 'react-select';
-import type {
-  CompanyBranchOption,
-  SelectOption,
-} from '../../../../@type/report';
+import type { SelectOption } from '../../../../@type/report';
 import Button from '../../../../components/common/Button';
 import { selectCustomStyles } from '../../../../components/common/reactSelectStyles';
 import DateRangeSelector from '../../../../components/form/DateRangeSelector';
@@ -29,10 +26,7 @@ import {
 const UserReportPage = () => {
   document.title = 'Report | User report';
 
-  const { hasPermissionAccessTransaction, company } = useAuth() as {
-    hasPermissionAccessTransaction: (execution: string) => boolean;
-    company: CompanyBranchOption[] | null;
-  };
+  const { hasPermissionAccessTransaction, company } = useAuth();
   const [data, setData] = useState<UserReportItem[] | null>(null);
 
   const [status, setStatus] = useState<SelectOption[]>([]);

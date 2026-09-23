@@ -3,10 +3,7 @@ import { useEffect, useState } from 'react';
 import ReactPaginate from 'react-paginate';
 import { Link, useNavigate } from 'react-router-dom';
 import Select from 'react-select';
-import type {
-  CompanyBranchOption,
-  SelectOption,
-} from '../../../../@type/report';
+import type { SelectOption } from '../../../../@type/report';
 import { selectCustomStyles } from '../../../../components/common/reactSelectStyles';
 import TableCellAction from '../../../../components/form/TableCellAction';
 import TableCellStatusCodeHandle from '../../../../components/form/TableCellStatusCodeHandle';
@@ -27,7 +24,7 @@ import AddPhoneNumberModal from '../components/AddPhoneNumberModal';
 const UserPage = () => {
   document.title = 'E-CHANNEL PORTAL | user';
   const navigate = useNavigate();
-  const { company } = useAuth() as { company: CompanyBranchOption[] | null };
+  const { company } = useAuth();
   const [query, setQuery] = useState('');
   const [arrList, setArrList] = useState<UserItem[]>([]);
   const [optionBranch, setOptionBranch] = useState<SelectOption[]>([]);

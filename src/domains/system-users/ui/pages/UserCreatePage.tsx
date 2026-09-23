@@ -4,10 +4,7 @@ import { PatternFormat } from 'react-number-format';
 import { useNavigate } from 'react-router-dom';
 import Select from 'react-select';
 import { toast } from 'react-toastify';
-import type {
-  CompanyBranchOption,
-  SelectOption,
-} from '../../../../@type/report';
+import type { SelectOption } from '../../../../@type/report';
 import { useAuth } from '../../../../context/AuthContext';
 import { ROUTE_PATH } from '../../../../utils/route-util';
 import {
@@ -24,7 +21,7 @@ import {
 const UserCreatePage = () => {
   document.title = 'E-CHANNEL PORTAL | user - create';
   const navigate = useNavigate();
-  const { company } = useAuth() as { company: CompanyBranchOption[] | null };
+  const { company } = useAuth();
   const [textEmail, setTextEmail] = useState('');
   const [phone, setPhone] = useState('');
   const [textFirstName, setTextFirstName] = useState('');

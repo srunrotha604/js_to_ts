@@ -1,14 +1,20 @@
-import type { CompanyBranchOption, SelectOption } from '../../../@type/report';
+import type { Company } from '../../../@type/profile';
+import type { SelectOption } from '../../../@type/report';
 
 export const deriveBranchOptions = (
-  company: CompanyBranchOption[] | null | undefined,
+  company: Company[] | null | undefined,
   storageKey = 'e_chanel_storage'
 ): SelectOption[] => {
   const storedValue = localStorage.getItem(storageKey);
   const tokenText = storedValue ? JSON.parse(storedValue) : null;
   const companyDetails = company?.find(
-    (item) => item?.value === tokenText?.company
+    (item) => item?.companyCode === tokenText?.company
   );
 
-  return companyDetails?.branch || [];
+  return (
+    companyDetails?.branch?.map((item) => ({
+      value: item.branchCode,
+      label: item.branchName,
+    })) ?? []
+  );
 };
