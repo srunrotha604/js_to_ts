@@ -82,7 +82,7 @@ const ROUTE_API = {
   loginRefreshToken: '/api/v1/auth/refresh',
   loginChangePassword: '/login/change-password',
   loginForgotPassword: '/api/v1/auth/forgot-password',
-  loginConfirmCode: '/login/confirm-code',
+  loginConfirmCode: '/api/v1/auth/confirm-code',
   loginConfirmChangePassword: '/login/confirm-change-password',
   loginViaSms: '/Login/via-sms',
   operationCustomerAccess: '/api/v1/operation-customer/access',

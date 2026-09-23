@@ -1,11 +1,16 @@
 export interface SelectOption {
-  productCode: string;
-  productName: string;
+  value: string;
+  label: string;
   hidden?: boolean;
 }
 export interface SelectOptionList {
   value: string;
   label: string;
+}
+export interface ProductSelectOption {
+  productCode: string;
+  productName: string;
+  hidden?: boolean;
 }
 export interface CompanyBranchOption extends SelectOption {
   branch?: SelectOption[];

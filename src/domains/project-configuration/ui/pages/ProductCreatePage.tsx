@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Select, { SingleValue } from 'react-select';
 import { toast } from 'react-toastify';
-import type { SelectOption } from '../../../../@type/report';
+import type { ProductSelectOption } from '../../../../@type/report';
 import { ROUTE_PATH } from '../../../../utils/route-util';
 import { createProduct, fetchProductOptions } from '../../interface-adapters';
 import { buildProductCreateDto, validateRequiredFields } from '../../use-cases';
@@ -14,7 +14,7 @@ const ProductCreatePage = () => {
 
   const [productCode, setProductCode] = useState('');
   const [productName, setProductName] = useState('');
-  const [productList, setProductList] = useState<SelectOption[]>([]);
+  const [productList, setProductList] = useState<ProductSelectOption[]>([]);
   const [selectedProduct, setSelectedProduct] = useState('');
 
   useRequest(fetchProductOptions, {
@@ -69,7 +69,7 @@ const ProductCreatePage = () => {
     e.preventDefault();
   };
 
-  const roleHandleChange = (value: SingleValue<SelectOption>) => {
+  const roleHandleChange = (value: SingleValue<ProductSelectOption>) => {
     setSelectedProduct(value?.productCode ?? '');
   };
 

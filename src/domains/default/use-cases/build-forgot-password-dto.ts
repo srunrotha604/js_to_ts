@@ -2,11 +2,11 @@ export const buildForgotPasswordRequestDto = (email: string) => ({ email });
 
 export const buildConfirmCodeDto = (
   email: string,
-  keyCode: string,
+  token: string,
   otpCode: string
 ) => ({
   email,
-  keyCode,
+  token,
   otpCode,
 });
 

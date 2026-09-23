@@ -4,4 +4,8 @@ export interface ForgotPasswordResponse {
   viaSMSCode?: string;
   attempt?: number;
   message?: string;
+  token?: string;
+  smsToken?: string;
+  expirationInMinutes?: number;
+  forgotPasswordViaSMS?: boolean;
 }

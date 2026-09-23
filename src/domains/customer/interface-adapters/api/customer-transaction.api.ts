@@ -62,10 +62,7 @@ export const updateCustomerTransaction = async (
 export const deleteCustomerTransactions = async (
   data: Record<string, unknown>
 ) => {
-  const response = await HttpUtil.post(
-    ROUTE_API.operationCustomerDelete,
-    data
-  );
+  const response = await HttpUtil.post(ROUTE_API.operationCustomerDelete, data);
   return response?.data;
 };
 

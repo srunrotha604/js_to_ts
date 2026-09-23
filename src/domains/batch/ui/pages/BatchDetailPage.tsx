@@ -30,11 +30,11 @@ import {
   fetchCustomerTransactionList,
   useTransactionTabSelect,
 } from '../../../customer/interface-adapters';
-import { mapCustomerTransaction } from '../../../customer/use-cases';
 import CustomerBatchProcessModal from '../../../customer/ui/components/transaction-table/CustomerBatchProcessModal';
 import { TransactionLogsModal } from '../../../customer/ui/components/transaction-table/CustomerTransactionLogs';
 import CustomerTransactionSelect from '../../../customer/ui/components/transaction-table/CustomerTransactionSelect';
 import { CustomerDetailModal } from '../../../customer/ui/components/transaction-table/CustomerTransactionTable';
+import { mapCustomerTransaction } from '../../../customer/use-cases';
 import { getConfirmedMessageText } from '../../../customer/use-cases/get-confirm-message-text';
 import { actions } from '../../../customer/use-cases/workflow-actions';
 import type { BatchDetail, BatchDetailInfo } from '../../entities';

@@ -6,7 +6,7 @@ export const requestForgotPassword = (data: { email: string }) =>
 
 export const confirmForgotPasswordCode = (data: {
   email: string;
-  keyCode: string;
+  token: string;
   otpCode: string;
 }) => HttpUtil.post<ForgotPasswordResponse>(ROUTE_API.loginConfirmCode, data);
 

@@ -1,4 +1,4 @@
-import type { SelectOption } from '../../../@type/report';
+import type { ProductSelectOption } from '../../../@type/report';
 
 export interface ProductItem {
   transationCode?: string;
@@ -14,6 +14,6 @@ export interface ProductListResponse {
 }
 
 export interface ProductOptionsResponse {
-  options?: SelectOption[];
+  options?: ProductSelectOption[];
   message?: string;
 }

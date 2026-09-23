@@ -27,10 +27,7 @@ export const uploadBatchExcel = (
 export const submitBatchCustomerList = async (
   data: Record<string, unknown>
 ) => {
-  const response = await HttpUtil.post(
-    ROUTE_API.operationCustomerBatch,
-    data
-  );
+  const response = await HttpUtil.post(ROUTE_API.operationCustomerBatch, data);
   return response?.data;
 };
 
@@ -52,9 +49,6 @@ export const fetchBatchTransactionList = async (
 export const processBatchTransactions = async (
   data: Record<string, unknown>
 ) => {
-  const response = await HttpUtil.post(
-    ROUTE_API.operationCustomerBatch,
-    data
-  );
+  const response = await HttpUtil.post(ROUTE_API.operationCustomerBatch, data);
   return response?.data;
 };

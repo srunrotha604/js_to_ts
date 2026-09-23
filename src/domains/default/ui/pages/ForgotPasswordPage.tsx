@@ -47,25 +47,27 @@ const ForgotPasswordPage = () => {
     {
       manual: true,
       onSuccess: (res) => {
+        console.log('res?.status', res?.status);
         switch (res?.status) {
           case 200:
             setShowSendEmail(false);
             setSuccess(false);
             setConfirmCode('');
-            setConfirmKey(res?.data?.keyCode ?? '');
+            setConfirmKey(res?.data?.token ?? '');
             setConfirmCodeMessage(
               'Enter the code we sent to your email address at'
             );
             setAddressMessage(email);
             setPhoneNumber(res?.data?.phoneNumber ?? '');
             setViaSMSCode(res?.data?.viaSMSCode ?? '');
-            setShowSMSResend(false);
+            setShowSMSResend(res.data.forgotPasswordViaSMS || false);
             setInvalidFeedBack('');
             break;
           case 400:
             setShowSendEmail(true);
             setSuccess(false);
             setInvalidFeedBack(res?.data?.message ?? '');
+            toast.error(String(res?.data?.message ?? ''));
             break;
           case 403:
             toast.error(String(res?.data));
@@ -73,9 +75,6 @@ const ForgotPasswordPage = () => {
           default:
             navigate(ROUTE_PATH.notFound);
         }
-      },
-      onError: (mess) => {
-        console.log('Error', mess);
       },
     }
   );
@@ -169,7 +168,9 @@ const ForgotPasswordPage = () => {
     e: React.MouseEvent<HTMLButtonElement>
   ) => {
     if (validateRequiredFields([confirmCode])) {
-      runConfirmCode(buildConfirmCodeDto(email, confirmKey, confirmCode));
+      runConfirmCode(
+        buildConfirmCodeDto(email, confirmKey, confirmCode.replace(/\s/g, ''))
+      );
     }
     e.preventDefault();
   };
