@@ -41,7 +41,11 @@ const CostomerTransationSubmit = (props: CustomerTransationSubmitProps) => {
                           ...(data as CustomerTransationSubmitData),
                           ...formData,
                           productName,
-                          inputter: `${user?.firstName || '' + user?.lastName}`,
+                          inputter: `${
+                            user?.email ||
+                            user?.firstName ||
+                            '' + user?.lastName
+                          }`,
                           inputBranch: selectedBranch?.branchName,
                           inputCompany: selectedCompany?.companyName,
                           inputDateTime: (data as CustomerTransationSubmitData)
