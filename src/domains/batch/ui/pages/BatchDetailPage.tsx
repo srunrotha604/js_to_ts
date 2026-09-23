@@ -30,6 +30,7 @@ import {
   fetchCustomerTransactionList,
   useTransactionTabSelect,
 } from '../../../customer/interface-adapters';
+import { mapCustomerTransaction } from '../../../customer/use-cases';
 import CustomerBatchProcessModal from '../../../customer/ui/components/transaction-table/CustomerBatchProcessModal';
 import { TransactionLogsModal } from '../../../customer/ui/components/transaction-table/CustomerTransactionLogs';
 import CustomerTransactionSelect from '../../../customer/ui/components/transaction-table/CustomerTransactionSelect';
@@ -286,6 +287,7 @@ const BatchDetailPage = () => {
             ref={tabListRef}
             DetailModal={CustomerDetailModal}
             LogsModal={TransactionLogsModal}
+            mapItem={mapCustomerTransaction}
             url={`${ROUTE_API.operationCustomerBatch}/`}
             extraParams={`batchNumber=${key}`}
             onFetchSuccess={({

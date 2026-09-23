@@ -1,7 +1,11 @@
 import type { FileWithPath } from 'react-dropzone';
 import { HttpUtil } from '../../../../utils/http-util';
 import { ROUTE_API } from '../../../../utils/route-util';
-import type { CustomerListResponse } from '../../../customer/entities';
+import type {
+  CustomerListResponse,
+  CustomerRawListResponse,
+} from '../../../customer/entities';
+import { mapCustomerTransaction } from '../../../customer/use-cases';
 import type { BatchCustomerListResult } from '../../entities';
 
 export const uploadBatchExcel = (
@@ -33,12 +37,16 @@ export const submitBatchCustomerList = async (
 export const fetchBatchTransactionList = async (
   batchNumber: string,
   params: Record<string, unknown>
-) => {
-  const response = await HttpUtil.get<CustomerListResponse>(
+): Promise<CustomerListResponse | null> => {
+  const response = await HttpUtil.get<CustomerRawListResponse>(
     `${ROUTE_API.operationCustomerBatch}?batchNumber=${batchNumber}`,
     { params }
   );
-  return response?.data ?? null;
+  if (!response?.data) return null;
+  return {
+    ...response.data,
+    list: response.data.list?.map(mapCustomerTransaction),
+  };
 };
 
 export const processBatchTransactions = async (

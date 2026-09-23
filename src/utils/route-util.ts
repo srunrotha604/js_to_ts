@@ -93,7 +93,7 @@ const ROUTE_API = {
   operationCustomerDelete: '/api/v1/operation-customer/delete',
   operationCustomerDuplicate: '/api/v1/operation-customer/duplicate',
   operationCustomerCardConfirmation: '/operation-customer/card-confirmation',
-  operationCustomerBatch: '/operation-customer/batch',
+  operationCustomerBatch: '/api/v1/operation-customer/batch',
   operationCustomerBatchUpload: '/api/v1/operation-customer/batch/upload',
   exportOperationCustomer: '/export/operation-customer',
   operationProject: '/api/v1/operation-project',
