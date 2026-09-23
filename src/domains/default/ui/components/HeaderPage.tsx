@@ -105,6 +105,9 @@ const HeaderPage = () => {
                         Profile
                       </Link>
                       <div className="dropdown-divider" />
+                      <Link to={ROUTE_PATH.loginList} className="dropdown-item">
+                        Session
+                      </Link>
                       <Link to={ROUTE_PATH.contactUs} className="dropdown-item">
                         Contact Us
                       </Link>

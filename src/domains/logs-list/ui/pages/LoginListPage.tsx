@@ -11,7 +11,7 @@ import { buildFilterLogdDto } from '../../use-cases';
 const PAGE_SIZE = 10;
 
 const LoginListPage = () => {
-  document.title = 'E-CHANNEL PORTAL | login logs';
+  document.title = 'E-CHANNEL PORTAL | session logs';
 
   const [search, setSearch] = useState('');
   const [pageNum, setPageNum] = useState(1);
@@ -58,7 +58,7 @@ const LoginListPage = () => {
           <div className="page-header d-print-none">
             <div className="row align-items-center">
               <div className="col">
-                <h2 className="page-title">Login Logs</h2>
+                <h2 className="page-title">Session Logs</h2>
               </div>
             </div>
           </div>

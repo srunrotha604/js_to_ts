@@ -273,7 +273,7 @@ const CustomerDeletePage = () => {
                   <td className="text-muted">
                     {item.sureName + ' ' + item.firstName}
                   </td>
-                  <td className="text-muted">{item.projectCode}</td>
+                  <td className="text-muted">{item.projectName}</td>
                   <td className="text-muted">{item.productCode}</td>
                   <td className="text-muted">{item.inputter}</td>
                   <td className="text-muted">{item.inputBranch}</td>

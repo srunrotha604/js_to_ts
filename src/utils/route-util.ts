@@ -1,7 +1,7 @@
 const ROUTE_PATH = {
   root: '/',
   login: '/login',
-  loginList: '/logs-list',
+  loginList: '/session',
   dashboard: '/dashboard',
   forgotPassword: '/forgot-password',
   error404: '/error404',
@@ -90,11 +90,11 @@ const ROUTE_API = {
   operationCustomerProductByCode: (code: string | number) =>
     `/operation-customer/product/${code}`,
   operationCustomer: '/api/v1/operation-customer',
-  operationCustomerDelete: '/operation-customer/delete',
+  operationCustomerDelete: '/api/v1/operation-customer/delete',
   operationCustomerDuplicate: '/api/v1/operation-customer/duplicate',
   operationCustomerCardConfirmation: '/operation-customer/card-confirmation',
   operationCustomerBatch: '/operation-customer/batch',
-  operationCustomerBatchUpload: '/operation-customer/batch/upload',
+  operationCustomerBatchUpload: '/api/v1/operation-customer/batch/upload',
   exportOperationCustomer: '/export/operation-customer',
   operationProject: '/api/v1/operation-project',
   operationProjectByKey: (key: string | number) =>
