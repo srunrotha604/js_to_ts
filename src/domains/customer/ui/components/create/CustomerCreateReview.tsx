@@ -93,7 +93,9 @@ const CustomerCreateReview = (props: CustomerCreateReviewProps) => {
                         ...formData,
                         productName,
                         inputter: `${
-                          user?.firstName || '' + user?.lastName || ''
+                          user?.email ||
+                          `${user?.firstName || '' + user?.lastName || ''}` ||
+                          ''
                         }`,
                         inputBranch: selectedBranch?.branchName,
                         inputCompany: selectedCompany?.companyName,

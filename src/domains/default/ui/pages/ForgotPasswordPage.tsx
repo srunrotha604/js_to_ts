@@ -74,6 +74,9 @@ const ForgotPasswordPage = () => {
             navigate(ROUTE_PATH.notFound);
         }
       },
+      onError: (mess) => {
+        console.log('Error', mess);
+      },
     }
   );
 

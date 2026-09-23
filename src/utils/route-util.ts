@@ -81,7 +81,7 @@ const ROUTE_API = {
   sessionStream: '/api/v1/auth/session-stream',
   loginRefreshToken: '/api/v1/auth/refresh',
   loginChangePassword: '/login/change-password',
-  loginForgotPassword: '/login/forgot-password',
+  loginForgotPassword: '/api/v1/auth/forgot-password',
   loginConfirmCode: '/login/confirm-code',
   loginConfirmChangePassword: '/login/confirm-change-password',
   loginViaSms: '/Login/via-sms',

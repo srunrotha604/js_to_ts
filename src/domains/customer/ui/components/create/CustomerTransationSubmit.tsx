@@ -43,8 +43,8 @@ const CostomerTransationSubmit = (props: CustomerTransationSubmitProps) => {
                           productName,
                           inputter: `${
                             user?.email ||
-                            user?.firstName ||
-                            '' + user?.lastName
+                            `${user?.firstName || '' + user?.lastName || ''}` ||
+                            ''
                           }`,
                           inputBranch: selectedBranch?.branchName,
                           inputCompany: selectedCompany?.companyName,
