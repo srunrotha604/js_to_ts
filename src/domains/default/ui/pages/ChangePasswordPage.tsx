@@ -57,7 +57,7 @@ const ChangePasswordPage = () => {
           toast.error(String(res?.data));
           break;
         default:
-          navigate(ROUTE_PATH.notFound);
+          navigate(ROUTE_PATH.error404);
       }
     },
   });
@@ -80,7 +80,7 @@ const ChangePasswordPage = () => {
           toast.error(String(res?.data));
           break;
         default:
-          navigate(ROUTE_PATH.notFound);
+          navigate(ROUTE_PATH.error404);
       }
     },
   });

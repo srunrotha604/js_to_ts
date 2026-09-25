@@ -6,7 +6,6 @@ const ROUTE_PATH = {
   forgotPassword: '/forgot-password',
   error404: '/error404',
   error500: '/error500',
-  notFound: '/404',
   profile: '/dashboard/profile',
   changePassword: '/dashboard/change-password',
   switchBranch: '/dashboard/switch-branch',
