@@ -142,7 +142,7 @@ const ROUTE_API = {
   applicationVersionActive: '/application-version/active',
   log: '/log',
   operationLog: '/api/v1/operation-customer/log',
-  logContactUs: '/log/contact-us',
+  logContactUs: '/api/v1/log/contact-us',
   customerReport: '/api/v1/export/operation-customer/filter',
 };
 

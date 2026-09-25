@@ -11,7 +11,7 @@ import DateRangeSelector from '../../../../components/form/DateRangeSelector';
 import ProjectSelect from '../../../../components/form/ProjectSelect';
 import { useAuth } from '../../../../context/AuthContext';
 import useMessage from '../../../../hooks/useMessage';
-import { getStartOfMonthDate } from '../../../../utils/format-day';
+import { formatDay, getStartOfMonthDate } from '../../../../utils/format-day';
 import { STATUS, typeOptions } from '../../../customer/entities';
 import ComponentStatus from '../../../customer/ui/components/ComponentStatus';
 import type { CustomerReportItem } from '../../entities';
@@ -411,7 +411,7 @@ const CustomerReportPage = () => {
                     </td>
                     <td className="text-muted">{item.projectCode}</td>
                     <td className="text-muted">{item.productCode}</td>
-                    <td className="text-muted">{item.inputDateTime}</td>
+                    <td className="text-muted">{formatDay(item.inputDateTime)}</td>
                     <td className="text-muted">{item.inputter}</td>
                     <td className="text-muted">{item.inputBranch}</td>
                     <td className="text-muted">
