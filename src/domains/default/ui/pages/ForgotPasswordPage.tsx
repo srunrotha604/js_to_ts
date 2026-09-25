@@ -150,7 +150,7 @@ const ForgotPasswordPage = () => {
             setResetSuccess(true);
             break;
           case 400:
-            toast.error(res?.data?.message ?? '');
+            toast.error(res?.data?.error ?? res?.data?.message ?? '');
             break;
           case 403:
             toast.error(String(res?.data));
@@ -158,9 +158,6 @@ const ForgotPasswordPage = () => {
           default:
             navigate(ROUTE_PATH.notFound);
         }
-      },
-      onError(e, params) {
-        console.log(e, params);
       },
     }
   );
