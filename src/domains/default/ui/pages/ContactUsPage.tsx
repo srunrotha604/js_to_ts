@@ -24,8 +24,12 @@ const ContactUsPage = () => {
   const onSubmit = async (data: ContactUsFormValues) => {
     try {
       openSpinner();
-      await submitContactUs(data);
-      setSuccess(true);
+      const response = await submitContactUs(data);
+      if (response?.status && response.status >= 200 && response.status < 300) {
+        setSuccess(true);
+      } else {
+        showErrorResponseMessage(response);
+      }
     } catch (error) {
       showErrorResponseMessage(error);
     } finally {
