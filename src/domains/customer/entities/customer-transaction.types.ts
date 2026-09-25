@@ -15,10 +15,6 @@ export interface CustomerListResponse {
   total?: TransactionTotalCounts[];
   totalDocs?: number;
 }
-
-// /api/v1/operation-customer responds with typo'd field names (transationCode,
-// transationNumber, dateofBirth) and stringified booleans for `deleted` —
-// mapCustomerTransaction() normalizes this into CustomerTransaction.
 export type CustomerTransactionRaw = Omit<
   CustomerTransaction,
   'transactionCode' | 'transactionNumber' | 'dateOfBirth' | 'deleted'

@@ -16,10 +16,6 @@ const ProjectPage = () => {
   const navigate = useNavigate();
   const [arrList, setArrList] = useState<ProjectItem[]>([]);
   const [query, setQuery] = useState('');
-  // const [getApplicationName, setGetApplicationName] = useState('');
-  // const [getApplicationCode, setGetApplicationCode] = useState('');
-  // const [getStatus, setGetStatus] = useState('');
-
   const { loading, refresh: refreshList } = useRequest(fetchProjectList, {
     onSuccess: (res) => {
       switch (res?.status) {
@@ -37,25 +33,15 @@ const ProjectPage = () => {
       }
     },
   });
-
-  // const handleViewClick = (item: ProjectItem) => {
-  //   setGetApplicationName(item.applicationName ?? '');
-  //   setGetApplicationCode(item.applicationCode ?? '');
-  //   setGetStatus(item.status ?? '');
-  // };
-
   const createNewHandleClick = () => {
     navigate(ROUTE_PATH.projectCreate);
   };
-
   const search = query.toLowerCase();
   const filteredList = arrList.filter((item) =>
     search === '' ? true : item.projectName?.toLowerCase().includes(search)
   );
-
   const { pageCount, pagedItems, handlePageClick, nf } =
     useListPagination(filteredList);
-
   return (
     <React.Fragment>
       {loading && <Loading value={loading} />}
@@ -235,45 +221,7 @@ const ProjectPage = () => {
           </div>
         </div>
       </div>
-      {/* <div
-        className="offcanvas offcanvas-start"
-        tabIndex={-1}
-        id="offcanvasView"
-      >
-        <div className="offcanvas-header">
-          <h2 className="offcanvas-title" id="offcanvasStartLabel">
-            View details
-          </h2>
-          <button
-            type="button"
-            className="btn-close text-reset"
-            data-bs-dismiss="offcanvas"
-            aria-label="Close"
-          />
-        </div>
-        <div className="offcanvas-body">
-          <div className="text-left">
-            <table className="table table-hover">
-              <tbody>
-                <tr>
-                  <td>Name :</td>
-                  <td className="text-muted">{getApplicationName}</td>
-                </tr>
-                <tr>
-                  <td>Code :</td>
-                  <td className="text-muted">{getApplicationCode}</td>
-                </tr>
-                <tr>
-                  <td>Status :</td>
-                  <td className="text-muted">{getStatus}</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </div> */}
     </React.Fragment>
   );
 };
-
 export default ProjectPage;

@@ -10,7 +10,6 @@ export interface BuildProfileUpdateDtoInput {
   // address2: string;
   // otherContact: string;
 }
-
 export const buildProfileUpdateDto = ({
   userCode,
   email1,

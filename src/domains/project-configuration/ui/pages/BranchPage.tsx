@@ -15,7 +15,6 @@ import {
   useListPagination,
 } from '../../interface-adapters';
 import { buildBranchAdminAssignDto } from '../../use-cases';
-
 const BranchPage = () => {
   document.title = 'E-CHANNEL PORTAL | Branch';
   const navigate = useNavigate();
@@ -24,9 +23,7 @@ const BranchPage = () => {
   const [selectedAdminValue, setSelectedAdminValue] = useState<string[]>([]);
   const [selectedBranch, setSelectedBranch] = useState('');
   const [query, setQuery] = useState('');
-
   const { modalRef, openModal, closeModal } = useModal();
-
   const { loading, refresh: refreshList } = useRequest(fetchBranchList, {
     onSuccess: (res) => {
       switch (res?.status) {
@@ -45,11 +42,9 @@ const BranchPage = () => {
       }
     },
   });
-
   const createNewHandleClick = () => {
     navigate(ROUTE_PATH.branchCreate);
   };
-
   const { run: runAssignBranchAdmin, loading: assignLoading } = useRequest(
     assignBranchAdmin,
     {
@@ -73,7 +68,6 @@ const BranchPage = () => {
       },
     }
   );
-
   const funcButtonHandleClickExecute = (
     e: React.MouseEvent<HTMLButtonElement>
   ) => {
@@ -82,26 +76,21 @@ const BranchPage = () => {
     );
     e.preventDefault();
   };
-
   const userHandleChange = (value: MultiValue<SelectOption> | null) => {
     setSelectedAdminValue(
       Array.isArray(value) ? value.map((x) => x.value) : []
     );
   };
-
   const filteredList = arrList.filter((item) => {
     const search = query.toLowerCase().trim();
-
     return search === ''
       ? true
       : item.branchCode?.toLowerCase()?.includes(search) ||
           item.branchName?.toLowerCase()?.includes(search) ||
           item.admin?.toLowerCase()?.includes(search);
   });
-
   const { pageCount, pagedItems, handlePageClick, nf, setCurrentPage } =
     useListPagination(filteredList);
-
   return (
     <React.Fragment>
       <Modal ref={modalRef} title={'Admin User'} size="xl">
@@ -124,7 +113,6 @@ const BranchPage = () => {
             <div className="invalid-feedback">Please select User!</div>
           </div>
         </div>
-
         <div className="form-footer">
           <button
             type="submit"
@@ -252,7 +240,6 @@ const BranchPage = () => {
             </div>
           </div>
         </div>
-
         <div className="page-body">
           <div className="container-xl">
             <div className="row align-items-center mb-2">
@@ -436,5 +423,4 @@ const BranchPage = () => {
     </React.Fragment>
   );
 };
-
 export default BranchPage;

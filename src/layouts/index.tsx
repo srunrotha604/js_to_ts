@@ -5,7 +5,6 @@ import ErrorPage from '../domains/default/ui/components/ErrorPage';
 import FooterPage from '../domains/default/ui/components/FooterPage';
 import HeaderPage from '../domains/default/ui/components/HeaderPage';
 import SideBarPage from '../domains/default/ui/components/SideBarPage';
-
 export default function Layout() {
   return (
     <>

@@ -13,17 +13,14 @@ import {
   fetchProductList,
   useListPagination,
 } from '../../interface-adapters';
-
 const ProductPage = () => {
   document.title = 'E-CHANNEL PORTAL | product';
   const navigate = useNavigate();
-
   const { modalRef, closeModal, openModal } = useModal();
   const [arrList, setArrList] = useState<ProductItem[]>([]);
   const [arrDetails, setArrDetails] = useState<ProductItem>({});
   const [query, setQuery] = useState('');
   const [transactionCode, setTransationCode] = useState('');
-
   const { loading, refresh: refreshList } = useRequest(fetchProductList, {
     onSuccess: (res) => {
       switch (res?.status) {
@@ -41,11 +38,9 @@ const ProductPage = () => {
       }
     },
   });
-
   const handleViewClick = (item: ProductItem) => {
     setArrDetails(item);
   };
-
   const { run: runDeleteProduct } = useRequest(deleteProduct, {
     manual: true,
     onSuccess: (res) => {
@@ -66,23 +61,18 @@ const ProductPage = () => {
       }
     },
   });
-
   const deleteRecordHandleClick = () => {
     runDeleteProduct({ transactionCode });
   };
-
   const createNewHandleClick = () => {
     navigate(ROUTE_PATH.productCreate);
   };
-
   const search = query.toLowerCase();
   const filteredList = arrList.filter((item) =>
     search === '' ? true : item.productName?.toLowerCase().includes(search)
   );
-
   const { pageCount, pagedItems, handlePageClick, nf } =
     useListPagination(filteredList);
-
   return (
     <React.Fragment>
       {loading && <Loading value={loading} />}

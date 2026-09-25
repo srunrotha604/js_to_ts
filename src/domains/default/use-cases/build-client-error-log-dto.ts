@@ -1,10 +1,11 @@
+import { STORAGE_KEY } from '../../../utils/storage-key';
+
 export interface BuildClientErrorLogDtoContext {
   email?: string;
   selectedBranchLabel?: string;
   selectedCompanyLabel?: string;
   permission: unknown;
 }
-
 export const buildClientErrorLogDto = (
   error: Error,
   context: BuildClientErrorLogDtoContext
@@ -14,7 +15,7 @@ export const buildClientErrorLogDto = (
   message: error.message,
   body: JSON.stringify({
     error: error.stack,
-    access: localStorage.getItem('e_chanel_storage'),
+    access: localStorage.getItem(STORAGE_KEY),
     permission: context.permission,
     selectedBranch: context.selectedBranchLabel || null,
     selectedCompany: context.selectedCompanyLabel || null,

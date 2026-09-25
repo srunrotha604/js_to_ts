@@ -6,7 +6,6 @@ export interface BuildUserCreateDtoInput {
   branch: string;
   phone: string;
 }
-
 export const buildUserCreateDto = ({
   email,
   givenName,

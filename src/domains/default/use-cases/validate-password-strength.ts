@@ -1,5 +1,4 @@
 import type { SecurityPolicy } from '../entities';
-
 export const DEFAULT_SECURITY_POLICY: SecurityPolicy = {
   minimumPasswordLength: 14,
   requireUppercase: true,
@@ -7,12 +6,10 @@ export const DEFAULT_SECURITY_POLICY: SecurityPolicy = {
   requireDigit: true,
   requireSpecialCharacter: true,
 };
-
 export interface PasswordRequirementCheck {
   label: string;
   met: boolean;
 }
-
 export const getPasswordRequirementChecks = (
   password: string,
   policy: SecurityPolicy = DEFAULT_SECURITY_POLICY
@@ -24,7 +21,6 @@ export const getPasswordRequirementChecks = (
       met: password.length >= minLength,
     },
   ];
-
   if (policy.requireUppercase) {
     checks.push({
       label: 'One uppercase letter (A-Z)',
@@ -49,9 +45,7 @@ export const getPasswordRequirementChecks = (
 
   return checks;
 };
-
 export type PasswordStrengthLabel = 'WEAK' | 'FAIR' | 'GOOD' | 'STRONG';
-
 export const getPasswordStrengthLabel = (
   checks: PasswordRequirementCheck[]
 ): PasswordStrengthLabel => {
@@ -62,7 +56,6 @@ export const getPasswordStrengthLabel = (
   if (ratio >= 0.4) return 'FAIR';
   return 'WEAK';
 };
-
 export const validatePasswordStrength = (
   password: string,
   policy: SecurityPolicy = DEFAULT_SECURITY_POLICY
@@ -80,11 +73,9 @@ export const buildPasswordPolicyMessage = (
   if (policy.requireLowercase) requirements.push('1 lowercase letter');
   if (policy.requireDigit) requirements.push('1 number');
   if (policy.requireSpecialCharacter) requirements.push('1 special character');
-
   const minLength = policy.minimumPasswordLength ?? 8;
   const requirementText = requirements.length
     ? `, including at least ${requirements.join(', ')}`
     : '';
-
   return `Password must have at least ${minLength} characters${requirementText}`;
 };

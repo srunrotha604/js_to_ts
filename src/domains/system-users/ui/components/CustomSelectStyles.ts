@@ -1,6 +1,5 @@
 import type { StylesConfig } from 'react-select';
 import type { SelectOption } from '../../../../@type/report';
-
 export const customSelectStyles: StylesConfig<SelectOption, false> = {
   control: (provided, state) => ({
     ...provided,
@@ -19,7 +18,6 @@ export const customSelectStyles: StylesConfig<SelectOption, false> = {
   valueContainer: (provided) => ({
     ...provided,
   }),
-
   input: (provided) => ({
     ...provided,
   }),

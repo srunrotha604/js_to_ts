@@ -1,42 +1,13 @@
-import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../../../context/AuthContext';
 import { contactUs } from '../../../../utils/contact';
 import { ROUTE_PATH } from '../../../../utils/route-util';
-// import { fetchCurrentVersion } from '../../../version-history/interface-adapters';
 const FooterPage = () => {
   const navigate = useNavigate();
-  // const [version, setVersion] = useState('');
-  const { user, version, application } = useAuth();
+  const { version, application } = useAuth();
   const VersionButton = () => {
     navigate(ROUTE_PATH.version);
   };
-
-  const loadVersion = async () => {
-    try {
-      // const res = await fetchCurrentVersion();
-      // const newVersion = res?.data?.version || '';
-      // setVersion(newVersion);
-    } catch (error) {
-      console.error('Error fetching version:', error);
-    }
-  };
-  useEffect(() => {
-    if (user) {
-      loadVersion();
-    }
-
-    const handleVersionUpdated = () => {
-      if (user) loadVersion();
-    };
-
-    window.addEventListener('versionUpdated', handleVersionUpdated);
-
-    return () => {
-      window.removeEventListener('versionUpdated', handleVersionUpdated);
-    };
-  }, [user]);
-
   return (
     <footer className="footer footer-transparent d-print-none py-1">
       <div className="container-xl">

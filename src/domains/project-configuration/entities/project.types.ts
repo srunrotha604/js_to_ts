@@ -6,7 +6,6 @@ export interface ProjectItem {
   inputter: string;
   inputDateTime: string;
 }
-
 export interface ProjectListResponse {
   list?: ProjectItem[];
   message?: string;

@@ -11,7 +11,6 @@ export interface DataEntryItem {
   status?: string;
   deleted?: boolean;
 }
-
 export interface DataEntryListResponse {
   list?: DataEntryItem[];
   message?: string;

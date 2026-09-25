@@ -5,7 +5,6 @@ export interface ActionItem {
   confirm?: boolean;
   reject?: boolean;
 }
-
 export const actions: Record<string, ActionItem[]> = {
   Draft: [
     {

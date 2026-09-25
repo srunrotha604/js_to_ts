@@ -1,4 +1,4 @@
-const STORAGE_KEY = 'e_chanel_storage';
+import { STORAGE_KEY } from '../../../utils/storage-key';
 
 export const applyBranchSwitch = (company: string, branch: string): void => {
   const storedValue = localStorage.getItem(STORAGE_KEY) || '';

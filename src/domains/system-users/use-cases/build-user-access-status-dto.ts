@@ -1,5 +1,4 @@
 import { serializeCsvList } from './serialize-csv-list';
-
 export const buildUserAccessStatusDto = (
   transactionCode: string,
   accessStatus: string[],

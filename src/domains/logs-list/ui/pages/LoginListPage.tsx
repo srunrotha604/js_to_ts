@@ -7,17 +7,13 @@ import PaginationComponent from '../../../../components/paginations/PaginationCo
 import type { LogData } from '../../entities';
 import { getLoginLogs } from '../../interface-adapters';
 import { buildFilterLogdDto } from '../../use-cases';
-
 const PAGE_SIZE = 10;
-
 const LoginListPage = () => {
   document.title = 'E-CHANNEL PORTAL | session logs';
-
   const [search, setSearch] = useState('');
   const [pageNum, setPageNum] = useState(1);
   const [totalDocs, setTotalDocs] = useState(0);
   const [data, setData] = useState<LogData[]>([]);
-
   const { loading, run: getList } = useRequest(
     (params: { pageNumber: number; searchValue: string }) =>
       getLoginLogs(
@@ -31,25 +27,21 @@ const LoginListPage = () => {
       },
     }
   );
-
   const { run: debouncedSearch } = useDebounceFn(
     (value: string) => getList({ pageNumber: 1, searchValue: value }),
     { wait: 400 }
   );
-
   const onSearchChange = (e: ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     setSearch(value);
     setPageNum(1);
     debouncedSearch(value);
   };
-
   const handlePageChange = ({ selected }: { selected: number }) => {
     const nextPage = selected + 1;
     setPageNum(nextPage);
     getList({ pageNumber: nextPage, searchValue: search });
   };
-
   return (
     <>
       {loading && <Loading value={loading} />}
@@ -63,13 +55,11 @@ const LoginListPage = () => {
             </div>
           </div>
         </div>
-
         <div className="page-body">
           <div className="container-xl">
             <div className="row align-items-center mb-2">
               <SearchBox onChange={onSearchChange} />
             </div>
-
             <div className="row row-cards">
               <div className="col-12">
                 <div className="card">
@@ -147,5 +137,4 @@ const LoginListPage = () => {
     </>
   );
 };
-
 export default LoginListPage;

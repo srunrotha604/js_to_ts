@@ -6,18 +6,15 @@ import Loading from '../../../../components/Loading';
 import { ROUTE_PATH } from '../../../../utils/route-util';
 import type { UserRoleItem } from '../../entities';
 import { deleteUserRole, fetchUserRoleList } from '../../interface-adapters';
-
 const UserRolePage = () => {
   document.title = 'E-CHANNEL PORTAL | user';
   const navigate = useNavigate();
   const params = useParams<{ key: string }>();
-
   const [arrList, setArrList] = useState<UserRoleItem[]>([]);
   const [getKey, setGetKey] = useState('');
   const [getStatus, setStatus] = useState('');
   const [getApplicationName, setApplicationName] = useState('');
   const [getRoleName, setRoleName] = useState('');
-
   const { loading, refresh: refreshList } = useRequest(
     () => fetchUserRoleList(params.key || ''),
     {
@@ -38,7 +35,6 @@ const UserRolePage = () => {
       },
     }
   );
-
   const { run: runDeleteUserRole, loading: deleteLoading } = useRequest(
     deleteUserRole,
     {
@@ -61,7 +57,6 @@ const UserRolePage = () => {
       },
     }
   );
-
   const funcRemoveHandleClickExecute = () => {
     runDeleteUserRole({ key: getKey });
   };

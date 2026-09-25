@@ -7,6 +7,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { refreshToken } from '../utils/http-util';
 import { ROUTE_PATH } from '../utils/route-util';
+import { STORAGE_KEY } from '../utils/storage-key';
 
 interface JwtPayload {
   exp?: number;
@@ -37,7 +38,7 @@ const AxiosInterceptor = ({ children }: AxiosInterceptorProps) => {
     };
 
     const checkTokenExpiry = () => {
-      const e_chanel_storage = localStorage.getItem('e_chanel_storage');
+      const e_chanel_storage = localStorage.getItem(STORAGE_KEY);
       if (!e_chanel_storage) return;
       try {
         const parsed = JSON.parse(e_chanel_storage);
@@ -50,7 +51,7 @@ const AxiosInterceptor = ({ children }: AxiosInterceptorProps) => {
           const now = new Date();
           if (expiryDate <= now) {
             toast.error('Your session has expired. Please log in again.');
-            localStorage.removeItem('e_chanel_storage');
+            localStorage.removeItem(STORAGE_KEY);
             navigate(ROUTE_PATH.logout, {
               replace: true,
               state: { from: location },
@@ -60,7 +61,7 @@ const AxiosInterceptor = ({ children }: AxiosInterceptorProps) => {
       } catch (err) {
         console.error('Token parsing/decoding failed:', err);
         toast.error('Authentication error. Please log in again.');
-        localStorage.removeItem('e_chanel_storage');
+        localStorage.removeItem(STORAGE_KEY);
         navigate(ROUTE_PATH.logout, {
           replace: true,
           state: { from: location },
@@ -79,7 +80,7 @@ const AxiosInterceptor = ({ children }: AxiosInterceptorProps) => {
           'Bearer ' + tokenObj.token;
         return Promise.resolve();
       } catch (error) {
-        localStorage.removeItem('e_chanel_storage');
+        localStorage.removeItem(STORAGE_KEY);
         toast.error('Your session has expired. Please log in again.');
         navigate(ROUTE_PATH.logout, {
           replace: true,

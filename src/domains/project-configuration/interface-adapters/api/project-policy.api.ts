@@ -5,20 +5,16 @@ import type {
   ProjectPolicyListResponse,
   ProjectPolicyOptionResponse,
 } from '../../entities';
-
 export const fetchProjectPolicyList = (projectKey: string) =>
   HttpUtil.get<ProjectPolicyListResponse>(
     ROUTE_API.operationProjectPolicyByKey(projectKey)
   );
-
 export const deleteProjectPolicy = (data: { transationCode: string }) =>
   HttpUtil.delete<MessageResponse>(ROUTE_API.operationProjectPolicy, data);
-
 export const fetchProjectPolicyOptions = () =>
   HttpUtil.get<ProjectPolicyOptionResponse>(
     ROUTE_API.coreSystemOperationPolicy
   );
-
 export const createProjectPolicy = (data: {
   projectFamily?: string;
   policyCode: string;

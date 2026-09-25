@@ -15,6 +15,7 @@ import type {
 import { openSessionStream } from '../domains/default/interface-adapters';
 import { HttpUtil } from '../utils/http-util';
 import { ROUTE_API, ROUTE_PATH } from '../utils/route-util';
+import { STORAGE_KEY } from '../utils/storage-key';
 import ModuleContextProvider from './module/ModuleContext';
 
 const logoutHandlers = new Set<() => void>();
@@ -109,7 +110,7 @@ const AuthContextProvider = ({ children }: { children?: ReactNode }) => {
     closeSessionStreamRef.current?.();
     closeSessionStreamRef.current = null;
 
-    const e_chanel_storage = localStorage.getItem('e_chanel_storage');
+    const e_chanel_storage = localStorage.getItem(STORAGE_KEY);
     const storedToken = e_chanel_storage
       ? JSON.parse(e_chanel_storage).token
       : null;
@@ -117,7 +118,7 @@ const AuthContextProvider = ({ children }: { children?: ReactNode }) => {
 
     closeSessionStreamRef.current = openSessionStream(() => {
       toast.error('Your session has expired. Please log in again.');
-      localStorage.removeItem('e_chanel_storage');
+      localStorage.removeItem(STORAGE_KEY);
       clearUser();
       navigate(ROUTE_PATH.logout, { replace: true });
     });
@@ -128,7 +129,7 @@ const AuthContextProvider = ({ children }: { children?: ReactNode }) => {
       setLoading(true);
       const responseUser = await fetchUserInfo();
       const responsePermission = await fetchPermissionAccess();
-      const e_chanel_storage = localStorage.getItem('e_chanel_storage');
+      const e_chanel_storage = localStorage.getItem(STORAGE_KEY);
       setToken(e_chanel_storage ? JSON.parse(e_chanel_storage) : null);
       const tempCompany = responseUser?.data.company;
       const tempUser = responseUser?.data?.userProfile;

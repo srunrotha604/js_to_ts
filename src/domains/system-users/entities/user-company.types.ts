@@ -4,7 +4,6 @@ export interface UserCompanyDetail {
   surName?: string;
   userName?: string;
 }
-
 export interface UserCompanyListItem {
   uuid?: string;
   company?: string;
@@ -12,7 +11,6 @@ export interface UserCompanyListItem {
   active?: boolean;
   default?: boolean;
 }
-
 export interface UserCompanyResponse {
   detail?: UserCompanyDetail;
   list?: UserCompanyListItem[];

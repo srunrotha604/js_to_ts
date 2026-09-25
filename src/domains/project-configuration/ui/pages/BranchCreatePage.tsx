@@ -5,11 +5,9 @@ import { toast } from 'react-toastify';
 import { ROUTE_PATH } from '../../../../utils/route-util';
 import { createBranch } from '../../interface-adapters';
 import { buildBranchCreateDto, validateRequiredFields } from '../../use-cases';
-
 const BranchCreatePage = () => {
   document.title = 'E-CHANNEL PORTAL | branch | create';
   const navigate = useNavigate();
-
   const [branchCode, setBranchCode] = useState('');
   const [branchName, setBranchName] = useState('');
   const [constacts, setContacts] = useState('');
@@ -20,7 +18,6 @@ const BranchCreatePage = () => {
   const [website, setWebsite] = useState('');
   const [address, setAddress] = useState('');
   const params = useParams<{ key: string }>();
-
   const { run: runCreateBranch, loading: createLoading } = useRequest(
     createBranch,
     {
@@ -42,7 +39,6 @@ const BranchCreatePage = () => {
       },
     }
   );
-
   const funcButtonHandleClickExecute = (
     e: React.MouseEvent<HTMLButtonElement>
   ) => {
@@ -63,7 +59,6 @@ const BranchCreatePage = () => {
     }
     e.preventDefault();
   };
-
   const branchCodeHandleChange = (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
@@ -101,11 +96,9 @@ const BranchCreatePage = () => {
   ) => {
     setAddress(event.target.value);
   };
-
   const goBackHandleClick = () => {
     navigate(ROUTE_PATH.branch);
   };
-
   return (
     <React.Fragment>
       <div className="page-wrapper">

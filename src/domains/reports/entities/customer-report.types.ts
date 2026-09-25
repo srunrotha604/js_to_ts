@@ -12,7 +12,6 @@ export interface CustomerReportItem {
   status?: string;
   deleted?: boolean;
 }
-
 export interface CustomerReportListResponse {
   list?: CustomerReportItem[];
 }

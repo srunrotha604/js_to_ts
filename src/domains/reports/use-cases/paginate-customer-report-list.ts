@@ -6,6 +6,5 @@ export const paginateCustomerReportList = <T>(
   const total = list.length;
   const startIndex = (pageNumber - 1) * pageSize;
   const endIndex = startIndex + pageSize;
-
   return { items: list.slice(startIndex, endIndex), total };
 };

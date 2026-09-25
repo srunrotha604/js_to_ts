@@ -25,10 +25,8 @@ import {
 
 const UserReportPage = () => {
   document.title = 'Report | User report';
-
   const { hasPermissionAccessTransaction, company } = useAuth();
   const [data, setData] = useState<UserReportItem[] | null>(null);
-
   const [status, setStatus] = useState<SelectOption[]>([]);
   const [rowPerPage, setRowPerPage] = useState(25);
   const [pageNum, setPageNum] = useState(1);
@@ -42,22 +40,18 @@ const UserReportPage = () => {
     startDate: null,
     endDate: null,
   });
-
   const onDateChange = (newDate: {
     startDate: Date | null;
     endDate: Date | null;
   }) => {
     setDate(newDate);
   };
-
   useEffect(() => {
     if (company) {
       setBranch(deriveBranchOptions(company));
     }
   }, []);
-
   useEffect(() => {}, [hasPermissionAccessTransaction]);
-
   const statusOptions = useMemo(
     () => [
       {
@@ -73,7 +67,6 @@ const UserReportPage = () => {
     ],
     [hasPermissionAccessTransaction]
   );
-
   const { loading, run: getList } = useRequest(
     async ({
       pageNumber,
@@ -102,9 +95,7 @@ const UserReportPage = () => {
       },
     }
   );
-
   const { showErrorResponseMessage } = useMessage();
-
   const { loading: exportLoading, run: exportList } = useRequest(
     async () => {
       const response = await exportUserReportList(
@@ -120,15 +111,12 @@ const UserReportPage = () => {
       },
     }
   );
-
   const tableRef = useRef<HTMLDivElement | null>(null);
-
   const resetTableScroll = (position = 0) => {
     if (tableRef.current) {
       tableRef.current.scrollTop = position;
     }
   };
-
   const isFilterAble = date?.startDate && date?.endDate;
   const [isFieldDirty, setIsFieldDirty] = useState(false);
 
@@ -373,9 +361,7 @@ const UserReportPage = () => {
     </div>
   );
 };
-
 const customSelectStyle = {
   ...selectCustomStyles,
 };
-
 export default UserReportPage;

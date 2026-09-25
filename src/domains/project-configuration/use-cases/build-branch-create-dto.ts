@@ -9,7 +9,6 @@ export interface BuildBranchCreateDtoInput {
   website: string;
   address: string;
 }
-
 export const buildBranchCreateDto = ({
   branchCode,
   branchName,

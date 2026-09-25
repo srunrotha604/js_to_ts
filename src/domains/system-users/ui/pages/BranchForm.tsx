@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Select from 'react-select';
 import { toast } from 'react-toastify';
@@ -209,7 +209,6 @@ const BranchForm = () => {
                     />
                   </div>
                 </div>
-
                 <div className="col-auto ms-auto d-print-none"></div>
                 <div className="card-table table-responsive">
                   <table className="table table-vcenter table-light">
@@ -278,5 +277,4 @@ const BranchForm = () => {
     </>
   );
 };
-
 export default BranchForm;

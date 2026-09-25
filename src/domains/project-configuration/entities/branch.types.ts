@@ -1,5 +1,4 @@
 import type { SelectOption } from '../../../@type/report';
-
 export interface BranchItem {
   transactionCode?: string;
   branchCode?: string;
@@ -15,7 +14,6 @@ export interface BranchItem {
   adminValue?: string[];
   status?: string;
 }
-
 export interface BranchListResponse {
   list?: BranchItem[];
   user?: SelectOption[];

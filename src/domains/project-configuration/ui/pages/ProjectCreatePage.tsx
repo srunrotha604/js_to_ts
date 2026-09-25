@@ -5,13 +5,10 @@ import { toast } from 'react-toastify';
 import { ROUTE_PATH } from '../../../../utils/route-util';
 import { createProject } from '../../interface-adapters';
 import { buildProjectCreateDto, validateRequiredFields } from '../../use-cases';
-
 const ProjectCreatePage = () => {
   document.title = 'E-CHANNEL PORTAL | project | create';
   const navigate = useNavigate();
-
   const [projectName, setProjectName] = useState('');
-
   const { run: runCreateProject, loading: createLoading } = useRequest(
     createProject,
     {
@@ -34,7 +31,6 @@ const ProjectCreatePage = () => {
       },
     }
   );
-
   const funcButtonHandleClickExecute = (
     e: React.MouseEvent<HTMLButtonElement>
   ) => {
@@ -43,7 +39,6 @@ const ProjectCreatePage = () => {
     }
     e.preventDefault();
   };
-
   const projectNameHandleChange = (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
@@ -129,7 +124,6 @@ const ProjectCreatePage = () => {
                       />
                     </div>
                   </div>
-
                   <div className="form-footer">
                     <button
                       className="btn btn-primary"
@@ -170,5 +164,4 @@ const ProjectCreatePage = () => {
     </>
   );
 };
-
 export default ProjectCreatePage;

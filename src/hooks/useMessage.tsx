@@ -1,10 +1,8 @@
 import { toast } from 'react-toastify';
-
 interface ApiResponseLike {
   data?: { message?: string };
   message?: string;
 }
-
 interface ApiErrorLike {
   status?: number;
   message?: string;
@@ -14,7 +12,6 @@ interface ApiErrorLike {
     data?: { message?: string };
   };
 }
-
 const useMessage = () => {
   const showSuccessResponseMessage = (response: unknown) => {
     const res = response as ApiResponseLike;

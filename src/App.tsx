@@ -1,6 +1,6 @@
-import { ToastContainer } from 'react-toastify';
-// import './App.css';
 import { BrowserRouter as Router } from 'react-router-dom';
+import { ToastContainer } from 'react-toastify';
+import './App.css';
 import AxiosInterceptor from './components/AxiosInterceptor';
 import AuthContextProvider from './context/AuthContext';
 import AllRoutes from './router/index.tsx';

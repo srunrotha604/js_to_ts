@@ -1,6 +1,5 @@
 import type { SelectOption } from '../../../@type/report';
 import type { BranchProjectOption } from '../entities';
-
 export const filterPoliciesByProjectKey = (
   projects: BranchProjectOption[],
   key: string

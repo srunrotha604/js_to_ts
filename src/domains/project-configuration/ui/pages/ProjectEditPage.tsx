@@ -30,7 +30,6 @@ const ProjectEditPage = () => {
       }
     },
   });
-
   const { run: runUpdateProject, loading: updateLoading } = useRequest(
     updateProject,
     {
@@ -53,7 +52,6 @@ const ProjectEditPage = () => {
       },
     }
   );
-
   const funcButtonHandleClickExecute = (
     e: React.MouseEvent<HTMLButtonElement>
   ) => {
@@ -62,7 +60,6 @@ const ProjectEditPage = () => {
     }
     e.preventDefault();
   };
-
   const projectNameHandleChange = (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
@@ -71,7 +68,6 @@ const ProjectEditPage = () => {
   const goBackHandleClick = () => {
     navigate(ROUTE_PATH.project);
   };
-
   return (
     <>
       <div className="page-wrapper">
@@ -189,5 +185,4 @@ const ProjectEditPage = () => {
     </>
   );
 };
-
 export default ProjectEditPage;

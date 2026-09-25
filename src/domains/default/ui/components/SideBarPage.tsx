@@ -14,12 +14,12 @@ import Modal, { useModal } from '../../../../components/common/modal';
 import { useAuth } from '../../../../context/AuthContext';
 import { useModulePermission } from '../../../../context/module/ModuleContext';
 import { ROUTE_PATH } from '../../../../utils/route-util';
+import { STORAGE_KEY } from '../../../../utils/storage-key';
 import {
   applyBranchSwitch,
   filterBranchesByCompany,
   validateRequiredFields,
 } from '../../use-cases';
-
 const SideBarPage = () => {
   const {
     company,
@@ -27,16 +27,12 @@ const SideBarPage = () => {
     user,
     fetchUser,
   } = useAuth();
-
   const { hasMainMenuPermission, hasMenuPermission } = useModulePermission();
-
   const location = useLocation();
   const pathName = location.pathname?.split('/dashboard/')[1];
-
   const [selectedCompany, setSelectdCompany] = useState('');
   const [optionBranch, setOptionBranch] = useState<SelectOption[]>([]);
   const [selectedBranch, setSelectdBranch] = useState('');
-
   const companyOptions = useMemo<CompanyBranchOption[]>(
     () =>
       (company ?? []).map((item) => ({
@@ -50,7 +46,6 @@ const SideBarPage = () => {
       })),
     [company]
   );
-
   const funcButtonHandleClickExecute = async (
     e: React.MouseEvent<HTMLButtonElement>
   ) => {
@@ -61,20 +56,16 @@ const SideBarPage = () => {
     }
     e.preventDefault();
   };
-
   const companyHandleChange = (data: CompanyBranchOption | null) => {
     setSelectdCompany(data?.value ?? '');
     setOptionBranch(filterBranchesByCompany(companyOptions, data?.value ?? ''));
   };
-
   const branchHandleChange = (data: SelectOption | null) => {
     setSelectdBranch(data?.value ?? '');
   };
-
   const { modalRef, openModal, closeModal } = useModal();
-
   const operationShow = () => {
-    let alt_fa_storage = localStorage.getItem('e_chanel_storage') || '';
+    let alt_fa_storage = localStorage.getItem(STORAGE_KEY) || '';
     let token_text = JSON.parse(alt_fa_storage);
 
     let companyDetails = company?.find(
@@ -107,7 +98,6 @@ const SideBarPage = () => {
       </div>
     );
   };
-
   const userMenu = () => {
     return (
       <div>
@@ -179,7 +169,6 @@ const SideBarPage = () => {
                 </div>
               </div>
             )}
-
             {hasMainMenuPermission('mn11') && (
               <div
                 className={
@@ -236,7 +225,6 @@ const SideBarPage = () => {
                 </div>
               </div>
             )}
-
             {hasMainMenuPermission('mn13') && (
               <div
                 className={
@@ -295,7 +283,6 @@ const SideBarPage = () => {
       </div>
     );
   };
-
   useEffect(() => {
     if (selectedCompanyContext) {
       const matched = companyOptions.find(
@@ -304,9 +291,7 @@ const SideBarPage = () => {
       if (matched) companyHandleChange(matched);
     }
   }, [company]);
-
   if (!user) return null;
-
   return (
     <React.Fragment>
       <div className="sticky-top" style={{ top: '56px' }}>
@@ -365,7 +350,6 @@ const SideBarPage = () => {
     </React.Fragment>
   );
 };
-
 interface CustomNavItemLinkProps
   extends Omit<NavLinkProps, 'children' | 'to' | 'className'> {
   children?: React.ReactNode;
@@ -374,7 +358,6 @@ interface CustomNavItemLinkProps
   to: string;
   dropdown?: boolean;
 }
-
 const CustomNavItemLink = ({
   children,
   icon,
@@ -395,5 +378,4 @@ const CustomNavItemLink = ({
     </NavLink>
   );
 };
-
 export default SideBarPage;

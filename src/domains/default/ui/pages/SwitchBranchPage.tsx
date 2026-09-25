@@ -1,10 +1,11 @@
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Select from 'react-select';
 import type {
   CompanyBranchOption,
   SelectOption,
 } from '../../../../@type/report';
 import { useAuth } from '../../../../context/AuthContext';
+import { STORAGE_KEY } from '../../../../utils/storage-key';
 import {
   applyBranchSwitch,
   filterBranchesByCompany,
@@ -26,22 +27,18 @@ const SwitchBranchPage = () => {
     }
     e.preventDefault();
   };
-
   useEffect(() => {
-    const alt_fa_storage = localStorage.getItem('e_chanel_storage') || '';
+    const alt_fa_storage = localStorage.getItem(STORAGE_KEY) || '';
     const token_text = JSON.parse(alt_fa_storage);
     setSelectdCompany(token_text.company);
   }, []);
-
   const companyHandleChange = (option: CompanyBranchOption | null) => {
     setSelectdCompany(option?.value ?? '');
     setOptionBranch(filterBranchesByCompany(company, option?.value ?? ''));
   };
-
   const branchHandleChange = (option: SelectOption | null) => {
     setSelectdBranch(option?.value ?? '');
   };
-
   return (
     <>
       <div className="container-tight py-4">

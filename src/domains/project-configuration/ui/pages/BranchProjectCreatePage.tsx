@@ -15,17 +15,14 @@ import {
   filterPoliciesByProjectKey,
   validateRequiredFields,
 } from '../../use-cases';
-
 const BranchProjectCreatePage = () => {
   document.title = 'E-CHANNEL PORTAL | project | import';
   const navigate = useNavigate();
   const params = useParams<{ key: string }>();
-
   const [optionProject, setOptionProject] = useState<BranchProjectOption[]>([]);
   const [selectedProject, setSelectdProject] = useState('');
   const [optionPolicies, setOptionPolicies] = useState<SelectOption[]>([]);
   const [selectedPolicies, setSelectdPolicies] = useState<string[]>([]);
-
   useRequest(() => fetchBranchProjectOptions(params.key ?? ''), {
     onSuccess: (res) => {
       switch (res?.status) {
@@ -43,7 +40,6 @@ const BranchProjectCreatePage = () => {
       }
     },
   });
-
   const { run: runCreateBranchProject, loading: createLoading } = useRequest(
     createBranchProject,
     {
@@ -65,7 +61,6 @@ const BranchProjectCreatePage = () => {
       },
     }
   );
-
   const funcButtonHandleClickExecute = (
     e: React.MouseEvent<HTMLButtonElement>
   ) => {
@@ -80,7 +75,6 @@ const BranchProjectCreatePage = () => {
     }
     e.preventDefault();
   };
-
   const projectHandleChange = (value: SingleValue<BranchProjectOption>) => {
     setSelectdProject(value?.value ?? '');
     setOptionPolicies(
@@ -90,11 +84,9 @@ const BranchProjectCreatePage = () => {
   const PoliciesHandleChange = (value: MultiValue<SelectOption> | null) => {
     setSelectdPolicies(Array.isArray(value) ? value.map((x) => x.value) : []);
   };
-
   const goBackHandleClick = () => {
     navigate(ROUTE_PATH.branchProject(params.key ?? ''));
   };
-
   return (
     <React.Fragment>
       <div className="page-wrapper">

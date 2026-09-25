@@ -12,7 +12,6 @@ export interface UserItem {
   status?: string;
   deleted?: boolean;
 }
-
 export interface UserListResponse {
   list?: UserItem[];
   message?: string;

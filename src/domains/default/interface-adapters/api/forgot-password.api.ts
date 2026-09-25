@@ -9,19 +9,16 @@ export const requestForgotPassword = (data: { email: string }) =>
     ROUTE_API.loginForgotPassword,
     data
   );
-
 export const confirmForgotPasswordCode = (data: {
   email: string;
   token: string;
   otpCode: string;
 }) => HttpUtil.post<ForgotPasswordResponse>(ROUTE_API.loginConfirmCode, data);
-
 export const requestForgotPasswordViaSms = (data: {
   email: string;
   token: string;
   smsToken: string;
 }) => HttpUtil.post<ForgotPasswordResponse>(ROUTE_API.loginViaSms, data);
-
 export const confirmForgotPasswordChange = (data: {
   email: string;
   token: string;

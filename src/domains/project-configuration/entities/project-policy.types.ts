@@ -1,15 +1,12 @@
 import type { SelectOption } from '../../../@type/report';
-
 export interface PolicyOption extends SelectOption {
   keyCode?: string;
 }
-
 export interface ProjectPolicyOptionResponse {
   product?: SelectOption[];
   policy?: PolicyOption[];
   message?: string;
 }
-
 export interface ProjectPolicyItem {
   transationCode?: string;
   projectLabel?: string;
@@ -17,7 +14,6 @@ export interface ProjectPolicyItem {
   insuredName?: string;
   status?: string;
 }
-
 export interface ProjectPolicyListResponse {
   list?: ProjectPolicyItem[];
   message?: string;

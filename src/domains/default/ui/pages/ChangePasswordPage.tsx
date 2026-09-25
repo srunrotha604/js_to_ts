@@ -16,13 +16,11 @@ import {
   validatePasswordStrength,
 } from '../../use-cases';
 import PasswordStrengthMeter from '../components/PasswordStrengthMeter';
-
 interface ChangePasswordFormValues {
   password: string;
   newPassword: string;
   confirmPassword: string;
 }
-
 const ChangePasswordPage = () => {
   const navigate = useNavigate();
   document.title = 'E-CHANNEL PORTAL | Change Password';
@@ -35,16 +33,13 @@ const ChangePasswordPage = () => {
   });
   const toggleEye = (key: keyof typeof show) =>
     setShow((s) => ({ ...s, [key]: !s[key] }));
-
   const {
     register,
     handleSubmit,
     watch,
     formState: { errors },
   } = useForm<ChangePasswordFormValues>({ mode: 'onChange' });
-
   const newPasswordValue = watch('newPassword') ?? '';
-
   useRequest(fetchCurrentUserProfile, {
     onSuccess: (res) => {
       switch (res?.status) {
@@ -53,7 +48,6 @@ const ChangePasswordPage = () => {
             const profile = res?.data?.userProfile;
             setUserUrl(profile?.avatarUrl ?? '');
             setUserName(`${profile.firstName} ${profile.lastName}` || '');
-            // setUserCode(profile?.channelCode ?? '');
           }
           break;
         case 400:
@@ -90,7 +84,6 @@ const ChangePasswordPage = () => {
       }
     },
   });
-
   const onSubmit = (data: ChangePasswordFormValues) => {
     runChangePassword(
       buildChangePasswordDto(
@@ -100,7 +93,6 @@ const ChangePasswordPage = () => {
       )
     );
   };
-
   const goBackHandleClick = () => {
     navigate(ROUTE_PATH.dashboard);
   };
@@ -167,7 +159,6 @@ const ChangePasswordPage = () => {
                 </button>
               </div>
             </div>
-
             <div className="mb-2">
               <label className="form-label required">New password</label>
               <div className="input-group input-group-flat">
@@ -199,14 +190,8 @@ const ChangePasswordPage = () => {
                   {show.newPassword ? <EyeIcon /> : <EyeOffIcon />}
                 </button>
               </div>
-              {/* {errors.newPassword && (
-                <div className="text-danger small mt-1">
-                  {errors.newPassword.message}
-                </div>
-              )} */}
               <PasswordStrengthMeter password={newPasswordValue} />
             </div>
-
             <div className="mb-2">
               <label className="form-label required">Confirm password</label>
               <div className="input-group input-group-flat">
@@ -253,7 +238,6 @@ const ChangePasswordPage = () => {
               >
                 Cancel
               </button>
-
               <button type="submit" className="btn btn-primary mt-2">
                 Change password
               </button>
@@ -264,5 +248,4 @@ const ChangePasswordPage = () => {
     </React.Fragment>
   );
 };
-
 export default ChangePasswordPage;

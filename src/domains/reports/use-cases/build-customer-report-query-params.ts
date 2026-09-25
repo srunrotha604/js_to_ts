@@ -1,6 +1,5 @@
 import type { SelectOption } from '../../../@type/report';
 import { formatDay } from '../../../utils/format-day';
-
 export interface BuildCustomerReportQueryParamsInput {
   type: SelectOption[];
   status: SelectOption[];
@@ -10,10 +9,8 @@ export interface BuildCustomerReportQueryParamsInput {
   selectedBranch: SelectOption[];
   selectedProject: SelectOption[];
 }
-
 const safeFormat = (d: Date | null | undefined, f: string) =>
   d ? formatDay(d, f) : '';
-
 export const buildCustomerReportQueryParams = ({
   type,
   status,

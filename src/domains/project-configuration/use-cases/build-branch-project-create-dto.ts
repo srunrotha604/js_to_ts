@@ -1,5 +1,4 @@
 import { serializeCsvList } from './serialize-csv-list';
-
 export const buildBranchProjectCreateDto = (
   branchFamily: string | undefined,
   projectFamily: string,

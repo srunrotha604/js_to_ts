@@ -14,10 +14,8 @@ const CompanyForm = () => {
   const navigate = useNavigate();
   const params = new URLSearchParams(location.search);
   document.title = 'Alt-Fa APIs Admin System | System user-company';
-
   const [details, setDetail] = useState<UserCompanyDetail | null>(null);
   const [list, setList] = useState<UserCompanyListItem[] | null>(null);
-
   const fetchRows = async () => {
     try {
       const response = await fetchUserCompany({
@@ -31,7 +29,6 @@ const CompanyForm = () => {
       console.log(error);
     }
   };
-
   useEffect(() => {
     fetchRows();
   }, []);

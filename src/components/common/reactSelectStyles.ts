@@ -20,6 +20,6 @@ export const selectCustomStyles: StylesConfig<any, boolean> = {
   }),
   menu: (base) => {
     const { width, ...css } = base;
-    return { ...css, minWidth: '300px' };
+    return { ...css, minWidth: width || '300px' };
   },
 };

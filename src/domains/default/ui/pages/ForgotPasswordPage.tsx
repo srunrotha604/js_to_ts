@@ -22,7 +22,6 @@ import {
   validateRequiredFields,
 } from '../../use-cases';
 import PasswordStrengthMeter from '../components/PasswordStrengthMeter';
-
 const ForgotPasswordPage = () => {
   document.title = 'E-CHANNEL PORTAL | Forgot Password';
   const navigate = useNavigate();
@@ -34,7 +33,6 @@ const ForgotPasswordPage = () => {
   const [confirmCode, setConfirmCode] = useState('');
   const [confirmKey, setConfirmKey] = useState('');
   const [invalidFeedBack, setInvalidFeedBack] = useState('');
-
   const [confirmChangeKey, setConfirmChangeKey] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -47,7 +45,6 @@ const ForgotPasswordPage = () => {
   const [securityPolicy, setSecurityPolicy] = useState<
     SecurityPolicy | undefined
   >();
-
   const { run: runRequestForgotPassword, loading: requestLoading } = useRequest(
     requestForgotPassword,
     {
@@ -108,7 +105,6 @@ const ForgotPasswordPage = () => {
       },
     }
   );
-
   const { run: runRequestViaSms, loading: viaSmsLoading } = useRequest(
     requestForgotPasswordViaSms,
     {
@@ -138,7 +134,6 @@ const ForgotPasswordPage = () => {
       },
     }
   );
-
   const { run: runChangePassword, loading: changePasswordLoading } = useRequest(
     confirmForgotPasswordChange,
     {
@@ -161,7 +156,6 @@ const ForgotPasswordPage = () => {
       },
     }
   );
-
   const funcButtonHandleClickExecute = (
     e: React.MouseEvent<HTMLButtonElement>
   ) => {
@@ -181,11 +175,9 @@ const ForgotPasswordPage = () => {
     }
     e.preventDefault();
   };
-
   const resqustViaSMSSubmit = () => {
     runRequestViaSms(buildViaSmsDto(email, confirmKey, viaSMSCode));
   };
-
   const funcChangePasswordHandleClickExecute = (
     e: React.MouseEvent<HTMLButtonElement>
   ) => {
@@ -210,19 +202,16 @@ const ForgotPasswordPage = () => {
 
     e.preventDefault();
   };
-
   const emailHandleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setEmail(event.target.value);
     setInvalidFeedBack('');
   };
-
   const confirmCodeHandleChange = (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
     setConfirmCode(event.target.value);
     setInvalidFeedBack('');
   };
-
   const newPasswordHandleChange = (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
@@ -235,7 +224,6 @@ const ForgotPasswordPage = () => {
     setConfirmPassword(event.target.value);
     setInvalidFeedBack('');
   };
-
   const toggleNewPassword = () => {
     setNewPasswordShown(!newPasswordShown);
   };
@@ -619,5 +607,4 @@ const ForgotPasswordPage = () => {
     </React.Fragment>
   );
 };
-
 export default ForgotPasswordPage;

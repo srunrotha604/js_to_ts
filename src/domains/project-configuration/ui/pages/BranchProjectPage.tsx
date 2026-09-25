@@ -11,7 +11,6 @@ import {
   fetchBranchProjectList,
   useListPagination,
 } from '../../interface-adapters';
-
 const BranchProjectPage = () => {
   document.title = 'E-CHANNEL PORTAL | Branch';
   const navigate = useNavigate();
@@ -19,7 +18,6 @@ const BranchProjectPage = () => {
   const [arrList, setArrList] = useState<BranchProjectListItem[]>([]);
   const [query, setQuery] = useState('');
   const [getKey, setGetKey] = useState('');
-
   const { loading, refresh: refreshList } = useRequest(
     () => fetchBranchProjectList(params.key ?? ''),
     {
@@ -30,7 +28,6 @@ const BranchProjectPage = () => {
       },
     }
   );
-
   const { run: runDeleteBranchProject, loading: deleteLoading } = useRequest(
     deleteBranchProject,
     {
@@ -53,22 +50,18 @@ const BranchProjectPage = () => {
       },
     }
   );
-
   const deleteProjectHandleClickExecute = () => {
     runDeleteBranchProject({ transactionCode: getKey });
   };
-
   const handleDeleteClick = (item: BranchProjectListItem) => {
     setGetKey(item.transactionCode ?? '');
   };
-
   const createNewHandleClick = () => {
     navigate(ROUTE_PATH.branchProjectCreate(params.key ?? ''));
   };
   const goBackHandleClick = () => {
     navigate(ROUTE_PATH.branch);
   };
-
   const search = query.toLowerCase();
   const filteredList = arrList.filter((item) =>
     search === ''
@@ -76,10 +69,8 @@ const BranchProjectPage = () => {
       : item.branchCode?.toLowerCase()?.includes(search) ||
         item.branchName?.toLowerCase()?.includes(search)
   );
-
   const { pageCount, pagedItems, handlePageClick, nf } =
     useListPagination(filteredList);
-
   return (
     <React.Fragment>
       {loading && <Loading value={loading} />}
@@ -234,7 +225,6 @@ const BranchProjectPage = () => {
             </div>
           </div>
         </div>
-
         <div className="page-body">
           <div className="container-xl">
             <div className="row align-items-center mb-2">
@@ -548,5 +538,4 @@ const BranchProjectPage = () => {
     </React.Fragment>
   );
 };
-
 export default BranchProjectPage;

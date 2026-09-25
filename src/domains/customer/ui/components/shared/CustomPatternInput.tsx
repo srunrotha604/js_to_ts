@@ -8,6 +8,7 @@ interface CustomPatternProps {
   onFocus?: (event: FocusEvent<HTMLInputElement>) => void;
   onKeyDown?: (event: KeyboardEvent<HTMLInputElement>) => void;
 }
+// eslint-disable-next-line react/display-name
 const CustomPatternInput = forwardRef<HTMLInputElement, CustomPatternProps>(
   ({ value, onClick, onChange, onFocus, onKeyDown }, ref) => {
     return (

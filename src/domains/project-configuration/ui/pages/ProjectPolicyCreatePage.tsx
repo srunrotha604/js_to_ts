@@ -1,5 +1,5 @@
 import { useRequest } from 'ahooks';
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { MdClear } from 'react-icons/md';
 import { useNavigate, useParams } from 'react-router-dom';
 import type { ClearIndicatorProps, SingleValue } from 'react-select';
@@ -57,7 +57,6 @@ const ProjectPolicyCreatePage = () => {
       },
     }
   );
-
   const funcButtonHandleClickExecute = (
     e: React.MouseEvent<HTMLButtonElement>
   ) => {
@@ -68,7 +67,6 @@ const ProjectPolicyCreatePage = () => {
     }
     e.preventDefault();
   };
-
   useRequest(fetchProjectPolicyOptions, {
     onSuccess: (res) => {
       switch (res?.status) {
@@ -87,13 +85,11 @@ const ProjectPolicyCreatePage = () => {
       }
     },
   });
-
   const policyHandleChange = (value: SingleValue<PolicyOption>) => {
     {
       value != null ? setSelectdPolicy(value.value) : setSelectdPolicy('');
     }
   };
-
   const productHandleChange = (value: SingleValue<SelectOption>) => {
     if (value !== null) {
       setSelectdProduct(value.value);
@@ -104,11 +100,9 @@ const ProjectPolicyCreatePage = () => {
       setSelectdProduct('');
     }
   };
-
   const goBackHandleClick = () => {
     navigate(ROUTE_PATH.projectPolicy(params.key ?? ''));
   };
-
   const customFilter = createFilter({ ignoreAccents: false });
   const customComponents = {
     MenuList: WindowedMenuList,
@@ -120,7 +114,6 @@ const ProjectPolicyCreatePage = () => {
       </components.ClearIndicator>
     ),
   };
-
   return (
     <>
       <div className="page-wrapper">

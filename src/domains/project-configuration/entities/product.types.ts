@@ -1,5 +1,4 @@
 import type { ProductSelectOption } from '../../../@type/report';
-
 export interface ProductItem {
   transationCode?: string;
   productsequenceCode?: string;
@@ -7,12 +6,10 @@ export interface ProductItem {
   productName?: string;
   status?: string;
 }
-
 export interface ProductListResponse {
   list?: ProductItem[];
   message?: string;
 }
-
 export interface ProductOptionsResponse {
   options?: ProductSelectOption[];
   message?: string;

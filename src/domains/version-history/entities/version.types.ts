@@ -4,7 +4,6 @@ export interface VersionItem {
   releaseDate: string;
   description: string;
 }
-
 export interface VersionListResponse {
   status?: number;
   data?: {
@@ -13,21 +12,17 @@ export interface VersionListResponse {
   list?: VersionItem[];
   version?: string;
 }
-
 export interface CreateVersionArgs {
   releaseDate: string;
   version: string;
   description: string;
 }
-
 export interface UpdateVersionArgs extends CreateVersionArgs {
   uuid: string;
 }
-
 export interface DeleteVersionArgs {
   uuid: string;
 }
-
 export interface UpdateVersionResponse {
   message?: string;
   data?: Partial<VersionItem>;

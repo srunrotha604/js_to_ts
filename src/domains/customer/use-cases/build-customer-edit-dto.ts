@@ -1,5 +1,4 @@
 import { STATUS } from '../entities';
-
 export interface CustomerEditFormData {
   transactionCode?: string;
   sureName?: string;
@@ -18,12 +17,10 @@ export interface CustomerEditFormData {
   parentId?: string;
   openingDate?: string;
 }
-
 export interface BuildCustomerEditDtoContext {
   productCode?: string;
   isDraft: boolean;
 }
-
 export const buildCustomerEditDto = (
   data: CustomerEditFormData,
   context: BuildCustomerEditDtoContext

@@ -7,21 +7,18 @@ import type {
   UpdateVersionResponse,
   VersionListResponse,
 } from '../../entities';
-
 export const fetchVersionList = async () => {
   const response = await HttpUtil.get<VersionListResponse>(
     ROUTE_API.applicationVersion
   );
   return response?.data;
 };
-
 export const createVersion = async (args: CreateVersionArgs) => {
   const payload = {
     releaseDate: args.releaseDate,
     version: args.version,
     description: args.description,
   };
-
   try {
     const response = await HttpUtil.post<VersionListResponse>(
       ROUTE_API.applicationVersion,
@@ -34,7 +31,6 @@ export const createVersion = async (args: CreateVersionArgs) => {
     throw error;
   }
 };
-
 export const updateVersion = async (args: UpdateVersionArgs) => {
   const payload = {
     releaseDate: args.releaseDate,
@@ -49,14 +45,12 @@ export const updateVersion = async (args: UpdateVersionArgs) => {
   );
   return response?.data;
 };
-
 export const fetchCurrentVersion = async () => {
   const response = await HttpUtil.get<VersionListResponse>(
     ROUTE_API.applicationVersionActive
   );
   return response;
 };
-
 export const deleteVersion = async (args: DeleteVersionArgs) => {
   const payload = { uuid: args.uuid };
   const response = await HttpUtil.delete<VersionListResponse>(

@@ -7,7 +7,6 @@ import Modal, { useModal } from '../../../../components/common/modal';
 import type { VersionItem } from '../../entities';
 import { deleteVersion, updateVersion } from '../../interface-adapters';
 import { formatReleaseDate } from '../../use-cases';
-
 interface VersionFormValues {
   version: string;
   description: string;

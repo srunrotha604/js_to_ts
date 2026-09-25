@@ -3,9 +3,9 @@ import React, { useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../../../context/AuthContext';
 import { ROUTE_PATH } from '../../../../utils/route-util';
+import { STORAGE_KEY } from '../../../../utils/storage-key';
 import { login } from '../../interface-adapters';
 import { buildLoginDto, validateRequiredFields } from '../../use-cases';
-
 const LoginPage = () => {
   document.title = 'E-CHANNEL PORTAL | Login';
   const navigate = useNavigate();
@@ -26,10 +26,7 @@ const LoginPage = () => {
             company: res?.data?.company,
             branch: res?.data?.branch,
           };
-          localStorage.setItem(
-            'e_chanel_storage',
-            JSON.stringify(alt_fa_token)
-          );
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(alt_fa_token));
           await fetchUser();
           if (location?.state?.from?.pathname) {
             navigate(location?.state?.from?.pathname);
@@ -49,7 +46,6 @@ const LoginPage = () => {
       }
     },
   });
-
   const funcButtonHandleClickExecute = (
     e: React.MouseEvent<HTMLButtonElement>
   ) => {
@@ -58,21 +54,17 @@ const LoginPage = () => {
     }
     e.preventDefault();
   };
-
   const togglePassword = () => {
     setPasswordShown(!passwordShown);
   };
-
   const userNameHandleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setUserName(event.target.value);
     setInvalidFeedBack('');
   };
-
   const PasswordHandleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setPassword(event.target.value);
     setInvalidFeedBack('');
   };
-
   return (
     <>
       <div className="container-tight py-4 full-height-container d-flex justify-content-center align-items-center">

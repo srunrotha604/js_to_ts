@@ -28,6 +28,7 @@ import { useAuth } from '../../context/AuthContext';
 import useMessage from '../../hooks/useMessage';
 import { HttpUtil } from '../../utils/http-util';
 import { ROUTE_API, ROUTE_PATH } from '../../utils/route-util';
+import { STORAGE_KEY } from '../../utils/storage-key';
 import { useModal } from '../common/modal/index';
 import { selectCustomStyles } from '../common/reactSelectStyles';
 import Spinner, { useSpinner } from '../common/Spinner';
@@ -301,7 +302,7 @@ const TransactionTableInner = <T extends TransactionLike>(
 
   useEffect(() => {
     if (company) {
-      const e_chanel_storage = localStorage.getItem('e_chanel_storage');
+      const e_chanel_storage = localStorage.getItem(STORAGE_KEY);
       const token_text = e_chanel_storage ? JSON.parse(e_chanel_storage) : null;
       const companyDetails = company?.find(
         (item) => item?.companyCode === token_text?.company

@@ -10,7 +10,6 @@ import {
   uploadProfileAvatar,
 } from '../../interface-adapters';
 import { buildProfileUpdateDto } from '../../use-cases';
-
 const ProfilePage = () => {
   const navigate = useNavigate();
   document.title = 'E-CHANNEL PORTAL | Profile';
@@ -60,7 +59,6 @@ const ProfilePage = () => {
       }
     },
   });
-
   const { run: uploadAvatar, loading: uploadLoading } = useRequest(
     uploadProfileAvatar,
     {
@@ -83,7 +81,6 @@ const ProfilePage = () => {
       },
     }
   );
-
   const { run: saveProfile, loading: saveLoading } = useRequest(
     saveProfileInfo,
     {
@@ -106,7 +103,6 @@ const ProfilePage = () => {
       },
     }
   );
-
   const profileUploadHandleClickExecute = () => {
     if (selectedFile !== '') {
       const formData = new FormData();
@@ -114,7 +110,6 @@ const ProfilePage = () => {
       uploadAvatar(formData);
     }
   };
-
   const saveChangeHandleExecute = () => {
     saveProfile(
       buildProfileUpdateDto({
@@ -123,17 +118,14 @@ const ProfilePage = () => {
       })
     );
   };
-
   const goBackHandleClick = () => {
     navigate(ROUTE_PATH.dashboard);
   };
-
   const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files?.[0]) {
       setSelectedFile(event.target.files[0]);
     }
   };
-
   return (
     <React.Fragment>
       <div className="page-wrapper">

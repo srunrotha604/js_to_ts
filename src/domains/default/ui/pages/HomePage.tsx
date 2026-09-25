@@ -25,10 +25,8 @@ import { getConfirmedMessageText } from '../../../customer/use-cases/get-confirm
 import { isTransactionStatusCountChanged } from '../../../customer/use-cases/transaction-status-tracking';
 import { actions } from '../../../customer/use-cases/workflow-actions';
 import { processCustomerTransactions } from '../../interface-adapters';
-
 const HomePage = () => {
   document.title = 'E-CHANNEL PORTAL | Home';
-
   const { hasPermissionAccessTransaction, isUserDRIAdmin } = useAuth();
   const navTab = useMemo(
     () => [
@@ -83,7 +81,6 @@ const HomePage = () => {
     ],
     [hasPermissionAccessTransaction]
   );
-
   const {
     handleSelectTransaction,
     handleRemoveCustomerFromList,
@@ -99,7 +96,6 @@ const HomePage = () => {
     setSelectedCustomerList,
     selectDeletedTransaction,
   } = useTransactionTabSelect();
-
   const getSelectedCustomerList = async () => {
     try {
       const data = await fetchCustomerTransactionList({
@@ -111,11 +107,9 @@ const HomePage = () => {
       console.log(error);
     }
   };
-
   const [searchParams] = useSearchParams();
   const { hasPermissionProccessTransaction } = useAuth();
   const { closeModal, openModal, modalRef, open } = useModal();
-
   const [isApprove, setIsApprove] = useState<boolean | null>(null);
   const [processStatus, setProcessStatus] = useState<string | null>(null);
   const {
@@ -123,14 +117,12 @@ const HomePage = () => {
     openModal: openActionModal,
     modalRef: actionModalRef,
   } = useModal();
-
   const { spinnerState, openSpinner, closeSpinner } = useSpinner();
   const handleProcessSelected = async () => {
     openSpinner({ title: 'Loading...' });
     await getSelectedCustomerList();
     delay([closeSpinner, openModal]);
   };
-
   const tabListRef = useRef<TransactionTabListHandle | null>(null);
   const handleProcess = async (rejectRemark?: string) => {
     try {
@@ -150,9 +142,7 @@ const HomePage = () => {
       if (rejectRemark) {
         summaryData.remark = rejectRemark;
       }
-
       await processCustomerTransactions(summaryData, isDeleted);
-
       toast.success(
         `${selectedCustomerList.length} ${pluralize(
           'transaction',
@@ -175,14 +165,12 @@ const HomePage = () => {
       resetSelected();
     }
   }, [selectedCustomerList]);
-
   const {
     modalRef: popupInfoModalRef,
     openModal: openPopupInfoModal,
     closeModal: closePopupInfoModal,
     data: popupInfoData,
   } = useModal<TransactionTotalCounts>();
-
   return (
     <div
       className="container-xl full-height-dashboard-container overflow-auto"
@@ -300,12 +288,10 @@ const HomePage = () => {
     </div>
   );
 };
-
 interface PopupInfoProps {
   data: TransactionTotalCounts | null;
   onClose: () => void;
 }
-
 const PopupInfo = forwardRef<HTMLDivElement, PopupInfoProps>(function PopupInfo(
   { data, onClose },
   ref
@@ -347,5 +333,4 @@ const PopupInfo = forwardRef<HTMLDivElement, PopupInfoProps>(function PopupInfo(
     ></Modal>
   );
 });
-
 export default HomePage;

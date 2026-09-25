@@ -1,7 +1,5 @@
 import { registerLogoutHandler } from '../../../context/AuthContext';
-
 const lsTransactionStatusReminderKey = 'lsTransactionStatusReminder';
-
 export const isTransactionStatusCountChanged = (
   status: string,
   transactionTotal: Record<string, number>
@@ -19,12 +17,10 @@ export const isTransactionStatusCountChanged = (
       JSON.stringify(transactionTotal)
     );
   }
-
   if (!lsTransactionStatus) {
     if (transactionTotal?.[status] > 0) return true;
     return false;
   }
-
   const _transactionTotal = JSON.parse(lsTransactionStatus);
   if (
     _transactionTotal?.[status] >= 0 &&
@@ -33,16 +29,12 @@ export const isTransactionStatusCountChanged = (
   ) {
     return true;
   }
-
   return false;
 };
-
 export const clearTransactionStatusCount = () => {
   localStorage.removeItem(lsTransactionStatusReminderKey);
 };
-
 registerLogoutHandler(clearTransactionStatusCount);
-
 export const NOTIFICATION_PATH = {
   Approved: `${window.location.origin}`,
 };

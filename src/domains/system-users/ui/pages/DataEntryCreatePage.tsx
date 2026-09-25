@@ -1,5 +1,5 @@
 import { useRequest } from 'ahooks';
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { PatternFormat } from 'react-number-format';
 import { useNavigate } from 'react-router-dom';
 import Select from 'react-select';
@@ -14,7 +14,6 @@ import {
   buildDataEntryCreateDto,
   validateRequiredFields,
 } from '../../use-cases';
-
 const DataEntryCreatePage = () => {
   document.title = 'E-CHANNEL PORTAL | data entry - create';
   const navigate = useNavigate();
@@ -22,10 +21,8 @@ const DataEntryCreatePage = () => {
   const [phone, setPhone] = useState('');
   const [textFirstName, setTextFirstName] = useState('');
   const [textLastName, setTextLastName] = useState('');
-
   const [optionRole, setOptionRole] = useState<SelectOption[]>([]);
   const [selectedRole, setSelectedRole] = useState('');
-
   useRequest(fetchDataEntryRoleOptions, {
     onSuccess: (res) => {
       switch (res?.status) {
@@ -43,7 +40,6 @@ const DataEntryCreatePage = () => {
       }
     },
   });
-
   const { run: runCreateDataEntry, loading: createLoading } = useRequest(
     createDataEntry,
     {
@@ -66,7 +62,6 @@ const DataEntryCreatePage = () => {
       },
     }
   );
-
   const funcButtonHandleClickExecute = (
     e: React.MouseEvent<HTMLButtonElement>
   ) => {
@@ -90,7 +85,6 @@ const DataEntryCreatePage = () => {
     }
     e.preventDefault();
   };
-
   const emailHandleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setTextEmail(event.target.value);
   };
@@ -102,11 +96,9 @@ const DataEntryCreatePage = () => {
   const lastNameHandleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setTextLastName(event.target.value);
   };
-
   const goBackHandleClick = () => {
     navigate(ROUTE_PATH.dataEntry);
   };
-
   const roleHandleChange = (e: SelectOption | null) => {
     setSelectedRole(e?.value ?? '');
   };
@@ -274,5 +266,4 @@ const DataEntryCreatePage = () => {
     </>
   );
 };
-
 export default DataEntryCreatePage;

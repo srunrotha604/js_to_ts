@@ -6,17 +6,15 @@ import { useAuth } from '../../../../context/AuthContext';
 import { ROUTE_PATH } from '../../../../utils/route-util';
 import { logClientError } from '../../interface-adapters';
 import { buildClientErrorLogDto } from '../../use-cases';
-
 const ErrorPage = ({ error }: FallbackProps) => {
   document.title = 'Something went wrong';
   const { user, selectedCompany, selectedBranch, permission } = useAuth();
-
   useEffect(() => {
     const sendErrorLog = async () => {
       const errorBody = buildClientErrorLogDto(error, {
         email: user?.email,
-        selectedBranchLabel: selectedBranch?.label,
-        selectedCompanyLabel: selectedCompany?.label,
+        selectedBranchLabel: selectedBranch?.branchName,
+        selectedCompanyLabel: selectedCompany?.companyName,
         permission,
       });
       try {
@@ -35,7 +33,6 @@ const ErrorPage = ({ error }: FallbackProps) => {
   const handleRefresh = () => {
     window.location.reload();
   };
-
   return (
     <div className="container py-4 full-height-dashboard-container d-flex justify-content-center ">
       <div className="empty">

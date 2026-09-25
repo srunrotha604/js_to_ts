@@ -1,6 +1,6 @@
 import { format, isValid, parse } from 'date-fns';
 import type { ChangeEvent, KeyboardEvent } from 'react';
-import { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { DateRange, type RangeKeyDict } from 'react-date-range';
 import 'react-date-range/dist/styles.css';
 import 'react-date-range/dist/theme/default.css';

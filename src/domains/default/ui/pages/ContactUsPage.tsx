@@ -19,10 +19,8 @@ const ContactUsPage = () => {
   const { control, handleSubmit, watch } = useForm<ContactUsFormValues>();
   const data = watch();
   const [success, setSuccess] = useState(false);
-
   const { spinnerState, openSpinner, closeSpinner } = useSpinner();
   const { showErrorResponseMessage } = useMessage();
-
   const onSubmit = async (data: ContactUsFormValues) => {
     try {
       openSpinner();
@@ -35,7 +33,6 @@ const ContactUsPage = () => {
       delay(closeSpinner);
     }
   };
-
   return (
     <div className="page-wrapper full-height-dashboard-container">
       <div className="page-body">
@@ -231,5 +228,4 @@ const config = {
     '|',
   ],
 };
-
 export default ContactUsPage;

@@ -1,5 +1,4 @@
 import type { SelectOption } from '../../../@type/report';
-
 export interface UserAccessBranchItem {
   transactionCode?: string;
   companyLabel?: string;
@@ -10,7 +9,6 @@ export interface UserAccessBranchItem {
   applicationFamily?: string;
   companyFamily?: string;
 }
-
 export interface UserAccessBranchListResponse {
   list?: UserAccessBranchItem[];
   options?: SelectOption[];

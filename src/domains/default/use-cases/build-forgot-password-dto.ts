@@ -1,5 +1,4 @@
 export const buildForgotPasswordRequestDto = (email: string) => ({ email });
-
 export const buildConfirmCodeDto = (
   email: string,
   token: string,
@@ -9,7 +8,6 @@ export const buildConfirmCodeDto = (
   token,
   otpCode,
 });
-
 export const buildViaSmsDto = (
   email: string,
   token: string,
@@ -19,7 +17,6 @@ export const buildViaSmsDto = (
   token,
   smsToken,
 });
-
 export const buildConfirmChangePasswordDto = (
   email: string,
   token: string,

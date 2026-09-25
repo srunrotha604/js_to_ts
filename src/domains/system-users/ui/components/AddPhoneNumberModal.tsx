@@ -7,18 +7,15 @@ import CancelButton from '../../../../components/buttons/CancelButton';
 import SubmitButton from '../../../../components/buttons/SubmitButton';
 import Modal, { useModal } from '../../../../components/common/modal';
 import { buildAddPhoneNumberDto } from '../../use-cases';
-
 interface AddPhoneNumberModalItem {
   userCode?: string;
   phone?: string;
 }
-
 interface AddPhoneNumberModalProps {
   item: AddPhoneNumberModalItem;
   success: () => void;
   onSubmit: (data: { uuid?: string; phoneNumber: string }) => Promise<unknown>;
 }
-
 const AddPhoneNumberModal = ({
   item,
   success,
@@ -26,7 +23,6 @@ const AddPhoneNumberModal = ({
 }: AddPhoneNumberModalProps) => {
   const { modalRef, openModal, closeModal } = useModal();
   const [phone, setPhone] = useState('');
-
   const handleSubmit = async () => {
     try {
       await onSubmit(buildAddPhoneNumberDto(item?.userCode, phone));
@@ -41,7 +37,6 @@ const AddPhoneNumberModal = ({
       console.log(message);
     }
   };
-
   return (
     <>
       <Modal ref={modalRef} title={'Add Phone Number'} size="lg">
@@ -58,7 +53,6 @@ const AddPhoneNumberModal = ({
             format="### ## ## ## #"
           />
         </div>
-
         <ButtonGroup>
           <SubmitButton tooltip="Submit" onClick={() => handleSubmit()} />
           <CancelButton tooltip="Cancel" onClick={() => closeModal()} />

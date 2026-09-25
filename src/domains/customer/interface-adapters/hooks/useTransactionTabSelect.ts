@@ -10,7 +10,6 @@ export const useTransactionTabSelect = () => {
   const [selectedAll, setSelectedAll] = useState(false);
   const [selectDeletedTransaction, setSelectDeletedTransaction] =
     useState(false);
-
   const handleSelectTransaction = (
     transaction?: CustomerTransaction | null
   ) => {

@@ -38,7 +38,9 @@ export const useSpinner = (defaultTitle = 'Loading...') => {
   });
   const [loading, setLoading] = useState(false);
 
-  const openSpinner = ({ title }: { title?: string } = { title: defaultTitle }) => {
+  const openSpinner = (
+    { title }: { title?: string } = { title: defaultTitle }
+  ) => {
     setState((prev) => ({ ...prev, title }));
     setLoading(true);
     openModal({ disableBackdrop: true });

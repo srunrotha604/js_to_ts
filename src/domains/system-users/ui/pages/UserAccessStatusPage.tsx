@@ -14,7 +14,6 @@ import {
   parseCsvList,
   validateRequiredFields,
 } from '../../use-cases';
-
 const UserAccessStatusPage = () => {
   document.title = 'E-CHANNEL PORTAL | user access status';
   const navigate = useNavigate();
@@ -27,7 +26,6 @@ const UserAccessStatusPage = () => {
   const [selectedProcessValue, setSelectedProcessValue] = useState<string[]>(
     []
   );
-
   const { refresh: refreshDetail } = useRequest(
     () => fetchUserAccessDetail(params.userCode ?? ''),
     {

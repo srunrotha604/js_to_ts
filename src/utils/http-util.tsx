@@ -1,9 +1,10 @@
 import type { AxiosRequestConfig, ResponseType } from 'axios';
 import axios from 'axios';
 import { ROUTE_API } from './route-util';
+import { STORAGE_KEY } from './storage-key';
 
 export const valid_token_data = () => {
-  const storage = localStorage.getItem('e_chanel_storage');
+  const storage = localStorage.getItem(STORAGE_KEY);
 
   const defaultData = {
     token: '',
@@ -15,22 +16,22 @@ export const valid_token_data = () => {
   };
 
   if (!storage) {
-    localStorage.setItem('e_chanel_storage', JSON.stringify(defaultData));
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(defaultData));
     return;
   }
 
   try {
     const parsed = JSON.parse(storage);
     const merged = { ...defaultData, ...parsed };
-    localStorage.setItem('e_chanel_storage', JSON.stringify(merged));
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(merged));
   } catch (e) {
     console.log(e);
-    localStorage.setItem('e_chanel_storage', JSON.stringify(defaultData));
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(defaultData));
   }
 };
 
 const readStoredToken = () => {
-  const alt_fa_storage = localStorage.getItem('e_chanel_storage') || '';
+  const alt_fa_storage = localStorage.getItem(STORAGE_KEY) || '';
   return JSON.parse(alt_fa_storage);
 };
 
@@ -64,7 +65,7 @@ interface RefreshTokenResponse {
 }
 
 export const refreshToken = async () => {
-  const storage = localStorage.getItem('e_chanel_storage') || '';
+  const storage = localStorage.getItem(STORAGE_KEY) || '';
   const token_text = JSON.parse(storage);
   if (!storage) {
     throw new Error('No token data in localStorage');
@@ -98,7 +99,7 @@ export const refreshToken = async () => {
     login_return_url: token_text.login_return_url || '',
   };
 
-  localStorage.setItem('e_chanel_storage', JSON.stringify(alt_fa_token));
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(alt_fa_token));
 
   return alt_fa_token;
 };

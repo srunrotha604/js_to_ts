@@ -5,29 +5,24 @@ import {
   getPasswordRequirementChecks,
   getPasswordStrengthLabel,
 } from '../../use-cases';
-
 interface PasswordStrengthMeterProps {
   password: string;
   policy?: SecurityPolicy;
 }
-
 const STRENGTH_STYLE: Record<string, { color: string; width: string }> = {
   WEAK: { color: '#d63939', width: '25%' },
   FAIR: { color: '#f76707', width: '50%' },
   GOOD: { color: '#4263eb', width: '75%' },
   STRONG: { color: '#2fb344', width: '100%' },
 };
-
 const PasswordStrengthMeter = ({
   password,
   policy = DEFAULT_SECURITY_POLICY,
 }: PasswordStrengthMeterProps) => {
   if (!password) return null;
-
   const checks = getPasswordRequirementChecks(password, policy);
   const strength = getPasswordStrengthLabel(checks);
   const style = STRENGTH_STYLE[strength];
-
   return (
     <div className="mt-2">
       <div className="d-flex justify-content-between align-items-center mb-1">
@@ -65,5 +60,4 @@ const PasswordStrengthMeter = ({
     </div>
   );
 };
-
 export default PasswordStrengthMeter;

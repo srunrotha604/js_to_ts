@@ -26,10 +26,8 @@ import {
   normalizeIssueDateRange,
   paginateCustomerReportList,
 } from '../../use-cases';
-
 const CustomerReportPage = () => {
   document.title = 'Report | customer report';
-
   const { hasPermissionAccessTransaction, company } = useAuth();
   const [data, setData] = useState<CustomerReportItem[] | null>(null);
   const [type, setType] = useState<SelectOption[]>([
@@ -58,7 +56,6 @@ const CustomerReportPage = () => {
     startDate: getStartOfMonthDate().toDate(),
     endDate: new Date(),
   });
-
   const onDateChange = ({
     startDate,
     endDate,
@@ -68,7 +65,6 @@ const CustomerReportPage = () => {
   }) => {
     setDate({ startDate, endDate });
   };
-
   useEffect(() => {
     if (company) {
       setBranch(deriveBranchOptions(company));
@@ -85,7 +81,6 @@ const CustomerReportPage = () => {
     ];
     setStatus(defaultSelectedStatus);
   }, [hasPermissionAccessTransaction]);
-
   const statusOptions = useMemo(
     () => [
       {
@@ -430,7 +425,6 @@ const CustomerReportPage = () => {
               </tbody>
             </table>
           </div>
-
           <div className="py-2 border-top border-bottom d-flex justify-content-between align-items-center">
             <div className="d-flex align-items-center mx-2">
               <label className="mx-2">Row per page :</label>

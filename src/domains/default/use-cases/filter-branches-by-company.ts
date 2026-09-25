@@ -1,5 +1,4 @@
 import type { CompanyBranchOption, SelectOption } from '../../../@type/report';
-
 export const filterBranchesByCompany = (
   companies: CompanyBranchOption[] | null | undefined,
   companyValue: string

@@ -11,9 +11,7 @@ import nation from '../../../entities/reference-data/nationlity.json';
 import { useCustomerDuplicateCheck } from '../../../interface-adapters';
 import { calculateAge } from '../../../use-cases';
 import ExistedPolicyModal from './ExistedPolicyModal';
-
 const nationCambodia = nation.find((item) => item.nationality === 'Cambodian');
-
 interface PolicyOption {
   label?: string;
   value?: string;

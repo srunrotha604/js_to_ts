@@ -8,12 +8,10 @@ export interface UserReportItem {
   createedBy?: string;
   status?: string;
 }
-
 export interface UserReportListResponse {
   totalDocs?: number;
   list?: UserReportItem[];
 }
-
 export const RECORDSTATUS = {
   Active: 'Active',
   Disable: 'Disable',

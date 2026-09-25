@@ -4,7 +4,6 @@ import type { MessageResponse, RoleAccessListResponse } from '../../entities';
 
 export const fetchRoleAccessList = () =>
   HttpUtil.get<RoleAccessListResponse>(ROUTE_API.applicationRoleAccess);
-
 export const updateRoleAccess = (data: {
   transactionCode: string;
   access: string;

@@ -14,7 +14,7 @@ interface TransactionBatchProccessModalProps {
   loading?: boolean;
   closeModal?: () => void;
 }
-
+// eslint-disable-next-line react/display-name
 const TransactionBatchProccessModal = forwardRef<
   HTMLDivElement,
   TransactionBatchProccessModalProps

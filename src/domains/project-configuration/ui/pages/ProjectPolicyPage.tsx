@@ -11,16 +11,13 @@ import {
   fetchProjectPolicyList,
   useListPagination,
 } from '../../interface-adapters';
-
 const ProjectPolicyPage = () => {
   document.title = 'E-CHANNEL PORTAL | project';
   const navigate = useNavigate();
   const params = useParams<{ key: string }>();
-
   const [arrList, setArrList] = useState<ProjectPolicyItem[]>([]);
   const [query, setQuery] = useState('');
   const [transactionCode, setTransationCode] = useState('');
-
   const { loading, refresh: refreshList } = useRequest(
     () => fetchProjectPolicyList(params.key ?? ''),
     {
@@ -41,7 +38,6 @@ const ProjectPolicyPage = () => {
       },
     }
   );
-
   const { run: runDeleteProjectPolicy, loading: deleteLoading } = useRequest(
     deleteProjectPolicy,
     {
@@ -64,11 +60,9 @@ const ProjectPolicyPage = () => {
       },
     }
   );
-
   const funcRemoveHandleClickExecute = () => {
     runDeleteProjectPolicy({ transationCode: transactionCode });
   };
-
   const getRecordHandleClick = (option: string, item: ProjectPolicyItem) => {
     switch (option) {
       case 'delete':
@@ -78,23 +72,18 @@ const ProjectPolicyPage = () => {
         navigate(ROUTE_PATH.error404);
     }
   };
-
   const createNewHandleClick = () => {
     navigate(ROUTE_PATH.projectPolicyCreate(params.key ?? ''));
   };
-
   const goBackHandleClick = () => {
     navigate(ROUTE_PATH.project);
   };
-
   const search = query.toLowerCase();
   const filteredList = arrList.filter((item) =>
     search === '' ? true : item.projectLabel?.toLowerCase().includes(search)
   );
-
   const { pageCount, pagedItems, handlePageClick, nf } =
     useListPagination(filteredList);
-
   return (
     <React.Fragment>
       {loading && <Loading value={loading} />}
@@ -487,5 +476,4 @@ const ProjectPolicyPage = () => {
     </React.Fragment>
   );
 };
-
 export default ProjectPolicyPage;

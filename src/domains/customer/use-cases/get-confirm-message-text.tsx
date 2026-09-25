@@ -18,7 +18,6 @@ export const getConfirmedMessageText = ({
     'DRI-Rejected': 'dri-reject',
   };
   const proccessStatus = (status && tempStatus[status]) ?? 'approve';
-
   return (
     <p className="fs-4">
       Are you sure you want to <b>{proccessStatus}</b>{' '}

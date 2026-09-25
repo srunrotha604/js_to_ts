@@ -5,7 +5,6 @@ export interface BuildDataEntryCreateDtoInput {
   role: string;
   phone: string;
 }
-
 export const buildDataEntryCreateDto = ({
   email,
   givenName,

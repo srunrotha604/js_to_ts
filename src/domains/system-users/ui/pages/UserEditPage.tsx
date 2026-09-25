@@ -278,5 +278,4 @@ const UserEditPage = () => {
     </React.Fragment>
   );
 };
-
 export default UserEditPage;

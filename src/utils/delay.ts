@@ -1,5 +1,4 @@
 type DelayCallback = (() => void) | (() => void)[];
-
 export const delay = (callback: DelayCallback, timeout: number = 200): void => {
   if (Array.isArray(callback)) {
     if (callback.length === 0) {

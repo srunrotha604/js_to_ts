@@ -12,8 +12,6 @@ export interface SecurityPolicy {
   passwordHistoryCount?: number;
   passwordExpirationDays?: number;
 }
-
-// Response of POST /auth/forgot-password on success.
 export interface ForgotPasswordRequestResponse {
   message?: string;
   token?: string;
@@ -22,9 +20,6 @@ export interface ForgotPasswordRequestResponse {
   forgotPasswordViaSMS?: boolean;
   securityPolicy?: SecurityPolicy;
 }
-
-// Shared response shape for the other steps in the flow (confirm-code,
-// forgot-password-via-sms) and for error bodies (which only carry `message`).
 export interface ForgotPasswordResponse {
   success?: boolean;
   keyCode?: string;

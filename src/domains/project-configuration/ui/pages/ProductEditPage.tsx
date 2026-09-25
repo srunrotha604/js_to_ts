@@ -5,15 +5,12 @@ import { toast } from 'react-toastify';
 import { ROUTE_PATH } from '../../../../utils/route-util';
 import { fetchProductByKey, updateProduct } from '../../interface-adapters';
 import { buildProductEditDto, validateRequiredFields } from '../../use-cases';
-
 const ProductEditPage = () => {
   document.title = 'E-CHANNEL PORTAL | product | edit';
   const params = useParams<{ key: string }>();
   const navigate = useNavigate();
-
   const [productCode, setProductCode] = useState('');
   const [productName, setProductName] = useState('');
-
   useRequest(() => fetchProductByKey(params.key ?? ''), {
     onSuccess: (res) => {
       if (res?.status === 200) {
@@ -29,7 +26,6 @@ const ProductEditPage = () => {
       }
     },
   });
-
   const { run: runUpdateProduct, loading: updateLoading } = useRequest(
     updateProduct,
     {
@@ -52,7 +48,6 @@ const ProductEditPage = () => {
       },
     }
   );
-
   const funcButtonHandleClickExecute = (
     e: React.MouseEvent<HTMLButtonElement>
   ) => {
@@ -63,7 +58,6 @@ const ProductEditPage = () => {
     }
     e.preventDefault();
   };
-
   const productCodeHandleChange = (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
@@ -77,7 +71,6 @@ const ProductEditPage = () => {
   const goBackHandleClick = () => {
     navigate(ROUTE_PATH.product);
   };
-
   return (
     <React.Fragment>
       <div className="page-wrapper">
@@ -212,5 +205,4 @@ const ProductEditPage = () => {
     </React.Fragment>
   );
 };
-
 export default ProductEditPage;

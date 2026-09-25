@@ -7,16 +7,13 @@ import type { ProductSelectOption } from '../../../../@type/report';
 import { ROUTE_PATH } from '../../../../utils/route-util';
 import { createProduct, fetchProductOptions } from '../../interface-adapters';
 import { buildProductCreateDto, validateRequiredFields } from '../../use-cases';
-
 const ProductCreatePage = () => {
   document.title = 'E-CHANNEL PORTAL | product | create';
   const navigate = useNavigate();
-
   const [productCode, setProductCode] = useState('');
   const [productName, setProductName] = useState('');
   const [productList, setProductList] = useState<ProductSelectOption[]>([]);
   const [selectedProduct, setSelectedProduct] = useState('');
-
   useRequest(fetchProductOptions, {
     onSuccess: (res) => {
       switch (res?.status) {
@@ -34,7 +31,6 @@ const ProductCreatePage = () => {
       }
     },
   });
-
   const { run: runCreateProduct, loading: createLoading } = useRequest(
     createProduct,
     {
@@ -57,7 +53,6 @@ const ProductCreatePage = () => {
       },
     }
   );
-
   const funcButtonHandleClickExecute = (
     e: React.MouseEvent<HTMLButtonElement>
   ) => {
@@ -68,11 +63,9 @@ const ProductCreatePage = () => {
     }
     e.preventDefault();
   };
-
   const roleHandleChange = (value: SingleValue<ProductSelectOption>) => {
     setSelectedProduct(value?.productCode ?? '');
   };
-
   const productCodeHandleChange = (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
@@ -86,7 +79,6 @@ const ProductCreatePage = () => {
   const goBackHandleClick = () => {
     navigate(ROUTE_PATH.product);
   };
-
   return (
     <React.Fragment>
       <div className="page-wrapper">
@@ -242,5 +234,4 @@ const ProductCreatePage = () => {
     </React.Fragment>
   );
 };
-
 export default ProductCreatePage;
