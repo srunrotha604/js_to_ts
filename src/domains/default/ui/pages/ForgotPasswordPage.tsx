@@ -5,6 +5,7 @@ import { PatternFormat } from 'react-number-format';
 import { Link, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { ROUTE_PATH } from '../../../../utils/route-util';
+import type { SecurityPolicy } from '../../entities';
 import {
   confirmForgotPasswordChange,
   confirmForgotPasswordCode,
@@ -15,10 +16,12 @@ import {
   buildConfirmChangePasswordDto,
   buildConfirmCodeDto,
   buildForgotPasswordRequestDto,
+  buildPasswordPolicyMessage,
   buildViaSmsDto,
   validatePasswordStrength,
   validateRequiredFields,
 } from '../../use-cases';
+import PasswordStrengthMeter from '../components/PasswordStrengthMeter';
 
 const ForgotPasswordPage = () => {
   document.title = 'E-CHANNEL PORTAL | Forgot Password';
@@ -41,6 +44,9 @@ const ForgotPasswordPage = () => {
   const [confirmCodeMessage, setConfirmCodeMessage] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
   const [viaSMSCode, setViaSMSCode] = useState('');
+  const [securityPolicy, setSecurityPolicy] = useState<
+    SecurityPolicy | undefined
+  >();
 
   const { run: runRequestForgotPassword, loading: requestLoading } = useRequest(
     requestForgotPassword,
@@ -58,9 +64,9 @@ const ForgotPasswordPage = () => {
               'Enter the code we sent to your email address at'
             );
             setAddressMessage(email);
-            setPhoneNumber(res?.data?.phoneNumber ?? '');
             setViaSMSCode(res?.data?.smsToken ?? '');
             setShowSMSResend(res.data.forgotPasswordViaSMS || false);
+            setSecurityPolicy(res?.data?.securityPolicy);
             setInvalidFeedBack('');
             break;
           case 400:
@@ -138,6 +144,7 @@ const ForgotPasswordPage = () => {
     {
       manual: true,
       onSuccess: (res) => {
+        console.log('res', res);
         switch (res?.status) {
           case 200:
             setResetSuccess(true);
@@ -151,6 +158,9 @@ const ForgotPasswordPage = () => {
           default:
             navigate(ROUTE_PATH.notFound);
         }
+      },
+      onError(e, params) {
+        console.log(e, params);
       },
     }
   );
@@ -187,8 +197,8 @@ const ForgotPasswordPage = () => {
       return;
     }
 
-    if (!validatePasswordStrength(newPassword)) {
-      toast.error('Invalid password requirement');
+    if (!validatePasswordStrength(newPassword, securityPolicy)) {
+      toast.error(buildPasswordPolicyMessage(securityPolicy));
       return;
     }
 
@@ -274,9 +284,7 @@ const ForgotPasswordPage = () => {
                 {success ? (
                   <>
                     <div className="alert alert-info">
-                      Password must have at least 8 characters, including at
-                      least 1 uppercase letter, 1 lowercase letter, 1 number and
-                      1 special character
+                      {buildPasswordPolicyMessage(securityPolicy)}
                     </div>
                     <div className="mb-2">
                       <label className="form-label required">
@@ -345,6 +353,10 @@ const ForgotPasswordPage = () => {
                           )}
                         </span>
                       </div>
+                      <PasswordStrengthMeter
+                        password={newPassword}
+                        policy={securityPolicy}
+                      />
                     </div>
 
                     <div className="mb-2">
@@ -355,7 +367,8 @@ const ForgotPasswordPage = () => {
                         <input
                           type={confirmPasswordShown ? 'text' : 'password'}
                           className={
-                            confirmPassword !== ''
+                            confirmPassword !== '' &&
+                            confirmPassword === newPassword
                               ? 'form-control'
                               : 'form-control is-invalid is-invalid-lite'
                           }
@@ -414,6 +427,12 @@ const ForgotPasswordPage = () => {
                           )}
                         </span>
                       </div>
+                      {confirmPassword !== '' &&
+                        confirmPassword !== newPassword && (
+                          <div className="text-danger small mt-1">
+                            Passwords do not match
+                          </div>
+                        )}
                     </div>
                     <div className="mt-3">
                       <button

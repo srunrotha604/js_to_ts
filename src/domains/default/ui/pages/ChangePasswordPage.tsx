@@ -10,7 +10,12 @@ import {
   changePassword,
   fetchCurrentUserProfile,
 } from '../../interface-adapters';
-import { buildChangePasswordDto } from '../../use-cases';
+import {
+  buildChangePasswordDto,
+  buildPasswordPolicyMessage,
+  validatePasswordStrength,
+} from '../../use-cases';
+import PasswordStrengthMeter from '../components/PasswordStrengthMeter';
 
 interface ChangePasswordFormValues {
   password: string;
@@ -31,7 +36,14 @@ const ChangePasswordPage = () => {
   const toggleEye = (key: keyof typeof show) =>
     setShow((s) => ({ ...s, [key]: !s[key] }));
 
-  const { register, handleSubmit } = useForm<ChangePasswordFormValues>();
+  const {
+    register,
+    handleSubmit,
+    watch,
+    formState: { errors },
+  } = useForm<ChangePasswordFormValues>({ mode: 'onChange' });
+
+  const newPasswordValue = watch('newPassword') ?? '';
 
   useRequest(fetchCurrentUserProfile, {
     onSuccess: (res) => {
@@ -162,11 +174,18 @@ const ChangePasswordPage = () => {
                 <input
                   id="newPassword"
                   type={show.newPassword ? 'text' : 'password'}
-                  className={'form-control'}
+                  className={`form-control ${
+                    errors.newPassword ? 'is-invalid' : ''
+                  }`}
                   placeholder="New password"
                   autoComplete="off"
                   required
-                  {...register('newPassword', { required: true })}
+                  {...register('newPassword', {
+                    required: true,
+                    validate: (value) =>
+                      validatePasswordStrength(value) ||
+                      buildPasswordPolicyMessage(),
+                  })}
                 />
                 <button
                   type="button"
@@ -180,6 +199,12 @@ const ChangePasswordPage = () => {
                   {show.newPassword ? <EyeIcon /> : <EyeOffIcon />}
                 </button>
               </div>
+              {/* {errors.newPassword && (
+                <div className="text-danger small mt-1">
+                  {errors.newPassword.message}
+                </div>
+              )} */}
+              <PasswordStrengthMeter password={newPasswordValue} />
             </div>
 
             <div className="mb-2">
@@ -188,11 +213,17 @@ const ChangePasswordPage = () => {
                 <input
                   id="confirmPassword"
                   type={show.confirmPassword ? 'text' : 'password'}
-                  className={'form-control'}
+                  className={`form-control ${
+                    errors.confirmPassword ? 'is-invalid' : ''
+                  }`}
                   placeholder="Confirm password"
                   autoComplete="off"
                   required
-                  {...register('confirmPassword', { required: true })}
+                  {...register('confirmPassword', {
+                    required: true,
+                    validate: (value) =>
+                      value === newPasswordValue || 'Passwords do not match',
+                  })}
                 />
                 <button
                   type="button"
@@ -208,6 +239,11 @@ const ChangePasswordPage = () => {
                   {show.confirmPassword ? <EyeIcon /> : <EyeOffIcon />}
                 </button>
               </div>
+              {errors.confirmPassword && (
+                <div className="text-danger small mt-1">
+                  {errors.confirmPassword.message}
+                </div>
+              )}
             </div>
             <div className="form-footer d-flex justify-content-between gap-2">
               <button

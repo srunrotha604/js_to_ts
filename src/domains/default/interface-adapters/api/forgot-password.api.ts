@@ -1,8 +1,14 @@
 import { HttpUtil } from '../../../../utils/http-util';
 import { ROUTE_API } from '../../../../utils/route-util';
-import type { ForgotPasswordResponse } from '../../entities';
+import type {
+  ForgotPasswordRequestResponse,
+  ForgotPasswordResponse,
+} from '../../entities';
 export const requestForgotPassword = (data: { email: string }) =>
-  HttpUtil.post<ForgotPasswordResponse>(ROUTE_API.loginForgotPassword, data);
+  HttpUtil.post<ForgotPasswordRequestResponse>(
+    ROUTE_API.loginForgotPassword,
+    data
+  );
 
 export const confirmForgotPasswordCode = (data: {
   email: string;
