@@ -50,7 +50,6 @@ const ForgotPasswordPage = () => {
     {
       manual: true,
       onSuccess: (res) => {
-        console.log('res?.status', res?.status);
         switch (res?.status) {
           case 200:
             setShowSendEmail(false);
@@ -139,7 +138,6 @@ const ForgotPasswordPage = () => {
     {
       manual: true,
       onSuccess: (res) => {
-        console.log('res', res);
         switch (res?.status) {
           case 200:
             setResetSuccess(true);

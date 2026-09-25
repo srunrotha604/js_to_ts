@@ -20,8 +20,6 @@ const ErrorPage = ({ error }: FallbackProps) => {
       try {
         if (import.meta.env.PROD) {
           await logClientError(errorBody);
-        } else {
-          console.log(errorBody);
         }
       } catch (error) {
         console.log(error);

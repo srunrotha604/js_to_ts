@@ -13,14 +13,15 @@ export const getPastDate = (dayCount: number, format = 'YYYY-MM-DD') => {
 export const getFutureDate = (dayCount: number, format = 'YYYY-MM-DD') => {
   return dayjs().add(dayCount, 'day').format(format);
 };
-export function getStartOfMonthDate(format?: string) {
+export const getStartOfMonthDate = <T extends string | undefined = undefined>(
+  format?: T
+): T extends string ? string : dayjs.Dayjs => {
   const day = dayjs().startOf('month');
 
-  if (!format) return day;
-
-  return day.format(format);
-}
-
+  return (format ? day.format(format) : day) as T extends string
+    ? string
+    : dayjs.Dayjs;
+};
 export const convertAge = (date: dayjs.ConfigType) => {
   const birthDate = dayjs(date);
   const today = dayjs();

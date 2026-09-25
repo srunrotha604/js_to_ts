@@ -98,7 +98,6 @@ const BranchForm = () => {
       fetchRows();
     } catch (error) {
       showErrorResponseMessage(error);
-      console.log(error);
     }
   };
 
@@ -114,7 +113,6 @@ const BranchForm = () => {
       fetchRows();
     } catch (error) {
       showErrorResponseMessage(error);
-      console.log(error);
     }
   };
 

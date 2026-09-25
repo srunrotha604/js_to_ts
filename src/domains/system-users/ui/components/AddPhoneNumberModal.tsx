@@ -34,7 +34,6 @@ const AddPhoneNumberModal = ({
         ? error.response?.data?.message
         : undefined;
       toast.error(message);
-      console.log(message);
     }
   };
   return (

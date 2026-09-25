@@ -29,7 +29,6 @@ const TableCellTextDeleteConfirm = (props: TableCellTextDeleteConfirmProps) => {
       success();
     } catch (error) {
       showErrorResponseMessage(error);
-      console.log(error);
     }
   };
   return (

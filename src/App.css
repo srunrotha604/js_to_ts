@@ -333,9 +333,9 @@ code {
   border-radius: 13px !important;
 }
 
-.spinner-container {
-  /*height: 160px;*/
-}
+/* .spinner-container {
+  height: 160px;
+} */
 
 .min-height-0 {
   min-height: 0 !important;

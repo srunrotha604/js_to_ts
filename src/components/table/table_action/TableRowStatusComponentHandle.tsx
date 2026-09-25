@@ -25,7 +25,6 @@ const TableRowStatusComponentHandle = (
       success();
     } catch (error) {
       showErrorResponseMessage(error);
-      console.log(error);
     }
   };
 

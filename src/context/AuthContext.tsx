@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import type { ReactNode } from 'react';
 import { createContext, useContext, useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -146,7 +147,7 @@ const AuthContextProvider = ({ children }: { children?: ReactNode }) => {
       setMode(responseUser?.data?.mode ?? '');
       startSessionStream();
     } catch (error) {
-      console.log(error);
+      setLoading(false);
     } finally {
       setLoading(false);
     }

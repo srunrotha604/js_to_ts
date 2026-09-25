@@ -19,7 +19,6 @@ const useMessage = () => {
   };
 
   const showErrorResponseMessage = (error: unknown) => {
-    console.log('response', error);
     const err = error as ApiErrorLike;
     if (err?.status === 401 || err?.response?.status === 401) {
       toast.error('Session expired, please login again');

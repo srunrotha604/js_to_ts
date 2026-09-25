@@ -61,7 +61,6 @@ const ReviewStep = (props: ReviewStepProps) => {
       closeModal();
     } catch (error) {
       showErrorResponseMessage(error);
-      console.log(error);
     } finally {
       closeSpinner();
     }

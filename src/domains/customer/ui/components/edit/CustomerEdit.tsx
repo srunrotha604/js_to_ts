@@ -74,7 +74,6 @@ const CustomerEdit = (props: CustomerEditProps) => {
         transactionCode: responseData?.transactionCode,
       });
     } catch (error) {
-      console.log(error);
       showErrorResponseMessage(error);
     } finally {
       closeSpinner?.();

@@ -28,7 +28,6 @@ const ContactUsPage = () => {
       setSuccess(true);
     } catch (error) {
       showErrorResponseMessage(error);
-      console.log(error);
     } finally {
       delay(closeSpinner);
     }

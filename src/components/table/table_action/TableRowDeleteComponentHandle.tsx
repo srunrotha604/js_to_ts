@@ -33,7 +33,6 @@ const TableRowDeleteComponentHandle = (
       closeModal();
     } catch (error) {
       showErrorResponseMessage(error);
-      console.log(error);
     }
   };
 
