@@ -14,6 +14,7 @@ export interface SecurityPolicy {
 }
 export interface ForgotPasswordRequestResponse {
   message?: string;
+  error?: string;
   token?: string;
   smsToken?: string;
   expirationInMinutes?: number;

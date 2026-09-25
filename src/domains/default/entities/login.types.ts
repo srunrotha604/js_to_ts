@@ -7,4 +7,5 @@ export interface LoginResponse {
   expiration: string;
   tokenExpiration: string;
   message?: string;
+  error?: string;
 }

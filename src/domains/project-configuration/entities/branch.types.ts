@@ -1,8 +1,8 @@
 import type { SelectOption } from '../../../@type/report';
 export interface BranchItem {
   transactionCode?: string;
-  branchCode?: string;
-  branchName?: string;
+  intermediaryCode?: string;
+  intermediaryName?: string;
   contacts?: string;
   phone?: string;
   mobileOne?: string;

@@ -68,8 +68,8 @@ const ForgotPasswordPage = () => {
           case 400:
             setShowSendEmail(true);
             setSuccess(false);
-            setInvalidFeedBack(res?.data?.message ?? '');
-            toast.error(String(res?.data?.message ?? ''));
+            setInvalidFeedBack(res?.data?.error ?? res?.data?.message ?? '');
+            toast.error(String(res?.data?.error ?? res?.data?.message ?? ''));
             break;
           case 403:
             toast.error(String(res?.data));
@@ -93,7 +93,7 @@ const ForgotPasswordPage = () => {
             break;
           case 400:
             setSuccess(false);
-            setInvalidFeedBack(res?.data?.message ?? '');
+            setInvalidFeedBack(res?.data?.error ?? res?.data?.message ?? '');
             break;
           case 403:
             toast.error(String(res?.data));
@@ -122,7 +122,7 @@ const ForgotPasswordPage = () => {
             break;
           case 400:
             setSuccess(false);
-            setInvalidFeedBack(res?.data?.message ?? '');
+            setInvalidFeedBack(res?.data?.error ?? res?.data?.message ?? '');
             break;
           case 403:
             toast.error(String(res?.data));

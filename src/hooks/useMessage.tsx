@@ -6,10 +6,10 @@ interface ApiResponseLike {
 interface ApiErrorLike {
   status?: number;
   message?: string;
-  data?: { message?: string };
+  data?: { error?: string; message?: string };
   response?: {
     status?: number;
-    data?: { message?: string };
+    data?: { error?: string; message?: string };
   };
 }
 const useMessage = () => {
@@ -25,7 +25,9 @@ const useMessage = () => {
       return;
     }
     toast.error(
-      err?.response?.data?.message ||
+      err?.response?.data?.error ||
+        err?.response?.data?.message ||
+        err?.data?.error ||
         err?.data?.message ||
         err?.message ||
         'Something Wrong'

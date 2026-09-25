@@ -95,7 +95,7 @@ const ROUTE_API = {
   operationCustomerCardConfirmation: '/operation-customer/card-confirmation',
   operationCustomerBatch: '/api/v1/operation-customer/batch',
   operationCustomerBatchUpload: '/api/v1/operation-customer/batch/upload',
-  exportOperationCustomer: '/export/operation-customer',
+  exportOperationCustomer: '/api/v1/export/operation-customer',
   operationProject: '/api/v1/operation-project',
   operationProjectByKey: (key: string | number) =>
     `/api/v1/operation-project/${key}`,
@@ -103,7 +103,7 @@ const ROUTE_API = {
   operationProjectPolicyByKey: (key: string | number) =>
     `/api/v1/operation-project/policy/${key}`,
   coreSystemOperationPolicy: '/api/v1/policies',
-  opertionBranch: '/opertion-branch',
+  opertionBranch: '/api/v1/opertion-branch',
   opertionBranchAdmin: '/opertion-branch/admin',
   opertionBranchProject: '/opertion-branch/project',
   opertionBranchProjectByKey: (key: string | number) =>
@@ -144,7 +144,7 @@ const ROUTE_API = {
   log: '/log',
   operationLog: '/api/v1/operation-customer/log',
   logContactUs: '/log/contact-us',
-  customerReport: '/export/operation-customer/filter',
+  customerReport: '/api/v1/export/operation-customer/filter',
 };
 
 export { ROUTE_API, ROUTE_PATH };

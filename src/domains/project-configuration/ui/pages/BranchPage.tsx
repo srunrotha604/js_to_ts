@@ -85,8 +85,8 @@ const BranchPage = () => {
     const search = query.toLowerCase().trim();
     return search === ''
       ? true
-      : item.branchCode?.toLowerCase()?.includes(search) ||
-          item.branchName?.toLowerCase()?.includes(search) ||
+      : item.intermediaryCode?.toLowerCase()?.includes(search) ||
+          item.intermediaryName?.toLowerCase()?.includes(search) ||
           item.admin?.toLowerCase()?.includes(search);
   });
   const { pageCount, pagedItems, handlePageClick, nf, setCurrentPage } =
@@ -295,8 +295,12 @@ const BranchPage = () => {
                       {pagedItems.map((item, index) => (
                         <tr key={index}>
                           <td>{index + 1}</td>
-                          <td className="text-muted">{item.branchCode}</td>
-                          <td className="text-muted">{item.branchName}</td>
+                          <td className="text-muted">
+                            {item.intermediaryCode}
+                          </td>
+                          <td className="text-muted">
+                            {item.intermediaryName}
+                          </td>
                           <td
                             className="text-underline text-primary text-pre-line"
                             onClick={() => {

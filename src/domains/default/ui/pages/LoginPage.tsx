@@ -36,7 +36,7 @@ const LoginPage = () => {
           break;
         }
         case 400:
-          setInvalidFeedBack(res?.data?.message ?? '');
+          setInvalidFeedBack(res?.data?.error ?? res?.data?.message ?? '');
           break;
         case 403:
           setInvalidFeedBack(String(res?.data));
