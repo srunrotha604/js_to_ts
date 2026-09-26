@@ -5,6 +5,7 @@ import userIcon from '../../../../assets/default-user.png';
 import companyLogoFull from '../../../../assets/logo-full.jpg';
 import { useAuth } from '../../../../context/AuthContext';
 import { ROUTE_PATH } from '../../../../utils/route-util';
+import NotificationBell from '../../../notification/ui/components/NotificationBell';
 import { performLogout } from '../../use-cases';
 const HeaderPage = () => {
   const { user, clearUser, mode, application } = useAuth();
@@ -70,6 +71,7 @@ const HeaderPage = () => {
             </Link>
           </div>
           <div className="navbar-nav flex-row order-md-last">
+            {user && <NotificationBell />}
             {user && (
               <div className="nav-item dropdown" role="button">
                 <div
@@ -83,11 +85,10 @@ const HeaderPage = () => {
                       e.currentTarget.src = userIcon;
                     }}
                     alt="Profile User"
-                    className="profile-image w-4 rounded-5"
+                    className="profile-image w-4 h-4 rounded-5"
                   />
                   <div className="d-none d-xl-block ps-2">
                     <div>
-                      {' '}
                       {user.firstName} {user.lastName}
                     </div>
                     <div className="mt-1 small text-muted">
